@@ -1,5 +1,9 @@
 #pragma once
 
+#include "bittorrent/ui/config.h"
+
+#include "bittorrent/mutex.h"
+
 #include <unordered_map>
 
 namespace bittorrent {
@@ -24,7 +28,7 @@ public:
 	*/
 	template <typename T>
 	EntryReference get(T&& hashable) const {
-		std::lock_guard<std::mutex> l(_mutex);
+		lock_guard<mutex> l(_mutex);
 		auto hash = std::hash<T>()(std::forward<T>(hashable));
 
 		auto it = _entries.find(hash);
@@ -40,7 +44,7 @@ public:
 	*/
 	template <typename T>
 	EntryReference add(Entry&& entry, T&& hashable, Policy policy = kRemoveUnreferenced) {
-		std::lock_guard<std::mutex> l(_mutex);
+		lock_guard<mutex> l(_mutex);
 		auto hash = std::hash<T>()(std::forward<T>(hashable));
 
 		auto it = _entries.find(hash);
@@ -64,7 +68,7 @@ public:
 	* Removes all entries from the cache.
 	*/
 	void clear() {
-		std::lock_guard<std::mutex> l(_mutex);
+		lock_guard<mutex> l(_mutex);
 		_entries.clear();
 	}
 	
@@ -73,7 +77,7 @@ public:
 	*/
 	template <typename T>
 	void remove(T&& hashable) {
-		std::lock_guard<std::mutex> l(_mutex);
+		lock_guard<mutex> l(_mutex);
 		auto hash = std::hash<T>()(std::forward<T>(hashable));
 		_entries.erase(hash);
 	}
@@ -82,12 +86,12 @@ public:
 	* Returns the number of entries currently in the cache.
 	*/
 	size_t size() {
-		std::lock_guard<std::mutex> l(_mutex);
+		lock_guard<mutex> l(_mutex);
 		return _entries.size();
 	}
 
 private:
-	mutable std::mutex _mutex;
+	mutable mutex _mutex;
 
 	struct EntryInfo {
 		shared_ptr<Entry> entry;
