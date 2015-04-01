@@ -1,0 +1,31 @@
+rule ui-frameworks ( properties * ) {
+	if <target-os>iphone in $(properties) || <target-os>darwin in $(properties) {
+		local result ;
+		result += <framework>OpenGL ;
+		return $(result) ;
+	}
+}
+
+
+cpp-pch pch :
+	../foundation//project_defaults
+	../foundation//foundation_headers
+	src/pch.h
+:
+	<conditional>@not-multi-arch
+	<include>./include
+;
+
+lib ui :
+	pch
+	[ glob-tree *.cpp : tests ]
+	../foundation//foundation
+:
+	<include>./include
+	<link>static
+: :
+	<include>./include
+	<conditional>@ui-frameworks
+	<target-os>linux:<linkflags>-lm
+	<target-os>android:<linkflags>"-lGLESv2"
+;
