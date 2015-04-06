@@ -19,12 +19,12 @@ public:
 	void setColor(double r, double g, double b, double a);
 	void setTexture(GLuint id, double x, double y, double w, double h);
 
-	virtual void drawTriangle(double x1, double y1, double x2, double y2, double x3, double y3, Bezier bezier) override;
+	virtual void drawTriangle(double x1, double y1, double x2, double y2, double x3, double y3, Curve curve) override;
 	virtual void flush() override;
 
 private:
 	opengl::ShaderProgram _program;
-	opengl::ShaderProgram::Uniform _bezierModeUniform;
+	opengl::ShaderProgram::Uniform _curveModeUniform;
 	AffineTransformation _transformation;
 	
 	GLuint _texture = 0;
@@ -33,14 +33,14 @@ private:
 	enum : GLuint {
 		kVertexPositionAttribute,
 		kVertexColorAttribute,
-		kVertexBezierAttribute,
+		kVertexCurveAttribute,
 		kVertexTextureCoordinateAttribute,
 	};
 
 	struct Vertex {
 		GLfloat x, y;
 		GLfloat r{1.0}, g{1.0}, b{1.0}, a{1.0};
-		GLfloat bu, bv, bm;
+		GLfloat cu, cv, cm, caa;
 		GLfloat s, t;
 	};
 

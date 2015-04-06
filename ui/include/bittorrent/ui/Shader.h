@@ -9,10 +9,11 @@ class Shader {
 public:
 	virtual ~Shader() {}
 	
-	enum Bezier {
-		kBezierNone    = 0,
-		kBezierConcave = 1,
-		kBezierConvex  = -1,
+	enum Curve {
+		kCurveNone    = 0,
+		kCurveBezierConcave  = 1,
+		kCurveBezierConvex   = -1,
+		kCurveCircularConvex = 2,
 	};
 
 	/**
@@ -20,7 +21,7 @@ public:
 	* to render something on top of the triangle with another shader, make a call to flush() to
 	* ensure that it's been rendered.
 	*/
-	virtual void drawTriangle(double x1, double y1, double x2, double y2, double x3, double y3, Bezier bezier = kBezierNone) = 0;
+	virtual void drawTriangle(double x1, double y1, double x2, double y2, double x3, double y3, Curve curve = kCurveNone) = 0;
 
 	/**
 	* Ensures that all triangles have been rendered.

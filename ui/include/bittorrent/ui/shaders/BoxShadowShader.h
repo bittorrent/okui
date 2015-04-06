@@ -27,7 +27,10 @@ public:
 	*/
 	void drawShadow(double x, double y, double w, double h, double spread, bool inverted = false);
 
-	virtual void drawTriangle(double x1, double y1, double x2, double y2, double x3, double y3, Bezier bezier) override;
+	/**
+	* @param bezier must be kCurveNone
+	*/
+	virtual void drawTriangle(double x1, double y1, double x2, double y2, double x3, double y3, Curve curve = kCurveNone) override;
 	virtual void flush() override;
 
 private:
@@ -39,7 +42,6 @@ private:
 	enum : GLuint {
 		kVertexPositionAttribute,
 		kVertexColorAttribute,
-		kVertexBezierAttribute,
 		kVertexShadowBoxAttribute,
 		kVertexShadowParametersAttribute,
 	};
@@ -47,7 +49,6 @@ private:
 	struct Vertex {
 		GLfloat x, y;
 		GLfloat r{0.0}, g{0.0}, b{0.0}, a{0.1};
-		GLfloat bu, bv, bm;
 		GLfloat boxX, boxY, boxWidth, boxHeight;
 		GLfloat spread{0.0}, inverted{0.0};
 	};

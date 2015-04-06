@@ -22,14 +22,12 @@ public:
 	};
 	
 	Rectangle& round(double radius, int corners = kCornerMinMin | kCornerMinMax | kCornerMaxMin | kCornerMaxMax);
-	Rectangle& circular(bool circular = true) { circularCorners = circular; return *this; }
 
 	void draw(Shader* shader);
 
 	double x, y, w, h;
 	double cornerRadius = 0.0;
 	int roundedCorners = 0;
-	bool circularCorners = false;
 };
 
 }}}

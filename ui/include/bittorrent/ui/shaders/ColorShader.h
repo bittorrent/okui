@@ -27,7 +27,7 @@ public:
 	void setColorA(double x, double y, double r, double g, double b, double a);
 	void setColorB(double x, double y, double r, double g, double b, double a);
 
-	virtual void drawTriangle(double x1, double y1, double x2, double y2, double x3, double y3, Bezier bezier) override;
+	virtual void drawTriangle(double x1, double y1, double x2, double y2, double x3, double y3, Curve curve) override;
 	virtual void flush() override;
 
 private:
@@ -49,13 +49,13 @@ private:
 	enum : GLuint {
 		kVertexPositionAttribute,
 		kVertexColorAttribute,
-		kVertexBezierAttribute,
+		kVertexCurveAttribute,
 	};
 
 	struct Vertex {
 		GLfloat x, y;
 		GLfloat r{1.0}, g{1.0}, b{1.0}, a{1.0};
-		GLfloat bu, bv, bm;
+		GLfloat cu, cv, cm, caa;
 	};
 	
 	struct Triangle {

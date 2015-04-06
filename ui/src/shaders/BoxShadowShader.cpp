@@ -12,18 +12,15 @@ BoxShadowShader::BoxShadowShader() {
     R"(
         attribute vec2 positionAttrib;
         attribute vec4 colorAttrib;
-        attribute vec3 bezierAttrib;
         attribute vec4 shadowBoxAttrib;
         attribute vec2 shadowParametersAttrib;
         
         varying vec4 color;
-        varying vec3 bezier;
         varying vec4 shadowBox;
         varying vec2 shadowParameters;
         
         void main() {
             color = colorAttrib;
-            bezier = bezierAttrib;
             shadowBox = shadowBoxAttrib;
             shadowParameters = shadowParametersAttrib;
             gl_Position = vec4(positionAttrib, 0.0, 1.0);
@@ -36,24 +33,10 @@ BoxShadowShader::BoxShadowShader() {
 #endif
     R"(
         varying vec4 color;
-        varying vec3 bezier;
         varying vec4 shadowBox;
         varying vec2 shadowParameters;
         
         void main() {
-            float alphaMultiplier = 1.0;
-            if (bezier.z != 0.0) {
-                float dist = pow(bezier.s, 2.0) - bezier.t;
-                if (dist < 0.0 != bezier.z < 0.0) {
-                    float x = abs(dist) / 0.02;
-                    if (x < 1.0) {
-                        alphaMultiplier = (1.0 - x);
-                    } else {
-                        discard;
-                    }
-                }
-            }
-            
             vec2 boxDistance = vec2(0.0);
             if (shadowBox.x < 0.0) {
                 boxDistance.x = -shadowBox.x;
@@ -68,7 +51,7 @@ BoxShadowShader::BoxShadowShader() {
             float opacity = 1.0 - min(length(boxDistance) / shadowParameters.s, 1.0);
             if (shadowParameters.t > 0.5) { opacity = 1.0 - opacity; }
             
-            gl_FragColor = vec4(color.rgb, color.a * alphaMultiplier * opacity * opacity);
+            gl_FragColor = vec4(color.rgb, color.a * opacity * opacity);
         }
     )", opengl::Shader::kFragmentShader);
     
@@ -76,7 +59,6 @@ BoxShadowShader::BoxShadowShader() {
     
     _program.bindAttribute(kVertexPositionAttribute, "positionAttrib");
     _program.bindAttribute(kVertexColorAttribute, "colorAttrib");
-    _program.bindAttribute(kVertexBezierAttribute, "bezierAttrib");
     _program.bindAttribute(kVertexShadowBoxAttribute, "shadowBoxAttrib");
     _program.bindAttribute(kVertexShadowParametersAttribute, "shadowParametersAttrib");
 
@@ -85,12 +67,7 @@ BoxShadowShader::BoxShadowShader() {
     if (!_program.error().empty()) {
         BT_LOG_ERROR("error creating shader: %s", _program.error().c_str());
         return;
-    }
-    
-    _triangle.a.bu = _triangle.a.bv = 0.0;
-    _triangle.b.bu = 0.5;
-    _triangle.b.bv = 0.0;
-    _triangle.c.bu = _triangle.c.bv = 1.0;
+    }    
 }
 
 void BoxShadowShader::setColor(double r, double g, double b, double a) {
@@ -120,11 +97,13 @@ void BoxShadowShader::drawShadow(double x, double y, double w, double h, double 
     setBox(x, y, w, h);
     setSpread(spread);
     setInverted(inverted);
-    drawTriangle(x - spread, y - spread, x - spread, y + h + spread, x + w + spread, y - spread, kBezierNone);
-    drawTriangle(x + w + spread, y + h + spread, x + w + spread, y - spread, x - spread, y + h + spread, kBezierNone);
+    drawTriangle(x - spread, y - spread, x - spread, y + h + spread, x + w + spread, y - spread, kCurveNone);
+    drawTriangle(x + w + spread, y + h + spread, x + w + spread, y - spread, x - spread, y + h + spread, kCurveNone);
 }
 
-void BoxShadowShader::drawTriangle(double x1, double y1, double x2, double y2, double x3, double y3, Shader::Bezier bezier) {
+void BoxShadowShader::drawTriangle(double x1, double y1, double x2, double y2, double x3, double y3, Shader::Curve curve) {
+    assert(curve == kCurveNone);
+    
     _triangle.a.boxX = x1 - _boxX;
     _triangle.a.boxY = y1 - _boxY;
 
@@ -140,15 +119,12 @@ void BoxShadowShader::drawTriangle(double x1, double y1, double x2, double y2, d
 
     _triangle.a.x  = x1;
     _triangle.a.y  = y1;
-    _triangle.a.bm = bezier;
 
     _triangle.b.x = x2;
     _triangle.b.y = y2;
-    _triangle.b.bm = bezier;
 
     _triangle.c.x = x3;
     _triangle.c.y = y3;
-    _triangle.c.bm = bezier;
 
     _vertices.push_back(_triangle.a);
     _vertices.push_back(_triangle.b);
@@ -165,14 +141,12 @@ void BoxShadowShader::flush() {
 
     glEnableVertexAttribArray(kVertexPositionAttribute);
     glEnableVertexAttribArray(kVertexColorAttribute);
-    glEnableVertexAttribArray(kVertexBezierAttribute);
     glEnableVertexAttribArray(kVertexShadowBoxAttribute);
     glEnableVertexAttribArray(kVertexShadowParametersAttribute);
 
     auto stride = reinterpret_cast<char*>(&_vertices[1]) - reinterpret_cast<char*>(&_vertices[0]);
     glVertexAttribPointer(kVertexPositionAttribute, 2, GL_FLOAT, GL_FALSE, stride, &_vertices[0].x);
     glVertexAttribPointer(kVertexColorAttribute, 4, GL_FLOAT, GL_FALSE, stride, &_vertices[0].r);
-    glVertexAttribPointer(kVertexBezierAttribute, 3, GL_FLOAT, GL_FALSE, stride, &_vertices[0].bu);
     glVertexAttribPointer(kVertexShadowBoxAttribute, 4, GL_FLOAT, GL_FALSE, stride, &_vertices[0].boxX);
     glVertexAttribPointer(kVertexShadowParametersAttribute, 2, GL_FLOAT, GL_FALSE, stride, &_vertices[0].spread);
 
@@ -180,7 +154,6 @@ void BoxShadowShader::flush() {
     
     glDisableVertexAttribArray(kVertexShadowParametersAttribute);
     glDisableVertexAttribArray(kVertexShadowBoxAttribute);
-    glDisableVertexAttribArray(kVertexBezierAttribute);
     glDisableVertexAttribArray(kVertexColorAttribute);
     glDisableVertexAttribArray(kVertexPositionAttribute);
     

@@ -24,29 +24,27 @@ void Rectangle::draw(Shader* shader) {
 		Rectangle(x + w - cornerRadius, y + cornerRadius, cornerRadius, h - 2.0 * cornerRadius).draw(shader);		
 
 		// draw each corner
-		
-		auto segmentation = circularCorners ? 12.0 : 1.0;
 
 		if (roundedCorners & kCornerMinMax) {
-			Arc(x + cornerRadius, y + h - cornerRadius, cornerRadius, 0.5 * M_PI, 2.0 * M_PI / 4.0, segmentation).draw(shader);
+			Arc(x + cornerRadius, y + h - cornerRadius, cornerRadius, 0.5 * M_PI, 2.0 * M_PI / 4.0).draw(shader);
 		} else {
 			Rectangle(x, y + h - cornerRadius, cornerRadius, cornerRadius).draw(shader);
 		}
 
 		if (roundedCorners & kCornerMinMin) {
-			Arc(x + cornerRadius, y + cornerRadius, cornerRadius, 1.0 * M_PI, 2.0 * M_PI / 4.0, segmentation).draw(shader);
+			Arc(x + cornerRadius, y + cornerRadius, cornerRadius, 1.0 * M_PI, 2.0 * M_PI / 4.0).draw(shader);
 		} else {
 			Rectangle(x, y, cornerRadius, cornerRadius).draw(shader);
 		}
 
 		if (roundedCorners & kCornerMaxMin) {
-			Arc(x + w - cornerRadius, y + cornerRadius, cornerRadius, 1.5 * M_PI, 2.0 * M_PI / 4.0, segmentation).draw(shader);
+			Arc(x + w - cornerRadius, y + cornerRadius, cornerRadius, 1.5 * M_PI, 2.0 * M_PI / 4.0).draw(shader);
 		} else {
 			Rectangle(x + w - cornerRadius, y, cornerRadius, cornerRadius).draw(shader);
 		}
 
 		if (roundedCorners & kCornerMaxMax) {
-			Arc(x + w - cornerRadius, y + h - cornerRadius, cornerRadius, 0.0 * M_PI, 2.0 * M_PI / 4.0, segmentation).draw(shader);
+			Arc(x + w - cornerRadius, y + h - cornerRadius, cornerRadius, 0.0 * M_PI, 2.0 * M_PI / 4.0).draw(shader);
 		} else {
 			Rectangle(x + w - cornerRadius, y + h - cornerRadius, cornerRadius, cornerRadius).draw(shader);
 		}
