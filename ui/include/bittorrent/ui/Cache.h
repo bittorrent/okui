@@ -29,7 +29,7 @@ public:
 	template <typename T>
 	EntryReference get(T&& hashable) const {
 		lock_guard<mutex> l(_mutex);
-		auto hash = std::hash<T>()(std::forward<T>(hashable));
+		auto hash = std::hash<typename std::remove_reference<T>::type>()(std::forward<T>(hashable));
 
 		auto it = _entries.find(hash);
 		return it == _entries.end() ? nullptr : it->second.entry;
@@ -45,7 +45,7 @@ public:
 	template <typename T>
 	EntryReference add(Entry&& entry, T&& hashable, Policy policy = kRemoveUnreferenced) {
 		lock_guard<mutex> l(_mutex);
-		auto hash = std::hash<T>()(std::forward<T>(hashable));
+		auto hash = std::hash<typename std::remove_reference<T>::type>()(std::forward<T>(hashable));
 
 		auto it = _entries.find(hash);
 		if (it != _entries.end()) {
@@ -78,7 +78,7 @@ public:
 	template <typename T>
 	void remove(T&& hashable) {
 		lock_guard<mutex> l(_mutex);
-		auto hash = std::hash<T>()(std::forward<T>(hashable));
+		auto hash = std::hash<typename std::remove_reference<T>::type>()(std::forward<T>(hashable));
 		_entries.erase(hash);
 	}
 

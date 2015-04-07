@@ -20,6 +20,7 @@ lib ui :
 	pch
 	[ glob-tree *.cpp : tests ]
 	../foundation//foundation
+	../third-party/libpng//png
 :
 	<include>./include
 	<link>static
