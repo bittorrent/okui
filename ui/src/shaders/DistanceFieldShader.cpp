@@ -85,8 +85,8 @@ void DistanceFieldShader::setTexture(GLuint id, double x, double y, double w, do
     _textureHeight = y2 - _textureY1;
 }
 
-void DistanceFieldShader::drawTriangle(double x1, double y1, double x2, double y2, double x3, double y3, Shader::Bezier bezier) {    
-	assert(bezier == kBezierNone);
+void DistanceFieldShader::drawTriangle(double x1, double y1, double x2, double y2, double x3, double y3, Shader::Curve curve) {    
+	assert(curve == kCurveNone);
 	
     _transformation.transform(x1, y1, &x1, &y1);
     _transformation.transform(x2, y2, &x2, &y2);

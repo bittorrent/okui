@@ -20,9 +20,9 @@ public:
 	void setTexture(GLuint id, double x, double y, double w, double h);
 
 	/**
-	* @param bezier must be kBezierNone
+	* @param curve must be kCurveNone
 	*/
-	virtual void drawTriangle(double x1, double y1, double x2, double y2, double x3, double y3, Bezier bezier = kBezierNone) override;
+	virtual void drawTriangle(double x1, double y1, double x2, double y2, double x3, double y3, Curve curve = kCurveNone) override;
 	virtual void flush() override;
 
 private:
