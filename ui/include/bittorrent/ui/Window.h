@@ -48,8 +48,9 @@ public:
 
     void dispatchMouseDown(MouseButton button, int x, int y);
     void dispatchMouseUp(MouseButton button, int x, int y);
+    void dispatchMouseMovement(int x, int y);
 
-    void render();
+    virtual void render() {}
 
 private:
     friend class Application;
@@ -73,6 +74,7 @@ private:
     std::unordered_set<shared_ptr<Texture>> _texturesToLoad;
     opengl::TextureCache _openGLTextureCache;
 
+    void _render();
     void _didResize(int width, int height);
     void _updateContentLayout();
 };

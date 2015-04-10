@@ -22,6 +22,7 @@ class View {
 public:
     View() {}
     View(const char* name) : _name(name) {}
+    ~View();
 
     const char* name() const { return _name.c_str(); }
     void setName(const char* name) { _name = name; }
@@ -39,6 +40,23 @@ public:
     void setInterceptsMouseEvents(bool intercepts, bool childrenIntercept);
 
     ShaderCache* shaderCache();
+    
+    void setIsVisible(bool isVisible = true) { _isVisible = isVisible; }
+    bool isVisible() const { return _isVisible; }
+        
+    void sendToBack();
+    void bringToFront();
+    
+    /**
+    * If the view has subviews that exceed its bounds, set this to ensure proper rendering and event dispatch.
+    */
+    void setHasBleedingSubviews(bool hasBleedingSubviews = true) { _hasBleedingSubviews = hasBleedingSubviews; }
+    bool hasBleedingSubviews() const;
+    
+    /**
+    * Returns true if the mouse is hovering directly over this view.
+    */
+    bool hasMouse() const;
 
     shaders::ColorShader* colorShader() { return shader<shaders::ColorShader>("color shader"); }
     shaders::TextureShader* textureShader() { return shader<shaders::TextureShader>("texture shader"); }
@@ -91,19 +109,26 @@ public:
     virtual bool hitTest(int x, int y);
 
     /**
-    * Override these to handle mouse events.
+    * Override these to handle mouse events. Call the base implementation to pass on the event.
     */
     virtual void mouseDown(MouseButton button, int x, int y);
     virtual void mouseUp(MouseButton button, int x, int y);
 
+    virtual void mouseMovement(int x, int y) {}
+    virtual void mouseEnter() {}
+    virtual void mouseExit() {}
+
     void renderAndRenderSubviews(Rectangle<int> viewport, double scale);
     bool dispatchMouseDown(MouseButton button, int x, int y);
     bool dispatchMouseUp(MouseButton button, int x, int y);
+    void dispatchMouseMovement(int x, int y);
 
 private:
     friend class Window;
     
     std::string _name;
+    bool _isVisible = true;
+    bool _hasBleedingSubviews = false;
 
     Rectangle<int> _bounds;
     bool _interceptsMouseEvents = true;
@@ -112,8 +137,11 @@ private:
     View* _superview = nullptr;
     std::list<View*> _subviews; // ordered back to front
     Window* _window = nullptr;
+    
+    View* _subviewWithMouse = nullptr;
 
     void _dispatchWindowChange();
+    void _mouseExit();
 };
 
 }}

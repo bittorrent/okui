@@ -9,15 +9,52 @@
 namespace bittorrent {
 namespace ui {
 
-void Application::run() {
+Application::Application(ResourceManager* resourceManager) : _resourceManager(resourceManager) {
+    if (SDL_Init(SDL_INIT_EVERYTHING) < 0) {
+        BT_LOG_ERROR("error initializing sdl: %s", SDL_GetError());
+    }
+    
+    _backgroundThread = std::thread([this]{ _backgroundRunLoop.run(); });
+}
+
+Application::~Application() {
+    SDL_Quit();
+    
+    _backgroundRunLoop.cancel();
+    _backgroundThread.join();
+
+    _backgroundRunLoop.flush();
+}
+
+void Application::backgroundTask(std::function<void()> task) {
+    _backgroundRunLoop.async(task);
+}
+
+void Application::run() {    
     SDL_Event e;
     bool shouldQuit = false;
     while (!shouldQuit) {
+#if __APPLE__
+        @autoreleasepool {
+#endif
+        
         while (SDL_PollEvent(&e)) {
             switch (e.type) {
                 case SDL_QUIT:
                     shouldQuit = true;
                     break;
+                case SDL_MOUSEMOTION: {
+                    auto& event = e.motion;
+                    auto window = _windows[event.windowID];
+                    switch (event.type) {
+                        case SDL_MOUSEMOTION:
+                            window->dispatchMouseMovement(event.x, window->height() - event.y);
+                            break;
+                        default:
+                            break;
+                    }
+                    break;
+                }
                 case SDL_MOUSEBUTTONDOWN:
                 case SDL_MOUSEBUTTONUP: {
                     auto& event = e.button;
@@ -52,8 +89,12 @@ void Application::run() {
         }
 
         for (auto& kv : _windows) {
-            kv.second->render();
+            kv.second->_render();
         }
+
+#if __APPLE__
+        } // @autoreleasepool
+#endif
     }
 }
 
