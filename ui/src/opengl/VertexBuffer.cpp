@@ -1,0 +1,27 @@
+#include "bittorrent/ui/opengl/VertexBuffer.h"
+
+namespace bittorrent {
+namespace ui {
+namespace opengl {
+	
+VertexBuffer::VertexBuffer() {
+	glGenBuffers(1, &_object);
+}
+
+VertexBuffer::~VertexBuffer() {
+	glDeleteBuffers(1, &_object);
+}
+
+void VertexBuffer::store(const void* data, size_t size, GLenum usage) {
+	glBindBuffer(GL_ARRAY_BUFFER, _object);
+	glBufferData(GL_ARRAY_BUFFER, size, data, usage);
+	glBindBuffer(GL_ARRAY_BUFFER, 0);
+}
+
+void VertexBuffer::loadAttribute(GLuint index, GLint size, GLenum type, GLboolean normalized, GLsizei stride, GLuint offset) {
+	glBindBuffer(GL_ARRAY_BUFFER, _object);
+	glVertexAttribPointer(index, size, type, normalized, stride, reinterpret_cast<GLvoid*>(offset));
+	glBindBuffer(GL_ARRAY_BUFFER, 0);
+}
+
+}}}
