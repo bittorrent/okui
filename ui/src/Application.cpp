@@ -13,13 +13,16 @@ Application::Application(ResourceManager* resourceManager) : _resourceManager(re
     if (SDL_Init(SDL_INIT_EVERYTHING) < 0) {
         BT_LOG_ERROR("error initializing sdl: %s", SDL_GetError());
     }
-    
-    _backgroundThread = std::thread([this]{ _backgroundRunLoop.run(); });
+
+    _backgroundThread = std::thread([this]{
+        SetThreadName("Application RunLoop");
+        _backgroundRunLoop.run();
+    });
 }
 
 Application::~Application() {
     SDL_Quit();
-    
+
     _backgroundRunLoop.cancel();
     _backgroundThread.join();
 
@@ -30,14 +33,14 @@ void Application::backgroundTask(std::function<void()> task) {
     _backgroundRunLoop.async(task);
 }
 
-void Application::run() {    
+void Application::run() {
     SDL_Event e;
     bool shouldQuit = false;
     while (!shouldQuit) {
 #if __APPLE__
         @autoreleasepool {
 #endif
-        
+
         while (SDL_PollEvent(&e)) {
             switch (e.type) {
                 case SDL_QUIT:
