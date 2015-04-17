@@ -120,9 +120,6 @@ void DistanceFieldShader::flush() {
     glActiveTexture(GL_TEXTURE0);
     glBindTexture(GL_TEXTURE_2D, _texture);
 
-    glEnable(GL_BLEND);
-    glBlendFuncSeparate(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA, GL_ONE, GL_ONE);
-
     glEnableVertexAttribArray(kVertexPositionAttribute);
     glEnableVertexAttribArray(kVertexColorAttribute);
     glEnableVertexAttribArray(kVertexTextureCoordinateAttribute);

@@ -136,9 +136,6 @@ void BoxShadowShader::flush() {
     
     _program.use();
 
-    glEnable(GL_BLEND);
-    glBlendFuncSeparate(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA, GL_ONE, GL_ONE);
-
     glEnableVertexAttribArray(kVertexPositionAttribute);
     glEnableVertexAttribArray(kVertexColorAttribute);
     glEnableVertexAttribArray(kVertexShadowBoxAttribute);
