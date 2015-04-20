@@ -3,12 +3,12 @@
 namespace bittorrent {
 namespace ui {
 
-enum MouseButton {
-    kMouseButtonLeft,
-    kMouseButtonMiddle,
-    kMouseButtonRight,
-    kMouseButtonX1,
-    kMouseButtonX2,
+enum class MouseButton {
+    kLeft,
+    kMiddle,
+    kRight,
+    kX1,
+    kX2,
 };
 
 }}

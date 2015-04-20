@@ -1,11 +1,11 @@
-#include "bittorrent/ui/ResourceManager.h"
+#include "bittorrent/ui/FileResourceManager.h"
 
 #include <fstream>
 
 namespace bittorrent {
 namespace ui {
 
-shared_ptr<std::string> ResourceManager::load(const char* name) {
+shared_ptr<std::string> FileResourceManager::load(const char* name) {
     auto hashable = std::string(name);
     
     if (auto hit = _cache.get(hashable)) {

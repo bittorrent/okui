@@ -14,6 +14,7 @@ class BitmapFont {
         shared_ptr<Texture> texture() const { return _texture; }
 
         double size() const { return _size; }
+        double padding() const { return _padding; }
         double lineHeight() const { return _lineHeight; }
         double base() const { return _base; }
 
@@ -36,6 +37,7 @@ class BitmapFont {
         shared_ptr<Texture> _texture;
 
         double _size = 0.0;
+        double _padding = 0.0;
         double _lineHeight = 0.0;
         double _base = 0.0;
         double _scaleW = 1.0;

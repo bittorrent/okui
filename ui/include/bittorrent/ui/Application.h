@@ -4,23 +4,22 @@
 
 #include "bittorrent/RunLoop.h"
 
-#include "bittorrent/ui/Cache.h"
-#include "bittorrent/ui/MouseButton.h"
 #include "bittorrent/ui/ResourceManager.h"
 
 #include <thread>
-#include <unordered_map>
 
 namespace bittorrent {
 namespace ui {
     
-class Window;
+class Platform;
 
 class Application {
 public:
-    Application(ResourceManager* resourceManager);
+    Application(Platform* platform, ResourceManager* resourceManager);
     ~Application();
-    
+
+    Platform* platform() const { return _platform; }
+
     shared_ptr<std::string> loadResource(const char* name) { return _resourceManager->load(name); }
 
     void backgroundTask(std::function<void()> task);
@@ -28,16 +27,11 @@ public:
     void run();
 
 private:
-    friend class Window;
-
+    Platform* const _platform;
     ResourceManager* const _resourceManager;
     
     RunLoop _backgroundRunLoop;
-    std::thread _backgroundThread;
-    
-    std::unordered_map<uint32_t, Window*> _windows;
-
-    static MouseButton sMouseButton(uint8_t id);
+    std::thread _backgroundThread;    
 };
 
 }}

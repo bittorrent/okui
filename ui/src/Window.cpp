@@ -1,8 +1,7 @@
-#ifdef BT_USE_UI_VIEWS
-
 #include "bittorrent/ui/Window.h"
 
 #include "bittorrent/ui/Application.h"
+#include "bittorrent/ui/Platform.h"
 
 namespace bittorrent {
 namespace ui {
@@ -16,47 +15,29 @@ Window::~Window() {
 }
 
 void Window::open() {
-    if (_window) { return; }
-
-    _window = SDL_CreateWindow(_title.c_str(), _x, _y, _width, _height, SDL_WINDOW_OPENGL | SDL_WINDOW_RESIZABLE | SDL_WINDOW_ALLOW_HIGHDPI);
-    _context = SDL_GL_CreateContext(_window);
-
+    application()->platform()->openWindow(this, _title.c_str(), _x, _y, _width, _height);
     _updateContentLayout();
-    application()->_windows[SDL_GetWindowID(_window)] = this;
 }
 
 void Window::close() {
-    if (!_window) { return; }
-
-    application()->_windows.erase(SDL_GetWindowID(_window));
-
-    SDL_GL_DeleteContext(_context);
-    SDL_DestroyWindow(_window);
-
-    _window = nullptr;
+    application()->platform()->closeWindow(this);
 }
 
 void Window::position(int x, int y) {
     _x = x;
     _y = y;
-    if (_window) {
-        SDL_SetWindowPosition(_window, x, y);
-    }
+    application()->platform()->setWindowPosition(this, x, y);
 }
 
 void Window::resize(int width, int height) {
     _width = width;
     _height = height;
-    if (_window) {
-        SDL_SetWindowSize(_window, width, height);
-    }
+    application()->platform()->setWindowSize(this, width, height);
 }
 
 void Window::setTitle(const char* title) {
     _title = title;
-    if (_window) {
-        SDL_SetWindowTitle(_window, title);
-    }
+    application()->platform()->setWindowTitle(this, title);
 }
 
 shared_ptr<Texture> Window::loadTextureResource(const char* name) {
@@ -84,6 +65,17 @@ shared_ptr<BitmapFont> Window::loadBitmapFontResource(const char* textureName, c
     return _bitmapFontCache.add(BitmapFont(texture, *metadata), hashable);
 }
 
+void Window::setFocus(View* focus) {
+    if (_focus == focus) { return; }
+    if (_focus) {
+        _focus->focusLost();
+    }
+    _focus = focus;
+    if (_focus) {
+        _focus->focusGained();
+    }
+}
+
 void Window::dispatchMouseDown(MouseButton button, int x, int y) {
     _contentView.dispatchMouseDown(button, x, y);
 }
@@ -96,23 +88,20 @@ void Window::dispatchMouseMovement(int x, int y) {
     _contentView.dispatchMouseMovement(x, y);
 }
 
-void Window::_render() {
-    SDL_GL_MakeCurrent(_window, _context);
-    
+void Window::ensureTextures() {
     for (auto& texture : _texturesToLoad) {
         texture->load(&_openGLTextureCache);
     }
     _texturesToLoad.clear();
+}
 
-    glClearColor(0.0, 0.0, 0.0, 0.0);
-    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
+void Window::_render() {    
+    ensureTextures();
 
     render();
     
     Rectangle<int> viewport(0, 0, _contentView.bounds().width, _contentView.bounds().height);
-    _contentView.renderAndRenderSubviews(viewport, renderScale());
-    
-    SDL_GL_SwapWindow(_window);
+    _contentView.renderAndRenderSubviews(viewport, renderScale());    
 }
 
 void Window::_didResize(int width, int height) {
@@ -123,12 +112,10 @@ void Window::_didResize(int width, int height) {
 
 void Window::_updateContentLayout() {
     int w, h;
-    SDL_GL_GetDrawableSize(_window, &w, &h);
+    application()->platform()->getWindowRenderSize(this, &w, &h);
     _renderScale = (double)w / _width;
     _contentView.setBounds(0, 0, _width, _height);
     layout();
 }
 
 }}
-
-#endif

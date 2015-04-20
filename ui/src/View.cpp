@@ -1,5 +1,3 @@
-#ifdef BT_USE_UI_VIEWS
-
 #include "bittorrent/ui/View.h"
 
 #include "bittorrent/ui/opengl/OpenGL.h"
@@ -100,6 +98,17 @@ void View::bringToFront() {
     }
 }
 
+void View::focus() {
+    window()->setFocus(this);
+}
+
+bool View::isDescendantOf(View* view) {
+    if (superview() == view) {
+        return true;
+    }
+    return superview() && superview()->isDescendantOf(view);
+}
+
 bool View::hasBleedingSubviews() const {
     if (_hasBleedingSubviews) {
         return true;
@@ -166,6 +175,8 @@ void View::renderAndRenderSubviews(Rectangle<int> viewport, double scale) {
     }
 
     glViewport(viewport.x, viewport.y, viewport.width, viewport.height);
+    glEnable(GL_BLEND);
+    glBlendFuncSeparate(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA, GL_ONE, GL_ONE);
 
     render();
 
@@ -188,6 +199,9 @@ bool View::dispatchMouseDown(MouseButton button, int x, int y) {
         }
     }
     if (_interceptsMouseEvents && hitTest(x, y)) {
+        if (!isDescendantOf(window()->focus())) {
+            window()->setFocus(nullptr);
+        }
         mouseDown(button, x, y);
         return true;
     }
@@ -266,5 +280,3 @@ void View::_mouseExit() {
 }
 
 }}
-
-#endif

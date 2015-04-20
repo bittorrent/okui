@@ -18,6 +18,7 @@ public:
 
 	void setColor(double r, double g, double b, double a);
 	void setTexture(GLuint id, double x, double y, double w, double h);
+	void setEdge(double edge) { _edge = edge; }
 
 	/**
 	* @param curve must be kCurveNone
@@ -49,6 +50,9 @@ private:
 	} _triangle;
 
 	std::vector<Vertex> _vertices;
+
+    double _edge = 0.5;
+	opengl::ShaderProgram::Uniform _edgeUniform;
 };
 
 }}}

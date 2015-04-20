@@ -22,7 +22,7 @@ class View {
 public:
     View() {}
     View(const char* name) : _name(name) {}
-    ~View();
+    virtual ~View();
 
     const char* name() const { return _name.c_str(); }
     void setName(const char* name) { _name = name; }
@@ -46,6 +46,10 @@ public:
         
     void sendToBack();
     void bringToFront();
+    
+    void focus();
+    
+    bool isDescendantOf(View* view);
     
     /**
     * If the view has subviews that exceed its bounds, set this to ensure proper rendering and event dispatch.
@@ -117,6 +121,9 @@ public:
     virtual void mouseMovement(int x, int y) {}
     virtual void mouseEnter() {}
     virtual void mouseExit() {}
+        
+    virtual void focusGained() {}
+    virtual void focusLost() {}
 
     void renderAndRenderSubviews(Rectangle<int> viewport, double scale);
     bool dispatchMouseDown(MouseButton button, int x, int y);

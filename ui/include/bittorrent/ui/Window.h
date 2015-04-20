@@ -10,12 +10,11 @@
 
 #include <unordered_set>
 
-#include <SDL2/SDL.h>
-
 namespace bittorrent {
 namespace ui {
     
 class Application;
+class Platform;
 
 class Window {
 public:
@@ -27,10 +26,13 @@ public:
     
     Application* application() { return _application; }
     
-    int width() { return _width; }
-    int height() { return _height; }
+    int x() const { return _x; }
+    int y() const { return _x; }
+
+    int width() const { return _width; }
+    int height() const { return _height; }
     
-    void position(int x, int y);
+    void position(int width, int height);
     void resize(int width, int height);
 
     const char* title() const { return _title.c_str(); }
@@ -43,7 +45,10 @@ public:
 
     shared_ptr<Texture> loadTextureResource(const char* name);
     shared_ptr<BitmapFont> loadBitmapFontResource(const char* textureName, const char* metadataName);
-        
+
+    View* focus() const { return _focus; }
+    void setFocus(View* focus);
+
     virtual void layout() {}
 
     void dispatchMouseDown(MouseButton button, int x, int y);
@@ -51,13 +56,11 @@ public:
     void dispatchMouseMovement(int x, int y);
 
     virtual void render() {}
+        
+    void ensureTextures();
 
 private:
-    friend class Application;
-
     Application* const _application;
-    SDL_Window* _window = nullptr;
-    SDL_GLContext _context;
 
     int _x{100}, _y{100};
     int _width{800}, _height{480};
@@ -67,6 +70,7 @@ private:
     std::string _title{"Untitled"};
         
     View _contentView;
+    View* _focus = nullptr;
     
     ShaderCache _shaderCache;
     Cache<Texture> _textureCache;
@@ -74,8 +78,10 @@ private:
     std::unordered_set<shared_ptr<Texture>> _texturesToLoad;
     opengl::TextureCache _openGLTextureCache;
 
+    friend class Platform;
     void _render();
     void _didResize(int width, int height);
+
     void _updateContentLayout();
 };
 

@@ -11,28 +11,36 @@ namespace views {
 
 class TextView : public View {
 public:
-	enum HorizontalAlignment {
-		kHorizontalAlignmentLeft,
-		kHorizontalAlignmentCenter,
-		kHorizontalAlignmentRight,
+	enum class HorizontalAlignment {
+		kLeft,
+		kCenter,
+		kRight,
 	};
 
-	enum VerticalAlignment {
-		kVerticalAlignmentBottom,
-		kVerticalAlignmentCenter,
-		kVerticalAlignmentTop,
+	enum class VerticalAlignment {
+		kBottom,
+		kCenter,
+		kTop,
 	};
 
-	void setAlignment(HorizontalAlignment horizontal, VerticalAlignment vertical = kVerticalAlignmentTop);
+	void setAlignment(HorizontalAlignment horizontal, VerticalAlignment vertical = VerticalAlignment::kTop);
 	void setFont(shared_ptr<BitmapFont> font, double size) { _font = font; _fontSize = size; }
 	void setText(const char* text);
 	void setTextColor(double r, double g, double b, double a = 1.0);
 
+	enum class Weight {
+	    kRegular,
+	    kHeavy,
+	};
+	
+	void setWeight(Weight weight) { _weight = weight; }
+
 	virtual void render() override;
 
 private:
-	HorizontalAlignment _horizontalAlignment = kHorizontalAlignmentLeft;
-	VerticalAlignment _verticalAlignment = kVerticalAlignmentTop;
+	HorizontalAlignment _horizontalAlignment = HorizontalAlignment::kLeft;
+	VerticalAlignment _verticalAlignment = VerticalAlignment::kTop;
+	Weight _weight = Weight::kRegular;
 	shared_ptr<BitmapFont> _font;
 	double _fontSize;
 	std::basic_string<BitmapFont::GlyphId> _text;

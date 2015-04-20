@@ -33,15 +33,15 @@ DistanceFieldShader::DistanceFieldShader() {
         varying vec2 textureCoord;
         
         uniform sampler2D texture;
+        uniform float edge;
         
         void main() {
             vec4 sample = texture2D(texture, textureCoord);
-            float min = 0.43;
-            float max = 0.49;
-            if (sample.r > max) {
+            float aa = fwidth(sample.a);
+            if (sample.r < edge + aa) {
                 discard;
             }
-            gl_FragColor = vec4(color.rgb, color.a * (1.0 - max((sample.r - min) / (max - min), 0.0)));
+            gl_FragColor = vec4(color.rgb, smoothstep(edge - aa, edge + aa, sample.a));
         }
     )", opengl::Shader::kFragmentShader);
     
@@ -55,6 +55,7 @@ DistanceFieldShader::DistanceFieldShader() {
     _program.use();
 
     _program.uniform("texture") = 0;
+    _edgeUniform = _program.uniform("edge");
     
     if (!_program.error().empty()) {
         BT_LOG_ERROR("error creating shader: %s", _program.error().c_str());
@@ -116,6 +117,7 @@ void DistanceFieldShader::flush() {
     if (_vertices.empty()) { return; }
     
     _program.use();
+    _edgeUniform = (GLfloat)_edge;
 
     glActiveTexture(GL_TEXTURE0);
     glBindTexture(GL_TEXTURE_2D, _texture);
