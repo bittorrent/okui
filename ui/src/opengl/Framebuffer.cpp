@@ -27,10 +27,15 @@ Framebuffer::Attachment* Framebuffer::addColorAttachment(int width, int height) 
     
     _attachments.emplace_back(width, height);
     auto& attachment = _attachments.back();
-    
+
+    glActiveTexture(GL_TEXTURE0);
+    glBindTexture(GL_TEXTURE_2D, attachment.texture());
+
     glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0 + _attachments.size() - 1, GL_TEXTURE_2D, attachment.texture(), 0);
     _drawBuffers.push_back(GL_COLOR_ATTACHMENT0 + _attachments.size() - 1);
     
+    glBindTexture(GL_TEXTURE_2D, 0);
+
 #ifndef OPENGL_ES
     glDrawBuffers(_drawBuffers.size(), _drawBuffers.data());
 #endif
@@ -39,11 +44,20 @@ Framebuffer::Attachment* Framebuffer::addColorAttachment(int width, int height) 
 
 Framebuffer::Attachment::Attachment(int width, int height) {
     glGenTextures(1, &_texture);
+
+    glActiveTexture(GL_TEXTURE0);
     glBindTexture(GL_TEXTURE_2D, _texture);
     
     glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, nullptr);
+
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+    
+    // GL_CLAMP_TO_EDGE is required for npot attachments
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+
+    glBindTexture(GL_TEXTURE_2D, 0);
 }
 
 Framebuffer::Attachment::~Attachment() {
