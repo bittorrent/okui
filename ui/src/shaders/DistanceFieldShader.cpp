@@ -26,7 +26,10 @@ DistanceFieldShader::DistanceFieldShader() {
 
     opengl::Shader fsh(
 #if OPENGL_ES
-        "precision highp float;"
+        "precision highp float;\n"
+#if GL_OES_standard_derivatives
+        "#extension GL_OES_standard_derivatives : enable\n"
+#endif
 #endif
     R"(
         varying vec4 color;
@@ -37,7 +40,13 @@ DistanceFieldShader::DistanceFieldShader() {
         
         void main() {
             vec4 sample = texture2D(texture, textureCoord);
-            float aa = fwidth(sample.a);
+    )"
+#if !OPENGL_ES || GL_OES_standard_derivatives
+            "float aa = fwidth(sample.a);"
+#else
+            "float aa = 0.03;"
+#endif
+    R"(
             if (sample.r < edge + aa) {
                 discard;
             }
