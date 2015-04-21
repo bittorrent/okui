@@ -20,16 +20,17 @@ public:
     SDL();
     ~SDL();
 
-	virtual void run() override;
-	
-	virtual void openWindow(Window* window, const char* title, int x, int y, int width, int height) override;
-	virtual void closeWindow(Window* window) override;
-	
-	virtual void getWindowRenderSize(Window* window, int* width, int* height) override;
+    virtual void run() override;
+    virtual void async(std::function<void()> task) override;
+    
+    virtual void openWindow(Window* window, const char* title, int x, int y, int width, int height) override;
+    virtual void closeWindow(Window* window) override;
+    
+    virtual void getWindowRenderSize(Window* window, int* width, int* height) override;
 
-	virtual void setWindowPosition(Window* window, int x, int y) override;
-	virtual void setWindowSize(Window* window, int width, int height) override;
-	virtual void setWindowTitle(Window* window, const char* title) override;
+    virtual void setWindowPosition(Window* window, int x, int y) override;
+    virtual void setWindowSize(Window* window, int width, int height) override;
+    virtual void setWindowTitle(Window* window, const char* title) override;
 
 private:
     struct WindowInfo {
@@ -48,6 +49,9 @@ private:
     std::unordered_map<uint32_t, WindowInfo> _windows;
 
     static MouseButton sMouseButton(uint8_t id);
+    
+    std::mutex _asyncMutex;
+    std::vector<std::function<void()>> _asyncTasks;
 };
 
 inline SDL::SDL() {
@@ -117,6 +121,15 @@ inline void SDL::run() {
                     break;
             }
         }
+        
+        std::vector<std::function<void()>> asyncTasks;
+        {
+            std::lock_guard<std::mutex> lock(_asyncMutex);
+            asyncTasks.swap(_asyncTasks);
+        }
+        for (auto& task : asyncTasks) {
+            task();
+        }
 
         for (auto& kv : _windows) {
             SDL_GL_MakeCurrent(kv.second.sdlWindow, kv.second.context);
@@ -130,6 +143,11 @@ inline void SDL::run() {
         } // @autoreleasepool
 #endif
     }
+}
+
+inline void SDL::async(std::function<void()> task) {
+    std::lock_guard<std::mutex> lock(_asyncMutex);
+    _asyncTasks.emplace_back(task);
 }
 
 inline void SDL::openWindow(Window* window, const char* title, int x, int y, int width, int height) {

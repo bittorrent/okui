@@ -22,6 +22,11 @@ public:
 
     shared_ptr<std::string> loadResource(const char* name) { return _resourceManager->load(name); }
 
+    /**
+    * Thread-safe.
+    */
+    void async(std::function<void()> task);
+
     void backgroundTask(std::function<void()> task);
     
     void run();

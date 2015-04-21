@@ -22,6 +22,10 @@ Application::~Application() {
     _backgroundRunLoop.flush();
 }
 
+void Application::async(std::function<void()> task) {
+    _platform->async(std::move(task));
+}
+
 void Application::backgroundTask(std::function<void()> task) {
     _backgroundRunLoop.async(task);
 }
