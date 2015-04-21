@@ -23,13 +23,13 @@ void Window::close() {
     application()->platform()->closeWindow(this);
 }
 
-void Window::position(int x, int y) {
+void Window::setPosition(int x, int y) {
     _x = x;
     _y = y;
     application()->platform()->setWindowPosition(this, x, y);
 }
 
-void Window::resize(int width, int height) {
+void Window::setSize(int width, int height) {
     _width = width;
     _height = height;
     application()->platform()->setWindowSize(this, width, height);

@@ -32,8 +32,8 @@ public:
     int width() const { return _width; }
     int height() const { return _height; }
     
-    void position(int width, int height);
-    void resize(int width, int height);
+    void setPosition(int width, int height);
+    void setSize(int width, int height);
 
     const char* title() const { return _title.c_str(); }
     void setTitle(const char* title);
