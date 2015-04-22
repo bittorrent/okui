@@ -44,6 +44,7 @@ public:
     ShaderCache* shaderCache() { return &_shaderCache; }
 
     shared_ptr<Texture> loadTextureResource(const char* name);
+    shared_ptr<Texture> loadTextureFromMemory(shared_ptr<const std::string> data);
     shared_ptr<BitmapFont> loadBitmapFontResource(const char* textureName, const char* metadataName);
 
     View* focus() const { return _focus; }

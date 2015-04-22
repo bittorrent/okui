@@ -42,7 +42,7 @@ DistanceFieldShader::DistanceFieldShader() {
             vec4 sample = texture2D(texture, textureCoord);
     )"
 #if !OPENGL_ES || GL_OES_standard_derivatives
-            "float aa = fwidth(sample.a);"
+            "float aa = fwidth(sample.a) * 0.75;"
 #else
             "float aa = 0.03;"
 #endif

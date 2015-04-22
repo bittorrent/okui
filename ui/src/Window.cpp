@@ -53,6 +53,18 @@ shared_ptr<Texture> Window::loadTextureResource(const char* name) {
     return ret;
 }
 
+shared_ptr<Texture> Window::loadTextureFromMemory(shared_ptr<const std::string> data) {
+    auto hashable = std::string("memory:") + std::to_string(reinterpret_cast<uintptr_t>(data->data())) + ":" + std::to_string(data->size());
+    
+    if (auto hit = _textureCache.get(hashable)) {
+        return hit;
+    }
+    
+    auto ret = _textureCache.add(Texture(data), hashable);
+    _texturesToLoad.insert(ret);
+    return ret;
+}
+
 shared_ptr<BitmapFont> Window::loadBitmapFontResource(const char* textureName, const char* metadataName) {
     auto hashable = std::string("resource:") + textureName + "$!@#" + metadataName;
     

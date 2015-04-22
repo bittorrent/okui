@@ -1,77 +1,87 @@
 #include "bittorrent/ui/BitmapFont.h"
 
-#include <regex>
+#include <cstring>
 
 namespace bittorrent {
 namespace ui {
 
 BitmapFont::BitmapFont(shared_ptr<Texture> texture, const std::string& metadata) : _texture(texture) {
-	_parseMetadata(metadata.data(), metadata.size());
+    _parseMetadata(metadata.c_str());
 }
 
 const BitmapFont::Glyph* BitmapFont::glyph(GlyphId id) const {
-	auto it = _glyphs.find(id);
-	return it == _glyphs.end() ? nullptr : &it->second;
+    auto it = _glyphs.find(id);
+    return it == _glyphs.end() ? nullptr : &it->second;
 }
 
 double BitmapFont::kerning(GlyphId first, GlyphId second) const {
-	auto it = _kernings.find(first);
-	if (it == _kernings.end()) { return 0.0; }
+    auto it = _kernings.find(first);
+    if (it == _kernings.end()) { return 0.0; }
 
-	auto it2 = it->second.find(second);
-	return it2 == it->second.end() ? 0.0 : it2->second;
+    auto it2 = it->second.find(second);
+    return it2 == it->second.end() ? 0.0 : it2->second;
 }
 
 double BitmapFont::width(const GlyphId* glyphs, size_t count) const {
-	double width = 0.0;
-	for (size_t i = 0; i < count; ++i) {
-		auto g = glyph(glyphs[i]);
-		if (!g) { continue; }
-		if (i > 0) {
-			width += kerning(glyphs[i - 1], glyphs[i]);
-		}
-		width += (i + 1 == count) ? (g->width - _padding) : g->xAdvance;
-	}
-	return width;
+    double width = 0.0;
+    for (size_t i = 0; i < count; ++i) {
+        auto g = glyph(glyphs[i]);
+        if (!g) { continue; }
+        if (i > 0) {
+            width += kerning(glyphs[i - 1], glyphs[i]);
+        }
+        width += (i + 1 == count) ? (g->width - _padding) : g->xAdvance;
+    }
+    return width;
 }
 
-void BitmapFont::_parseMetadata(const void* data, size_t len) {
-	std::stringstream ss(std::string((const char*)data, len));
-	std::string line;
-
-	while (std::getline(ss, line, '\n')) {
-		_parseMetadataLine(line.c_str());
+void BitmapFont::_parseMetadata(const char* metadata) {
+	auto line = metadata;
+	while (true) {
+		auto newline = strchr(line, '\n');
+		_parseMetadataLine(line);
+		if (newline) {
+			line = newline + 1;
+		} else {
+			break;
+		}
 	}
 }
 
 void BitmapFont::_parseMetadataLine(const char* line) {
-	std::cmatch matches;
-	
-	if (std::regex_match(line, matches, std::regex("info.*size=([0-9]+) .*padding=([0-9]+).*"))) {
-		_size = std::strtod(matches.str(1).c_str(), nullptr);
-		_padding = std::strtod(matches.str(2).c_str(), nullptr);
-	} else if (std::regex_match(line, matches, std::regex("common +lineHeight=([0-9]+) +base=([0-9]+) +scaleW=([0-9]+) +scaleH=([0-9]+) .*"))) {
-		_lineHeight = std::strtod(matches.str(1).c_str(), nullptr);
-		_base       = _lineHeight - std::strtod(matches.str(2).c_str(), nullptr);
-		_scaleW     = std::strtod(matches.str(3).c_str(), nullptr);
-		_scaleH     = std::strtod(matches.str(4).c_str(), nullptr);
-	} else if (std::regex_match(line, matches, std::regex("char +id=([0-9]+) +x=([\\-0-9]+) +y=([\\-0-9]+) +width=([0-9]+) +height=([0-9]+) +xoffset=([\\-0-9]+) +yoffset=([\\-0-9]+) +xadvance=([\\-0-9]+) +.*"))) {
-		auto& glyph    = _glyphs[std::strtol(matches.str(1).c_str(), nullptr, 0)];
+    if (!strncmp(line, "info ", 5)) {
+        _size = sLineParameter("size", line);
+        _padding = sLineParameter("padding", line);
+    } else if (!strncmp(line, "common ", 7)) {
+        _lineHeight = sLineParameter("lineHeight", line);
+        _base       = _lineHeight - sLineParameter("base", line);
+        _scaleW     = sLineParameter("scaleW", line);
+        _scaleH     = sLineParameter("scaleH", line);
+    } else if (!strncmp(line, "char ", 5)) {
+        auto& glyph    = _glyphs[sLineParameter("id", line)];
 
-		auto textureScale = _texture->width() / _scaleW;
+        auto textureScale = _texture->width() / _scaleW;
 
-		glyph.width         = std::strtod(matches.str(4).c_str(), nullptr);
-		glyph.height        = std::strtod(matches.str(5).c_str(), nullptr);
-		glyph.textureWidth  = glyph.width * textureScale;
-		glyph.textureHeight = glyph.height * textureScale;
-		glyph.textureX      = std::strtod(matches.str(2).c_str(), nullptr) * textureScale;
-		glyph.textureY      = (_scaleH - std::strtod(matches.str(3).c_str(), nullptr)) * textureScale - glyph.textureHeight;
-		glyph.xOffset       = std::strtod(matches.str(6).c_str(), nullptr);
-		glyph.yOffset       = _lineHeight - glyph.height - std::strtod(matches.str(7).c_str(), nullptr);
-		glyph.xAdvance      = std::strtod(matches.str(8).c_str(), nullptr);
-	} else if (std::regex_match(line, matches, std::regex("kerning +first=([0-9]+) +second=([0-9]+) +amount=([\\-0-9]+) .*"))) {
-		_kernings[std::strtol(matches.str(1).c_str(), nullptr, 0)][std::strtol(matches.str(2).c_str(), nullptr, 0)] = std::strtod(matches.str(3).c_str(), nullptr);
-	}
+        glyph.width         = sLineParameter("width", line);
+        glyph.height        = sLineParameter("height", line);
+        glyph.textureWidth  = glyph.width * textureScale;
+        glyph.textureHeight = glyph.height * textureScale;
+        glyph.textureX      = sLineParameter("x", line) * textureScale;
+        glyph.textureY      = (_scaleH - sLineParameter("y", line)) * textureScale - glyph.textureHeight;
+        glyph.xOffset       = sLineParameter("xoffset", line);
+        glyph.yOffset       = _lineHeight - glyph.height - sLineParameter("yoffset", line);;
+        glyph.xAdvance      = sLineParameter("xadvance", line);
+    } else if (!strncmp(line, "kerning ", 8)) {
+        _kernings[sLineParameter("first", line)][sLineParameter("second", line)] = sLineParameter("amount", line);
+    }
+}
+
+double BitmapFont::sLineParameter(const char* name, const char* line) {
+    auto parameter = strstr(line, name);
+	if (!parameter) { return 0.0; }
+    auto nameLength = strlen(name);
+    if (parameter[nameLength] != '=') { return 0.0; }
+    return std::strtod(parameter + nameLength + 1, nullptr);
 }
 
 }}

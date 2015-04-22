@@ -4,6 +4,7 @@ namespace bittorrent {
 namespace ui {
 
 int Stencil::_sStencilCount = 0;
+int Stencil::_sStencilFuncRef = 0;
 
 Stencil::Stencil() {
 	// TODO: support multiple contexts / larger stencil buffers
@@ -50,14 +51,21 @@ Stencil::~Stencil() {
 	}
 
 	--_sStencilCount;
+	if (_isActivated) {
+	    _sStencilFuncRef = (_sStencilFuncRef >> 1);
+	}
 }
 
-void Stencil::activate() {	
+void Stencil::activate(bool invert) {
+    _isActivated = true;
+    
 	glColorMask(_colorMask[0], _colorMask[1], _colorMask[2], _colorMask[3]);
 	glDepthMask(_depthMask);
 
+    _sStencilFuncRef = (_sStencilFuncRef << 1) | (invert ? 1 : 0);
+
 	glStencilMask(0x00);
-	glStencilFunc(GL_EQUAL, 0, ~(0xff << _sStencilCount));
+	glStencilFunc(GL_EQUAL, _sStencilFuncRef, ~(0xff << _sStencilCount));
 }
 
 }}

@@ -6,6 +6,7 @@
 #include "bittorrent/ui/Point.h"
 #include "bittorrent/ui/Rectangle.h"
 #include "bittorrent/ui/ShaderCache.h"
+#include "bittorrent/ui/shaders/BoxShadowShader.h"
 #include "bittorrent/ui/shaders/ColorShader.h"
 #include "bittorrent/ui/shaders/DistanceFieldShader.h"
 #include "bittorrent/ui/shaders/TextureShader.h"
@@ -64,6 +65,7 @@ public:
 
     shaders::ColorShader* colorShader() { return shader<shaders::ColorShader>("color shader"); }
     shaders::TextureShader* textureShader() { return shader<shaders::TextureShader>("texture shader"); }
+    shaders::BoxShadowShader* boxShadowShader() { return shader<shaders::BoxShadowShader>("box shadow shader"); }
     shaders::DistanceFieldShader* distanceFieldShader() { return shader<shaders::DistanceFieldShader>("distance field shader"); }
 
     /**

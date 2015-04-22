@@ -10,7 +10,7 @@ namespace ui {
 
 class Texture {
 public:
-	Texture(shared_ptr<std::string> data);
+	Texture(shared_ptr<const std::string> data);
 
 	int width();
 	int height();
@@ -32,7 +32,7 @@ public:
 	GLuint id() { return _cacheEntry->id; }
 
 private:	
-	shared_ptr<std::string> _data;
+	shared_ptr<const std::string> _data;
 	int _width{0}, _height{0};
 	opengl::TextureCache::EntryReference _cacheEntry;
 };

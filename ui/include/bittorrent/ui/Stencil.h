@@ -21,7 +21,7 @@ public:
 	/**
 	* Call this method to activate the stencil once you are done drawing it.
 	*/
-	void activate();
+	void activate(bool invert = false);
 
 private:
 	GLboolean _colorMask[4];
@@ -29,8 +29,10 @@ private:
 	GLboolean _stencilTestEnabled;
 	GLint _stencilWritemask, _stencilFunc, _stencilReference, _stencilValueMask;
 	GLint _stencilFail, _stencilPassDepthPass, _stencilPassDepthFail;
+	bool _isActivated = false;
 	
 	static int _sStencilCount;
+	static int _sStencilFuncRef;
 };
 
 }}
