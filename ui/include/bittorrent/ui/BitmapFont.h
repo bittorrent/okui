@@ -9,9 +9,9 @@ namespace ui {
 
 class BitmapFont {
 public:
-    BitmapFont(shared_ptr<Texture> texture, const std::string& metadata);
+    BitmapFont(std::shared_ptr<Texture> texture, const std::string& metadata);
 
-    shared_ptr<Texture> texture() const { return _texture; }
+    std::shared_ptr<Texture> texture() const { return _texture; }
 
     double size() const { return _size; }
     double padding() const { return _padding; }
@@ -34,7 +34,7 @@ public:
     double width(const GlyphId* glyphs, size_t count) const;
 
 private:
-    shared_ptr<Texture> _texture;
+    std::shared_ptr<Texture> _texture;
 
     double _size = 0.0;
     double _padding = 0.0;

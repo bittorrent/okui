@@ -5,7 +5,7 @@
 namespace bittorrent {
 namespace ui {
 
-BitmapFont::BitmapFont(shared_ptr<Texture> texture, const std::string& metadata) : _texture(texture) {
+BitmapFont::BitmapFont(std::shared_ptr<Texture> texture, const std::string& metadata) : _texture(texture) {
     _parseMetadata(metadata.c_str());
 }
 

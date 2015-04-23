@@ -11,8 +11,8 @@ namespace ui {
 class FileResourceManager : public ResourceManager {
 public:
     FileResourceManager(const char* directory) : _directory(directory) {}
-    
-    virtual shared_ptr<std::string> load(const char* name) override;
+
+    virtual std::shared_ptr<std::string> load(const char* name) override;
 
 private:
     const std::string _directory;

@@ -11,7 +11,7 @@ void TextView::setAlignment(HorizontalAlignment horizontal, VerticalAlignment ve
     _verticalAlignment = vertical;
 }
 
-void TextView::setFont(shared_ptr<BitmapFont> font, double size) {
+void TextView::setFont(std::shared_ptr<BitmapFont> font, double size) {
     _font = font;
     _fontSize = size;
     _computeLines();
@@ -35,7 +35,7 @@ void TextView::setTextColor(double r, double g, double b, double a) {
 
 void TextView::render() {
     if (!_font) { return; }
-    
+
     auto distanceFieldShader = this->distanceFieldShader();
 
     if (_weight == Weight::kHeavy) {
@@ -48,7 +48,7 @@ void TextView::render() {
     distanceFieldShader->flush();
     distanceFieldShader->setEdge(0.5);
 }
-	
+
 void TextView::layout() {
 	_computeLines();
 }
@@ -61,7 +61,7 @@ void TextView::_computeLines() {
 
     auto fontScale = _fontSize / _font->size();
     auto width = bounds().width;
-    
+
     std::basic_string<BitmapFont::GlyphId> line;
 
     for (auto& glyph : _text) {
@@ -96,7 +96,7 @@ void TextView::_computeLines() {
     if (!line.empty()) {
         _lines.emplace_back(std::move(line));
     }
-    
+
     for (auto& line : _lines) {
         _textWidth = std::max(_textWidth, _font->width(line.data(), line.size()) * fontScale);
     }
@@ -104,7 +104,7 @@ void TextView::_computeLines() {
 
 void TextView::_renderBitmapText(shaders::DistanceFieldShader* shader) {
     // TODO: this could be much more optimized (e.g. via display list or vbo)
-    
+
     auto fontScale = _fontSize / _font->size();
     auto texture = _font->texture();
 
@@ -117,17 +117,17 @@ void TextView::_renderBitmapText(shaders::DistanceFieldShader* shader) {
     } else if (_verticalAlignment == VerticalAlignment::kTop) {
         y = textHeight + (bounds().height - textHeight) - lineSpacing;
     }
-    
+
     for (auto& line : _lines) {
         auto textWidth = _font->width(line.data(), line.size()) * fontScale;
-    
+
         double x = 0.0;
         if (_horizontalAlignment == HorizontalAlignment::kCenter) {
             x = (bounds().width - textWidth) * 0.5;
         } else if (_horizontalAlignment == HorizontalAlignment::kRight) {
             x = bounds().width - textWidth;
         }
-    
+
         for (size_t i = 0; i < line.size(); ++i) {
             if (i > 0) {
                 x += _font->kerning(line[i - 1], line[i]);
@@ -140,8 +140,8 @@ void TextView::_renderBitmapText(shaders::DistanceFieldShader* shader) {
                 ui::shapes::Rectangle(glyphBounds.x, glyphBounds.y, glyphBounds.width, glyphBounds.height).draw(shader);
                 x += glyph->xAdvance * fontScale;
             }
-        }    
-        
+        }
+
         y -= lineSpacing;
     }
 }

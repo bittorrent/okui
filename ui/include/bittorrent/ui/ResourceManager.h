@@ -11,7 +11,7 @@ class ResourceManager {
 public:
     virtual ~ResourceManager() {}
 
-    virtual shared_ptr<std::string> load(const char* name) = 0;
+    virtual std::shared_ptr<std::string> load(const char* name) = 0;
 };
 
 }}

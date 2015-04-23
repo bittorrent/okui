@@ -10,7 +10,7 @@
 
 namespace bittorrent {
 namespace ui {
-    
+
 class Window;
 
 namespace platforms {
@@ -22,10 +22,10 @@ public:
 
     virtual void run() override;
     virtual void async(std::function<void()> task) override;
-    
+
     virtual void openWindow(Window* window, const char* title, int x, int y, int width, int height) override;
     virtual void closeWindow(Window* window) override;
-    
+
     virtual void getWindowRenderSize(Window* window, int* width, int* height) override;
 
     virtual void setWindowPosition(Window* window, int x, int y) override;
@@ -37,19 +37,19 @@ private:
         WindowInfo() {}
         WindowInfo(Window* window, SDL_Window* sdlWindow, SDL_GLContext& context)
             : window(window), sdlWindow(sdlWindow), context(context) {}
-        
+
         Window* window = nullptr;
         SDL_Window* sdlWindow = nullptr;
         SDL_GLContext context;
     };
-    
+
     SDL_Window* _sdlWindow(Window* window);
 
     std::unordered_map<Window*, uint32_t> _windowIds;
     std::unordered_map<uint32_t, WindowInfo> _windows;
 
     static MouseButton sMouseButton(uint8_t id);
-    
+
     std::mutex _asyncMutex;
     std::vector<std::function<void()>> _asyncTasks;
 };
@@ -121,7 +121,7 @@ inline void SDL::run() {
                     break;
             }
         }
-        
+
         std::vector<std::function<void()>> asyncTasks;
         {
             std::lock_guard<std::mutex> lock(_asyncMutex);
@@ -169,10 +169,10 @@ inline void SDL::closeWindow(Window* window) {
     if (it == _windowIds.end()) {
         return;
     }
-    
+
     auto id = it->second;
     auto& info = _windows[id];
-    
+
     SDL_GL_DeleteContext(info.context);
     SDL_DestroyWindow(info.sdlWindow);
 

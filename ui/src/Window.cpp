@@ -40,20 +40,20 @@ void Window::setTitle(const char* title) {
     application()->platform()->setWindowTitle(this, title);
 }
 
-shared_ptr<Texture> Window::loadTextureResource(const char* name) {
+std::shared_ptr<Texture> Window::loadTextureResource(const char* name) {
     auto hashable = std::string("resource:") + name;
-    
+
     if (auto hit = _textureCache.get(hashable)) {
         return hit;
     }
-    
+
     auto resource = application()->loadResource(name);
     auto ret = _textureCache.add(Texture(resource), hashable);
     _texturesToLoad.insert(ret);
     return ret;
 }
 
-shared_ptr<Texture> Window::loadTextureFromMemory(shared_ptr<const std::string> data) {
+std::shared_ptr<Texture> Window::loadTextureFromMemory(std::shared_ptr<const std::string> data) {
     auto hashable = std::string("memory:") + std::to_string(reinterpret_cast<uintptr_t>(data->data())) + ":" + std::to_string(data->size());
     
     if (auto hit = _textureCache.get(hashable)) {
@@ -65,13 +65,13 @@ shared_ptr<Texture> Window::loadTextureFromMemory(shared_ptr<const std::string> 
     return ret;
 }
 
-shared_ptr<BitmapFont> Window::loadBitmapFontResource(const char* textureName, const char* metadataName) {
+std::shared_ptr<BitmapFont> Window::loadBitmapFontResource(const char* textureName, const char* metadataName) {
     auto hashable = std::string("resource:") + textureName + "$!@#" + metadataName;
-    
+
     if (auto hit = _bitmapFontCache.get(hashable)) {
         return hit;
     }
-    
+
     auto texture = loadTextureResource(textureName);
     auto metadata = application()->loadResource(metadataName);
     return _bitmapFontCache.add(BitmapFont(texture, *metadata), hashable);
@@ -107,13 +107,13 @@ void Window::ensureTextures() {
     _texturesToLoad.clear();
 }
 
-void Window::_render() {    
+void Window::_render() {
     ensureTextures();
 
     render();
-    
+
     Rectangle<int> viewport(0, 0, _contentView.bounds().width, _contentView.bounds().height);
-    _contentView.renderAndRenderSubviews(viewport, renderScale());    
+    _contentView.renderAndRenderSubviews(viewport, renderScale());
 }
 
 void Window::_didResize(int width, int height) {

@@ -2,7 +2,7 @@
 
 #include "bittorrent/ui/config.h"
 
-#include "bittorrent/mutex.h"
+#include <mutex>
 
 #include <unordered_map>
 
@@ -15,7 +15,7 @@ namespace ui {
 template <typename Entry>
 class Cache {
 public:
-	using EntryReference = shared_ptr<Entry>;
+	using EntryReference = std::shared_ptr<Entry>;
 
 	// order matters. policy can be upgraded, but not downgraded via add
 	enum Policy {
@@ -28,7 +28,7 @@ public:
 	*/
 	template <typename T>
 	EntryReference get(T&& hashable) const {
-		lock_guard<mutex> l(_mutex);
+		std::lock_guard<std::mutex> l(_mutex);
 		auto hash = std::hash<typename std::remove_reference<T>::type>()(std::forward<T>(hashable));
 
 		auto it = _entries.find(hash);
@@ -44,7 +44,7 @@ public:
 	*/
 	template <typename T>
 	EntryReference add(Entry&& entry, T&& hashable, Policy policy = kRemoveUnreferenced) {
-		lock_guard<mutex> l(_mutex);
+		std::lock_guard<std::mutex> l(_mutex);
 		auto hash = std::hash<typename std::remove_reference<T>::type>()(std::forward<T>(hashable));
 
 		auto it = _entries.find(hash);
@@ -54,11 +54,11 @@ public:
 			}
 			return it->second.entry;
 		}
-		
+
 		_removeExpired();
-		
+
 		EntryInfo info;
-		info.entry = make_shared<Entry>(std::move(entry));
+		info.entry = std::make_shared<Entry>(std::move(entry));
 		info.policy = policy;
 		_entries[hash] = info;
 		return info.entry;
@@ -68,16 +68,16 @@ public:
 	* Removes all entries from the cache.
 	*/
 	void clear() {
-		lock_guard<mutex> l(_mutex);
+		std::lock_guard<std::mutex> l(_mutex);
 		_entries.clear();
 	}
-	
+
 	/**
 	* Removes an entry from the cache.
 	*/
 	template <typename T>
 	void remove(T&& hashable) {
-		lock_guard<mutex> l(_mutex);
+		std::lock_guard<std::mutex> l(_mutex);
 		auto hash = std::hash<typename std::remove_reference<T>::type>()(std::forward<T>(hashable));
 		_entries.erase(hash);
 	}
@@ -86,20 +86,20 @@ public:
 	* Returns the number of entries currently in the cache.
 	*/
 	size_t size() {
-		lock_guard<mutex> l(_mutex);
+		std::lock_guard<std::mutex> l(_mutex);
 		return _entries.size();
 	}
 
 private:
-	mutable mutex _mutex;
+	mutable std::mutex _mutex;
 
 	struct EntryInfo {
-		shared_ptr<Entry> entry;
+		std::shared_ptr<Entry> entry;
 		Policy policy;
 	};
 
 	std::unordered_map<size_t, EntryInfo> _entries;
-	
+
 	void _removeExpired() {
 		for (auto it = _entries.begin(); it != _entries.end();) {
 			if (it->second.entry.use_count() == 1 && it->second.policy == kRemoveUnreferenced) {

@@ -24,7 +24,7 @@ public:
 	};
 
 	void setAlignment(HorizontalAlignment horizontal, VerticalAlignment vertical = VerticalAlignment::kTop);
-	void setFont(shared_ptr<BitmapFont> font, double size);
+	void setFont(std::shared_ptr<BitmapFont> font, double size);
 	void setText(const char* text);
 	void setTextColor(double r, double g, double b, double a = 1.0);
 	
@@ -34,7 +34,7 @@ public:
 	    kRegular,
 	    kHeavy,
 	};
-	
+
 	void setWeight(Weight weight) { _weight = weight; }
 
 	virtual void render() override;
@@ -44,7 +44,7 @@ private:
 	HorizontalAlignment _horizontalAlignment = HorizontalAlignment::kLeft;
 	VerticalAlignment _verticalAlignment = VerticalAlignment::kTop;
 	Weight _weight = Weight::kRegular;
-	shared_ptr<BitmapFont> _font;
+	std::shared_ptr<BitmapFont> _font;
 	double _fontSize;
 	std::basic_string<BitmapFont::GlyphId> _text;
 	std::vector<std::basic_string<BitmapFont::GlyphId>> _lines;
