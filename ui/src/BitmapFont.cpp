@@ -53,12 +53,13 @@ void BitmapFont::_parseMetadataLine(const char* line) {
         _size = sLineParameter("size", line);
         _padding = sLineParameter("padding", line);
     } else if (!strncmp(line, "common ", 7)) {
-        _lineHeight = sLineParameter("lineHeight", line);
-        _base       = _lineHeight - sLineParameter("base", line);
-        _scaleW     = sLineParameter("scaleW", line);
-        _scaleH     = sLineParameter("scaleH", line);
+        _lineSpacing = sLineParameter("lineHeight", line);
+        _base        = _lineSpacing - sLineParameter("base", line);
+        _scaleW      = sLineParameter("scaleW", line);
+        _scaleH      = sLineParameter("scaleH", line);
     } else if (!strncmp(line, "char ", 5)) {
-        auto& glyph    = _glyphs[sLineParameter("id", line)];
+        auto id = sLineParameter("id", line);
+        auto& glyph    = _glyphs[id];
 
         auto textureScale = _texture->width() / _scaleW;
 
@@ -69,8 +70,12 @@ void BitmapFont::_parseMetadataLine(const char* line) {
         glyph.textureX      = sLineParameter("x", line) * textureScale;
         glyph.textureY      = (_scaleH - sLineParameter("y", line)) * textureScale - glyph.textureHeight;
         glyph.xOffset       = sLineParameter("xoffset", line);
-        glyph.yOffset       = _lineHeight - glyph.height - sLineParameter("yoffset", line);;
+        glyph.yOffset       = _lineSpacing - glyph.height - sLineParameter("yoffset", line);;
         glyph.xAdvance      = sLineParameter("xadvance", line);
+        
+        if (strchr("ABCDEFGHIKLMNOPRSTUVWXYZ", id)) {
+            _capHeight = std::max(glyph.height - _padding * 2, _capHeight);
+        }
     } else if (!strncmp(line, "kerning ", 8)) {
         _kernings[sLineParameter("first", line)][sLineParameter("second", line)] = sLineParameter("amount", line);
     }

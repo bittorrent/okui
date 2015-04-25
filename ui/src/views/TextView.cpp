@@ -108,15 +108,17 @@ void TextView::_renderBitmapText(shaders::DistanceFieldShader* shader) {
     auto fontScale = _fontSize / _font->size();
     auto texture = _font->texture();
 
-    auto lineSpacing = _font->lineHeight() * fontScale;
-    auto textHeight = lineSpacing * _lines.size();
+    auto lineSpacing = _font->lineSpacing() * fontScale;
+    auto textHeight = _lines.empty() ? 0.0 : (lineSpacing * _lines.size() - (lineSpacing - _font->capHeight() * fontScale));
 
-    auto y = _font->base() * fontScale;
+    auto y = 0.0;
     if (_verticalAlignment == VerticalAlignment::kCenter) {
-        y = textHeight + (bounds().height - textHeight) * 0.5 - lineSpacing;
+        y = (bounds().height - textHeight) * 0.5;
     } else if (_verticalAlignment == VerticalAlignment::kTop) {
-        y = textHeight + (bounds().height - textHeight) - lineSpacing;
+        y = bounds().height - textHeight;
     }
+
+    y += (lineSpacing * (_lines.size() - 1)) - _font->base() * fontScale;
 
     for (auto& line : _lines) {
         auto textWidth = _font->width(line.data(), line.size()) * fontScale;

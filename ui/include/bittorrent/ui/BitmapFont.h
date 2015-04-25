@@ -15,7 +15,8 @@ public:
 
     double size() const { return _size; }
     double padding() const { return _padding; }
-    double lineHeight() const { return _lineHeight; }
+    double lineSpacing() const { return _lineSpacing; }
+    double capHeight() const { return _capHeight; }
     double base() const { return _base; }
 
     using GlyphId = uint16_t;
@@ -38,7 +39,8 @@ private:
 
     double _size = 0.0;
     double _padding = 0.0;
-    double _lineHeight = 0.0;
+    double _lineSpacing = 0.0;
+    double _capHeight = 0.0;
     double _base = 0.0;
     double _scaleW = 1.0;
     double _scaleH = 1.0;
