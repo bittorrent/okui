@@ -1,7 +1,6 @@
 #include "bittorrent/ui/shapes/Rectangle.h"
 
 #include "bittorrent/ui/Shader.h"
-#include "bittorrent/ui/Stencil.h"
 
 #include "bittorrent/ui/shapes/Arc.h"
 
@@ -25,14 +24,6 @@ void Rectangle::draw(Shader* shader) {
         Rectangle(x + w - cornerRadius, y + cornerRadius, cornerRadius, h - 2.0 * cornerRadius).draw(shader);        
 
         // draw each corner
-
-        // stencil the curves to the rectangle, so the anti-aliasing doesn't bleed
-        shader->flush();
-        Stencil stencil;
-        shader->drawTriangle(x, y, x + w, y, x, y + h);
-        shader->drawTriangle(x, y + h, x + w, y, x + w, y + h);
-        shader->flush();
-        stencil.activate(true);
 
         if (roundedCorners & kCornerMinMax) {
             Arc(x + cornerRadius, y + h - cornerRadius, cornerRadius, 0.5 * M_PI, 2.0 * M_PI / 4.0).draw(shader);

@@ -36,6 +36,9 @@ ColorShader::ColorShader() {
             vec4 c = color;
             float alphaMultiplier = 1.0;
             if (curve.z > 1.5) {
+                if (abs(curve.s) >= 0.5 || abs(curve.t) >= 0.5) {
+                    discard;
+                }
                 float dist = sqrt(curve.s * curve.s + curve.t * curve.t);
                 float aa = curve.w;
                 if (dist > 0.5 + 0.5 * aa) {
