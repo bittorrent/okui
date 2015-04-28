@@ -73,6 +73,11 @@ GLuint Texture::load(opengl::TextureCache* textureCache) {
     int bytesPerRow = png_get_rowbytes(png, info);
     
     BT_ASSERT(bytesPerRow == ((colorType & PNG_COLOR_MASK_ALPHA) ? 4 : 3) * _width);
+    
+    // align rows to 4-byte boundaries
+    if (bytesPerRow % 4) {
+        bytesPerRow += 4 - (bytesPerRow % 4);
+    }
 
     png_byte* image = reinterpret_cast<png_byte*>(malloc(bytesPerRow * _height));
     png_bytep* rowPointers = reinterpret_cast<png_bytep*>(malloc(_height * sizeof(png_bytep)));
@@ -92,8 +97,12 @@ GLuint Texture::load(opengl::TextureCache* textureCache) {
     GLuint texture;
     glGenTextures(1, &texture);
     glBindTexture(GL_TEXTURE_2D, texture);
+
+    glPixelStorei(GL_UNPACK_ALIGNMENT, 4);
+
     auto format = (colorType & PNG_COLOR_MASK_ALPHA) ? GL_RGBA : GL_RGB;
     glTexImage2D(GL_TEXTURE_2D, 0, format, _width, _height, 0, format, GL_UNSIGNED_BYTE, image);
+
     glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
     glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
