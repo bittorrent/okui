@@ -48,6 +48,9 @@ std::shared_ptr<Texture> Window::loadTextureResource(const char* name) {
     }
 
     auto resource = application()->loadResource(name);
+    if (!resource) {
+        return nullptr;
+    }
     auto ret = _textureCache.add(Texture(resource), hashable);
     _texturesToLoad.insert(ret);
     return ret;
@@ -73,6 +76,9 @@ std::shared_ptr<BitmapFont> Window::loadBitmapFontResource(const char* textureNa
     }
 
     auto texture = loadTextureResource(textureName);
+    if (!texture) {
+        return nullptr;
+    }
     auto metadata = application()->loadResource(metadataName);
     return _bitmapFontCache.add(BitmapFont(texture, *metadata), hashable);
 }

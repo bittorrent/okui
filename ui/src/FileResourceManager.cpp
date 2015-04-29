@@ -12,10 +12,11 @@ std::shared_ptr<std::string> FileResourceManager::load(const char* name) {
         return hit;
     }
 
-    std::ifstream f(_directory + "/" + name);
+    const auto path = _directory + "/" + name;
+    std::ifstream f(path);
 
     if (!f.is_open()) {
-        BT_LOG_ERROR("error opening resource: %d", name);
+        BT_LOG_ERROR("error opening resource: %s", path.c_str());
         return nullptr;
     }
 
