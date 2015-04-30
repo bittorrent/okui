@@ -2,6 +2,7 @@
 
 #include "bittorrent/ui/config.h"
 
+#include "bittorrent/ui/Point.h"
 #include "bittorrent/ui/ShaderCache.h"
 #include "bittorrent/ui/opengl/TextureCache.h"
 #include "bittorrent/ui/BitmapFont.h"
@@ -49,6 +50,14 @@ public:
 
     View* focus() const { return _focus; }
     void setFocus(View* focus);
+    
+    /**
+    * Converts a window coordinate to a view coordinate.
+    */
+    Point<int> windowToView(View* view, int x, int y);
+    
+    void beginDragging(View* view);
+    void endDragging(View* view);
 
     virtual void layout() {}
 
@@ -78,6 +87,8 @@ private:
     Cache<BitmapFont> _bitmapFontCache;
     std::unordered_set<std::shared_ptr<Texture>> _texturesToLoad;
     opengl::TextureCache _openGLTextureCache;
+
+    std::unordered_set<View*> _draggedViews;
 
     friend class Platform;
     void _render();

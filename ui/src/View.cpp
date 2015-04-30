@@ -26,6 +26,9 @@ void View::addSubview(View* view) {
     _subviews.push_back(view);
     
     if (viewWindow != view->window()) {
+        if (viewWindow) {
+            viewWindow->endDragging(view);
+        }
         view->_dispatchWindowChange();
     }
 }
@@ -50,6 +53,9 @@ void View::removeSubview(View* view) {
     }
 
     if (viewWindow != view->window()) {
+        if (viewWindow) {
+            viewWindow->endDragging(view);
+        }
         view->_dispatchWindowChange();
     }
 }
@@ -159,6 +165,7 @@ void View::mouseDown(MouseButton button, int x, int y) {
     if (superview() && superview()->_interceptsMouseEvents) {
         auto point = localToSuperview(x, y);
         superview()->mouseDown(button, point.x, point.y);
+        window()->beginDragging(superview());
     }
 }
 
@@ -203,6 +210,7 @@ bool View::dispatchMouseDown(MouseButton button, int x, int y) {
             window()->setFocus(nullptr);
         }
         mouseDown(button, x, y);
+        window()->beginDragging(this);
         return true;
     }
     return false;

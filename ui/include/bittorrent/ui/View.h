@@ -120,6 +120,7 @@ public:
     virtual void mouseDown(MouseButton button, int x, int y);
     virtual void mouseUp(MouseButton button, int x, int y);
 
+    virtual void mouseDrag(int x, int y) {}
     virtual void mouseMovement(int x, int y) {}
     virtual void mouseEnter() {}
     virtual void mouseExit() {}

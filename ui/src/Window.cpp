@@ -88,16 +88,45 @@ void Window::setFocus(View* focus) {
     }
 }
 
+Point<int> Window::windowToView(View* view, int x, int y) {
+    if (!view) {
+        return Point<int>(x, y);
+    }
+    auto superPoint = windowToView(view->superview(), x, y);
+    return view->superviewToLocal(superPoint.x, superPoint.y);
+}
+
+void Window::beginDragging(View* view) {
+    _draggedViews.insert(view);
+}
+
+void Window::endDragging(View* view) {
+    _draggedViews.erase(view);
+}
+
 void Window::dispatchMouseDown(MouseButton button, int x, int y) {
     _contentView.dispatchMouseDown(button, x, y);
+    for (auto& observer : _draggedViews) {
+        auto point = windowToView(observer, x, y);
+        observer->mouseDrag(point.x, point.y);
+    }
 }
 
 void Window::dispatchMouseUp(MouseButton button, int x, int y) {
     _contentView.dispatchMouseUp(button, x, y);
+    for (auto& observer : _draggedViews) {
+        auto point = windowToView(observer, x, y);
+        observer->mouseDrag(point.x, point.y);
+    }
+    _draggedViews.clear();
 }
 
 void Window::dispatchMouseMovement(int x, int y) {
     _contentView.dispatchMouseMovement(x, y);
+    for (auto& observer : _draggedViews) {
+        auto point = windowToView(observer, x, y);
+        observer->mouseDrag(point.x, point.y);
+    }
 }
 
 void Window::ensureTextures() {
