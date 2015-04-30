@@ -1,5 +1,4 @@
 #include "bittorrent/ui/views/TextView.h"
-
 #include "bittorrent/ui/shapes/Rectangle.h"
 
 namespace bittorrent {

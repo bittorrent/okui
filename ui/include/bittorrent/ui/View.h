@@ -11,6 +11,8 @@
 #include "bittorrent/ui/shaders/DistanceFieldShader.h"
 #include "bittorrent/ui/shaders/TextureShader.h"
 
+#include <boost/optional.hpp>
+
 #include <list>
 
 namespace bittorrent {
@@ -30,34 +32,31 @@ public:
 
     void addSubview(View* view);
     void removeSubview(View* view);
-    
+
     View* superview() const;
     Window* window() const;
     Application* application() const;
-    
+
     Rectangle<int> bounds() const { return _bounds; }
     void setBounds(int x, int y, int width, int height);
-    
+
     void setInterceptsMouseEvents(bool intercepts, bool childrenIntercept);
 
     ShaderCache* shaderCache();
-    
+
     void setIsVisible(bool isVisible = true) { _isVisible = isVisible; }
     bool isVisible() const { return _isVisible; }
-        
+
     void sendToBack();
     void bringToFront();
-    
+
     void focus();
-    
+
     bool isDescendantOf(View* view);
-    
-    /**
-    * If the view has subviews that exceed its bounds, set this to ensure proper rendering and event dispatch.
-    */
-    void setHasBleedingSubviews(bool hasBleedingSubviews = true) { _hasBleedingSubviews = hasBleedingSubviews; }
-    bool hasBleedingSubviews() const;
-    
+
+    void setClipped(bool isClipped = true) { _clipped = isClipped; }
+    bool clipped() const { return _clipped; }
+
     /**
     * Returns true if the mouse is hovering directly over this view.
     */
@@ -81,19 +80,19 @@ public:
         ret->setTransformation(renderTransformation());
         return ret;
     }
-    
+
     AffineTransformation renderTransformation();
-    
+
     /**
     * Converts a point from local coordinates to superview coordinates.
     */
     Point<int> localToSuperview(int x, int y);
-    
+
     /**
     * Converts a point from super coordinates to local coordinates.
     */
     Point<int> superviewToLocal(int x, int y);
-    
+
     /**
     * Override this to do drawing.
     */
@@ -110,7 +109,7 @@ public:
     virtual void windowChanged() {}
 
     /**
-    * Override this if you want odd-shaped views to have accurate hit boxes. 
+    * Override this if you want odd-shaped views to have accurate hit boxes.
     */
     virtual bool hitTest(int x, int y);
 
@@ -119,36 +118,39 @@ public:
     */
     virtual void mouseDown(MouseButton button, int x, int y);
     virtual void mouseUp(MouseButton button, int x, int y);
+    virtual void mouseWheel(int xPos, int yPos, int xWheel, int yWheel);
 
     virtual void mouseDrag(int x, int y) {}
     virtual void mouseMovement(int x, int y) {}
     virtual void mouseEnter() {}
     virtual void mouseExit() {}
-        
+
     virtual void focusGained() {}
     virtual void focusLost() {}
 
-    void renderAndRenderSubviews(Rectangle<int> viewport, double scale);
+    void renderAndRenderSubviews(Rectangle<int> viewport, double scale, boost::optional<Rectangle<int>> clipBounds = boost::none);
     bool dispatchMouseDown(MouseButton button, int x, int y);
     bool dispatchMouseUp(MouseButton button, int x, int y);
     void dispatchMouseMovement(int x, int y);
+    bool dispatchMouseWheel(int xPos, int yPos, int xWheel, int yWheel);
 
 private:
     friend class Window;
-    
-    std::string _name;
-    bool _isVisible = true;
-    bool _hasBleedingSubviews = false;
 
-    Rectangle<int> _bounds;
-    bool _interceptsMouseEvents = true;
-    bool _childrenInterceptMouseEvents = true;
-    
-    View* _superview = nullptr;
+    std::string      _name;
+    bool             _isVisible = true;
+
+    bool             _clipped = true;
+
+    Rectangle<int>   _bounds;
+    bool             _interceptsMouseEvents = true;
+    bool             _childrenInterceptMouseEvents = true;
+
+    View*            _superview = nullptr;
     std::list<View*> _subviews; // ordered back to front
-    Window* _window = nullptr;
-    
-    View* _subviewWithMouse = nullptr;
+    Window*          _window = nullptr;
+
+    View*            _subviewWithMouse = nullptr;
 
     void _dispatchWindowChange();
     void _mouseExit();

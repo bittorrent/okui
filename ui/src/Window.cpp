@@ -8,6 +8,7 @@ namespace ui {
 
 Window::Window(Application* application) : _application(application) {
     _contentView._window = this;
+    _contentView.setClipped(false);
 }
 
 Window::~Window() {
@@ -58,11 +59,11 @@ std::shared_ptr<Texture> Window::loadTextureResource(const char* name) {
 
 std::shared_ptr<Texture> Window::loadTextureFromMemory(std::shared_ptr<const std::string> data) {
     auto hashable = std::string("memory:") + std::to_string(reinterpret_cast<uintptr_t>(data->data())) + ":" + std::to_string(data->size());
-    
+
     if (auto hit = _textureCache.get(hashable)) {
         return hit;
     }
-    
+
     auto ret = _textureCache.add(Texture(data), hashable);
     _texturesToLoad.insert(ret);
     return ret;
@@ -133,6 +134,10 @@ void Window::dispatchMouseMovement(int x, int y) {
         auto point = windowToView(observer, x, y);
         observer->mouseDrag(point.x, point.y);
     }
+}
+
+void Window::dispatchMouseWheel(int xPos, int yPos, int xWheel, int yWheel) {
+    _contentView.dispatchMouseWheel(xPos, yPos, xWheel, yWheel);
 }
 
 void Window::ensureTextures() {

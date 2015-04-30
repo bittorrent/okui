@@ -16,15 +16,15 @@ void View::addSubview(View* view) {
     if (view->superview() == this) {
         return;
     }
-    
+
     auto viewWindow = view->window();
-    
+
     if (view->superview()) {
         view->superview()->removeSubview(view);
     }
     view->_superview = this;
     _subviews.push_back(view);
-    
+
     if (viewWindow != view->window()) {
         if (viewWindow) {
             viewWindow->endDragging(view);
@@ -37,11 +37,11 @@ void View::removeSubview(View* view) {
     if (view->superview() != this) {
         return;
     }
-    
+
     if (_subviewWithMouse == view) {
         _subviewWithMouse = nullptr;
     }
-    
+
     auto viewWindow = view->window();
 
     view->_superview = nullptr;
@@ -115,20 +115,6 @@ bool View::isDescendantOf(View* view) {
     return superview() && superview()->isDescendantOf(view);
 }
 
-bool View::hasBleedingSubviews() const {
-    if (_hasBleedingSubviews) {
-        return true;
-    }
-    
-    for (auto& view : _subviews) {
-        if (view->hasBleedingSubviews()) {
-            return true;
-        }
-    }
-
-    return false;
-}
-
 bool View::hasMouse() const {
     return superview() && superview()->_subviewWithMouse == this;
 }
@@ -176,7 +162,14 @@ void View::mouseUp(MouseButton button, int x, int y) {
     }
 }
 
-void View::renderAndRenderSubviews(Rectangle<int> viewport, double scale) {
+void View::mouseWheel(int xPos, int yPos, int xWheel, int yWheel) {
+    if (superview() && superview()->_interceptsMouseEvents) {
+        auto point = localToSuperview(xPos, yPos);
+        superview()->mouseWheel(point.x, point.y, xWheel, yWheel);
+    }
+}
+
+void View::renderAndRenderSubviews(Rectangle<int> viewport, double scale, boost::optional<Rectangle<int>> parentClippedBounds) {
     if (!isVisible()) {
         return;
     }
@@ -185,11 +178,36 @@ void View::renderAndRenderSubviews(Rectangle<int> viewport, double scale) {
     glEnable(GL_BLEND);
     glBlendFuncSeparate(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA, GL_ONE, GL_ONE);
 
+    if (_clipped) {
+        auto clipBounds = viewport;
+        if (parentClippedBounds)  {
+            Point<int> topLeft    {std::max(parentClippedBounds->x, clipBounds.x),
+                                   std::max(parentClippedBounds->y, clipBounds.y)};
+            Point<int> bottomRight{std::min(parentClippedBounds->x + parentClippedBounds->width, clipBounds.x + clipBounds.width),
+                                   std::min(parentClippedBounds->y + parentClippedBounds->height, clipBounds.y + clipBounds.height)};
+
+            if (bottomRight.x < topLeft.x) { topLeft.x = bottomRight.x; }
+            if (bottomRight.y < topLeft.y) { topLeft.y = bottomRight.y; }
+
+            clipBounds.x = topLeft.x;
+            clipBounds.y = topLeft.y;
+            clipBounds.width = bottomRight.x - topLeft.x;
+            clipBounds.height = bottomRight.y - topLeft.y;
+        }
+        parentClippedBounds = clipBounds;
+        glScissor(clipBounds.x, clipBounds.y, clipBounds.width, clipBounds.height);
+        glEnable(GL_SCISSOR_TEST);
+    }
+
     render();
 
     for (auto& subview : _subviews) {
         Rectangle<int> subviewport(viewport.x + scale * subview->_bounds.x, viewport.y + scale * subview->_bounds.y, scale * subview->_bounds.width, scale * subview->_bounds.height);
-        subview->renderAndRenderSubviews(subviewport, scale);
+        subview->renderAndRenderSubviews(subviewport, scale, parentClippedBounds);
+    }
+
+    if (_clipped) {
+        glDisable(GL_SCISSOR_TEST);
     }
 }
 
@@ -200,7 +218,7 @@ bool View::dispatchMouseDown(MouseButton button, int x, int y) {
     if (_childrenInterceptMouseEvents) {
         for (auto it = _subviews.rbegin(); it != _subviews.rend(); ++it) {
             auto point = (*it)->superviewToLocal(x, y);
-            if (((*it)->hasBleedingSubviews() || (*it)->hitTest(point.x, point.y)) && (*it)->dispatchMouseDown(button, point.x, point.y)) {
+            if ((!(*it)->clipped() || (*it)->hitTest(point.x, point.y)) && (*it)->dispatchMouseDown(button, point.x, point.y)) {
                 return true;
             }
         }
@@ -223,7 +241,7 @@ bool View::dispatchMouseUp(MouseButton button, int x, int y) {
     if (_childrenInterceptMouseEvents) {
         for (auto it = _subviews.rbegin(); it != _subviews.rend(); ++it) {
             auto point = (*it)->superviewToLocal(x, y);
-            if (((*it)->hasBleedingSubviews() || (*it)->hitTest(point.x, point.y)) && (*it)->dispatchMouseUp(button, point.x, point.y)) {
+            if ((!(*it)->clipped() || (*it)->hitTest(point.x, point.y)) && (*it)->dispatchMouseUp(button, point.x, point.y)) {
                 return true;
             }
         }
@@ -250,7 +268,7 @@ void View::dispatchMouseMovement(int x, int y) {
                     subview = *it;
                 }
                 (*it)->dispatchMouseMovement(point.x, point.y);
-            } else if ((*it)->hasBleedingSubviews()) {
+            } else if (!(*it)->clipped()) {
                 (*it)->dispatchMouseMovement(point.x, point.y);
             }
         }
@@ -271,16 +289,39 @@ void View::dispatchMouseMovement(int x, int y) {
     }
 }
 
+bool View::dispatchMouseWheel(int xPos, int yPos, int xWheel, int yWheel) {
+    if (!isVisible()) {
+        return false;
+    }
+
+    if (_childrenInterceptMouseEvents) {
+        for (auto it = _subviews.rbegin(); it != _subviews.rend(); ++it) {
+            auto point = (*it)->superviewToLocal(xPos, yPos);
+            if ((!(*it)->clipped() || (*it)->hitTest(point.x, point.y)) &&
+                (*it)->dispatchMouseWheel(point.x, point.y, xWheel, yWheel)) {
+                return true;
+            }
+        }
+    }
+
+    if (_interceptsMouseEvents && hitTest(xPos, yPos)) {
+        mouseWheel(xPos, yPos, xWheel, yWheel);
+        return true;
+    }
+
+    return false;
+}
+
 void View::_dispatchWindowChange() {
     windowChanged();
-    
+
     for (auto& subview : _subviews) {
         subview->_dispatchWindowChange();
     }
 }
 
 void View::_mouseExit() {
-    if (_subviewWithMouse && !_hasBleedingSubviews) {
+    if (_subviewWithMouse && _clipped) {
         _subviewWithMouse->_mouseExit();
         _subviewWithMouse = nullptr;
     }

@@ -64,6 +64,7 @@ public:
     void dispatchMouseDown(MouseButton button, int x, int y);
     void dispatchMouseUp(MouseButton button, int x, int y);
     void dispatchMouseMovement(int x, int y);
+    void dispatchMouseWheel(int xPos, int yPos, int xWheel, int yWheel);
 
     virtual void render() {}
 
