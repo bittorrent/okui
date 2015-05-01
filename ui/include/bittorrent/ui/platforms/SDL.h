@@ -110,7 +110,7 @@ inline void SDL::run() {
                     auto window = _windows[event.windowID].window;
                     int xPos = 0, yPos = 0;
                     SDL_GetMouseState(&xPos, &yPos);
-                    window->dispatchMouseWheel(xPos, yPos, event.x, event.y);
+                    window->dispatchMouseWheel(xPos, window->height() - yPos, event.x, event.y);
                     break;
                 }
                 case SDL_WINDOWEVENT: {
