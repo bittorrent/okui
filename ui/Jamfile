@@ -24,6 +24,7 @@ lib ui :
 :
 	<include>./include
 	<link>static
+	<define>BT_LIBRARY
 : :
 	<include>./include
 	<conditional>@ui-frameworks
