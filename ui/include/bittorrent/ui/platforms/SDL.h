@@ -67,12 +67,19 @@ inline SDL::~SDL() {
 inline void SDL::run() {
     SDL_Event e;
     bool shouldQuit = false;
+    
+    constexpr auto frameRateLimit = 60;
+    constexpr auto minFrameInterval = std::chrono::microseconds(1000000 / frameRateLimit);
+    std::chrono::steady_clock::time_point lastFrameTime;
+    
     while (!shouldQuit) {
 #if __APPLE__
         @autoreleasepool {
 #endif
 
-        while (SDL_PollEvent(&e)) {
+        auto eventTimeoutMS = std::chrono::duration_cast<std::chrono::milliseconds>(minFrameInterval - (std::chrono::steady_clock::now() - lastFrameTime)).count();
+
+        if (SDL_WaitEventTimeout(&e, std::max<int>(eventTimeoutMS, 1))) {
             switch (e.type) {
                 case SDL_QUIT:
                     shouldQuit = true;
@@ -129,7 +136,7 @@ inline void SDL::run() {
                     break;
             }
         }
-
+                
         std::vector<std::function<void()>> asyncTasks;
         {
             std::lock_guard<std::mutex> lock(_asyncMutex);
@@ -139,12 +146,17 @@ inline void SDL::run() {
             task();
         }
 
-        for (auto& kv : _windows) {
-            SDL_GL_MakeCurrent(kv.second.sdlWindow, kv.second.context);
-            glClearColor(0.0, 0.0, 0.0, 0.0);
-            glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
-            _render(kv.second.window);
-            SDL_GL_SwapWindow(kv.second.sdlWindow);
+        auto now = std::chrono::steady_clock::now();
+
+        if (now - lastFrameTime >= minFrameInterval) {
+            for (auto& kv : _windows) {
+                SDL_GL_MakeCurrent(kv.second.sdlWindow, kv.second.context);
+                glClearColor(0.0, 0.0, 0.0, 0.0);
+                glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
+                _render(kv.second.window);
+                SDL_GL_SwapWindow(kv.second.sdlWindow);
+            }
+            lastFrameTime = now;
         }
 
 #if __APPLE__
