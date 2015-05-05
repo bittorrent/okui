@@ -132,7 +132,7 @@ Window* View::window() const {
 }
 
 Application* View::application() const {
-    return window()->application();
+    return window() ? window()->application() : nullptr;
 }
 
 Point<int> View::localToSuperview(int x, int y) {
