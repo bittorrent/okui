@@ -140,6 +140,24 @@ void Window::dispatchMouseWheel(int xPos, int yPos, int xWheel, int yWheel) {
     _contentView.dispatchMouseWheel(xPos, yPos, xWheel, yWheel);
 }
 
+void Window::dispatchTextInput(const std::string& text) {
+    if (_focus != nullptr) {
+        _focus->dispatchTextInput(text);
+    }
+}
+
+void Window::dispatchKeyDown(Keycode key, KeyModifiers mod, bool repeat) {
+     if (_focus != nullptr) {
+        _focus->dispatchKeyDown(key, mod, repeat);
+    }
+}
+
+void Window::dispatchKeyUp(Keycode key, KeyModifiers mod, bool repeat) {
+     if (_focus != nullptr) {
+        _focus->dispatchKeyUp(key, mod, repeat);
+    }
+}
+
 void Window::ensureTextures() {
     for (auto& texture : _texturesToLoad) {
         texture->load(&_openGLTextureCache);

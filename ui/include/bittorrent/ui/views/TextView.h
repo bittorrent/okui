@@ -27,7 +27,10 @@ public:
 	void setFont(std::shared_ptr<BitmapFont> font, double size);
 	void setText(const char* text);
 	void setTextColor(double r, double g, double b, double a = 1.0);
-	
+
+	void setMultiLine(bool enabled) { _multiLine = enabled;  _computeLines(); }
+	bool multiLine() const          { return _multiLine; }
+
 	double textWidth() const { return _textWidth; }
 
 	enum class Weight {
@@ -50,7 +53,8 @@ private:
 	std::vector<std::basic_string<BitmapFont::GlyphId>> _lines;
 	double _textWidth;
 	double _textColorR{0.0}, _textColorG{0.0}, _textColorB{0.0}, _textColorA{1.0};
-	
+	bool _multiLine = true;
+
 	void _computeLines();
 	void _renderBitmapText(shaders::DistanceFieldShader* shader);
 };

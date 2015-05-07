@@ -1,7 +1,6 @@
 #pragma once
-
 #include "bittorrent/ui/config.h"
-
+#include "bittorrent/ui/Keycode.h"
 #include "bittorrent/ui/MouseButton.h"
 #include "bittorrent/ui/Point.h"
 #include "bittorrent/ui/Rectangle.h"
@@ -34,7 +33,7 @@ public:
     void removeSubview(View* view);
 
     View* superview() const;
-    Window* window() const;
+    Window* window() const { return _window; }
     Application* application() const;
 
     Rectangle<int> bounds() const { return _bounds; }
@@ -51,8 +50,9 @@ public:
     void bringToFront();
 
     void focus();
+    bool hasFocus() const;
 
-    bool isDescendantOf(View* view);
+    bool isDescendantOf(const View* view) const;
 
     void setClipped(bool isClipped = true) { _clipped = isClipped; }
     bool clipped() const { return _clipped; }
@@ -120,6 +120,10 @@ public:
     virtual void mouseUp(MouseButton button, int x, int y);
     virtual void mouseWheel(int xPos, int yPos, int xWheel, int yWheel);
 
+    virtual void textInput(const std::string& text) {}
+    virtual void keyDown(Keycode key, KeyModifiers mod, bool repeat) {}
+    virtual void keyUp(Keycode key, KeyModifiers mod, bool repeat) {}
+
     virtual void mouseDrag(int x, int y) {}
     virtual void mouseMovement(int x, int y) {}
     virtual void mouseEnter() {}
@@ -133,6 +137,9 @@ public:
     bool dispatchMouseUp(MouseButton button, int x, int y);
     void dispatchMouseMovement(int x, int y);
     bool dispatchMouseWheel(int xPos, int yPos, int xWheel, int yWheel);
+    void dispatchTextInput(const std::string& text);
+    void dispatchKeyDown(Keycode key, KeyModifiers mod, bool repeat);
+    void dispatchKeyUp(Keycode key, KeyModifiers mod, bool repeat);
 
 private:
     friend class Window;
@@ -152,7 +159,7 @@ private:
 
     View*            _subviewWithMouse = nullptr;
 
-    void _dispatchWindowChange();
+    void _dispatchWindowChange(Window* window);
     void _mouseExit();
 };
 

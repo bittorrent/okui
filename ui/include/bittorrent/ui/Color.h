@@ -4,8 +4,8 @@ namespace bittorrent {
 namespace ui {
 
 struct Color {
-    Color();
-    Color(double brightness, double alpha = 1.0) : r{brightness}, g{brightness}, b{brightness}, a{alpha} {}
+    Color() = default;
+    explicit Color(double brightness, double alpha = 1.0) : r{brightness}, g{brightness}, b{brightness}, a{alpha} {}
     Color(double red, double green, double blue, double alpha = 1.0) : r{red}, g{green}, b{blue}, a{alpha} {}
 
     Color operator*(double multiplier) const {

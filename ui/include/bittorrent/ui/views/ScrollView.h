@@ -1,4 +1,5 @@
 #pragma once
+#include "bittorrent/ui/config.h"
 #include "bittorrent/ui/View.h"
 
 namespace bittorrent {

@@ -1,7 +1,6 @@
 #pragma once
-
 #include "bittorrent/ui/config.h"
-
+#include "bittorrent/ui/Keycode.h"
 #include "bittorrent/ui/Point.h"
 #include "bittorrent/ui/ShaderCache.h"
 #include "bittorrent/ui/opengl/TextureCache.h"
@@ -50,12 +49,12 @@ public:
 
     View* focus() const { return _focus; }
     void setFocus(View* focus);
-    
+
     /**
     * Converts a window coordinate to a view coordinate.
     */
     Point<int> windowToView(View* view, int x, int y);
-    
+
     void beginDragging(View* view);
     void endDragging(View* view);
 
@@ -65,6 +64,9 @@ public:
     void dispatchMouseUp(MouseButton button, int x, int y);
     void dispatchMouseMovement(int x, int y);
     void dispatchMouseWheel(int xPos, int yPos, int xWheel, int yWheel);
+    void dispatchTextInput(const std::string& text);
+    void dispatchKeyDown(Keycode key, KeyModifiers mod, bool repeat);
+    void dispatchKeyUp(Keycode key, KeyModifiers mod, bool repeat);
 
     virtual void render() {}
 

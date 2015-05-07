@@ -30,9 +30,25 @@ public:
     virtual void setWindowSize(Window* window, int width, int height) = 0;
     virtual void setWindowTitle(Window* window, const char* title) = 0;
 
+    virtual void setClipboardText(const char* text) = 0;
+    virtual std::string getClipboardText() = 0;
+
+    virtual void startTextInput() = 0;
+    virtual void stopTextInput() = 0;
+
+    virtual KeyModifier defaultShortcutModifier();
+
 protected:
     void _render(Window* window) { window->_render(); }
     void _didResize(Window* window, int width, int height) { window->_didResize(width, height); }
 };
+
+inline KeyModifier Platform::defaultShortcutModifier() {
+#if __APPLE__
+    return KeyModifier::kSuper;
+#else
+    return KeyModifier::kCtrl;
+#endif
+}
 
 }}

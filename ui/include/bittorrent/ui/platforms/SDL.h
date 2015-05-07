@@ -1,8 +1,8 @@
 #pragma once
-
 #include "bittorrent/ui/config.h"
-
 #include "bittorrent/ui/Platform.h"
+
+#include "bittorrent/ui/platforms/SDLKeycode.h"
 
 #include <unordered_map>
 
@@ -32,6 +32,12 @@ public:
     virtual void setWindowSize(Window* window, int width, int height) override;
     virtual void setWindowTitle(Window* window, const char* title) override;
 
+    virtual void setClipboardText(const char* text) override;
+    virtual std::string getClipboardText() override;
+
+    virtual void startTextInput() override;
+    virtual void stopTextInput() override;
+
 private:
     struct WindowInfo {
         WindowInfo() {}
@@ -44,6 +50,13 @@ private:
     };
 
     SDL_Window* _sdlWindow(Window* window);
+
+    void _handleMouseMotionEvent (const SDL_MouseMotionEvent& e);
+    void _handleMouseButtonEvent (const SDL_MouseButtonEvent& e);
+    void _handleMouseWheelEvent  (const SDL_MouseWheelEvent& e);
+    void _handleWindowEvent      (const SDL_WindowEvent& e);
+    void _handleKeyboardEvent    (const SDL_KeyboardEvent& e);
+    void _handleTextInputEvent   (const SDL_TextInputEvent& e);
 
     std::unordered_map<Window*, uint32_t> _windowIds;
     std::unordered_map<uint32_t, WindowInfo> _windows;
@@ -67,11 +80,11 @@ inline SDL::~SDL() {
 inline void SDL::run() {
     SDL_Event e;
     bool shouldQuit = false;
-    
+
     constexpr auto frameRateLimit = 60;
     constexpr auto minFrameInterval = std::chrono::microseconds(1000000 / frameRateLimit);
     std::chrono::steady_clock::time_point lastFrameTime;
-    
+
     while (!shouldQuit) {
 #if __APPLE__
         @autoreleasepool {
@@ -81,67 +94,25 @@ inline void SDL::run() {
 
         if (SDL_WaitEventTimeout(&e, std::max<int>(eventTimeoutMS, 1))) {
             switch (e.type) {
-                case SDL_QUIT:
-                    shouldQuit = true;
-                    break;
-                case SDL_MOUSEMOTION: {
-                    auto& event = e.motion;
-                    auto window = _windows[event.windowID].window;
-                    switch (event.type) {
-                        case SDL_MOUSEMOTION:
-                            window->dispatchMouseMovement(event.x, window->height() - event.y);
-                            break;
-                        default:
-                            break;
-                    }
-                    break;
-                }
-                case SDL_MOUSEBUTTONDOWN:
-                case SDL_MOUSEBUTTONUP: {
-                    auto& event = e.button;
-                    auto window = _windows[event.windowID].window;
-                    switch (event.type) {
-                        case SDL_MOUSEBUTTONDOWN:
-                            window->dispatchMouseDown(sMouseButton(event.button), event.x, window->height() - event.y);
-                            break;
-                        case SDL_MOUSEBUTTONUP:
-                            window->dispatchMouseUp(sMouseButton(event.button), event.x, window->height() - event.y);
-                            break;
-                        default:
-                            break;
-                    }
-                    break;
-                }
-                case SDL_MOUSEWHEEL: {
-                    auto& event = e.wheel;
-                    auto window = _windows[event.windowID].window;
-                    int xPos = 0, yPos = 0;
-                    SDL_GetMouseState(&xPos, &yPos);
-                    window->dispatchMouseWheel(xPos, window->height() - yPos, event.x, event.y);
-                    break;
-                }
-                case SDL_WINDOWEVENT: {
-                    auto& event = e.window;
-                    auto window = _windows[event.windowID].window;
-                    switch (event.event) {
-                        case SDL_WINDOWEVENT_RESIZED:
-                            _didResize(window, event.data1, event.data2);
-                            break;
-                        default:
-                            break;
-                    }
-                    break;
-                }
-                default:
-                    break;
+                case SDL_QUIT:            { shouldQuit = true; break; }
+                case SDL_MOUSEMOTION:     { _handleMouseMotionEvent(e.motion); break; }
+                case SDL_MOUSEBUTTONUP:
+                case SDL_MOUSEBUTTONDOWN: { _handleMouseButtonEvent(e.button); break; }
+                case SDL_MOUSEWHEEL:      { _handleMouseWheelEvent(e.wheel); break; }
+                case SDL_WINDOWEVENT:     { _handleWindowEvent(e.window); break; }
+                case SDL_KEYUP:
+                case SDL_KEYDOWN:         { _handleKeyboardEvent(e.key); break;}
+                case SDL_TEXTINPUT:       { _handleTextInputEvent(e.text); break; }
+                default:                  break;
             }
         }
-                
+
         std::vector<std::function<void()>> asyncTasks;
         {
             std::lock_guard<std::mutex> lock(_asyncMutex);
             asyncTasks.swap(_asyncTasks);
         }
+
         for (auto& task : asyncTasks) {
             task();
         }
@@ -224,10 +195,105 @@ inline void SDL::setWindowTitle(Window* window, const char* title) {
     }
 }
 
+inline void SDL::setClipboardText(const char* text) {
+     SDL_SetClipboardText(text);
+}
+
+inline std::string SDL::getClipboardText() {
+    auto text = SDL_GetClipboardText();
+    auto string = std::string{text};
+    SDL_free(text);
+    return string;
+}
+
+inline void SDL::startTextInput() {
+    SDL_StartTextInput();
+}
+
+inline void SDL::stopTextInput() {
+    SDL_StopTextInput();
+}
+
 inline SDL_Window* SDL::_sdlWindow(Window* window) {
     auto it = _windowIds.find(window);
     return it == _windowIds.end() ? nullptr : _windows[it->second].sdlWindow;
 }
+
+inline void SDL::_handleMouseMotionEvent(const SDL_MouseMotionEvent& event) {
+    auto window = _windows[event.windowID].window;
+    switch (event.type) {
+        case SDL_MOUSEMOTION:
+            window->dispatchMouseMovement(event.x, window->height() - event.y);
+            break;
+        default:
+            break;
+    }
+}
+
+inline void SDL::_handleMouseButtonEvent(const SDL_MouseButtonEvent& event) {
+    auto window = _windows[event.windowID].window;
+    switch (event.type) {
+        case SDL_MOUSEBUTTONDOWN:
+            window->dispatchMouseDown(sMouseButton(event.button), event.x, window->height() - event.y);
+            break;
+        case SDL_MOUSEBUTTONUP:
+            window->dispatchMouseUp(sMouseButton(event.button), event.x, window->height() - event.y);
+            break;
+        default:
+            break;
+    }
+}
+
+inline void SDL::_handleMouseWheelEvent(const SDL_MouseWheelEvent& event) {
+    auto window = _windows[event.windowID].window;
+    switch (event.type) {
+        case SDL_MOUSEWHEEL: {
+            int xPos = 0, yPos = 0;
+            SDL_GetMouseState(&xPos, &yPos);
+            window->dispatchMouseWheel(xPos, window->height() - yPos, event.x, event.y);
+            break;
+        }
+        default:
+            break;
+    }
+}
+
+inline void SDL::_handleWindowEvent(const SDL_WindowEvent& event) {
+    auto window = _windows[event.windowID].window;
+    switch (event.event) {
+        case SDL_WINDOWEVENT_RESIZED:
+            _didResize(window, event.data1, event.data2);
+            break;
+        default:
+            break;
+    }
+}
+
+inline void SDL::_handleKeyboardEvent(const SDL_KeyboardEvent& event) {
+    auto window = _windows[event.windowID].window;
+    switch (event.type) {
+        case SDL_KEYDOWN:
+            window->dispatchKeyDown(ConvertKeycode(event.keysym.sym), ConvertKeyModifier(event.keysym.mod), event.repeat);
+            break;
+        case SDL_KEYUP:
+            window->dispatchKeyUp(ConvertKeycode(event.keysym.sym), ConvertKeyModifier(event.keysym.mod), event.repeat);
+            break;
+        default:
+            break;
+    }
+}
+
+inline void SDL::_handleTextInputEvent(const SDL_TextInputEvent& event) {
+    auto window = _windows[event.windowID].window;
+    switch (event.type) {
+        case SDL_TEXTINPUT:
+            window->dispatchTextInput(event.text);
+            break;
+        default:
+            break;
+    }
+}
+
 
 inline MouseButton SDL::sMouseButton(uint8_t id) {
     switch (id) {

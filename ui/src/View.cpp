@@ -17,19 +17,17 @@ void View::addSubview(View* view) {
         return;
     }
 
-    auto viewWindow = view->window();
-
     if (view->superview()) {
         view->superview()->removeSubview(view);
     }
     view->_superview = this;
     _subviews.push_back(view);
 
-    if (viewWindow != view->window()) {
-        if (viewWindow) {
-            viewWindow->endDragging(view);
+    if (_window != view->window()) {
+        if (view->window()) {
+            view->window()->endDragging(view);
         }
-        view->_dispatchWindowChange();
+        view->_dispatchWindowChange(_window);
     }
 }
 
@@ -42,21 +40,16 @@ void View::removeSubview(View* view) {
         _subviewWithMouse = nullptr;
     }
 
-    auto viewWindow = view->window();
-
     view->_superview = nullptr;
-    for (auto it = _subviews.begin(); it != _subviews.end(); ++it) {
-        if (*it == view) {
-            _subviews.erase(it);
-            break;
-        }
+
+    auto viewIt = std::find(_subviews.begin(), _subviews.end(), view);
+    if (viewIt != _subviews.end()) {
+        _subviews.erase(viewIt);
     }
 
-    if (viewWindow != view->window()) {
-        if (viewWindow) {
-            viewWindow->endDragging(view);
-        }
-        view->_dispatchWindowChange();
+    if (view->window() != nullptr) {
+        view->window()->endDragging(view);
+        view->_dispatchWindowChange(nullptr);
     }
 }
 
@@ -108,7 +101,11 @@ void View::focus() {
     window()->setFocus(this);
 }
 
-bool View::isDescendantOf(View* view) {
+bool View::hasFocus() const {
+    return window() && window()->focus() == this;
+}
+
+bool View::isDescendantOf(const View* view) const {
     if (superview() == view) {
         return true;
     }
@@ -125,10 +122,6 @@ AffineTransformation View::renderTransformation() {
 
 View* View::superview() const {
     return _superview;
-}
-
-Window* View::window() const {
-    return _superview ? _superview->window() : _window;
 }
 
 Application* View::application() const {
@@ -170,9 +163,7 @@ void View::mouseWheel(int xPos, int yPos, int xWheel, int yWheel) {
 }
 
 void View::renderAndRenderSubviews(Rectangle<int> viewport, double scale, boost::optional<Rectangle<int>> parentClippedBounds) {
-    if (!isVisible()) {
-        return;
-    }
+    if (!isVisible()) { return; }
 
     glViewport(viewport.x, viewport.y, viewport.width, viewport.height);
     glEnable(GL_BLEND);
@@ -212,9 +203,8 @@ void View::renderAndRenderSubviews(Rectangle<int> viewport, double scale, boost:
 }
 
 bool View::dispatchMouseDown(MouseButton button, int x, int y) {
-    if (!isVisible()) {
-        return false;
-    }
+    if (!isVisible()) { return false; }
+
     if (_childrenInterceptMouseEvents) {
         for (auto it = _subviews.rbegin(); it != _subviews.rend(); ++it) {
             auto point = (*it)->superviewToLocal(x, y);
@@ -235,9 +225,8 @@ bool View::dispatchMouseDown(MouseButton button, int x, int y) {
 }
 
 bool View::dispatchMouseUp(MouseButton button, int x, int y) {
-    if (!isVisible()) {
-        return false;
-    }
+    if (!isVisible()) { return false; }
+
     if (_childrenInterceptMouseEvents) {
         for (auto it = _subviews.rbegin(); it != _subviews.rend(); ++it) {
             auto point = (*it)->superviewToLocal(x, y);
@@ -254,9 +243,7 @@ bool View::dispatchMouseUp(MouseButton button, int x, int y) {
 }
 
 void View::dispatchMouseMovement(int x, int y) {
-    if (!isVisible()) {
-        return;
-    }
+    if (!isVisible()) { return; }
 
     View* subview = nullptr;
 
@@ -290,9 +277,7 @@ void View::dispatchMouseMovement(int x, int y) {
 }
 
 bool View::dispatchMouseWheel(int xPos, int yPos, int xWheel, int yWheel) {
-    if (!isVisible()) {
-        return false;
-    }
+    if (!isVisible()) { return false; }
 
     if (_childrenInterceptMouseEvents) {
         for (auto it = _subviews.rbegin(); it != _subviews.rend(); ++it) {
@@ -312,11 +297,28 @@ bool View::dispatchMouseWheel(int xPos, int yPos, int xWheel, int yWheel) {
     return false;
 }
 
-void View::_dispatchWindowChange() {
+void View::dispatchTextInput(const std::string& text) {
+    if (!isVisible()) { return; }
+    textInput(text);
+}
+
+void View::dispatchKeyDown(Keycode key, KeyModifiers mod, bool repeat) {
+    if (!isVisible()) { return; }
+    keyDown(key, mod, repeat);
+}
+
+void View::dispatchKeyUp(Keycode key, KeyModifiers mod, bool repeat) {
+    if (!isVisible()) { return; }
+    keyUp(key, mod, repeat);
+}
+
+void View::_dispatchWindowChange(Window* window) {
+    _window = window;
+
     windowChanged();
 
     for (auto& subview : _subviews) {
-        subview->_dispatchWindowChange();
+        subview->_dispatchWindowChange(window);
     }
 }
 
