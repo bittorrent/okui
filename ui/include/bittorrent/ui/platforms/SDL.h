@@ -1,7 +1,9 @@
 #pragma once
+
 #include "bittorrent/ui/config.h"
 #include "bittorrent/ui/Platform.h"
 
+#include "bittorrent/ui/platforms/Native.h"
 #include "bittorrent/ui/platforms/SDLKeycode.h"
 
 #include <unordered_map>
@@ -10,18 +12,14 @@
 
 namespace bittorrent {
 namespace ui {
-
-class Window;
-
 namespace platforms {
 
-class SDL : public Platform {
+class SDL : public Native {
 public:
     SDL();
     ~SDL();
 
     virtual void run() override;
-    virtual void async(std::function<void()> task) override;
 
     virtual void openWindow(Window* window, const char* title, int x, int y, int width, int height) override;
     virtual void closeWindow(Window* window) override;
@@ -31,6 +29,8 @@ public:
     virtual void setWindowPosition(Window* window, int x, int y) override;
     virtual void setWindowSize(Window* window, int width, int height) override;
     virtual void setWindowTitle(Window* window, const char* title) override;
+
+    virtual std::string userStoragePath(const char* application, const char* organization) const override;
 
     virtual void setClipboardText(const char* text) override;
     virtual std::string getClipboardText() override;
@@ -49,6 +49,7 @@ private:
         SDL_GLContext context;
     };
 
+    Window* _window(uint32_t id);
     SDL_Window* _sdlWindow(Window* window);
 
     void _handleMouseMotionEvent (const SDL_MouseMotionEvent& e);
@@ -62,9 +63,6 @@ private:
     std::unordered_map<uint32_t, WindowInfo> _windows;
 
     static MouseButton sMouseButton(uint8_t id);
-
-    std::mutex _asyncMutex;
-    std::vector<std::function<void()>> _asyncTasks;
 };
 
 inline SDL::SDL() {
@@ -107,15 +105,7 @@ inline void SDL::run() {
             }
         }
 
-        std::vector<std::function<void()>> asyncTasks;
-        {
-            std::lock_guard<std::mutex> lock(_asyncMutex);
-            asyncTasks.swap(_asyncTasks);
-        }
-
-        for (auto& task : asyncTasks) {
-            task();
-        }
+        work();
 
         auto now = std::chrono::steady_clock::now();
 
@@ -134,11 +124,6 @@ inline void SDL::run() {
         } // @autoreleasepool
 #endif
     }
-}
-
-inline void SDL::async(std::function<void()> task) {
-    std::lock_guard<std::mutex> lock(_asyncMutex);
-    _asyncTasks.emplace_back(task);
 }
 
 inline void SDL::openWindow(Window* window, const char* title, int x, int y, int width, int height) {
@@ -195,6 +180,13 @@ inline void SDL::setWindowTitle(Window* window, const char* title) {
     }
 }
 
+inline std::string SDL::userStoragePath(const char* application, const char* organization) const {
+    auto path = SDL_GetPrefPath(organization, application);
+    std::string ret(path);
+    SDL_free(path);
+    return ret;
+}
+
 inline void SDL::setClipboardText(const char* text) {
      SDL_SetClipboardText(text);
 }
@@ -214,13 +206,20 @@ inline void SDL::stopTextInput() {
     SDL_StopTextInput();
 }
 
+inline Window* SDL::_window(uint32_t id) {
+    auto it = _windows.find(id);
+    return it == _windows.end() ? nullptr : it->second.window;
+}
+
 inline SDL_Window* SDL::_sdlWindow(Window* window) {
     auto it = _windowIds.find(window);
     return it == _windowIds.end() ? nullptr : _windows[it->second].sdlWindow;
 }
 
 inline void SDL::_handleMouseMotionEvent(const SDL_MouseMotionEvent& event) {
-    auto window = _windows[event.windowID].window;
+    auto window = _window(event.windowID);
+    if (!window) { return; }
+
     switch (event.type) {
         case SDL_MOUSEMOTION:
             window->dispatchMouseMovement(event.x, window->height() - event.y);
@@ -231,7 +230,9 @@ inline void SDL::_handleMouseMotionEvent(const SDL_MouseMotionEvent& event) {
 }
 
 inline void SDL::_handleMouseButtonEvent(const SDL_MouseButtonEvent& event) {
-    auto window = _windows[event.windowID].window;
+    auto window = _window(event.windowID);
+    if (!window) { return; }
+
     switch (event.type) {
         case SDL_MOUSEBUTTONDOWN:
             window->dispatchMouseDown(sMouseButton(event.button), event.x, window->height() - event.y);
@@ -245,7 +246,9 @@ inline void SDL::_handleMouseButtonEvent(const SDL_MouseButtonEvent& event) {
 }
 
 inline void SDL::_handleMouseWheelEvent(const SDL_MouseWheelEvent& event) {
-    auto window = _windows[event.windowID].window;
+    auto window = _window(event.windowID);
+    if (!window) { return; }
+
     switch (event.type) {
         case SDL_MOUSEWHEEL: {
             int xPos = 0, yPos = 0;
@@ -259,7 +262,9 @@ inline void SDL::_handleMouseWheelEvent(const SDL_MouseWheelEvent& event) {
 }
 
 inline void SDL::_handleWindowEvent(const SDL_WindowEvent& event) {
-    auto window = _windows[event.windowID].window;
+    auto window = _window(event.windowID);
+    if (!window) { return; }
+
     switch (event.event) {
         case SDL_WINDOWEVENT_RESIZED:
             _didResize(window, event.data1, event.data2);
@@ -270,7 +275,9 @@ inline void SDL::_handleWindowEvent(const SDL_WindowEvent& event) {
 }
 
 inline void SDL::_handleKeyboardEvent(const SDL_KeyboardEvent& event) {
-    auto window = _windows[event.windowID].window;
+    auto window = _window(event.windowID);
+    if (!window) { return; }
+
     switch (event.type) {
         case SDL_KEYDOWN:
             window->dispatchKeyDown(ConvertKeycode(event.keysym.sym), ConvertKeyModifier(event.keysym.mod), event.repeat);
@@ -284,7 +291,9 @@ inline void SDL::_handleKeyboardEvent(const SDL_KeyboardEvent& event) {
 }
 
 inline void SDL::_handleTextInputEvent(const SDL_TextInputEvent& event) {
-    auto window = _windows[event.windowID].window;
+    auto window = _window(event.windowID);
+    if (!window) { return; }
+
     switch (event.type) {
         case SDL_TEXTINPUT:
             window->dispatchTextInput(event.text);

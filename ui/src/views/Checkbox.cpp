@@ -17,4 +17,13 @@ void Checkbox::mouseDown(MouseButton button, int x, int y) {
     setState(_state == State::kChecked ? State::kUnchecked : State::kChecked, true);
 }
 
+void Checkbox::keyDown(Keycode key, KeyModifiers mod, bool repeat) {
+    if (key == Keycode::kSpace) {
+        setState(_state == State::kChecked ? State::kUnchecked : State::kChecked, true);
+        return;
+    }
+    
+    bittorrent::ui::View::keyDown(key, mod, repeat);
+}
+
 }}}

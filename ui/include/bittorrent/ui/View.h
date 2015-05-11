@@ -43,14 +43,42 @@ public:
 
     ShaderCache* shaderCache();
 
-    void setIsVisible(bool isVisible = true) { _isVisible = isVisible; }
+    void setIsVisible(bool isVisible = true);
     bool isVisible() const { return _isVisible; }
+
+    /**
+    * Returns true if the view's ancestors are visible or if the view has no ancestors.
+    */
+    bool ancestorsAreVisible() const;
 
     void sendToBack();
     void bringToFront();
 
+    /**
+    * Override this if the view can become focused.
+    */
+    virtual bool canBecomeFocus() { return false; }
+
     void focus();
-    bool hasFocus() const;
+    void unfocus();
+    
+    /**
+    * If the view receives an unhandled tab key down, focus will change to the given 
+    * view (and shift+tab will do the opposite).
+    */
+    void setNextFocus(View* view);
+    
+    /**
+    * Returns the next available visible and focusable view if there is one.
+    */
+    View* nextAvailableFocus();
+
+    /**
+    * Returns the previous available visible and focusable view.
+    */
+    View* previousAvailableFocus();
+
+    bool isFocus() const;
 
     bool isDescendantOf(const View* view) const;
 
@@ -121,8 +149,12 @@ public:
     virtual void mouseWheel(int xPos, int yPos, int xWheel, int yWheel);
 
     virtual void textInput(const std::string& text) {}
-    virtual void keyDown(Keycode key, KeyModifiers mod, bool repeat) {}
-    virtual void keyUp(Keycode key, KeyModifiers mod, bool repeat) {}
+        
+    /**
+    * Override these to handle keyboard events. Call the base implementation to pass on the event.
+    */
+    virtual void keyDown(Keycode key, KeyModifiers mod, bool repeat);
+    virtual void keyUp(Keycode key, KeyModifiers mod, bool repeat);
 
     virtual void mouseDrag(int x, int y) {}
     virtual void mouseMovement(int x, int y) {}
@@ -131,6 +163,16 @@ public:
 
     virtual void focusGained() {}
     virtual void focusLost() {}
+
+    /**
+    * Called when the view and all of its ancestors become visible in the window.
+    */
+    virtual void appeared() {}
+
+    /**
+    * Called when the view or one of its ancestors become invisible in the window.
+    */
+    virtual void disappeared() {}
 
     void renderAndRenderSubviews(Rectangle<int> viewport, double scale, boost::optional<Rectangle<int>> clipBounds = boost::none);
     bool dispatchMouseDown(MouseButton button, int x, int y);
@@ -158,6 +200,9 @@ private:
     Window*          _window = nullptr;
 
     View*            _subviewWithMouse = nullptr;
+    
+    View*            _nextFocus = nullptr;
+    View*            _previousFocus = nullptr;
 
     void _dispatchWindowChange(Window* window);
     void _mouseExit();

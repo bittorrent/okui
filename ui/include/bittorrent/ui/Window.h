@@ -51,6 +51,11 @@ public:
     void setFocus(View* focus);
 
     /**
+    * If tab is hit when there's no focus, the specified view will be focused.
+    */
+    void setInitialFocus(View* focus) { _initialFocus = focus; }
+
+    /**
     * Converts a window coordinate to a view coordinate.
     */
     Point<int> windowToView(View* view, int x, int y);
@@ -68,6 +73,12 @@ public:
     void dispatchKeyDown(Keycode key, KeyModifiers mod, bool repeat);
     void dispatchKeyUp(Keycode key, KeyModifiers mod, bool repeat);
 
+    /**
+    * Override these to handle keyboard events. Call the base implementation to pass on the event.
+    */
+    virtual void keyDown(Keycode key, KeyModifiers mod, bool repeat);
+    virtual void keyUp(Keycode key, KeyModifiers mod, bool repeat) {}
+
     virtual void render() {}
 
     void ensureTextures();
@@ -84,6 +95,7 @@ private:
 
     View _contentView;
     View* _focus = nullptr;
+    View* _initialFocus = nullptr;
 
     ShaderCache _shaderCache;
     Cache<Texture> _textureCache;

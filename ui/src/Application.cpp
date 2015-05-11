@@ -6,8 +6,8 @@
 namespace bittorrent {
 namespace ui {
 
-Application::Application(Platform* platform, ResourceManager* resourceManager)
-    : _platform(platform), _resourceManager(resourceManager)
+Application::Application(const char* name, const char* organization, Platform* platform, ResourceManager* resourceManager)
+    : _name(name), _organization(organization), _platform(platform), _resourceManager(resourceManager)
 {
     _backgroundThread = std::thread([this]{
         SetThreadName("Application RunLoop");
@@ -20,6 +20,10 @@ Application::~Application() {
     _backgroundThread.join();
 
     _backgroundRunLoop.flush();
+}
+
+std::string Application::userStoragePath() const {
+    return _platform->userStoragePath(_name.c_str(), _organization.c_str());
 }
 
 void Application::async(std::function<void()> task) {

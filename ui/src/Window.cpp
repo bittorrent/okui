@@ -147,14 +147,36 @@ void Window::dispatchTextInput(const std::string& text) {
 }
 
 void Window::dispatchKeyDown(Keycode key, KeyModifiers mod, bool repeat) {
-     if (_focus != nullptr) {
+    if (_focus) {
         _focus->dispatchKeyDown(key, mod, repeat);
+    } else {
+        keyDown(key, mod, repeat);
     }
 }
 
 void Window::dispatchKeyUp(Keycode key, KeyModifiers mod, bool repeat) {
-     if (_focus != nullptr) {
+    if (_focus) {
         _focus->dispatchKeyUp(key, mod, repeat);
+    } else {
+        keyUp(key, mod, repeat);
+    }
+}
+
+void Window::keyDown(Keycode key, KeyModifiers mod, bool repeat) {
+    if (key == Keycode::kTab && _initialFocus && !_focus) {
+        if (mod & KeyModifier::kShift) {
+            if (auto view = _initialFocus->previousAvailableFocus()) {
+                view->focus();
+                return;
+            }
+        }
+        if (_initialFocus->isVisible() && _initialFocus->canBecomeFocus()) {
+            _initialFocus->focus();
+            return;
+        } else if (auto view = _initialFocus->nextAvailableFocus()) {
+            view->focus();
+            return;
+        }
     }
 }
 

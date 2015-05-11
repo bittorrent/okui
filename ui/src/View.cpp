@@ -7,6 +7,14 @@ namespace bittorrent {
 namespace ui {
 
 View::~View() {
+    if (_nextFocus) {
+        _nextFocus->_previousFocus = _previousFocus;
+    }
+
+    if (_previousFocus) {
+        _previousFocus->_nextFocus = _nextFocus;
+    }
+    
     if (superview()) {
         superview()->removeSubview(this);
     }
@@ -17,7 +25,12 @@ void View::addSubview(View* view) {
         return;
     }
 
+    bool isViewAppearance = view->isVisible() && window() && ancestorsAreVisible();
+
     if (view->superview()) {
+        if (view->superview()->window() && view->superview()->ancestorsAreVisible()) {
+            isViewAppearance = false;
+        }
         view->superview()->removeSubview(view);
     }
     view->_superview = this;
@@ -29,12 +42,20 @@ void View::addSubview(View* view) {
         }
         view->_dispatchWindowChange(_window);
     }
+    
+    if (isViewAppearance) {
+        view->appeared();
+    }
 }
 
 void View::removeSubview(View* view) {
     if (view->superview() != this) {
         return;
     }
+
+    view->unfocus();
+
+    bool isViewDisappearance = view->isVisible() && view->window() && view->ancestorsAreVisible();
 
     if (_subviewWithMouse == view) {
         _subviewWithMouse = nullptr;
@@ -51,6 +72,28 @@ void View::removeSubview(View* view) {
         view->window()->endDragging(view);
         view->_dispatchWindowChange(nullptr);
     }
+    
+    if (isViewDisappearance) {
+        view->disappeared();
+    }
+}
+
+void View::setIsVisible(bool isVisible) {
+    if (_isVisible == isVisible) { return; }
+
+    _isVisible = isVisible;
+    
+    if (window() && ancestorsAreVisible()) {
+        if (_isVisible) {
+            appeared();
+        } else {
+            disappeared();
+        }
+    }
+}
+
+bool View::ancestorsAreVisible() const {
+    return superview() ? (superview()->isVisible() && superview()->ancestorsAreVisible()) : true;
 }
 
 void View::setBounds(int x, int y, int width, int height) {
@@ -101,7 +144,52 @@ void View::focus() {
     window()->setFocus(this);
 }
 
-bool View::hasFocus() const {
+void View::unfocus() {
+    if (isFocus()) {
+        window()->setFocus(nullptr);
+    }
+}
+
+void View::setNextFocus(View* view) {
+    if (_nextFocus == view) { return; }
+    
+    if (_nextFocus) {
+        if (_nextFocus->_previousFocus) {
+            _nextFocus->_previousFocus->_nextFocus = nullptr;
+        }
+        _nextFocus->_previousFocus = nullptr;
+    }
+
+    _nextFocus = view;
+
+    if (_nextFocus) {
+        _nextFocus->_previousFocus = this;
+    }
+}
+
+View* View::nextAvailableFocus() {
+    auto view = _nextFocus;
+    while (view && view != this) {
+        if (view->isVisible() && view->canBecomeFocus()) {
+            return view;
+        }
+        view = view->_nextFocus;
+    }
+    return nullptr;
+}
+
+View* View::previousAvailableFocus() {
+    auto view = _previousFocus;
+    while (view && view != this) {
+        if (view->isVisible() && view->canBecomeFocus()) {
+            return view;
+        }
+        view = view->_previousFocus;
+    }
+    return nullptr;
+}
+
+bool View::isFocus() const {
     return window() && window()->focus() == this;
 }
 
@@ -159,6 +247,36 @@ void View::mouseWheel(int xPos, int yPos, int xWheel, int yWheel) {
     if (superview() && superview()->_interceptsMouseEvents) {
         auto point = localToSuperview(xPos, yPos);
         superview()->mouseWheel(point.x, point.y, xWheel, yWheel);
+    }
+}
+
+void View::keyDown(Keycode key, KeyModifiers mod, bool repeat) {
+    if (key == Keycode::kTab) {
+        if (_previousFocus && (mod & KeyModifier::kShift)) {
+            if (auto view = previousAvailableFocus()) {
+                view->focus();
+            }
+            return;
+        } else if (_nextFocus) {
+            if (auto view = nextAvailableFocus()) {
+                view->focus();
+            }
+            return;
+        }
+    }
+
+    if (superview()) {
+        superview()->keyDown(key, mod, repeat);
+    } else if (window()) {
+        window()->keyDown(key, mod, repeat);
+    }
+}
+
+void View::keyUp(Keycode key, KeyModifiers mod, bool repeat) {
+    if (superview()) {
+        superview()->keyUp(key, mod, repeat);
+    } else if (window()) {
+        window()->keyUp(key, mod, repeat);
     }
 }
 
