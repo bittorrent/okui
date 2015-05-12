@@ -14,11 +14,11 @@ TextureShader::TextureShader() {
         attribute vec4 colorAttrib;
         attribute vec4 curveAttrib;
         attribute vec2 textureCoordAttrib;
-        
+
         varying vec4 color;
         varying vec4 curve;
         varying vec2 textureCoord;
-        
+
         void main() {
             color = colorAttrib;
             curve = curveAttrib;
@@ -35,9 +35,9 @@ TextureShader::TextureShader() {
         varying vec4 color;
         varying vec4 curve;
         varying vec2 textureCoord;
-        
+
         uniform sampler2D texture;
-        
+
         void main() {
             float alphaMultiplier = 1.0;
             if (curve.z > 1.5) {
@@ -67,9 +67,9 @@ TextureShader::TextureShader() {
             gl_FragColor = texture2D(texture, textureCoord) * vec4(color.rgb, color.a * alphaMultiplier);
         }
     )", opengl::Shader::kFragmentShader);
-    
+
     _program.attachShaders(vsh, fsh);
-    
+
     _program.bindAttribute(kVertexPositionAttribute, "positionAttrib");
     _program.bindAttribute(kVertexColorAttribute, "colorAttrib");
     _program.bindAttribute(kVertexCurveAttribute, "curveAttrib");
@@ -79,7 +79,7 @@ TextureShader::TextureShader() {
     _program.use();
 
     _program.uniform("texture") = 0;
-    
+
     if (!_program.error().empty()) {
         BT_LOG_ERROR("error creating shader: %s", _program.error().c_str());
         return;
@@ -97,33 +97,33 @@ void TextureShader::setTexture(GLuint id, double x, double y, double w, double h
     if (_texture != id) {
         flush();
     }
-    
+
     _texture = id;
-    
+
     _transformation.transform(x, y, &_textureX1, &_textureY1);
-    
+
     double x2, y2;
     _transformation.transform(x + w, y + h, &x2, &y2);
-    
+
     _textureWidth  = x2 - _textureX1;
     _textureHeight = y2 - _textureY1;
 }
 
-void TextureShader::drawTriangle(double x1, double y1, double x2, double y2, double x3, double y3, Shader::Curve curve) {    
+void TextureShader::drawTriangle(double x1, double y1, double x2, double y2, double x3, double y3, Shader::Curve curve) {
     if (curve) {
         if (curve == kCurveCircularConvex) {
             auto dx = (x1 - x2);
             auto dy = (y1 - y2);
             auto scale = 1.0 / sqrt(dx * dx + dy * dy);
-            
+
             _triangle.a.cu = dx * scale;
             _triangle.b.cu = 0.0;
             _triangle.c.cu = (x3 - x2) * scale;
-    
+
             _triangle.a.cv = dy * scale;
             _triangle.b.cv = 0.0;
             _triangle.c.cv = (y3 - y2) * scale;
-            
+
             _triangle.a.caa = _triangle.b.caa = _triangle.c.caa = scale;
         } else if (curve == kCurveBezierConcave || curve == kCurveBezierConvex) {
             _triangle.a.cu = _triangle.a.cv = 0.0;
@@ -165,7 +165,7 @@ void TextureShader::drawTriangle(double x1, double y1, double x2, double y2, dou
 
 void TextureShader::flush() {
     if (_vertices.empty()) { return; }
-    
+
     _program.use();
 
     glActiveTexture(GL_TEXTURE0);
@@ -183,12 +183,12 @@ void TextureShader::flush() {
     glVertexAttribPointer(kVertexTextureCoordinateAttribute, 2, GL_FLOAT, GL_FALSE, stride, &_vertices[0].s);
 
     glDrawArrays(GL_TRIANGLES, 0, _vertices.size());
-    
+
     glDisableVertexAttribArray(kVertexTextureCoordinateAttribute);
     glDisableVertexAttribArray(kVertexCurveAttribute);
     glDisableVertexAttribArray(kVertexColorAttribute);
     glDisableVertexAttribArray(kVertexPositionAttribute);
-    
+
     _vertices.clear();
 }
 

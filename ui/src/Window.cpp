@@ -8,7 +8,6 @@ namespace ui {
 
 Window::Window(Application* application) : _application(application) {
     _contentView._window = this;
-    _contentView.setClipped(false);
 }
 
 Window::~Window() {
@@ -192,8 +191,8 @@ void Window::_render() {
 
     render();
 
-    Rectangle<int> viewport(0, 0, _contentView.bounds().width, _contentView.bounds().height);
-    _contentView.renderAndRenderSubviews(viewport, renderScale());
+    Rectangle<int> viewport(0, 0, _contentView.bounds().width*_renderScale, _contentView.bounds().height*_renderScale);
+    _contentView.renderAndRenderSubviews(viewport, _renderScale);
 }
 
 void Window::_didResize(int width, int height) {

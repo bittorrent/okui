@@ -7,7 +7,7 @@ namespace ui {
 
 struct PNGInput {
     PNGInput(const void* data, size_t length) : data(data), length(length) {}
-    
+
     const void* data;
     size_t length;
     size_t position = 0;
@@ -28,20 +28,20 @@ Texture::Texture(std::shared_ptr<const std::string> data) : _data(data) {
 
     png_structp png = png_create_read_struct(PNG_LIBPNG_VER_STRING, nullptr, nullptr, nullptr);
     png_infop info = png_create_info_struct(png);
-    
+
     if (setjmp(png_jmpbuf(png))) {
         BT_LOG_ERROR("error reading png data");
         png_destroy_read_struct(&png, &info, nullptr);
         return;
     }
-    
+
     png_set_read_fn(png, &input, &PNGRead);
-    
+
     png_read_info(png, info);
-    
+
     _width = png_get_image_width(png, info);
     _height = png_get_image_height(png, info);
-    
+
     png_destroy_read_struct(&png, &info, nullptr);
 }
 
@@ -58,22 +58,22 @@ GLuint Texture::load(opengl::TextureCache* textureCache) {
 
     png_structp png = png_create_read_struct(PNG_LIBPNG_VER_STRING, nullptr, nullptr, nullptr);
     png_infop info = png_create_info_struct(png);
-    
+
     if (setjmp(png_jmpbuf(png))) {
         BT_LOG_ERROR("error reading png data");
         png_destroy_read_struct(&png, &info, nullptr);
         return 0;
     }
-    
+
     png_set_read_fn(png, &input, &PNGRead);
-    
+
     png_read_info(png, info);
 
     auto colorType = png_get_color_type(png, info);
     int bytesPerRow = png_get_rowbytes(png, info);
-    
+
     BT_ASSERT(bytesPerRow == ((colorType & PNG_COLOR_MASK_ALPHA) ? 4 : 3) * _width);
-    
+
     // align rows to 4-byte boundaries
     if (bytesPerRow % 4) {
         bytesPerRow += 4 - (bytesPerRow % 4);
@@ -81,19 +81,19 @@ GLuint Texture::load(opengl::TextureCache* textureCache) {
 
     png_byte* image = reinterpret_cast<png_byte*>(malloc(bytesPerRow * _height));
     png_bytep* rowPointers = reinterpret_cast<png_bytep*>(malloc(_height * sizeof(png_bytep)));
-    
+
     for (int i = 0; i < _height; ++i) {
-        rowPointers[i] = image + (_height - i - 1) * bytesPerRow;
+        rowPointers[i] = image + i * bytesPerRow;
     }
-    
+
     png_read_image(png, rowPointers);
-    
+
     free(rowPointers);
-    
+
     png_destroy_read_struct(&png, &info, nullptr);
-    
+
     // image now contains our raw bytes. send it to the gpu
-    
+
     GLuint texture;
     glGenTextures(1, &texture);
     glBindTexture(GL_TEXTURE_2D, texture);

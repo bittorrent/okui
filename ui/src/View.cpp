@@ -14,7 +14,7 @@ View::~View() {
     if (_previousFocus) {
         _previousFocus->_nextFocus = _nextFocus;
     }
-    
+
     if (superview()) {
         superview()->removeSubview(this);
     }
@@ -42,7 +42,7 @@ void View::addSubview(View* view) {
         }
         view->_dispatchWindowChange(_window);
     }
-    
+
     if (isViewAppearance) {
         view->appeared();
     }
@@ -72,7 +72,7 @@ void View::removeSubview(View* view) {
         view->window()->endDragging(view);
         view->_dispatchWindowChange(nullptr);
     }
-    
+
     if (isViewDisappearance) {
         view->disappeared();
     }
@@ -82,7 +82,7 @@ void View::setIsVisible(bool isVisible) {
     if (_isVisible == isVisible) { return; }
 
     _isVisible = isVisible;
-    
+
     if (window() && ancestorsAreVisible()) {
         if (_isVisible) {
             appeared();
@@ -152,7 +152,7 @@ void View::unfocus() {
 
 void View::setNextFocus(View* view) {
     if (_nextFocus == view) { return; }
-    
+
     if (_nextFocus) {
         if (_nextFocus->_previousFocus) {
             _nextFocus->_previousFocus->_nextFocus = nullptr;
@@ -205,7 +205,9 @@ bool View::hasMouse() const {
 }
 
 AffineTransformation View::renderTransformation() {
-    return AffineTransformation(-1.0, -1.0, 0.0, 0.0, 2.0 / _bounds.width, 2.0 / _bounds.height);
+    // 2/width and 2/height because clip space is -1 to 1 (2x2), so scale down into clip space
+    // Scale y is negative and translate (-1, 1) to get the top left to be (0, 0)
+    return AffineTransformation{-1, 1, 0, 0, 2.0/_bounds.width, -2.0/_bounds.height};
 }
 
 View* View::superview() const {
@@ -225,7 +227,8 @@ Point<int> View::superviewToLocal(int x, int y) {
 }
 
 bool View::hitTest(int x, int y) {
-    return (x >= 0 && x < bounds().width && y >= 0 && y < bounds().height);
+    return x >= 0 && x < bounds().width &&
+           y >= 0 && y < bounds().height;
 }
 
 void View::mouseDown(MouseButton button, int x, int y) {
@@ -280,42 +283,36 @@ void View::keyUp(Keycode key, KeyModifiers mod, bool repeat) {
     }
 }
 
-void View::renderAndRenderSubviews(Rectangle<int> viewport, double scale, boost::optional<Rectangle<int>> parentClippedBounds) {
+void View::renderAndRenderSubviews(const Rectangle<int>& viewport, double scale, boost::optional<Rectangle<int>> clipBounds) {
     if (!isVisible()) { return; }
+    auto windowRenderHeight = window()->height()*window()->renderScale();
 
-    glViewport(viewport.x, viewport.y, viewport.width, viewport.height);
+    glViewport(viewport.x, windowRenderHeight-viewport.bottom(), viewport.width, viewport.height);
     glEnable(GL_BLEND);
     glBlendFuncSeparate(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA, GL_ONE, GL_ONE);
 
     if (_clipped) {
-        auto clipBounds = viewport;
-        if (parentClippedBounds)  {
-            Point<int> topLeft    {std::max(parentClippedBounds->x, clipBounds.x),
-                                   std::max(parentClippedBounds->y, clipBounds.y)};
-            Point<int> bottomRight{std::min(parentClippedBounds->x + parentClippedBounds->width, clipBounds.x + clipBounds.width),
-                                   std::min(parentClippedBounds->y + parentClippedBounds->height, clipBounds.y + clipBounds.height)};
+        clipBounds = clipBounds ? clipBounds->intersection(viewport) : viewport;
+    }
 
-            if (bottomRight.x < topLeft.x) { topLeft.x = bottomRight.x; }
-            if (bottomRight.y < topLeft.y) { topLeft.y = bottomRight.y; }
-
-            clipBounds.x = topLeft.x;
-            clipBounds.y = topLeft.y;
-            clipBounds.width = bottomRight.x - topLeft.x;
-            clipBounds.height = bottomRight.y - topLeft.y;
-        }
-        parentClippedBounds = clipBounds;
-        glScissor(clipBounds.x, clipBounds.y, clipBounds.width, clipBounds.height);
+    if (clipBounds) {
         glEnable(GL_SCISSOR_TEST);
+        glScissor(clipBounds->x, windowRenderHeight-clipBounds->bottom(), clipBounds->width, clipBounds->height);
+    } else {
+        glDisable(GL_SCISSOR_TEST);
     }
 
     render();
 
     for (auto& subview : _subviews) {
-        Rectangle<int> subviewport(viewport.x + scale * subview->_bounds.x, viewport.y + scale * subview->_bounds.y, scale * subview->_bounds.width, scale * subview->_bounds.height);
-        subview->renderAndRenderSubviews(subviewport, scale, parentClippedBounds);
+        Rectangle<int> subviewport(viewport.x + scale * subview->_bounds.x,
+                                   viewport.y + scale * subview->_bounds.y,
+                                   scale * subview->_bounds.width,
+                                   scale * subview->_bounds.height);
+        subview->renderAndRenderSubviews(subviewport, scale, clipBounds);
     }
 
-    if (_clipped) {
+    if (clipBounds) {
         glDisable(GL_SCISSOR_TEST);
     }
 }

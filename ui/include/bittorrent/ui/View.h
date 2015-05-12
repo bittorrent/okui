@@ -61,13 +61,13 @@ public:
 
     void focus();
     void unfocus();
-    
+
     /**
-    * If the view receives an unhandled tab key down, focus will change to the given 
+    * If the view receives an unhandled tab key down, focus will change to the given
     * view (and shift+tab will do the opposite).
     */
     void setNextFocus(View* view);
-    
+
     /**
     * Returns the next available visible and focusable view if there is one.
     */
@@ -147,19 +147,18 @@ public:
     virtual void mouseDown(MouseButton button, int x, int y);
     virtual void mouseUp(MouseButton button, int x, int y);
     virtual void mouseWheel(int xPos, int yPos, int xWheel, int yWheel);
+	virtual void mouseDrag(int x, int y) {}
+    virtual void mouseMovement(int x, int y) {}
+    virtual void mouseEnter() {}
+    virtual void mouseExit() {}
 
     virtual void textInput(const std::string& text) {}
-        
+
     /**
     * Override these to handle keyboard events. Call the base implementation to pass on the event.
     */
     virtual void keyDown(Keycode key, KeyModifiers mod, bool repeat);
     virtual void keyUp(Keycode key, KeyModifiers mod, bool repeat);
-
-    virtual void mouseDrag(int x, int y) {}
-    virtual void mouseMovement(int x, int y) {}
-    virtual void mouseEnter() {}
-    virtual void mouseExit() {}
 
     virtual void focusGained() {}
     virtual void focusLost() {}
@@ -174,7 +173,7 @@ public:
     */
     virtual void disappeared() {}
 
-    void renderAndRenderSubviews(Rectangle<int> viewport, double scale, boost::optional<Rectangle<int>> clipBounds = boost::none);
+    void renderAndRenderSubviews(const Rectangle<int>& viewport, double scale, boost::optional<Rectangle<int>> clipBounds = boost::none);
     bool dispatchMouseDown(MouseButton button, int x, int y);
     bool dispatchMouseUp(MouseButton button, int x, int y);
     void dispatchMouseMovement(int x, int y);
@@ -200,7 +199,7 @@ private:
     Window*          _window = nullptr;
 
     View*            _subviewWithMouse = nullptr;
-    
+
     View*            _nextFocus = nullptr;
     View*            _previousFocus = nullptr;
 

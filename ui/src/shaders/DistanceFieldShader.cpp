@@ -13,10 +13,10 @@ DistanceFieldShader::DistanceFieldShader() {
         attribute vec2 positionAttrib;
         attribute vec4 colorAttrib;
         attribute vec2 textureCoordAttrib;
-        
+
         varying vec4 color;
         varying vec2 textureCoord;
-        
+
         void main() {
             color = colorAttrib;
             textureCoord = textureCoordAttrib;
@@ -34,10 +34,10 @@ DistanceFieldShader::DistanceFieldShader() {
     R"(
         varying vec4 color;
         varying vec2 textureCoord;
-        
+
         uniform sampler2D texture;
         uniform float edge;
-        
+
         void main() {
             vec4 sample = texture2D(texture, textureCoord);
     )"
@@ -53,9 +53,9 @@ DistanceFieldShader::DistanceFieldShader() {
             gl_FragColor = vec4(color.rgb, smoothstep(edge - aa, edge + aa, sample.a));
         }
     )", opengl::Shader::kFragmentShader);
-    
+
     _program.attachShaders(vsh, fsh);
-    
+
     _program.bindAttribute(kVertexPositionAttribute, "positionAttrib");
     _program.bindAttribute(kVertexColorAttribute, "colorAttrib");
     _program.bindAttribute(kVertexTextureCoordinateAttribute, "textureCoordAttrib");
@@ -65,7 +65,7 @@ DistanceFieldShader::DistanceFieldShader() {
 
     _program.uniform("texture") = 0;
     _edgeUniform = _program.uniform("edge");
-    
+
     if (!_program.error().empty()) {
         BT_LOG_ERROR("error creating shader: %s", _program.error().c_str());
         return;
@@ -83,21 +83,21 @@ void DistanceFieldShader::setTexture(GLuint id, double x, double y, double w, do
     if (_texture != id) {
         flush();
     }
-    
+
     _texture = id;
-    
+
     _transformation.transform(x, y, &_textureX1, &_textureY1);
-    
+
     double x2, y2;
     _transformation.transform(x + w, y + h, &x2, &y2);
-    
+
     _textureWidth  = x2 - _textureX1;
     _textureHeight = y2 - _textureY1;
 }
 
-void DistanceFieldShader::drawTriangle(double x1, double y1, double x2, double y2, double x3, double y3, Shader::Curve curve) {    
+void DistanceFieldShader::drawTriangle(double x1, double y1, double x2, double y2, double x3, double y3, Shader::Curve curve) {
 	assert(curve == kCurveNone);
-	
+
     _transformation.transform(x1, y1, &x1, &y1);
     _transformation.transform(x2, y2, &x2, &y2);
     _transformation.transform(x3, y3, &x3, &y3);
@@ -124,7 +124,7 @@ void DistanceFieldShader::drawTriangle(double x1, double y1, double x2, double y
 
 void DistanceFieldShader::flush() {
     if (_vertices.empty()) { return; }
-    
+
     _program.use();
     _edgeUniform = (GLfloat)_edge;
 
@@ -141,11 +141,11 @@ void DistanceFieldShader::flush() {
     glVertexAttribPointer(kVertexTextureCoordinateAttribute, 2, GL_FLOAT, GL_FALSE, stride, &_vertices[0].s);
 
     glDrawArrays(GL_TRIANGLES, 0, _vertices.size());
-    
+
     glDisableVertexAttribArray(kVertexTextureCoordinateAttribute);
     glDisableVertexAttribArray(kVertexColorAttribute);
     glDisableVertexAttribArray(kVertexPositionAttribute);
-    
+
     _vertices.clear();
 }
 

@@ -11,8 +11,8 @@ void ScrollView::setView(bittorrent::ui::View* view) {
 }
 
 void ScrollView::layout() {
-    if (_topView) {
-        _topView->setBounds(0, _topView->bounds().height, bounds().width, bounds().height);
+    if (_topView != nullptr) {
+        _topView->setBounds(0, 0, _topView->bounds().width, _topView->bounds().height);
     }
 }
 
@@ -21,16 +21,21 @@ void ScrollView::windowChanged() {
 }
 
 void ScrollView::mouseWheel(int xPos, int yPos, int xWheel, int yWheel) {
+    if (_topView == nullptr) { return; }
+
     static constexpr auto multiplier = 10.0f;
 
     auto topViewBounds = _topView->bounds();
     topViewBounds.x += xWheel * multiplier;
-    topViewBounds.y += -yWheel * multiplier;
+    topViewBounds.y += yWheel * multiplier;
 
-    if (topViewBounds.x + topViewBounds.width < bounds().width) { topViewBounds.x = bounds().width - topViewBounds.width; }
-    if (topViewBounds.x > 0) { topViewBounds.x = 0; }
-    if (topViewBounds.y + topViewBounds.height < bounds().height) { topViewBounds.y = bounds().height - topViewBounds.height; }
-    if (topViewBounds.y > 0) { topViewBounds.y = 0; }
+    auto bottom = topViewBounds.y + topViewBounds.height,
+         right = topViewBounds.x + topViewBounds.width;
+
+    if (topViewBounds.x > 0)                                  { topViewBounds.x = 0; }
+    else if (topViewBounds.x < 0 && right < bounds().width)   { topViewBounds.x += std::min(bounds().width - right, 0 - topViewBounds.x); }
+    if (topViewBounds.y > 0 )                                 { topViewBounds.y = 0; }
+    else if (topViewBounds.y < 0 && bottom < bounds().height) { topViewBounds.y += std::min(bounds().height - bottom, 0 - topViewBounds.y); }
 
     _topView->setBounds(topViewBounds.x, topViewBounds.y, topViewBounds.width, topViewBounds.height);
 }

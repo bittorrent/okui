@@ -112,6 +112,7 @@ inline void SDL::run() {
         if (now - lastFrameTime >= minFrameInterval) {
             for (auto& kv : _windows) {
                 SDL_GL_MakeCurrent(kv.second.sdlWindow, kv.second.context);
+                glDisable(GL_SCISSOR_TEST);
                 glClearColor(0.0, 0.0, 0.0, 0.0);
                 glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
                 _render(kv.second.window);
@@ -222,7 +223,7 @@ inline void SDL::_handleMouseMotionEvent(const SDL_MouseMotionEvent& event) {
 
     switch (event.type) {
         case SDL_MOUSEMOTION:
-            window->dispatchMouseMovement(event.x, window->height() - event.y);
+            window->dispatchMouseMovement(event.x, event.y);
             break;
         default:
             break;
@@ -235,10 +236,10 @@ inline void SDL::_handleMouseButtonEvent(const SDL_MouseButtonEvent& event) {
 
     switch (event.type) {
         case SDL_MOUSEBUTTONDOWN:
-            window->dispatchMouseDown(sMouseButton(event.button), event.x, window->height() - event.y);
+            window->dispatchMouseDown(sMouseButton(event.button), event.x, event.y);
             break;
         case SDL_MOUSEBUTTONUP:
-            window->dispatchMouseUp(sMouseButton(event.button), event.x, window->height() - event.y);
+            window->dispatchMouseUp(sMouseButton(event.button), event.x, event.y);
             break;
         default:
             break;
@@ -253,7 +254,7 @@ inline void SDL::_handleMouseWheelEvent(const SDL_MouseWheelEvent& event) {
         case SDL_MOUSEWHEEL: {
             int xPos = 0, yPos = 0;
             SDL_GetMouseState(&xPos, &yPos);
-            window->dispatchMouseWheel(xPos, window->height() - yPos, event.x, event.y);
+            window->dispatchMouseWheel(xPos, yPos, event.x, event.y);
             break;
         }
         default:

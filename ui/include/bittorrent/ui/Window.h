@@ -40,6 +40,7 @@ public:
 
     View* contentView() { return &_contentView; }
     double renderScale() const { return _renderScale; }
+    void setRenderScale(double scale) { _renderScale = scale; }
 
     ShaderCache* shaderCache() { return &_shaderCache; }
 

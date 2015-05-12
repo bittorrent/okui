@@ -13,18 +13,18 @@ using KeyModifiers = uint16_t;
  * Key modifiers (possibly OR'd together)
  */
 enum KeyModifier : KeyModifiers {
-    kNone                   = 0,
-    kLShift                 = 1 << 0,
-    kRShift                 = 1 << 1,
-    kLCtrl                  = 1 << 2,
-    kRCtrl                  = 1 << 3,
-    kLAlt                   = 1 << 4,
-    kRAlt                   = 1 << 5,
-    kLSuper                 = 1 << 6,  // https://en.wikipedia.org/wiki/Super_key_%28keyboard_button%29
-    kRSuper                 = 1 << 7,
-    kNum                    = 1 << 8,
-    kCaps                   = 1 << 9,
-    kMode                   = 1 << 10, // https://en.wikipedia.org/wiki/AltGr_key
+    kNone                   = 0b00000000000,
+    kLShift                 = 0b00000000001,
+    kRShift                 = 0b00000000010,
+    kLCtrl                  = 0b00000000100,
+    kRCtrl                  = 0b00000001000,
+    kLAlt                   = 0b00000010000,
+    kRAlt                   = 0b00000100000,
+    kLSuper                 = 0b00001000000, // https://en.wikipedia.org/wiki/Super_key_%28keyboard_button%29
+    kRSuper                 = 0b00010000000,
+    kNum                    = 0b00100000000,
+    kCaps                   = 0b01000000000,
+    kMode                   = 0b10000000000, // https://en.wikipedia.org/wiki/AltGr_key
 
     kCtrl                   = kLCtrl  | kRCtrl,
     kShift                  = kLShift | kRShift,

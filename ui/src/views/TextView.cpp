@@ -112,16 +112,14 @@ void TextView::_renderBitmapText(shaders::DistanceFieldShader* shader) {
     auto texture = _font->texture();
 
     auto lineSpacing = _font->lineSpacing() * fontScale;
-    auto textHeight = _lines.empty() ? 0.0 : (lineSpacing * _lines.size() - (lineSpacing - _font->capHeight() * fontScale));
+    auto textHeight = _lines.empty() ? 0.0 : (lineSpacing * _lines.size());
 
     auto y = 0.0;
     if (_verticalAlignment == VerticalAlignment::kCenter) {
         y = (bounds().height - textHeight) * 0.5;
-    } else if (_verticalAlignment == VerticalAlignment::kTop) {
+    } else if (_verticalAlignment == VerticalAlignment::kBottom) {
         y = bounds().height - textHeight;
     }
-
-    y += (lineSpacing * (_lines.size() - 1)) - _font->base() * fontScale;
 
     for (auto& line : _lines) {
         auto textWidth = _font->width(line.data(), line.size()) * fontScale;
@@ -147,7 +145,7 @@ void TextView::_renderBitmapText(shaders::DistanceFieldShader* shader) {
             }
         }
 
-        y -= lineSpacing;
+        y += lineSpacing;
     }
 }
 

@@ -2,7 +2,6 @@
 
 #include <chrono>
 #include <list>
-
 #include <cmath>
 
 namespace bittorrent {
@@ -10,7 +9,7 @@ namespace ui {
 
 namespace Interpolation {
 	using Function = double(*)(double);
-	
+
 	static constexpr double Linear(double p) { return p; }
 	static double EaseInExpo(double p) { return pow(2, 10.0 * (p - 1.0)); }
 	static double EaseOutExpo(double p) { return 1.0 - pow(2, -10.0 * p); }
@@ -39,7 +38,7 @@ public:
 		_start = Clock::now();
 		_end = _start + duration;
 	}
-	
+
 	T target() const { return _target; }
 
 	void reset(const T& value) {
@@ -48,14 +47,14 @@ public:
 		_start = Clock::time_point::min();
 		_end = Clock::time_point::min();
 	}
-	
+
 	typename Clock::time_point end() const { return _end; }
 
 private:
 	T _initial;
 	T _target;
 	Interpolation::Function _interpolation = nullptr;
-	
+
 	typename Clock::time_point _start;
 	typename Clock::time_point _end;
 };
@@ -74,7 +73,7 @@ public:
 		}
 		return _animation.current();
 	}
-	
+
 	template <typename... Args>
 	void target(const T& target, typename Clock::duration duration, Args&&... args) {
 		_chain.clear();
@@ -88,12 +87,12 @@ public:
 		_animation.target(target, duration, interpolation);
 		_appendTargets(std::forward<Args>(args)...);
 	}
-	
+
 	void reset(const T& value) {
 		_chain.clear();
 		_animation.reset(value);
 	}
-	
+
 private:
 	Animation<T, Clock> _animation;
 	std::list<std::tuple<T, typename Clock::duration, Interpolation::Function>> _chain;

@@ -68,11 +68,11 @@ void BitmapFont::_parseMetadataLine(const char* line) {
         glyph.textureWidth  = glyph.width * textureScale;
         glyph.textureHeight = glyph.height * textureScale;
         glyph.textureX      = sLineParameter("x", line) * textureScale;
-        glyph.textureY      = (_scaleH - sLineParameter("y", line)) * textureScale - glyph.textureHeight;
+        glyph.textureY      = sLineParameter("y", line) * textureScale;
         glyph.xOffset       = sLineParameter("xoffset", line);
-        glyph.yOffset       = _lineSpacing - glyph.height - sLineParameter("yoffset", line);;
+        glyph.yOffset       = sLineParameter("yoffset", line);
         glyph.xAdvance      = sLineParameter("xadvance", line);
-        
+
         if (strchr("ABCDEFGHIKLMNOPRSTUVWXYZ", id)) {
             _capHeight = std::max(glyph.height - _padding * 2, _capHeight);
         }
