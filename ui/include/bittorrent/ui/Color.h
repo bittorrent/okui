@@ -20,6 +20,10 @@ struct Color {
         return *this * (1.0 - factor) + other * factor;
     }
 
+    bool operator==(const Color& other) const {
+        return r == other.r && g == other.g && b == other.b && a == other.a;
+    }
+
     double r{1.0}, g{1.0}, b{1.0}, a{1.0};
 };
 

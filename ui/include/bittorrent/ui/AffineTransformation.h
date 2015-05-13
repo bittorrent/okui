@@ -26,6 +26,18 @@ public:
 		*yOut = x * _sxSinR + y * _syCosR + _tyF;
 	}
 
+    static AffineTransformation Translation(double x, double y) {
+        return AffineTransformation(x, y);
+    }
+
+    static AffineTransformation Rotation(double r) {
+        return AffineTransformation(0.0, 0.0, 0.0, 0.0, 1.0, 1.0, r);
+    }
+
+    static AffineTransformation Scale(double x, double y) {
+        return AffineTransformation(0.0, 0.0, 0.0, 0.0, x, y);
+    }
+
 private:
 	double _sxCosR, _sySinR, _sxSinR, _syCosR, _txF, _tyF;
 };

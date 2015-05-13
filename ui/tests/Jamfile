@@ -1,0 +1,4 @@
+exe ui_tests
+	: [ glob *.cpp ] ..//ui ../../third-party/gtest//gtest_main
+	: <conditional>@require-desktop
+;
