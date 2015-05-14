@@ -23,11 +23,15 @@ public:
 	    Attachment(int width, int height);
 	    ~Attachment();
 	
+	    int width() const { return _width; }
+	    int height() const { return _height; }
+	
 	    GLuint texture() const { return _texture; }
 	    GLuint releaseTexture();
 
 	private:
 	    GLuint _texture = 0;
+	    int _width, _height;
 	};
 	
 	Attachment* addColorAttachment(int width, int height);

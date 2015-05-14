@@ -42,7 +42,7 @@ Framebuffer::Attachment* Framebuffer::addColorAttachment(int width, int height) 
     return &attachment;
 }
 
-Framebuffer::Attachment::Attachment(int width, int height) {
+Framebuffer::Attachment::Attachment(int width, int height) : _width(width), _height(height) {
     glGenTextures(1, &_texture);
 
     glActiveTexture(GL_TEXTURE0);
