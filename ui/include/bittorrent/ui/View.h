@@ -164,9 +164,19 @@ public:
     virtual void focusLost() {}
 
     /**
+    * Called before the view and all of its ancestors become visible in the window.
+    */
+    virtual void willAppear() {}
+        
+    /**
     * Called when the view and all of its ancestors become visible in the window.
     */
     virtual void appeared() {}
+
+    /**
+    * Called before the view or one of its ancestors become invisible in the window.
+    */
+    virtual void willDisappear() {}
 
     /**
     * Called when the view or one of its ancestors become invisible in the window.
@@ -203,6 +213,8 @@ private:
     View*            _nextFocus = nullptr;
     View*            _previousFocus = nullptr;
 
+    void _dispatchFutureVisibilityChange(bool visible);
+    void _dispatchVisibilityChange(bool visible);
     void _dispatchWindowChange(Window* window);
     void _mouseExit();
 };

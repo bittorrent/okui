@@ -14,6 +14,10 @@ View::~View() {
     if (_previousFocus) {
         _previousFocus->_nextFocus = _nextFocus;
     }
+    
+    while (!_subviews.empty()) {
+        removeSubview(*_subviews.begin());
+    }
 
     if (superview()) {
         superview()->removeSubview(this);
@@ -26,6 +30,10 @@ void View::addSubview(View* view) {
     }
 
     bool isViewAppearance = view->isVisible() && window() && ancestorsAreVisible();
+
+    if (isViewAppearance) {
+        view->_dispatchFutureVisibilityChange(true);
+    }
 
     if (view->superview()) {
         if (view->superview()->window() && view->superview()->ancestorsAreVisible()) {
@@ -44,7 +52,7 @@ void View::addSubview(View* view) {
     }
 
     if (isViewAppearance) {
-        view->appeared();
+        view->_dispatchVisibilityChange(true);
     }
 }
 
@@ -56,6 +64,10 @@ void View::removeSubview(View* view) {
     view->unfocus();
 
     bool isViewDisappearance = view->isVisible() && view->window() && view->ancestorsAreVisible();
+
+    if (isViewDisappearance) {
+        view->_dispatchFutureVisibilityChange(false);
+    }
 
     if (_subviewWithMouse == view) {
         _subviewWithMouse = nullptr;
@@ -74,17 +86,25 @@ void View::removeSubview(View* view) {
     }
 
     if (isViewDisappearance) {
-        view->disappeared();
+        view->_dispatchVisibilityChange(false);
     }
 }
 
 void View::setIsVisible(bool isVisible) {
     if (_isVisible == isVisible) { return; }
 
+    if (window() && ancestorsAreVisible()) {
+        if (isVisible) {
+            willAppear();
+        } else {
+            willDisappear();
+        }
+    }
+    
     _isVisible = isVisible;
 
     if (window() && ancestorsAreVisible()) {
-        if (_isVisible) {
+        if (isVisible) {
             appeared();
         } else {
             disappeared();
@@ -425,6 +445,34 @@ void View::dispatchKeyDown(Keycode key, KeyModifiers mod, bool repeat) {
 void View::dispatchKeyUp(Keycode key, KeyModifiers mod, bool repeat) {
     if (!isVisible()) { return; }
     keyUp(key, mod, repeat);
+}
+
+void View::_dispatchFutureVisibilityChange(bool visible) {
+    if (visible) {
+        willAppear();
+    } else {
+        willDisappear();
+    }
+
+    for (auto& subview : _subviews) {
+        if (visible == subview->_isVisible) {
+            subview->_dispatchFutureVisibilityChange(visible);
+        }
+    }
+}
+
+void View::_dispatchVisibilityChange(bool visible) {
+    if (visible) {
+        appeared();
+    } else {
+        disappeared();
+    }
+
+    for (auto& subview : _subviews) {
+        if (visible == subview->_isVisible) {
+            subview->_dispatchVisibilityChange(visible);
+        }
+    }
 }
 
 void View::_dispatchWindowChange(Window* window) {
