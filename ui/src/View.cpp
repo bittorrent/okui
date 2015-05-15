@@ -303,7 +303,7 @@ void View::keyUp(Keycode key, KeyModifiers mod, bool repeat) {
     }
 }
 
-void View::renderAndRenderSubviews(const RenderTarget* target, const Rectangle<int>& area, double scale, boost::optional<Rectangle<int>> clipBounds) {
+void View::renderAndRenderSubviews(const RenderTarget* target, const Rectangle<int>& area, boost::optional<Rectangle<int>> clipBounds) {
     if (!isVisible()) { return; }
 
     glViewport(area.x, target->height() - area.maxY(), area.width, area.height);
@@ -323,12 +323,15 @@ void View::renderAndRenderSubviews(const RenderTarget* target, const Rectangle<i
 
     render();
 
+    auto xScale = (_bounds.width ? (double)area.width / _bounds.width : 1.0);
+    auto yScale = (_bounds.height ? (double)area.height / _bounds.height : 1.0);
+
     for (auto& subview : _subviews) {
-        Rectangle<int> subarea(area.x + scale * subview->_bounds.x,
-                               area.y + scale * subview->_bounds.y,
-                               scale * subview->_bounds.width,
-                               scale * subview->_bounds.height);
-        subview->renderAndRenderSubviews(target, subarea, scale, clipBounds);
+        Rectangle<int> subarea(area.x + xScale * subview->_bounds.x,
+                               area.y + yScale * subview->_bounds.y,
+                               xScale * subview->_scale.x * subview->_bounds.width,
+                               yScale * subview->_scale.y * subview->_bounds.height);
+        subview->renderAndRenderSubviews(target, subarea, clipBounds);
     }
 
     if (clipBounds) {

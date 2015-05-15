@@ -47,6 +47,12 @@ public:
 
     void setIsVisible(bool isVisible = true);
     bool isVisible() const { return _isVisible; }
+        
+    /**
+    * Allows scaling of the view by a particular factor.
+    */
+    void setScale(double scale) { setScale(scale, scale); }
+    void setScale(double scaleX, double scaleY) { _scale.x = scaleX; _scale.y = scaleY; }
 
     /**
     * Returns true if the view's ancestors are visible or if the view has no ancestors.
@@ -189,11 +195,9 @@ public:
     * Renders the view and its subviews.
     *
     * @param area the area within the target to render to. the view will fill this area
-    * @param scale the scale that children are rendered at. the view will fill the area, unaffected by this, but
-    *              if, for example, scale is 0.5, the children will be rendered at half size
     * @param clipBounds the bounds within the target to clip rendering of the view and its children to
     */
-    void renderAndRenderSubviews(const RenderTarget* target, const Rectangle<int>& area, double scale, boost::optional<Rectangle<int>> clipBounds = boost::none);
+    void renderAndRenderSubviews(const RenderTarget* target, const Rectangle<int>& area, boost::optional<Rectangle<int>> clipBounds = boost::none);
 
     bool dispatchMouseDown(MouseButton button, int x, int y);
     bool dispatchMouseUp(MouseButton button, int x, int y);
@@ -223,6 +227,8 @@ private:
 
     View*            _nextFocus = nullptr;
     View*            _previousFocus = nullptr;
+    
+    Point<double>    _scale{1.0, 1.0};
 
     void _dispatchFutureVisibilityChange(bool visible);
     void _dispatchVisibilityChange(bool visible);

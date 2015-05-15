@@ -193,7 +193,7 @@ void Window::_render() {
 
     Rectangle<int> area(0, 0, _contentView.bounds().width * _renderScale, _contentView.bounds().height * _renderScale);
     RenderTarget target(area.width, area.height);
-    _contentView.renderAndRenderSubviews(&target, area, _renderScale);
+    _contentView.renderAndRenderSubviews(&target, area);
 }
 
 void Window::_didResize(int width, int height) {
