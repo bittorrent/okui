@@ -303,21 +303,20 @@ void View::keyUp(Keycode key, KeyModifiers mod, bool repeat) {
     }
 }
 
-void View::renderAndRenderSubviews(const Rectangle<int>& viewport, double scale, boost::optional<Rectangle<int>> clipBounds) {
+void View::renderAndRenderSubviews(const RenderTarget* target, const Rectangle<int>& area, double scale, boost::optional<Rectangle<int>> clipBounds) {
     if (!isVisible()) { return; }
-    auto windowRenderHeight = window()->height()*window()->renderScale();
 
-    glViewport(viewport.x, windowRenderHeight-viewport.bottom(), viewport.width, viewport.height);
+    glViewport(area.x, target->height() - area.maxY(), area.width, area.height);
     glEnable(GL_BLEND);
     glBlendFuncSeparate(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA, GL_ONE, GL_ONE);
 
     if (_clipped) {
-        clipBounds = clipBounds ? clipBounds->intersection(viewport) : viewport;
+        clipBounds = clipBounds ? clipBounds->intersection(area) : area;
     }
 
     if (clipBounds) {
         glEnable(GL_SCISSOR_TEST);
-        glScissor(clipBounds->x, windowRenderHeight-clipBounds->bottom(), clipBounds->width, clipBounds->height);
+        glScissor(clipBounds->x, target->height() - clipBounds->maxY(), clipBounds->width, clipBounds->height);
     } else {
         glDisable(GL_SCISSOR_TEST);
     }
@@ -325,11 +324,11 @@ void View::renderAndRenderSubviews(const Rectangle<int>& viewport, double scale,
     render();
 
     for (auto& subview : _subviews) {
-        Rectangle<int> subviewport(viewport.x + scale * subview->_bounds.x,
-                                   viewport.y + scale * subview->_bounds.y,
-                                   scale * subview->_bounds.width,
-                                   scale * subview->_bounds.height);
-        subview->renderAndRenderSubviews(subviewport, scale, clipBounds);
+        Rectangle<int> subarea(area.x + scale * subview->_bounds.x,
+                               area.y + scale * subview->_bounds.y,
+                               scale * subview->_bounds.width,
+                               scale * subview->_bounds.height);
+        subview->renderAndRenderSubviews(target, subarea, scale, clipBounds);
     }
 
     if (clipBounds) {

@@ -1,9 +1,11 @@
 #pragma once
+
 #include "bittorrent/ui/config.h"
 #include "bittorrent/ui/Keycode.h"
 #include "bittorrent/ui/MouseButton.h"
 #include "bittorrent/ui/Point.h"
 #include "bittorrent/ui/Rectangle.h"
+#include "bittorrent/ui/RenderTarget.h"
 #include "bittorrent/ui/ShaderCache.h"
 #include "bittorrent/ui/shaders/BoxShadowShader.h"
 #include "bittorrent/ui/shaders/ColorShader.h"
@@ -183,7 +185,16 @@ public:
     */
     virtual void disappeared() {}
 
-    void renderAndRenderSubviews(const Rectangle<int>& viewport, double scale, boost::optional<Rectangle<int>> clipBounds = boost::none);
+    /**
+    * Renders the view and its subviews.
+    *
+    * @param area the area within the target to render to. the view will fill this area
+    * @param scale the scale that children are rendered at. the view will fill the area, unaffected by this, but
+    *              if, for example, scale is 0.5, the children will be rendered at half size
+    * @param clipBounds the bounds within the target to clip rendering of the view and its children to
+    */
+    void renderAndRenderSubviews(const RenderTarget* target, const Rectangle<int>& area, double scale, boost::optional<Rectangle<int>> clipBounds = boost::none);
+
     bool dispatchMouseDown(MouseButton button, int x, int y);
     bool dispatchMouseUp(MouseButton button, int x, int y);
     void dispatchMouseMovement(int x, int y);
