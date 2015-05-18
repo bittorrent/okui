@@ -21,12 +21,6 @@ struct Rectangle {
     T minY() const { return y; }
     T maxY() const { return y + height; }
 
-    // TODO: remove these?
-    T left() const { return minX(); }
-    T right() const { return maxX(); }
-    T top() const { return minY(); }
-    T bottom() const { return maxY(); }
-
     /**
     * Tests if the rectangle contains the given point. 
     *
