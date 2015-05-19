@@ -20,6 +20,7 @@ public:
     ~SDL();
 
     virtual void run() override;
+    virtual void quit() override;
 
     virtual void openWindow(Window* window, const char* title, int x, int y, int width, int height) override;
     virtual void closeWindow(Window* window) override;
@@ -107,6 +108,8 @@ inline void SDL::run() {
 
         work();
 
+        if (shouldQuit) { break; }
+
         auto now = std::chrono::steady_clock::now();
 
         if (now - lastFrameTime >= minFrameInterval) {
@@ -125,6 +128,12 @@ inline void SDL::run() {
         } // @autoreleasepool
 #endif
     }
+}
+
+inline void SDL::quit() {
+    SDL_Event event;
+    event.type = SDL_QUIT;
+    SDL_PushEvent(&event);
 }
 
 inline void SDL::openWindow(Window* window, const char* title, int x, int y, int width, int height) {

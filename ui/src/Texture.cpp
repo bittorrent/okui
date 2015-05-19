@@ -71,8 +71,28 @@ GLuint Texture::load(opengl::TextureCache* textureCache) {
 
     auto colorType = png_get_color_type(png, info);
     int bytesPerRow = png_get_rowbytes(png, info);
+    
+    int bitDepth = png_get_bit_depth(png, info);
+    if (bitDepth != 8 && bitDepth != 16) {
+        BT_LOG_ERROR("unsupported bit depth");
+        png_destroy_read_struct(&png, &info, nullptr);
+        return 0;
+    }
+        
+    if (bitDepth > 8) {
+        // libpng stores pixels as big endian. we need them in native endianness for opengl
+        union {
+            uint32_t i;
+            char c[4];
+        } u = {0x01020304};
 
-    BT_ASSERT(bytesPerRow == ((colorType & PNG_COLOR_MASK_ALPHA) ? 4 : 3) * _width);
+        if (u.c[0] != 1) {
+            // we're not big endian. swap
+            png_set_swap(png);
+        }
+    }
+
+    BT_ASSERT(bytesPerRow == ((colorType & PNG_COLOR_MASK_ALPHA) ? 4 : 3) * (bitDepth >> 3) * _width);
 
     // align rows to 4-byte boundaries
     if (bytesPerRow % 4) {
@@ -101,7 +121,7 @@ GLuint Texture::load(opengl::TextureCache* textureCache) {
     glPixelStorei(GL_UNPACK_ALIGNMENT, 4);
 
     auto format = (colorType & PNG_COLOR_MASK_ALPHA) ? GL_RGBA : GL_RGB;
-    glTexImage2D(GL_TEXTURE_2D, 0, format, _width, _height, 0, format, GL_UNSIGNED_BYTE, image);
+    glTexImage2D(GL_TEXTURE_2D, 0, format, _width, _height, 0, format, bitDepth == 8 ? GL_UNSIGNED_BYTE : GL_UNSIGNED_SHORT, image);
 
     glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
     glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);

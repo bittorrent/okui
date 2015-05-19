@@ -32,6 +32,11 @@ public:
     * Override this to set up the main run loop. The run loop must regularly call work().
     */
     virtual void run() = 0;
+    
+    /**
+    * A call to this method should cause the main loop to end and run() to return.
+    */
+    virtual void quit() = 0;
 
     virtual void openWindow(Window* window, const char* title, int x, int y, int width, int height) = 0;
     virtual void closeWindow(Window* window) = 0;

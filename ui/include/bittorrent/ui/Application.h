@@ -43,6 +43,8 @@ public:
     void backgroundTask(std::function<void()> task);
 
     void run();
+    
+    void quit();
 
 private:
     std::string _name;

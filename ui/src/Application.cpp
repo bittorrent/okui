@@ -38,4 +38,8 @@ void Application::run() {
     _platform->run();
 }
 
+void Application::quit() {
+    _platform->quit();
+}
+
 }}
