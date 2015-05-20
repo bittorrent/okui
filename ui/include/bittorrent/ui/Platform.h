@@ -96,7 +96,17 @@ public:
     *
     * @param action the action to be taken once a choice is made
     */
-    virtual void openDialog(Window* window, const char* title, const char* message, const std::vector<std::string>& buttons, std::function<void(int)> action) = 0;
+    virtual void openDialog(Window* window, const char* title, const char* message, const std::vector<std::string>& buttons, std::function<void(int)> action = std::function<void(int)>()) = 0;
+
+    /**
+    * Returns the name of the operating system.
+    */
+    virtual std::string operatingSystem() const { return "Unknown"; }
+
+    /**
+    * Enables or disables the screen saver.
+    */
+    virtual void setScreenSaverEnabled(bool enabled = true) {}
 
 protected:
     void _render(Window* window) { window->_render(); }

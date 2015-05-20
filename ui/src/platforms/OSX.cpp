@@ -45,8 +45,10 @@ void OSX::openDialog(Window* window, const char* title, const char* message, con
     for (auto& button : buttons) {
         [alert addButtonWithTitle:[NSString stringWithUTF8String:button.c_str()]];
     }
-    [alert beginSheetModalForWindow:nativeWindow(window) completionHandler:^(NSModalResponse returnCode) {
-        action(returnCode - NSAlertFirstButtonReturn);
+    [alert beginSheetModalForWindow:(window ? nativeWindow(window) : [NSApp keyWindow]) completionHandler:^(NSModalResponse returnCode) {
+        if (action) {
+            action(returnCode - NSAlertFirstButtonReturn);
+        }
     }];
 }
 

@@ -52,7 +52,9 @@ void IOS::openDialog(Window* window, const char* title, const char* message, con
         [alert addButtonWithTitle:[NSString stringWithUTF8String:button.c_str()]];
     }
     [AlertViewHelper showAlertView:alert withCompletionHandler:^(NSInteger buttonIndex) {
-        action(buttonIndex);
+        if (action) {
+            action(buttonIndex);
+        }
     }];
 }
 

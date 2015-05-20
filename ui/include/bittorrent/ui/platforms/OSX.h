@@ -27,7 +27,7 @@ public:
     virtual bool canOpenURL(const char* url) const override;
     virtual bool openURL(const char* url) override;
 
-    virtual void openDialog(Window* window, const char* title, const char* message, const std::vector<std::string>& buttons, std::function<void(int)> action) override;
+    virtual void openDialog(Window* window, const char* title, const char* message, const std::vector<std::string>& buttons, std::function<void(int)> action = std::function<void(int)>()) override;
 };
 
 }}}

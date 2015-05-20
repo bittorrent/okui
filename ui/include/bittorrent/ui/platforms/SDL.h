@@ -46,6 +46,9 @@ public:
     virtual void startTextInput() override;
     virtual void stopTextInput() override;
 
+    virtual std::string operatingSystem() const override { return SDL_GetPlatform(); }
+    virtual void setScreenSaverEnabled(bool enabled = true) override { enabled ? SDL_EnableScreenSaver() : SDL_DisableScreenSaver(); }
+
 #if BT_MAC_OS_X
     NSWindow* nativeWindow(Window* window) const override;
 #endif
