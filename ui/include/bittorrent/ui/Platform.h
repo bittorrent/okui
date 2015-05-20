@@ -64,7 +64,7 @@ public:
     /**
     * The default set of modifiers to apply to shortcuts.
     */
-    virtual KeyModifier defaultShortcutModifier() { return KeyModifier::kCtrl; }
+    virtual KeyModifier defaultShortcutModifier() const { return KeyModifier::kCtrl; }
     
     /**
     * Should return true if the platform has some sort of file browser or mechanism for selecting files.
@@ -80,6 +80,23 @@ public:
     * @param action the action to be taken once a selection is made
     */
     virtual void selectFiles(bool allowFiles, bool allowDirectories, bool allowMultiple, std::function<void(std::vector<std::string>)> action) { BT_ASSERT(false); }
+
+    /**
+    * Should return true if the platform can open the given URL.
+    */
+    virtual bool canOpenURL(const char* url) const { return false; }
+
+    /**
+    * Should open the given URL.
+    */
+    virtual bool openURL(const char* url) { return false; }
+
+    /**
+    * Opens up a dialog.
+    *
+    * @param action the action to be taken once a choice is made
+    */
+    virtual void openDialog(Window* window, const char* title, const char* message, const std::vector<std::string>& buttons, std::function<void(int)> action) = 0;
 
 protected:
     void _render(Window* window) { window->_render(); }

@@ -9,6 +9,7 @@
 #include <unordered_map>
 
 #include <SDL2/SDL.h>
+#include <SDL2/SDL_syswm.h>
 
 namespace bittorrent {
 namespace ui {
@@ -39,6 +40,10 @@ public:
     virtual void startTextInput() override;
     virtual void stopTextInput() override;
 
+#if BT_MAC_OS_X
+    NSWindow* nativeWindow(Window* window) const override;
+#endif
+
 private:
     struct WindowInfo {
         WindowInfo() {}
@@ -50,8 +55,8 @@ private:
         SDL_GLContext context;
     };
 
-    Window* _window(uint32_t id);
-    SDL_Window* _sdlWindow(Window* window);
+    Window* _window(uint32_t id) const;
+    SDL_Window* _sdlWindow(Window* window) const;
 
     void _handleMouseMotionEvent (const SDL_MouseMotionEvent& e);
     void _handleMouseButtonEvent (const SDL_MouseButtonEvent& e);
@@ -216,14 +221,42 @@ inline void SDL::stopTextInput() {
     SDL_StopTextInput();
 }
 
-inline Window* SDL::_window(uint32_t id) {
+#if BT_MAC_OS_X
+inline NSWindow* SDL::nativeWindow(Window* window) const {
+    if (auto w = _sdlWindow(window)) {
+        // XXX: SDL_SysWMinfo's default constructor and destructor are deleted...
+        union Hack {
+            Hack() {}
+            ~Hack() {}
+            SDL_SysWMinfo info;
+        };
+        Hack hack;
+        auto& info = hack.info;
+        SDL_VERSION(&info.version);
+        if (SDL_GetWindowWMInfo(w, &info) != SDL_TRUE) {
+            return nil;
+        }
+        BT_ASSERT(info.subsystem == SDL_SYSWM_COCOA);
+        if (info.subsystem != SDL_SYSWM_COCOA) {
+            return nil;
+        }
+        return info.info.cocoa.window;
+    }
+    return nil;
+}
+#endif
+
+inline Window* SDL::_window(uint32_t id) const {
     auto it = _windows.find(id);
     return it == _windows.end() ? nullptr : it->second.window;
 }
 
-inline SDL_Window* SDL::_sdlWindow(Window* window) {
+inline SDL_Window* SDL::_sdlWindow(Window* window) const {
     auto it = _windowIds.find(window);
-    return it == _windowIds.end() ? nullptr : _windows[it->second].sdlWindow;
+    if (it == _windowIds.end()) {
+        return nullptr;
+    }
+    return _windows.find(it->second)->second.sdlWindow;
 }
 
 inline void SDL::_handleMouseMotionEvent(const SDL_MouseMotionEvent& event) {
