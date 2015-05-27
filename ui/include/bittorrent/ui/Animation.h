@@ -53,7 +53,7 @@ public:
 private:
 	T _initial;
 	T _target;
-	Interpolation::Function _interpolation = nullptr;
+	Interpolation::Function _interpolation = Interpolation::Linear;
 
 	typename Clock::time_point _start;
 	typename Clock::time_point _end;
