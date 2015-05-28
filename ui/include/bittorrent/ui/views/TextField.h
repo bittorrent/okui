@@ -14,7 +14,19 @@ public:
 
     TextField();
 
+    /**
+    * The change action is invoked any time the field's text is changed.
+    */
     void setChangeAction(Action action) { _changeAction = std::move(action); }
+        
+    /**
+    * The blur action is invoked any time the field loses focus.
+    */
+    void setBlurAction(Action action) { _blurAction = std::move(action); }
+
+    /**
+    * The return action is invoked any time the return key is hit while the field has focus.
+    */
     void setReturnAction(Action action) { _returnAction = std::move(action); }
 
     const std::string& text() const { return _text; }
@@ -59,6 +71,7 @@ private:
     TextView     _textView;
     View         _textViewClip;
     Action       _returnAction;
+    Action       _blurAction;
     Action       _changeAction;
     bool         _concealsText = false;
     bool         _isEnabled = true;

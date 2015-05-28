@@ -63,6 +63,9 @@ void TextField::focusGained() {
 
 void TextField::focusLost() {
     application()->platform()->stopTextInput();
+    if (_blurAction) {
+        _blurAction();
+    }
 }
 
 void TextField::keyDown(Keycode key, KeyModifiers mod, bool repeat) {
