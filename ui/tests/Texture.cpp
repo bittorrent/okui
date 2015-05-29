@@ -1,8 +1,7 @@
 #include "gtest/gtest.h"
 
-#include "TestApplication.h"
+#include "RenderOnce.h"
 #include "bittorrent/ui/Texture.h"
-#include "bittorrent/ui/Window.h"
 
 using namespace bittorrent;
 using namespace bittorrent::ui;
@@ -17,55 +16,34 @@ struct Pixel {
 #include "TexturePixels.h"
 
 static void TextureTest(const unsigned char* imageData, size_t imageDataSize, int width, int height, const Pixel* expectedPixels) {
-    TestApplication application;
+    std::shared_ptr<Texture> texture;
 
-    bool didRender = false;
+    RenderOnce([&](View* view) {
+        texture = view->window()->loadTextureFromMemory(std::make_shared<std::string>((const char*)imageData, imageDataSize));
 
-    struct TestWindow : Window {
-        TestWindow(Application* application, bool* didRender, const unsigned char* imageData, size_t imageDataSize, int width, int height, const Pixel* expectedPixels)
-            : Window(application), didRender(didRender), expectedPixels(expectedPixels)
-        {
-            texture = loadTextureFromMemory(std::make_shared<std::string>((const char*)imageData, imageDataSize));
-            
-            EXPECT_NE(texture, nullptr);
-            
-            EXPECT_FALSE(texture->isLoaded());
-            
-            EXPECT_EQ(texture->width(), width);
-            EXPECT_EQ(texture->height(), height);
-        }
+        EXPECT_NE(texture, nullptr);
         
-        virtual void render() override {
-            EXPECT_TRUE(texture->isLoaded());
+        EXPECT_FALSE(texture->isLoaded());
+        
+        EXPECT_EQ(texture->width(), width);
+        EXPECT_EQ(texture->height(), height);
+    }, [&](View* view) {
+        EXPECT_TRUE(texture->isLoaded());
 
-            std::vector<Pixel> pixels;
-            pixels.resize(texture->width() * texture->height());            
-            
-            glBindTexture(GL_TEXTURE_2D, texture->id());
-            glGetTexImage(GL_TEXTURE_2D, 0, GL_RGBA, GL_UNSIGNED_BYTE, pixels.data());
+        std::vector<Pixel> pixels;
+        pixels.resize(texture->width() * texture->height());            
+        
+        glBindTexture(GL_TEXTURE_2D, texture->id());
+        glGetTexImage(GL_TEXTURE_2D, 0, GL_RGBA, GL_UNSIGNED_BYTE, pixels.data());
 
-            for (int y = 0; y < texture->height(); ++y) {
-                for (int x = 0; x < texture->width(); ++x) {
-                    auto& pixel = pixels[x + texture->width() * y];
-                    auto& expected = expectedPixels[x + texture->width() * y];
-                    EXPECT_EQ(pixel, expected);
-                }
+        for (int y = 0; y < texture->height(); ++y) {
+            for (int x = 0; x < texture->width(); ++x) {
+                auto& pixel = pixels[x + texture->width() * y];
+                auto& expected = expectedPixels[x + texture->width() * y];
+                EXPECT_EQ(pixel, expected);
             }
-            
-            *didRender = true;
-            application()->quit();
         }
-        
-        bool* didRender = nullptr;
-        const Pixel* expectedPixels = nullptr;
-        std::shared_ptr<Texture> texture;
-    } window(&application, &didRender, imageData, imageDataSize, width, height, expectedPixels);
-    
-    window.open();
-
-    application.run();
-
-    EXPECT_TRUE(didRender);
+    });    
 }
 
 TEST(Texture, png16BitRGB) {

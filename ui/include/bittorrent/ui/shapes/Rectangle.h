@@ -1,6 +1,7 @@
 #pragma once
 
 #include "bittorrent/ui/config.h"
+#include "bittorrent/ui/Rectangle.h"
 
 namespace bittorrent {
 namespace ui {
@@ -11,6 +12,8 @@ namespace shapes {
 
 class Rectangle {
 public:
+    Rectangle(const bittorrent::ui::Rectangle<double>& r) : Rectangle(r.x, r.y, r.width, r.height) {}
+
 	Rectangle(double x, double y, double w, double h)
 		: x(x), y(y), w(w), h(h) {}
 	

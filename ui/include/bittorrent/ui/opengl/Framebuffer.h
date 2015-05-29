@@ -4,7 +4,7 @@
 
 #include "bittorrent/ui/opengl/OpenGL.h"
 
-#include <vector>
+#include <list>
 
 namespace bittorrent {
 namespace ui {
@@ -20,14 +20,18 @@ public:
 	
 	class Attachment {
 	public:
-	    Attachment(int width, int height);
+	    Attachment(int width, int height, bool isDepthStencil = false);
 	    ~Attachment();
 	
 	    int width() const { return _width; }
 	    int height() const { return _height; }
 	
 	    GLuint texture() const { return _texture; }
-	    GLuint releaseTexture();
+	        
+	    /**
+	    * Relinquishes ownership of the texture to the caller.
+	    */
+	    GLuint relinquishTexture();
 
 	private:
 	    GLuint _texture = 0;
@@ -35,10 +39,14 @@ public:
 	};
 	
 	Attachment* addColorAttachment(int width, int height);
+#ifndef OPENGL_ES
+	Attachment* addDepthStencilAttachment(int width, int height);
+#endif
 
 private:
 	GLuint _framebuffer = 0;
-	std::vector<Attachment> _attachments;
+	std::list<Attachment> _attachments;
+	int _colorAttachments = 0;
 	std::vector<GLenum> _drawBuffers;
 };
 

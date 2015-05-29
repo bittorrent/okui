@@ -1,5 +1,8 @@
 #pragma once
+
 #include "bittorrent/ui/Point.h"
+
+#include <cmath>
 
 namespace bittorrent {
 namespace ui {
@@ -30,9 +33,16 @@ struct Rectangle {
     bool contains(T x, T y) const;
     bool contains(const Point<T>& p) const { return contains(p.x, p.y); }
 
+    /**
+    * Returns the distance from the given point to the edge of the rectangle.
+    *
+    * The returned distance is negative if the point is inside the rectangle.
+    */
+    double distance(T x, T y) const;
+
     bool intersects(const Rectangle& other) const;
     Rectangle intersection(const Rectangle& other) const;
-
+    
     bool operator==(const Rectangle& other) const {
         return x == other.x && y == other.y && width == other.width && height == other.height;
     }
@@ -65,8 +75,17 @@ Rectangle<T>::Rectangle(T x, T y, T width, T height)
 
 template<typename T>
 bool Rectangle<T>::contains(T x, T y) const {
-    return x >= this->x && x < this->x + width &&
-           y >= this->y && y < this->y + height;
+    return x >= minX() && x < maxX() && y >= minY() && y < maxY();
+}
+
+template<typename T>
+double Rectangle<T>::distance(T x, T y) const {
+    if (contains(x, y)) {
+        return -std::min({x - minX(), maxX() - x, y - minY(), maxY() - y});
+    }
+    auto xDistance = x < minX() ? (minX() - x) : x >= maxX() ? (x - maxX()) : 0;
+    auto yDistance = y < minY() ? (minY() - y) : y >= maxY() ? (y - maxY()) : 0;
+    return sqrt(xDistance * xDistance + yDistance * yDistance);
 }
 
 template<typename T>

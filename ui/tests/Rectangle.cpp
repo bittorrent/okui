@@ -45,6 +45,17 @@ TEST(Rectangle, contains) {
     EXPECT_FALSE(r.contains(2, 6));
 }
 
+TEST(Rectangle, distance) {
+    Rectangle<int> r(1, 2, 3, 4);
+
+    EXPECT_NEAR(r.distance(0, 0), sqrt(5.0), 0.01);
+    EXPECT_NEAR(r.distance(7, 2), 3.0, 0.01);
+
+    EXPECT_NEAR(r.distance(2, 2), 0.0, 0.01);
+
+    EXPECT_NEAR(r.distance(2, 4), -1.0, 0.01);
+}
+
 TEST(Rectangle, intersection) {
     {
         Rectangle<int> a(1, 2, 3, 4);
