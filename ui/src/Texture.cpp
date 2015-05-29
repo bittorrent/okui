@@ -45,14 +45,6 @@ Texture::Texture(std::shared_ptr<const std::string> data) : _data(data) {
     png_destroy_read_struct(&png, &info, nullptr);
 }
 
-int Texture::width() {
-    return _width;
-}
-
-int Texture::height() {
-    return _height;
-}
-
 GLuint Texture::load(opengl::TextureCache* textureCache) {
     PNGInput input(_data->data(), _data->size());
 

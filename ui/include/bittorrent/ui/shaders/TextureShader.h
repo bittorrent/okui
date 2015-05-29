@@ -2,6 +2,7 @@
 
 #include "bittorrent/ui/config.h"
 
+#include "bittorrent/ui/Rectangle.h"
 #include "bittorrent/ui/Shader.h"
 #include "bittorrent/ui/opengl/ShaderProgram.h"
 #include "bittorrent/ui/AffineTransformation.h"
@@ -17,6 +18,8 @@ public:
 	void setTransformation(const AffineTransformation& transformation) { _transformation = transformation; }
 
 	void setColor(double r, double g, double b, double a);
+
+	void setTexture(GLuint id, Rectangle<double> bounds) { setTexture(id, bounds.x, bounds.y, bounds.width, bounds.height); }
 	void setTexture(GLuint id, double x, double y, double w, double h);
 
 	virtual void drawTriangle(double x1, double y1, double x2, double y2, double x3, double y3, Curve curve) override;

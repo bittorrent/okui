@@ -116,3 +116,11 @@ TEST(Rectangle, intersection) {
         EXPECT_EQ(a.intersection(b), Rectangle<int>(770, 0, 1130, 500));
     }
 }
+
+TEST(Rectangle, scaledFill) {
+    EXPECT_EQ(Rectangle<int>(10, 10, 100, 200).scaledFill(2.0), Rectangle<double>(10-150, 10, 400, 200));
+}
+
+TEST(Rectangle, scaledFit) {
+    EXPECT_EQ(Rectangle<int>(10, 10, 100, 200).scaledFit(2.0), Rectangle<double>(10, 10+75, 100, 50));
+}

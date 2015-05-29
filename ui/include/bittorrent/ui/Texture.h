@@ -17,8 +17,13 @@ public:
     *
     * Return 0 if the image data could not be parsed.
     */
-    int width();
-    int height();
+    int width() const { return _width; }
+    int height() const { return _height; }
+
+    /**
+    * Returns the aspect ratio (width / height) of the texture.
+    */
+    double aspectRatio() const { return (double)_width / _height; }
 
     bool isLoaded() { return _cacheEntry ? true : false; }
 

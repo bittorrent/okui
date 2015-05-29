@@ -27,6 +27,7 @@ static void TextureTest(const unsigned char* imageData, size_t imageDataSize, in
         
         EXPECT_EQ(texture->width(), width);
         EXPECT_EQ(texture->height(), height);
+        EXPECT_FLOAT_EQ(texture->aspectRatio(), (double)width / height);
     }, [&](View* view) {
         EXPECT_TRUE(texture->isLoaded());
 
