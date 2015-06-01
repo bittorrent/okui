@@ -4,7 +4,9 @@
 
 #include "bittorrent/RunLoop.h"
 
+#include "bittorrent/ui/Menu.h"
 #include "bittorrent/ui/ResourceManager.h"
+#include "bittorrent/ui/Responder.h"
 
 #include <thread>
 
@@ -13,7 +15,7 @@ namespace ui {
 
 class Platform;
 
-class Application {
+class Application : public Responder {
 public:
     /**
     * @param name human readable application name. e.g. "Example Application"
@@ -25,7 +27,18 @@ public:
     Platform* platform() const { return _platform; }
 
     std::shared_ptr<std::string> loadResource(const char* name) { return _resourceManager->load(name); }
-        
+
+    /**
+    * The application-wide first responder is the active window's first responder or the application if 
+    * there are no open windows.
+    */
+    Responder* firstResponder();
+
+    /**
+    * Sets an application-wide menu. On some platforms, this is used as an alternative to window-specific menus.
+    */
+    void setMenu(const Menu& menu);
+
     /**
     * Returns a path suitable for storing preferences or other persistent user data.
     *
@@ -45,6 +58,11 @@ public:
     void run();
     
     void quit();
+
+    // Responder overrides
+    virtual Responder* nextResponder() override;
+    virtual bool canHandleCommand(Command command) override;
+    virtual void handleCommand(Command command, CommandContext context) override;
 
 private:
     std::string _name;

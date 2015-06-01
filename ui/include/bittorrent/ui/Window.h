@@ -1,7 +1,8 @@
 #pragma once
 #include "bittorrent/ui/config.h"
-#include "bittorrent/ui/Keycode.h"
+#include "bittorrent/ui/Menu.h"
 #include "bittorrent/ui/Point.h"
+#include "bittorrent/ui/Responder.h"
 #include "bittorrent/ui/ShaderCache.h"
 #include "bittorrent/ui/opengl/TextureCache.h"
 #include "bittorrent/ui/BitmapFont.h"
@@ -16,7 +17,7 @@ namespace ui {
 class Application;
 class Platform;
 
-class Window {
+class Window : public Responder {
 public:
     Window(Application* application);
     virtual ~Window();
@@ -27,7 +28,7 @@ public:
     Application* application() { return _application; }
 
     int x() const { return _x; }
-    int y() const { return _x; }
+    int y() const { return _y; }
 
     int width() const { return _width; }
     int height() const { return _height; }
@@ -37,6 +38,15 @@ public:
 
     const char* title() const { return _title.c_str(); }
     void setTitle(const char* title);
+
+    /**
+    * Sets the menu for the window.
+    * 
+    * For good portability, you should also set an application-wide menu that can be used on platforms that prefer 
+    * them over window-specific menus (or simply don't support window-specific menus). (see Application::setMenu).
+    */
+    void setMenu(const Menu& menu);
+    const Menu& menu() const { return _menu; }
 
     View* contentView() { return &_contentView; }
     double renderScale() const { return _renderScale; }
@@ -50,6 +60,8 @@ public:
 
     View* focus() const { return _focus; }
     void setFocus(View* focus);
+    
+    Responder* firstResponder() { return _focus ? dynamic_cast<Responder*>(_focus) : dynamic_cast<Responder*>(this); }
 
     /**
     * If tab is hit when there's no focus, the specified view will be focused.
@@ -70,19 +82,14 @@ public:
     void dispatchMouseUp(MouseButton button, int x, int y);
     void dispatchMouseMovement(int x, int y);
     void dispatchMouseWheel(int xPos, int yPos, int xWheel, int yWheel);
-    void dispatchTextInput(const std::string& text);
-    void dispatchKeyDown(Keycode key, KeyModifiers mod, bool repeat);
-    void dispatchKeyUp(Keycode key, KeyModifiers mod, bool repeat);
-
-    /**
-    * Override these to handle keyboard events. Call the base implementation to pass on the event.
-    */
-    virtual void keyDown(Keycode key, KeyModifiers mod, bool repeat);
-    virtual void keyUp(Keycode key, KeyModifiers mod, bool repeat) {}
 
     virtual void render() {}
 
     void ensureTextures();
+
+    // Responder overrides
+    virtual Responder* nextResponder() override;
+    virtual void keyDown(KeyCode key, KeyModifiers mod, bool repeat) override;
 
 private:
     Application* const _application;
@@ -93,6 +100,7 @@ private:
     double _renderScale = 1.0;
 
     std::string _title{"Untitled"};
+    Menu _menu;
 
     View _contentView;
     View* _focus = nullptr;

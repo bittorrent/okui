@@ -16,8 +16,8 @@ enum KeyModifier : KeyModifiers {
     kNone                   = 0b00000000000,
     kLShift                 = 0b00000000001,
     kRShift                 = 0b00000000010,
-    kLCtrl                  = 0b00000000100,
-    kRCtrl                  = 0b00000001000,
+    kLControl               = 0b00000000100,
+    kRControl               = 0b00000001000,
     kLAlt                   = 0b00000010000,
     kRAlt                   = 0b00000100000,
     kLSuper                 = 0b00001000000, // https://en.wikipedia.org/wiki/Super_key_%28keyboard_button%29
@@ -26,18 +26,18 @@ enum KeyModifier : KeyModifiers {
     kCaps                   = 0b01000000000,
     kMode                   = 0b10000000000, // https://en.wikipedia.org/wiki/AltGr_key
 
-    kCtrl                   = kLCtrl  | kRCtrl,
-    kShift                  = kLShift | kRShift,
-    kAlt                    = kLAlt   | kRAlt,
-    kSuper                  = kLSuper | kRSuper
+    kControl                = kLControl | kRControl,
+    kShift                  = kLShift   | kRShift,
+    kAlt                    = kLAlt     | kRAlt,
+    kSuper                  = kLSuper   | kRSuper
 };
 
 /**
- * Virtual keycodes
+ * Virtual key codes
  */
-enum class Keycode
-{
-    kUnknown                = 0,
+enum class KeyCode {
+    kNone                   = 0,
+    kUnknown                = ~0,
     kReturn                 = '\r',
     kEscape                 = '\033',
     kBackspace              = '\b',
@@ -133,11 +133,11 @@ enum class Keycode
     kF22,
     kF23,
     kF24,
-    kLCtrl,
+    kLControl,
     kLShift,
     kLAlt,
     kLSuper,
-    kRCtrl,
+    kRControl,
     kRShift,
     kRAlt,
     kRSuper,

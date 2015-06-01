@@ -40,6 +40,11 @@ void Window::setTitle(const char* title) {
     application()->platform()->setWindowTitle(this, title);
 }
 
+void Window::setMenu(const Menu& menu) {
+    _menu = menu;
+    application()->platform()->setWindowMenu(this, menu);
+}
+
 std::shared_ptr<Texture> Window::loadTextureResource(const char* name) {
     auto hashable = std::string("resource:") + name;
 
@@ -139,30 +144,12 @@ void Window::dispatchMouseWheel(int xPos, int yPos, int xWheel, int yWheel) {
     _contentView.dispatchMouseWheel(xPos, yPos, xWheel, yWheel);
 }
 
-void Window::dispatchTextInput(const std::string& text) {
-    if (_focus != nullptr) {
-        _focus->dispatchTextInput(text);
-    }
+Responder* Window::nextResponder() {
+    return application();
 }
 
-void Window::dispatchKeyDown(Keycode key, KeyModifiers mod, bool repeat) {
-    if (_focus) {
-        _focus->dispatchKeyDown(key, mod, repeat);
-    } else {
-        keyDown(key, mod, repeat);
-    }
-}
-
-void Window::dispatchKeyUp(Keycode key, KeyModifiers mod, bool repeat) {
-    if (_focus) {
-        _focus->dispatchKeyUp(key, mod, repeat);
-    } else {
-        keyUp(key, mod, repeat);
-    }
-}
-
-void Window::keyDown(Keycode key, KeyModifiers mod, bool repeat) {
-    if (key == Keycode::kTab && _initialFocus && !_focus) {
+void Window::keyDown(KeyCode key, KeyModifiers mod, bool repeat) {
+    if (key == KeyCode::kTab && _initialFocus && !_focus) {
         if (mod & KeyModifier::kShift) {
             if (auto view = _initialFocus->previousAvailableFocus()) {
                 view->focus();
@@ -177,6 +164,8 @@ void Window::keyDown(Keycode key, KeyModifiers mod, bool repeat) {
             return;
         }
     }
+    
+    Responder::keyDown(key, mod, repeat);
 }
 
 void Window::ensureTextures() {

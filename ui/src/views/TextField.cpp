@@ -68,20 +68,30 @@ void TextField::focusLost() {
     }
 }
 
-void TextField::keyDown(Keycode key, KeyModifiers mod, bool repeat) {
-    if (key == Keycode::kBackspace) {
+void TextField::keyDown(KeyCode key, KeyModifiers mod, bool repeat) {
+    if (key == KeyCode::kBackspace) {
         if (!_text.empty()) {
             setText(_text.substr(0, _text.size() - 1).c_str(), true);
         }
-    } else if (key == Keycode::kReturn && _returnAction) {
+    } else if (key == KeyCode::kReturn && _returnAction) {
         _returnAction();
-    } else if (key == Keycode::kV && (mod & application()->platform()->defaultShortcutModifier())) {
-        textInput(application()->platform()->getClipboardText());
-    } else if (key == Keycode::kC && (mod & application()->platform()->defaultShortcutModifier())) {
-        application()->platform()->setClipboardText(_text.c_str());
-    } else {
-        // pass the event up the chain
+    } else if (!(key >= KeyCode::kSpace && key <= KeyCode::kZ)) {
+        // pass the event up the chain if it's not input
         View::keyDown(key, mod, repeat);
+    }
+}
+
+bool TextField::canHandleCommand(Command command) {
+    return command == kCommandCopy || command == kCommandPaste || View::canHandleCommand(command);
+}
+
+void TextField::handleCommand(Command command, CommandContext context) {
+    if (command == kCommandCopy) {
+        application()->platform()->setClipboardText(_text.c_str());
+    } else if (command == kCommandPaste) {
+        textInput(application()->platform()->getClipboardText());
+    } else {
+        View::handleCommand(command, context);
     }
 }
 

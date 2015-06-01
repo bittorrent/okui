@@ -273,8 +273,12 @@ void View::mouseWheel(int xPos, int yPos, int xWheel, int yWheel) {
     }
 }
 
-void View::keyDown(Keycode key, KeyModifiers mod, bool repeat) {
-    if (key == Keycode::kTab) {
+Responder* View::nextResponder() {
+    return superview() ? dynamic_cast<Responder*>(superview()) : dynamic_cast<Responder*>(window());
+}
+
+void View::keyDown(KeyCode key, KeyModifiers mod, bool repeat) {
+    if (key == KeyCode::kTab) {
         if (_previousFocus && (mod & KeyModifier::kShift)) {
             if (auto view = previousAvailableFocus()) {
                 view->focus();
@@ -288,19 +292,7 @@ void View::keyDown(Keycode key, KeyModifiers mod, bool repeat) {
         }
     }
 
-    if (superview()) {
-        superview()->keyDown(key, mod, repeat);
-    } else if (window()) {
-        window()->keyDown(key, mod, repeat);
-    }
-}
-
-void View::keyUp(Keycode key, KeyModifiers mod, bool repeat) {
-    if (superview()) {
-        superview()->keyUp(key, mod, repeat);
-    } else if (window()) {
-        window()->keyUp(key, mod, repeat);
-    }
+    Responder::keyDown(key, mod, repeat);
 }
 
 void View::renderAndRenderSubviews(const RenderTarget* target, const Rectangle<int>& area, boost::optional<Rectangle<int>> clipBounds) {
@@ -432,21 +424,6 @@ bool View::dispatchMouseWheel(int xPos, int yPos, int xWheel, int yWheel) {
     }
 
     return false;
-}
-
-void View::dispatchTextInput(const std::string& text) {
-    if (!isVisible()) { return; }
-    textInput(text);
-}
-
-void View::dispatchKeyDown(Keycode key, KeyModifiers mod, bool repeat) {
-    if (!isVisible()) { return; }
-    keyDown(key, mod, repeat);
-}
-
-void View::dispatchKeyUp(Keycode key, KeyModifiers mod, bool repeat) {
-    if (!isVisible()) { return; }
-    keyUp(key, mod, repeat);
 }
 
 void View::_dispatchFutureVisibilityChange(bool visible) {

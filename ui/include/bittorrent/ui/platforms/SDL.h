@@ -15,7 +15,36 @@
 #pragma clang diagnostic ignored "-Wextern-c-compat"
 #include <SDL2/SDL_syswm.h>
 #pragma clang diagnostic pop
-#endif
+
+@interface BTUIApplication : NSApplication
+@end
+
+@implementation BTUIApplication
+// selectively give events to sdl
+- (NSEvent*)nextEventMatchingMask:(NSUInteger)mask untilDate:(NSDate*)expiration inMode:(NSString*)mode dequeue:(BOOL)flag {
+    NSEvent* event = [super nextEventMatchingMask:mask untilDate:expiration inMode:mode dequeue:flag];
+
+    if (event.type != NSKeyDown && event.type != NSKeyUp) {
+        return event;
+    }
+
+    if ((self.keyWindow && [self.keyWindow performKeyEquivalent:event]) || [self.mainMenu performKeyEquivalent:event]) {
+        // if this is a key equivalent, let the owner handle it instead of sdl
+        return flag ? [self nextEventMatchingMask:mask untilDate:expiration inMode:mode dequeue:flag] : nil;
+    }
+
+    return event;
+}
+
+- (void)terminate:(id)sender {
+    SDL_Event event;
+    event.type = SDL_QUIT;
+    SDL_PushEvent(&event);
+}
+
+@end
+
+#endif // BT_MAC_OS_X
 
 namespace bittorrent {
 namespace ui {
@@ -37,6 +66,8 @@ public:
     virtual void setWindowPosition(Window* window, int x, int y) override;
     virtual void setWindowSize(Window* window, int width, int height) override;
     virtual void setWindowTitle(Window* window, const char* title) override;
+
+    virtual Window* activeWindow() override { return _activeWindow; }
 
     virtual std::string userStoragePath(const char* application, const char* organization) const override;
 
@@ -76,11 +107,17 @@ private:
 
     std::unordered_map<Window*, uint32_t> _windowIds;
     std::unordered_map<uint32_t, WindowInfo> _windows;
+    Window* _activeWindow = nullptr;
 
     static MouseButton sMouseButton(uint8_t id);
 };
 
 inline SDL::SDL() {
+#if BT_MAC_OS_X
+    // make sure we use our application class instead of sdl's
+    [BTUIApplication sharedApplication];
+    [NSApp finishLaunching];
+#endif
     if (SDL_Init(SDL_INIT_EVERYTHING) < 0) {
         BT_LOG_ERROR("error initializing sdl: %s", SDL_GetError());
     }
@@ -321,6 +358,14 @@ inline void SDL::_handleWindowEvent(const SDL_WindowEvent& event) {
         case SDL_WINDOWEVENT_RESIZED:
             _didResize(window, event.data1, event.data2);
             break;
+        case SDL_WINDOWEVENT_FOCUS_GAINED:
+            _activeWindow = window;
+            break;
+        case SDL_WINDOWEVENT_FOCUS_LOST:
+            if (_activeWindow == window) {
+                _activeWindow = nullptr;
+            }
+            break;
         default:
             break;
     }
@@ -332,10 +377,10 @@ inline void SDL::_handleKeyboardEvent(const SDL_KeyboardEvent& event) {
 
     switch (event.type) {
         case SDL_KEYDOWN:
-            window->dispatchKeyDown(ConvertKeycode(event.keysym.sym), ConvertKeyModifier(event.keysym.mod), event.repeat);
+            window->firstResponder()->keyDown(ConvertKeyCode(event.keysym.sym), ConvertKeyModifiers(event.keysym.mod), event.repeat);
             break;
         case SDL_KEYUP:
-            window->dispatchKeyUp(ConvertKeycode(event.keysym.sym), ConvertKeyModifier(event.keysym.mod), event.repeat);
+            window->firstResponder()->keyUp(ConvertKeyCode(event.keysym.sym), ConvertKeyModifiers(event.keysym.mod), event.repeat);
             break;
         default:
             break;
@@ -348,7 +393,7 @@ inline void SDL::_handleTextInputEvent(const SDL_TextInputEvent& event) {
 
     switch (event.type) {
         case SDL_TEXTINPUT:
-            window->dispatchTextInput(event.text);
+            window->firstResponder()->textInput(event.text);
             break;
         default:
             break;

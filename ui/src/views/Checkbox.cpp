@@ -17,8 +17,8 @@ void Checkbox::mouseDown(MouseButton button, int x, int y) {
     setState(_state == State::kChecked ? State::kUnchecked : State::kChecked, true);
 }
 
-void Checkbox::keyDown(Keycode key, KeyModifiers mod, bool repeat) {
-    if (key == Keycode::kSpace) {
+void Checkbox::keyDown(KeyCode key, KeyModifiers mod, bool repeat) {
+    if (key == KeyCode::kSpace) {
         setState(_state == State::kChecked ? State::kUnchecked : State::kChecked, true);
         return;
     }

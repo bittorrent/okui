@@ -1,11 +1,10 @@
 #pragma once
 
 #include "bittorrent/ui/config.h"
-#include "bittorrent/ui/Keycode.h"
-#include "bittorrent/ui/MouseButton.h"
 #include "bittorrent/ui/Point.h"
 #include "bittorrent/ui/Rectangle.h"
 #include "bittorrent/ui/RenderTarget.h"
+#include "bittorrent/ui/Responder.h"
 #include "bittorrent/ui/ShaderCache.h"
 #include "bittorrent/ui/shaders/BoxShadowShader.h"
 #include "bittorrent/ui/shaders/ColorShader.h"
@@ -22,7 +21,7 @@ namespace ui {
 class Application;
 class Window;
 
-class View {
+class View : public Responder {
 public:
     View() {}
     View(const char* name) : _name(name) {}
@@ -155,18 +154,10 @@ public:
     virtual void mouseDown(MouseButton button, int x, int y);
     virtual void mouseUp(MouseButton button, int x, int y);
     virtual void mouseWheel(int xPos, int yPos, int xWheel, int yWheel);
-	virtual void mouseDrag(int x, int y) {}
+    virtual void mouseDrag(int x, int y) {}
     virtual void mouseMovement(int x, int y) {}
     virtual void mouseEnter() {}
     virtual void mouseExit() {}
-
-    virtual void textInput(const std::string& text) {}
-
-    /**
-    * Override these to handle keyboard events. Call the base implementation to pass on the event.
-    */
-    virtual void keyDown(Keycode key, KeyModifiers mod, bool repeat);
-    virtual void keyUp(Keycode key, KeyModifiers mod, bool repeat);
 
     virtual void focusGained() {}
     virtual void focusLost() {}
@@ -203,9 +194,10 @@ public:
     bool dispatchMouseUp(MouseButton button, int x, int y);
     void dispatchMouseMovement(int x, int y);
     bool dispatchMouseWheel(int xPos, int yPos, int xWheel, int yWheel);
-    void dispatchTextInput(const std::string& text);
-    void dispatchKeyDown(Keycode key, KeyModifiers mod, bool repeat);
-    void dispatchKeyUp(Keycode key, KeyModifiers mod, bool repeat);
+
+    // Responder overrides
+    virtual Responder* nextResponder() override;
+    virtual void keyDown(KeyCode key, KeyModifiers mod, bool repeat) override;
 
 private:
     friend class Window;

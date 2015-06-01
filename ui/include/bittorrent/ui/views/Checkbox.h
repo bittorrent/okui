@@ -22,7 +22,7 @@ public:
 
     virtual bool canBecomeFocus() override { return true; }
     virtual void mouseDown(MouseButton button, int x, int y) override;
-    virtual void keyDown(Keycode key, KeyModifiers mod, bool repeat) override;
+    virtual void keyDown(KeyCode key, KeyModifiers mod, bool repeat) override;
 
 private:
     State _state = State::kUnchecked;

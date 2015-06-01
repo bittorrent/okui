@@ -64,7 +64,10 @@ public:
 
     virtual void mouseDown(MouseButton button, int x, int y) override;
     virtual void textInput(const std::string& text) override;
-    virtual void keyDown(Keycode key, KeyModifiers mod, bool repeat) override;
+    virtual void keyDown(KeyCode key, KeyModifiers mod, bool repeat) override;
+
+    virtual bool canHandleCommand(Command command) override;
+    virtual void handleCommand(Command command, CommandContext context) override;
 
 private:
     std::string  _text;

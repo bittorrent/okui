@@ -2,6 +2,7 @@
 
 #include "bittorrent/ui/config.h"
 
+#include "bittorrent/ui/Menu.h"
 #include "bittorrent/ui/Window.h"
 
 namespace bittorrent {
@@ -12,7 +13,7 @@ namespace ui {
 *
 * Implement this to add support for a new platform.
 */
-class Platform {
+class Platform : public Responder {
 public:
     virtual ~Platform() {}
 
@@ -47,6 +48,11 @@ public:
     virtual void setWindowSize(Window* window, int width, int height) = 0;
     virtual void setWindowTitle(Window* window, const char* title) = 0;
 
+    virtual void setApplicationMenu(Application* application, const Menu& menu) {}
+    virtual void setWindowMenu(Window* window, const Menu& menu) {}
+
+    virtual Window* activeWindow() = 0;
+
     /**
     * Should return a path suitable for storing preferences or other persistent user data.
     */
@@ -64,7 +70,7 @@ public:
     /**
     * The default set of modifiers to apply to shortcuts.
     */
-    virtual KeyModifier defaultShortcutModifier() const { return KeyModifier::kCtrl; }
+    virtual KeyModifier defaultShortcutModifier() const { return KeyModifier::kControl; }
     
     /**
     * Should return true if the platform has some sort of file browser or mechanism for selecting files.

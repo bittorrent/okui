@@ -6,6 +6,7 @@
 
 #include "bittorrent/ui/platforms/Apple.h"
 
+#import <AppKit/NSMenu.h>
 #import <AppKit/NSWindow.h>
 
 namespace bittorrent {
@@ -28,6 +29,19 @@ public:
     virtual bool openURL(const char* url) override;
 
     virtual void openDialog(Window* window, const char* title, const char* message, const std::vector<std::string>& buttons, std::function<void(int)> action = std::function<void(int)>()) override;
+
+    virtual void setApplicationMenu(Application* application, const Menu& menu) override;
+
+    virtual void keyDown(KeyCode key, KeyModifiers mod, bool repeat) override;
+
+private:
+    NSMenu* _convertMenu(const Menu& menu);
+    NSMenuItem* _convertMenuItem(const MenuItem& item);
+    unichar _convertKeyCode(KeyCode keyCode);
+    NSUInteger _convertKeyModifiers(KeyModifiers modifiers);
+
+    id _applicationMenuTarget = nil;
+    Menu _applicationMenu;    
 };
 
 }}}

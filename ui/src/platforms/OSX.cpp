@@ -2,8 +2,48 @@
 
 #if BT_MAC_OS_X
 
+#include "bittorrent/ui/Application.h"
+
 #import <AppKit/NSAlert.h>
 #import <AppKit/NSOpenPanel.h>
+
+@interface MenuTarget : NSObject {
+    bittorrent::ui::Application* _application;
+    std::vector<const bittorrent::ui::MenuItem*> _menuItems;
+}
+@end
+
+@implementation MenuTarget
+
+- (id)initWithApplication:(bittorrent::ui::Application*)application {
+    if (self = [super init]) {
+        _application = application;
+    }
+    return self;
+}
+
+- (NSInteger)addMenuItem:(const bittorrent::ui::MenuItem*)item {
+    _menuItems.push_back(item);
+    return _menuItems.size() - 1;
+}
+
+- (void)menuItemAction:(id)sender {
+    auto item = [self itemForObject:sender];
+    if (item->command()) {
+        _application->firstResponder()->handleCommand(item->command(), item->commandContext());
+    }
+}
+
+- (BOOL)validateUserInterfaceItem:(id<NSValidatedUserInterfaceItem>)item {
+    auto command = [self itemForObject:item]->command();
+    return !command || _application->firstResponder()->chainCanHandleCommand(command);
+}
+
+- (const bittorrent::ui::MenuItem*)itemForObject:(id)object {
+    return _menuItems[[object tag]];
+}
+
+@end
 
 namespace bittorrent {
 namespace ui {
@@ -50,6 +90,83 @@ void OSX::openDialog(Window* window, const char* title, const char* message, con
             action(returnCode - NSAlertFirstButtonReturn);
         }
     }];
+}
+
+void OSX::setApplicationMenu(Application* application, const Menu& menu) {
+    _applicationMenuTarget = [[MenuTarget alloc] initWithApplication:application];
+    _applicationMenu = menu;
+    [NSApp setMainMenu:_convertMenu(_applicationMenu)];
+}
+
+void OSX::keyDown(KeyCode key, KeyModifiers mod, bool repeat) {
+    switch (key) {
+        case KeyCode::kCapsLock:
+        case KeyCode::kLControl:
+        case KeyCode::kLShift:
+        case KeyCode::kLAlt:
+        case KeyCode::kLSuper:
+        case KeyCode::kRControl:
+        case KeyCode::kRShift:
+        case KeyCode::kRAlt:
+        case KeyCode::kRSuper:
+        case KeyCode::kScrollLock:
+            break;
+        default:
+            NSBeep();
+    }
+}
+
+NSMenu* OSX::_convertMenu(const Menu& menu) {
+    NSMenu* ret = [NSMenu new];
+    for (auto& item : menu.items()) {
+        [ret addItem:_convertMenuItem(item)];
+    }
+    return ret;
+}
+
+NSMenuItem* OSX::_convertMenuItem(const MenuItem& item) {
+    if (item.isSeparator()) {
+        return [NSMenuItem separatorItem];
+    }
+    unichar key = _convertKeyCode(item.keyCode());
+    NSMenuItem* ret = [[NSMenuItem alloc] initWithTitle:[NSString stringWithUTF8String:item.label().c_str()] action:nil keyEquivalent:(key ? [NSString stringWithCharacters:&key length:1]: @"")];
+    if (key) {
+        ret.keyEquivalentModifierMask = _convertKeyModifiers(item.keyModifiers());
+    }
+    if (item.submenu()) {
+        NSMenu* submenu = _convertMenu(item.submenu());
+        submenu.title = [NSString stringWithUTF8String:item.label().c_str()];
+        [ret setSubmenu:submenu];
+    }
+    ret.target = _applicationMenuTarget;
+    ret.action = @selector(menuItemAction:);
+    ret.tag = [_applicationMenuTarget addMenuItem:&item];
+    return ret;
+}
+
+unichar OSX::_convertKeyCode(KeyCode keyCode) {
+    if (static_cast<unichar>(keyCode) < 256) {
+        return static_cast<unichar>(keyCode);
+    }
+    // TODO: convert non-ascii keys: https://developer.apple.com/library/mac/documentation/Cocoa/Reference/ApplicationKit/Classes/NSEvent_Class/#//apple_ref/doc/constant_group/Function_Key_Unicodes
+    return 0;
+}
+
+NSUInteger OSX::_convertKeyModifiers(KeyModifiers modifiers) {
+    NSUInteger ret = 0;
+    if (modifiers & kShift) {
+        ret |= NSShiftKeyMask;
+    }
+    if (modifiers & kAlt) {
+        ret |= NSAlternateKeyMask;
+    }
+    if (modifiers & kControl) {
+        ret |= NSControlKeyMask;
+    }
+    if (modifiers & kSuper) {
+        ret |= NSCommandKeyMask;
+    }
+    return ret;
 }
 
 }}}
