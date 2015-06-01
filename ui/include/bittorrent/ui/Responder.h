@@ -2,7 +2,7 @@
 
 #include "bittorrent/ui/config.h"
 #include "bittorrent/ui/Command.h"
-#include "bittorrent/ui/Keycode.h"
+#include "bittorrent/ui/KeyCode.h"
 #include "bittorrent/ui/MouseButton.h"
 
 namespace bittorrent {
