@@ -200,6 +200,9 @@ public:
     virtual void keyDown(KeyCode key, KeyModifiers mod, bool repeat) override;
 
 private:
+	View(const View& other) = delete;
+	View(const View&& other) = delete;
+
     friend class Window;
 
     std::string      _name;
