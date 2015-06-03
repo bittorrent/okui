@@ -366,6 +366,9 @@ inline void SDL::_handleWindowEvent(const SDL_WindowEvent& event) {
                 _activeWindow = nullptr;
             }
             break;
+        case SDL_WINDOWEVENT_CLOSE:
+            window->close();
+            break;
         default:
             break;
     }

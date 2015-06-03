@@ -20,6 +20,7 @@ void Window::open() {
 }
 
 void Window::close() {
+    closing();
     application()->platform()->closeWindow(this);
 }
 

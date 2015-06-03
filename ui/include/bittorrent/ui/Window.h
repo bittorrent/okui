@@ -85,6 +85,8 @@ public:
 
     virtual void render() {}
 
+    virtual void closing() {}
+
     void ensureTextures();
 
     // Responder overrides
