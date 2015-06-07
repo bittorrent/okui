@@ -1,4 +1,0 @@
-exe ui_tests
-	: [ glob-tree *.cpp ] ..//ui ../../third-party/gtest//gtest_main ../../third-party/sdl//sdl
-	: <conditional>@require-desktop
-;

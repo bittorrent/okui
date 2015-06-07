@@ -1,0 +1,33 @@
+rule okui-frameworks ( properties * ) {
+	if <target-os>iphone in $(properties) || <target-os>darwin in $(properties) {
+		local result ;
+		result += <framework>OpenGL ;
+		return $(result) ;
+	}
+}
+
+
+cpp-pch pch :
+	../foundation//project_defaults
+	../foundation//foundation_headers
+	src/pch.h
+:
+	<conditional>@not-multi-arch
+	<include>./include
+;
+
+lib okui :
+	pch
+	[ glob-tree *.cpp : tests ]
+	../foundation//foundation
+	../third-party/libpng//png
+:
+	<include>./include
+	<link>static
+	<define>ONAIR_LIBRARY
+: :
+	<include>./include
+	<conditional>@okui-frameworks
+	<target-os>linux:<linkflags>-lm
+	<target-os>android:<linkflags>"-lGLESv2"
+;
