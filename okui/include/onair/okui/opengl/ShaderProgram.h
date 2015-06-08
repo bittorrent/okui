@@ -38,7 +38,7 @@ public:
 		explicit Uniform(GLint location) : location(location) {}
 		void operator=(GLint n) { glUniform1i(location, n); }
 		void operator=(GLfloat f) { glUniform1f(location, f); }
-		void setMatrix4(GLfloat* m, size_t count = 1) { glUniformMatrix4fv(location, count, GL_FALSE, m); }
+		void setMatrix4(const GLfloat* m, size_t count = 1) { glUniformMatrix4fv(location, count, GL_FALSE, m); }
 
 		GLint location = GL_INVALID_VALUE;
 	};
