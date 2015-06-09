@@ -5,6 +5,8 @@
 #include "onair/okui/Menu.h"
 #include "onair/okui/Window.h"
 
+#include "onair/TaskScheduler.h"
+
 namespace onair {
 namespace okui {
 
@@ -18,22 +20,17 @@ public:
     virtual ~Platform() {}
 
     /**
-    * Queues up a task to be executed asynchronously (but on the main thread).
+    * Queues up a tasks to be executed asynchronously (but on the main thread).
     *
     * This method is thread-safe.
     */
-    void async(std::function<void()> task);
-    
-    /**
-    * Carries out work such as driving asynchronous operations.
-    */
-    void work();
+    TaskScheduler& taskScheduler() { return _taskScheduler; }
 
     /**
     * Override this to set up the main run loop. The run loop must regularly call work().
     */
     virtual void run() = 0;
-    
+
     /**
     * A call to this method should cause the main loop to end and run() to return.
     */
@@ -71,12 +68,12 @@ public:
     * The default set of modifiers to apply to shortcuts.
     */
     virtual KeyModifier defaultShortcutModifier() const { return KeyModifier::kControl; }
-    
+
     /**
     * Should return true if the platform has some sort of file browser or mechanism for selecting files.
     */
     virtual bool canSelectFiles() const { return false; }
-    
+
     /**
     * Opens up the platform's file selection mechanism.
     *
@@ -119,9 +116,7 @@ protected:
     void _didResize(Window* window, int width, int height) { window->_didResize(width, height); }
 
 private:
-    std::mutex _asyncMutex;
-    std::vector<std::function<void()>> _asyncTasks;
-    
+    TaskScheduler _taskScheduler;
     std::string _clipboard;
 };
 
