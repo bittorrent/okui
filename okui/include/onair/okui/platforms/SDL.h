@@ -90,7 +90,7 @@ private:
 inline SDL::SDL() {
 #if ONAIR_MAC_OS_X
     // make sure we use our application class instead of sdl's
-    [OKUISDLApplication sharedApplication];
+    ((OKUISDLApplication*)[OKUISDLApplication sharedApplication]).platform = this;
     [NSApp finishLaunching];
 #endif
     if (SDL_Init(SDL_INIT_EVERYTHING) < 0) {

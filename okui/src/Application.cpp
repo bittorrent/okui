@@ -13,9 +13,6 @@ Application::Application(const char* name, const char* organization, Platform* p
     , _resourceManager{resourceManager}
 {
     setMenu(Menu({
-        MenuItem("File", Menu({
-            MenuItem("Quit", kCommandQuit, KeyCode::kQ, platform->defaultShortcutModifier()),
-        })),
         MenuItem("Edit", Menu({
             MenuItem("Copy", kCommandCopy, KeyCode::kC, platform->defaultShortcutModifier()),
             MenuItem("Paste", kCommandPaste, KeyCode::kV, platform->defaultShortcutModifier()),

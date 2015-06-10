@@ -95,7 +95,39 @@ void OSX::openDialog(Window* window, const char* title, const char* message, con
 void OSX::setApplicationMenu(Application* application, const Menu& menu) {
     _applicationMenuTarget = [[MenuTarget alloc] initWithApplication:application];
     _applicationMenu = menu;
-    [NSApp setMainMenu:_convertMenu(_applicationMenu)];
+    NSMenu* mainMenu = _convertMenu(_applicationMenu);
+
+    // insert a standard "apple" menu (which is oddly the menu to the right of the menu with the apple icon)
+
+    NSMenu* appleMenu = [NSMenu new];
+    
+    NSString* appName = [[NSBundle mainBundle] objectForInfoDictionaryKey:@"CFBundleDisplayName"];
+    if (!appName) {
+        appName = [[NSBundle mainBundle] objectForInfoDictionaryKey:@"CFBundleName"];
+    }
+    if (!appName) {
+        appName = @"Application";
+    }
+
+    [appleMenu addItemWithTitle:[@"About " stringByAppendingString:appName] action:@selector(orderFrontStandardAboutPanel:) keyEquivalent:@""];
+    [appleMenu addItem:[NSMenuItem separatorItem]];
+    NSMenu* servicesMenu = [NSMenu new];
+    NSMenuItem* menuItem = [appleMenu addItemWithTitle:@"Services" action:nil keyEquivalent:@""];
+    [menuItem setSubmenu:servicesMenu];
+    [NSApp setServicesMenu:servicesMenu];
+    [appleMenu addItem:[NSMenuItem separatorItem]];
+    [appleMenu addItemWithTitle:[@"Hide " stringByAppendingString:appName] action:@selector(hide:) keyEquivalent:@"h"];
+    menuItem = (NSMenuItem*)[appleMenu addItemWithTitle:@"Hide Others" action:@selector(hideOtherApplications:) keyEquivalent:@"h"];
+    [menuItem setKeyEquivalentModifierMask:(NSAlternateKeyMask|NSCommandKeyMask)];
+    [appleMenu addItemWithTitle:@"Show All" action:@selector(unhideAllApplications:) keyEquivalent:@""];
+    [appleMenu addItem:[NSMenuItem separatorItem]];
+    [appleMenu addItemWithTitle:[@"Quit " stringByAppendingString:appName] action:@selector(terminate:) keyEquivalent:@"q"];
+
+    menuItem = [NSMenuItem new];
+    [menuItem setSubmenu:appleMenu];
+    [mainMenu insertItem:menuItem atIndex:0];
+
+    [NSApp setMainMenu:mainMenu];
 }
 
 void OSX::keyDown(KeyCode key, KeyModifiers mod, bool repeat) {
