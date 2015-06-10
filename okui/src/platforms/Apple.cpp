@@ -14,6 +14,11 @@ std::string Apple::userStoragePath(const char* application, const char* organiza
     return std::string([applicationSupportDirectory UTF8String]) + '/' + organization + '/' + application;
 }
 
+std::string Apple::resourcePath() const {
+	NSString* path = [[NSBundle mainBundle] resourcePath];
+	return std::string{[path UTF8String]};
+}
+
 }}}
 
 #endif

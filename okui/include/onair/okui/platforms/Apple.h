@@ -20,6 +20,8 @@ public:
     virtual std::string userStoragePath(const char* application, const char* organization) const override;
 
     virtual KeyModifier defaultShortcutModifier() const override { return KeyModifier::kSuper; }
+
+    virtual std::string resourcePath() const override;
 };
 
 }}}

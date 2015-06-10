@@ -111,6 +111,11 @@ public:
     */
     virtual void setScreenSaverEnabled(bool enabled = true) {}
 
+    /**
+    * Returns path to resources, if there is one.
+    */
+    virtual std::string resourcePath() const { return ""; }
+
 protected:
     void _render(Window* window) { window->_render(); }
     void _didResize(Window* window, int width, int height) { window->_didResize(width, height); }
