@@ -7,7 +7,7 @@
 #include "onair/okui/Responder.h"
 #include "onair/okui/Platform.h"
 
-#include "onair/TaskScheduler.h"
+#include "onair/TaskQueue.h"
 
 #include <thread>
 
@@ -47,7 +47,7 @@ public:
     /**
     * Returns task scheduler which runs tasks on the main ui thread
     */
-    TaskScheduler& taskScheduler() { return _platform->taskScheduler(); }
+    TaskQueue& taskQueue() { return _platform->taskQueue(); }
 
     void run();
 

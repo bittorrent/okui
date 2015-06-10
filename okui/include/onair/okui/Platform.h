@@ -5,7 +5,7 @@
 #include "onair/okui/Menu.h"
 #include "onair/okui/Window.h"
 
-#include "onair/TaskScheduler.h"
+#include "onair/TaskQueue.h"
 
 namespace onair {
 namespace okui {
@@ -24,7 +24,7 @@ public:
     *
     * This method is thread-safe.
     */
-    TaskScheduler& taskScheduler() { return _taskScheduler; }
+    TaskQueue& taskQueue() { return _taskQueue; }
 
     /**
     * Override this to set up the main run loop. The run loop must regularly call work().
@@ -116,7 +116,7 @@ protected:
     void _didResize(Window* window, int width, int height) { window->_didResize(width, height); }
 
 private:
-    TaskScheduler _taskScheduler;
+    TaskQueue _taskQueue;
     std::string _clipboard;
 };
 
