@@ -47,7 +47,7 @@ public:
     /**
     * Returns task scheduler which runs tasks on the main ui thread
     */
-    TaskQueue& taskQueue() { return _platform->taskQueue(); }
+    AbstractTaskScheduler& taskScheduler() { return _platform->taskQueue(); }
 
     void run();
 
