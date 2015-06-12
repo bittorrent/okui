@@ -1,6 +1,7 @@
 #include "onair/okui/View.h"
 
 #include "onair/okui/opengl/OpenGL.h"
+#include "onair/okui/shapes/Rectangle.h"
 #include "onair/okui/Window.h"
 
 namespace onair {
@@ -311,6 +312,13 @@ void View::renderAndRenderSubviews(const RenderTarget* target, const Rectangle<i
         glScissor(clipBounds->x, target->height() - clipBounds->maxY(), clipBounds->width, clipBounds->height);
     } else {
         glDisable(GL_SCISSOR_TEST);
+    }
+
+    if (_backgroundColor.a) {
+        auto backgroundShader = colorShader();
+        backgroundShader->setColor(_backgroundColor.r, _backgroundColor.g, _backgroundColor.b, _backgroundColor.a);
+        shapes::Rectangle(0.0, 0.0, bounds().width, bounds().height).draw(backgroundShader);
+        backgroundShader->flush();
     }
 
     render();

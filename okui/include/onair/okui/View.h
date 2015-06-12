@@ -1,6 +1,7 @@
 #pragma once
 
 #include "onair/okui/config.h"
+#include "onair/okui/Color.h"
 #include "onair/okui/Point.h"
 #include "onair/okui/Rectangle.h"
 #include "onair/okui/RenderTarget.h"
@@ -52,6 +53,12 @@ public:
     */
     void setScale(double scale) { setScale(scale, scale); }
     void setScale(double scaleX, double scaleY) { _scale.x = scaleX; _scale.y = scaleY; }
+
+    /**
+    * Sets the view's background color.
+    */
+    template <typename... Args>
+    void setBackgroundColor(Args&&... args) { _backgroundColor = Color(std::forward<Args>(args)...); }
 
     /**
     * Returns true if the view's ancestors are visible or if the view has no ancestors.
@@ -224,6 +231,8 @@ private:
     View*            _previousFocus = nullptr;
     
     Point<double>    _scale{1.0, 1.0};
+        
+    Color            _backgroundColor{0.0, 0.0};
 
     void _dispatchFutureVisibilityChange(bool visible);
     void _dispatchVisibilityChange(bool visible);
