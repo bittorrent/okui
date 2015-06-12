@@ -26,10 +26,10 @@ DistanceFieldShader::DistanceFieldShader() {
 
     opengl::Shader fsh(
 #if OPENGL_ES
-        "precision highp float;\n"
 #if GL_OES_standard_derivatives
         "#extension GL_OES_standard_derivatives : enable\n"
 #endif
+        "precision highp float;\n"
 #endif
     R"(
         varying vec4 color;
