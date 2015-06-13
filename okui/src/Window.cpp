@@ -74,6 +74,21 @@ std::shared_ptr<Texture> Window::loadTextureFromMemory(std::shared_ptr<const std
     return ret;
 }
 
+std::shared_ptr<Texture> Window::loadTextureFromURL(const std::string& url) {
+    auto it = _textureDownloads.find(url);
+    if (it != _textureDownloads.end()) {
+        if (auto texture = it->second.texture.lock()) {
+            return texture;
+        }
+    }
+
+    auto texture = std::make_shared<Texture>();
+    auto& download = _textureDownloads[url];
+    download.texture = texture;
+    download.download = application()->download(url);
+    return texture;
+}
+
 std::shared_ptr<BitmapFont> Window::loadBitmapFontResource(const char* textureName, const char* metadataName) {
     auto hashable = std::string("resource:") + textureName + "$!@#" + metadataName;
 
@@ -170,6 +185,25 @@ void Window::keyDown(KeyCode key, KeyModifiers mod, bool repeat) {
 }
 
 void Window::ensureTextures() {
+    for (auto it = _textureDownloads.begin(); it != _textureDownloads.end();) {
+        auto& download = it->second;
+        auto texture = download.texture.lock();
+        if (!texture) {
+            it = _textureDownloads.erase(it);
+            continue;
+        }
+        if (!download.isComplete) {
+            auto status = download.download.wait_for(0_ms);
+            if (status == std::future_status::ready) {
+                if (auto data = download.download.get()) {
+                    texture->setData(data);
+                    texture->load(&_openGLTextureCache);
+                }
+                download.isComplete = true;
+            }
+        }
+        ++it;
+    }
     for (auto& texture : _texturesToLoad) {
         texture->load(&_openGLTextureCache);
     }

@@ -23,7 +23,10 @@ static void PNGRead(png_structp png, png_bytep data, png_size_t length) {
     }
 }
 
-Texture::Texture(std::shared_ptr<const std::string> data) : _data(data) {
+void Texture::setData(std::shared_ptr<const std::string> data) {
+    _data = data;
+    _cacheEntry = nullptr;
+    
     PNGInput input(_data->data(), _data->size());
 
     png_structp png = png_create_read_struct(PNG_LIBPNG_VER_STRING, nullptr, nullptr, nullptr);

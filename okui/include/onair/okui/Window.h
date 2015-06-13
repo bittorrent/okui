@@ -9,6 +9,8 @@
 #include "onair/okui/Texture.h"
 #include "onair/okui/View.h"
 
+#include <future>
+#include <unordered_map>
 #include <unordered_set>
 
 namespace onair {
@@ -56,6 +58,7 @@ public:
 
     std::shared_ptr<Texture> loadTextureResource(const char* name);
     std::shared_ptr<Texture> loadTextureFromMemory(std::shared_ptr<const std::string> data);
+    std::shared_ptr<Texture> loadTextureFromURL(const std::string& url);
     std::shared_ptr<BitmapFont> loadBitmapFontResource(const char* textureName, const char* metadataName);
 
     View* focus() const { return _focus; }
@@ -113,6 +116,14 @@ private:
     Cache<BitmapFont> _bitmapFontCache;
     std::unordered_set<std::shared_ptr<Texture>> _texturesToLoad;
     opengl::TextureCache _openGLTextureCache;
+
+    struct TextureDownload {
+        bool isComplete = false;
+        std::weak_ptr<Texture> texture;
+        std::future<std::shared_ptr<const std::string>> download;
+    };
+
+    std::unordered_map<std::string, TextureDownload> _textureDownloads;
 
     std::unordered_set<View*> _draggedViews;
 
