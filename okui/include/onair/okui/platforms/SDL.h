@@ -317,7 +317,8 @@ inline void SDL::_handleMouseWheelEvent(const SDL_MouseWheelEvent& event) {
         case SDL_MOUSEWHEEL: {
             int xPos = 0, yPos = 0;
             SDL_GetMouseState(&xPos, &yPos);
-            window->dispatchMouseWheel(xPos, yPos, event.x, event.y);
+            // TODO: invert scrolling per-os
+            window->dispatchMouseWheel(xPos, yPos, -event.x, event.y);
             break;
         }
         default:
