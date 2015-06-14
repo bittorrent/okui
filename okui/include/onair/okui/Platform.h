@@ -24,7 +24,7 @@ public:
     *
     * This method is thread-safe.
     */
-    TaskQueue& taskQueue() { return _taskQueue; }
+    TaskQueue* taskQueue() { return &_taskQueue; }
 
     /**
     * Override this to set up the main run loop. The run loop must regularly call work().

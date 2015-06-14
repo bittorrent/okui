@@ -1,5 +1,6 @@
 #include "onair/okui/views/TextView.h"
 #include "onair/okui/shapes/Rectangle.h"
+#include "onair/okui/Window.h"
 
 namespace onair {
 namespace okui {
@@ -13,6 +14,8 @@ void TextView::setAlignment(HorizontalAlignment horizontal, VerticalAlignment ve
 void TextView::setFont(std::shared_ptr<BitmapFont> font, double size) {
     _font = font;
     _fontSize = size;
+    _bitmapFontTexture.clear();
+    _bitmapFontMetadata.clear();
     _computeLines();
 }
 
@@ -30,6 +33,16 @@ void TextView::setTextColor(double r, double g, double b, double a) {
     _textColorG = g;
     _textColorB = b;
     _textColorA = a;
+}
+
+void TextView::setBitmapFont(const char* texture, const char* metadata, double size) {
+    _bitmapFontTexture = texture;
+    _bitmapFontMetadata = metadata;
+    _bitmapFontSize = size;
+    _font = nullptr;
+    if (window()) {
+        setFont(window()->loadBitmapFontResource(_bitmapFontTexture.c_str(), _bitmapFontMetadata.c_str()), _bitmapFontSize);
+    }
 }
 
 void TextView::render() {
@@ -50,6 +63,12 @@ void TextView::render() {
 
 void TextView::layout() {
 	_computeLines();
+}
+
+void TextView::windowChanged() {
+    if (!_font && !_bitmapFontTexture.empty() && window()) {
+        setFont(window()->loadBitmapFontResource(_bitmapFontTexture.c_str(), _bitmapFontMetadata.c_str()), _bitmapFontSize);
+    }
 }
 
 void TextView::_computeLines() {

@@ -38,8 +38,10 @@ public:
     Window* window() const { return _window; }
     Application* application() const;
 
-    Rectangle<int> bounds() const { return _bounds; }
-    void setBounds(int x, int y, int width, int height);
+    const Rectangle<int>& bounds() const { return _bounds; }
+
+    template <typename... Args>
+    void setBounds(Args&&... args) { _setBounds(Rectangle<int>(std::forward<Args>(args)...)); }
 
     void setInterceptsMouseEvents(bool intercepts, bool childrenIntercept);
 
@@ -65,7 +67,14 @@ public:
     */
     bool ancestorsAreVisible() const;
 
+    /**
+    * Arranges the view so it's behind all of its current siblings.
+    */
     void sendToBack();
+
+    /**
+    * Arranges the view so it's in front of all of its current siblings.
+    */
     void bringToFront();
 
     /**
@@ -96,8 +105,15 @@ public:
 
     bool isDescendantOf(const View* view) const;
 
-    void setClipped(bool isClipped = true) { _clipped = isClipped; }
-    bool clipped() const { return _clipped; }
+    /**
+    * @param clipsToBounds if true, the view will not render itself or any subviews outside of its bounds
+    */
+    void setClipsToBounds(bool clipsToBounds = true) { _clipsToBounds = clipsToBounds; }
+
+    /**
+    * @return if true, the view will not render itself or any subviews outside of its bounds
+    */
+    bool clipsToBounds() const { return _clipsToBounds; }
 
     /**
     * Returns true if the mouse is hovering directly over this view.
@@ -215,7 +231,7 @@ private:
     std::string      _name;
     bool             _isVisible = true;
 
-    bool             _clipped = true;
+    bool             _clipsToBounds = true;
 
     Rectangle<int>   _bounds;
     bool             _interceptsMouseEvents = true;
@@ -233,6 +249,8 @@ private:
     Point<double>    _scale{1.0, 1.0};
         
     Color            _backgroundColor{0.0, 0.0};
+
+    void _setBounds(const Rectangle<int>&& bounds);
 
     void _dispatchFutureVisibilityChange(bool visible);
     void _dispatchVisibilityChange(bool visible);

@@ -63,7 +63,7 @@ std::future<std::shared_ptr<const std::string>> Application::download(const std:
 
     _backgroundTasks.emplace_back(std::async([=, promise = std::move(promise)] () mutable {
         auto result = Download(url);
-        taskScheduler().async([=, promise = std::move(promise)] () mutable {
+        taskScheduler()->async([=, promise = std::move(promise)] () mutable {
             auto& download = _downloads[url];
             download.result = result;
 

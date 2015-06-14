@@ -9,16 +9,15 @@ namespace views {
 class ScrollView : public onair::okui::View {
 public:
     ScrollView() {}
+    ScrollView(onair::okui::View* contentView) { setContentView(contentView); }
 
-    void setView(onair::okui::View* view);
+    void setContentView(onair::okui::View* view);
 
     virtual void layout() override;
-    virtual void windowChanged() override;
-
     virtual void mouseWheel(int xPos, int yPos, int xWheel, int yWheel) override;
 
 private:
-    onair::okui::View* _topView;
+    onair::okui::View* _contentView;
 };
 
 }}}

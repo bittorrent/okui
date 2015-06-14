@@ -33,6 +33,11 @@ public:
     * there are no open windows.
     */
     Responder* firstResponder();
+    
+    /**
+    * Executes the given command. Equivalent to `firstResponder()->handleCommand(command, context)`.
+    */
+    void command(Command command, CommandContext context) { firstResponder()->handleCommand(command, context); }
 
     /**
     * Sets an application-wide menu. On some platforms, this is used as an alternative to window-specific menus.
@@ -56,10 +61,16 @@ public:
     /**
     * Returns task scheduler which runs tasks on the main ui thread
     */
-    AbstractTaskScheduler& taskScheduler() { return _platform->taskQueue(); }
+    AbstractTaskScheduler* taskScheduler() { return _platform->taskQueue(); }
 
+    /**
+    * Runs the application. This call does not return until the application is finished running.
+    */
     void run();
 
+    /**
+    * Causes the application to quit and run() to return.
+    */
     void quit();
 
     // Responder overrides

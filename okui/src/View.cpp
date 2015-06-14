@@ -117,19 +117,6 @@ bool View::ancestorsAreVisible() const {
     return superview() ? (superview()->isVisible() && superview()->ancestorsAreVisible()) : true;
 }
 
-void View::setBounds(int x, int y, int width, int height) {
-    auto willResize = (_bounds.width != width || _bounds.height != height);
-
-    _bounds.x = x;
-    _bounds.y = y;
-    _bounds.width = width;
-    _bounds.height = height;
-
-    if (willResize) {
-        layout();
-    }
-}
-
 void View::setInterceptsMouseEvents(bool intercepts, bool childrenIntercept) {
     _interceptsMouseEvents = intercepts;
     _childrenInterceptMouseEvents = childrenIntercept;
@@ -303,7 +290,7 @@ void View::renderAndRenderSubviews(const RenderTarget* target, const Rectangle<i
     glEnable(GL_BLEND);
     glBlendFuncSeparate(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA, GL_ONE, GL_ONE);
 
-    if (_clipped) {
+    if (_clipsToBounds) {
         clipBounds = clipBounds ? clipBounds->intersection(area) : area;
     }
 
@@ -345,7 +332,7 @@ bool View::dispatchMouseDown(MouseButton button, int x, int y) {
     if (_childrenInterceptMouseEvents) {
         for (auto it = _subviews.rbegin(); it != _subviews.rend(); ++it) {
             auto point = (*it)->superviewToLocal(x, y);
-            if ((!(*it)->clipped() || (*it)->hitTest(point.x, point.y)) && (*it)->dispatchMouseDown(button, point.x, point.y)) {
+            if ((!(*it)->clipsToBounds() || (*it)->hitTest(point.x, point.y)) && (*it)->dispatchMouseDown(button, point.x, point.y)) {
                 return true;
             }
         }
@@ -367,7 +354,7 @@ bool View::dispatchMouseUp(MouseButton button, int x, int y) {
     if (_childrenInterceptMouseEvents) {
         for (auto it = _subviews.rbegin(); it != _subviews.rend(); ++it) {
             auto point = (*it)->superviewToLocal(x, y);
-            if ((!(*it)->clipped() || (*it)->hitTest(point.x, point.y)) && (*it)->dispatchMouseUp(button, point.x, point.y)) {
+            if ((!(*it)->clipsToBounds() || (*it)->hitTest(point.x, point.y)) && (*it)->dispatchMouseUp(button, point.x, point.y)) {
                 return true;
             }
         }
@@ -392,7 +379,7 @@ void View::dispatchMouseMovement(int x, int y) {
                     subview = *it;
                 }
                 (*it)->dispatchMouseMovement(point.x, point.y);
-            } else if (!(*it)->clipped()) {
+            } else if (!(*it)->clipsToBounds()) {
                 (*it)->dispatchMouseMovement(point.x, point.y);
             }
         }
@@ -419,7 +406,7 @@ bool View::dispatchMouseWheel(int xPos, int yPos, int xWheel, int yWheel) {
     if (_childrenInterceptMouseEvents) {
         for (auto it = _subviews.rbegin(); it != _subviews.rend(); ++it) {
             auto point = (*it)->superviewToLocal(xPos, yPos);
-            if ((!(*it)->clipped() || (*it)->hitTest(point.x, point.y)) &&
+            if ((!(*it)->clipsToBounds() || (*it)->hitTest(point.x, point.y)) &&
                 (*it)->dispatchMouseWheel(point.x, point.y, xWheel, yWheel)) {
                 return true;
             }
@@ -432,6 +419,16 @@ bool View::dispatchMouseWheel(int xPos, int yPos, int xWheel, int yWheel) {
     }
 
     return false;
+}
+
+void View::_setBounds(const Rectangle<int>&& bounds) {
+    auto willResize = (_bounds.width != bounds.width || _bounds.height != bounds.height);
+
+    _bounds = std::move(bounds);
+
+    if (willResize) {
+        layout();
+    }
 }
 
 void View::_dispatchFutureVisibilityChange(bool visible) {
@@ -473,7 +470,7 @@ void View::_dispatchWindowChange(Window* window) {
 }
 
 void View::_mouseExit() {
-    if (_subviewWithMouse && _clipped) {
+    if (_subviewWithMouse && _clipsToBounds) {
         _subviewWithMouse->_mouseExit();
         _subviewWithMouse = nullptr;
     }

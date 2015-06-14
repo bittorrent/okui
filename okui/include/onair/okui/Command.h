@@ -11,16 +11,20 @@ namespace okui {
 using Command = uint64_t;
 using CommandContext = int;
 
-static constexpr Command kCommandNone = 0;
+namespace {
+
+constexpr Command kCommandNone = 0;
 
 /**
 * Commands in the onair::okui namespace are OR'd with this value to avoid
 * collisions with user or third-party commands.
 */
-static constexpr Command kCommandPrefixMask = UINT64_C(0x33359c3d) << 32;
+constexpr Command kCommandPrefixMask = UINT64_C(0x33359c3d) << 32;
 
-static constexpr Command kCommandCopy  = kCommandPrefixMask | 1;
-static constexpr Command kCommandPaste = kCommandPrefixMask | 2;
-static constexpr Command kCommandQuit  = kCommandPrefixMask | 3;
+constexpr Command kCommandCopy  = kCommandPrefixMask | 1;
+constexpr Command kCommandPaste = kCommandPrefixMask | 2;
+constexpr Command kCommandQuit  = kCommandPrefixMask | 3;
 
-}}
+} // namespace
+
+}} // namespace onair::okui

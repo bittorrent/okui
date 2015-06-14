@@ -30,7 +30,7 @@
 - (void)menuItemAction:(id)sender {
     auto item = [self itemForObject:sender];
     if (item->command()) {
-        _application->firstResponder()->handleCommand(item->command(), item->commandContext());
+        _application->command(item->command(), item->commandContext());
     }
 }
 

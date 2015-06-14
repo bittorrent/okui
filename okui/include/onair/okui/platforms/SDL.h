@@ -132,7 +132,7 @@ inline void SDL::run() {
             }
         }
 
-        taskQueue().run();
+        taskQueue()->run();
 
         if (shouldQuit) { break; }
 
