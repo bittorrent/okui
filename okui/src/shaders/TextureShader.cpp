@@ -1,5 +1,8 @@
 #include "onair/okui/shaders/TextureShader.h"
 
+#include "onair/okui/Texture.h"
+#include "onair/okui/shapes/Rectangle.h"
+
 namespace onair {
 namespace okui {
 namespace shaders {
@@ -107,6 +110,16 @@ void TextureShader::setTexture(GLuint id, double x, double y, double w, double h
 
     _textureWidth  = x2 - _textureX1;
     _textureHeight = y2 - _textureY1;
+}
+
+void TextureShader::drawScaledFill(const Texture& texture, Rectangle<double> area) {
+    setTexture(texture.id(), area.scaledFill(texture.aspectRatio()));
+    okui::shapes::Rectangle(area).draw(this);
+}
+
+void TextureShader::drawScaledFit(const Texture& texture, Rectangle<double> area) {
+    setTexture(texture.id(), area.scaledFit(texture.aspectRatio()));
+    okui::shapes::Rectangle(area).draw(this);
 }
 
 void TextureShader::drawTriangle(double x1, double y1, double x2, double y2, double x3, double y3, Shader::Curve curve) {
