@@ -7,11 +7,15 @@ namespace onair {
 namespace okui {
 
 Window::Window(Application* application) : _application(application) {
-    _contentView._window = this;
+    _contentView.reset(new View());
+    _contentView->_window = this;
 }
 
 Window::~Window() {
     close();
+    
+    // the content view should be destroyed before the window's other members
+    _contentView.reset();
 }
 
 void Window::open() {
@@ -132,7 +136,7 @@ void Window::endDragging(View* view) {
 }
 
 void Window::dispatchMouseDown(MouseButton button, int x, int y) {
-    _contentView.dispatchMouseDown(button, x, y);
+    _contentView->dispatchMouseDown(button, x, y);
     for (auto& observer : _draggedViews) {
         auto point = windowToView(observer, x, y);
         observer->mouseDrag(point.x, point.y);
@@ -140,7 +144,7 @@ void Window::dispatchMouseDown(MouseButton button, int x, int y) {
 }
 
 void Window::dispatchMouseUp(MouseButton button, int x, int y) {
-    _contentView.dispatchMouseUp(button, x, y);
+    _contentView->dispatchMouseUp(button, x, y);
     for (auto& observer : _draggedViews) {
         auto point = windowToView(observer, x, y);
         observer->mouseDrag(point.x, point.y);
@@ -149,7 +153,7 @@ void Window::dispatchMouseUp(MouseButton button, int x, int y) {
 }
 
 void Window::dispatchMouseMovement(int x, int y) {
-    _contentView.dispatchMouseMovement(x, y);
+    _contentView->dispatchMouseMovement(x, y);
     for (auto& observer : _draggedViews) {
         auto point = windowToView(observer, x, y);
         observer->mouseDrag(point.x, point.y);
@@ -157,7 +161,7 @@ void Window::dispatchMouseMovement(int x, int y) {
 }
 
 void Window::dispatchMouseWheel(int xPos, int yPos, int xWheel, int yWheel) {
-    _contentView.dispatchMouseWheel(xPos, yPos, xWheel, yWheel);
+    _contentView->dispatchMouseWheel(xPos, yPos, xWheel, yWheel);
 }
 
 Responder* Window::nextResponder() {
@@ -215,9 +219,9 @@ void Window::_render() {
 
     render();
 
-    Rectangle<int> area(0, 0, _contentView.bounds().width * _renderScale, _contentView.bounds().height * _renderScale);
+    Rectangle<int> area(0, 0, _contentView->bounds().width * _renderScale, _contentView->bounds().height * _renderScale);
     RenderTarget target(area.width, area.height);
-    _contentView.renderAndRenderSubviews(&target, area);
+    _contentView->renderAndRenderSubviews(&target, area);
 }
 
 void Window::_didResize(int width, int height) {
@@ -230,7 +234,7 @@ void Window::_updateContentLayout() {
     int w, h;
     application()->platform()->getWindowRenderSize(this, &w, &h);
     _renderScale = (double)w / _width;
-    _contentView.setBounds(0, 0, _width, _height);
+    _contentView->setBounds(0, 0, _width, _height);
     layout();
 }
 

@@ -50,7 +50,7 @@ public:
     void setMenu(const Menu& menu);
     const Menu& menu() const { return _menu; }
 
-    View* contentView() { return &_contentView; }
+    View* contentView() { return _contentView.get(); }
     double renderScale() const { return _renderScale; }
     void setRenderScale(double scale) { _renderScale = scale; }
 
@@ -107,7 +107,7 @@ private:
     std::string _title{"Untitled"};
     Menu _menu;
 
-    View _contentView;
+    std::unique_ptr<View> _contentView;
     View* _focus = nullptr;
     View* _initialFocus = nullptr;
 
