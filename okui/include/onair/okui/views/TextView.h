@@ -26,6 +26,7 @@ public:
     void setAlignment(HorizontalAlignment horizontal, VerticalAlignment vertical = VerticalAlignment::kTop);
     void setFont(std::shared_ptr<BitmapFont> font, double size);
     void setText(const char* text);
+    void setText(const std::string& text) { setText(text.c_str()); }
     void setTextColor(double r, double g, double b, double a = 1.0);
 
     /**
