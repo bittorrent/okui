@@ -117,6 +117,10 @@ bool View::ancestorsAreVisible() const {
     return superview() ? (superview()->isVisible() && superview()->ancestorsAreVisible()) : true;
 }
 
+bool View::isVisibleInOpenWindow() const {
+    return isVisible() && ancestorsAreVisible() && window() && window()->isOpen();
+}
+
 void View::setInterceptsMouseEvents(bool intercepts, bool childrenIntercept) {
     _interceptsMouseEvents = intercepts;
     _childrenInterceptMouseEvents = childrenIntercept;

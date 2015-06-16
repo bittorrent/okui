@@ -20,12 +20,14 @@ Window::~Window() {
 
 void Window::open() {
     application()->platform()->openWindow(this, _title.c_str(), _x, _y, _width, _height);
+    _isOpen = true;
     _updateContentLayout();
 }
 
 void Window::close() {
     closing();
     application()->platform()->closeWindow(this);
+    _isOpen = false;
 }
 
 void Window::setPosition(int x, int y) {

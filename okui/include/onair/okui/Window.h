@@ -26,6 +26,8 @@ public:
 
     void open();
     void close();
+    
+    bool isOpen() const { return _isOpen; }
 
     Application* application() { return _application; }
 
@@ -98,6 +100,8 @@ public:
 
 private:
     Application* const _application;
+    
+    bool _isOpen = false;
 
     int _x{100}, _y{100};
     int _width{800}, _height{480};

@@ -31,12 +31,12 @@ public:
     */
     virtual Responder* nextResponder() { return nullptr; }
 
-    virtual void keyDown(KeyCode key, KeyModifiers mod, bool repeat) {
-        if (auto next = nextResponder()) { next->keyDown(key, mod, repeat); }
+    virtual void keyDown(KeyCode key, KeyModifiers modifiers, bool repeat) {
+        if (auto next = nextResponder()) { next->keyDown(key, modifiers, repeat); }
     }
 
-    virtual void keyUp(KeyCode key, KeyModifiers mod, bool repeat) {
-        if (auto next = nextResponder()) { next->keyUp(key, mod, repeat); }
+    virtual void keyUp(KeyCode key, KeyModifiers modifiers, bool repeat) {
+        if (auto next = nextResponder()) { next->keyUp(key, modifiers, repeat); }
     }
     
     virtual void textInput(const std::string& text) {

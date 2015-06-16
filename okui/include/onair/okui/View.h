@@ -68,6 +68,11 @@ public:
     bool ancestorsAreVisible() const;
 
     /**
+    * Returns true if the view and its ancestors are visible and in an open window.
+    */
+    bool isVisibleInOpenWindow() const;
+
+    /**
     * Arranges the view so it's behind all of its current siblings.
     */
     void sendToBack();
