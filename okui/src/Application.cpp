@@ -3,8 +3,6 @@
 #include "onair/okui/Platform.h"
 
 #include "onair/HTTPRequest.h"
-#include "onair/HTTPSRequest.h"
-#include "onair/URL.h"
 #include "onair/thread.h"
 
 namespace onair {
@@ -46,34 +44,47 @@ std::string Application::userStoragePath() const {
 }
 
 std::future<std::shared_ptr<const std::string>> Application::download(const std::string& url, bool useCache) {
-    auto& download = _downloads[url];
+    auto it = _downloads.find(url);
+    auto download = it == _downloads.end() ? (_downloads[url] = std::make_shared<DownloadInfo>()) : _downloads[url];
+    std::lock_guard<std::mutex> lock(download->mutex);
+    
     if (useCache) {
-        if (download.result) {
+        if (download->result) {
             std::promise<std::shared_ptr<const std::string>> promise;
-            promise.set_value(download.result);
+            promise.set_value(download->result);
             return promise.get_future();
-        } else if (!download.promises.empty()) {
-            download.promises.emplace_back();
-            return download.promises.back().get_future();
+        } else if (download->inProgress) {
+            download->promises.emplace_back();
+            return download->promises.back().get_future();
         }
     }
     
     std::promise<std::shared_ptr<const std::string>> promise;
     auto future = promise.get_future();
+    
+    ++download->inProgress;
 
-    _backgroundTasks.emplace_back(std::async([=, promise = std::move(promise)] () mutable {
+    for (auto it = _backgroundTasks.begin(); it != _backgroundTasks.end();) {
+        if (!it->valid() || it->wait_for(0_ms) == std::future_status::ready) {
+            it = _backgroundTasks.erase(it);
+        } else {
+            ++it;
+        }
+    }
+
+    _backgroundTasks.emplace_back(std::async([url, download, promise = std::move(promise)] () mutable {
         auto result = Download(url);
-        taskScheduler()->async([=, promise = std::move(promise)] () mutable {
-            auto& download = _downloads[url];
-            download.result = result;
 
+        std::lock_guard<std::mutex> lock(download->mutex);
+        download->result = result;
+
+        promise.set_value(result);
+        for (auto& promise : download->promises) {
             promise.set_value(result);
-            for (auto& promise : download.promises) {
-                promise.set_value(result);
-            }
+        }
 
-            download.promises.clear();
-        });
+        download->promises.clear();
+        --download->inProgress;
     }));
     
     return future;
@@ -104,23 +115,9 @@ void Application::handleCommand(Command command, CommandContext context) {
 }
 
 std::shared_ptr<const std::string> Application::Download(const std::string& url) {
-    URL parsed{url};
-    
-    if (parsed.protocol() == "http") {
-        HTTPRequest request(parsed.host().c_str(), parsed.port(), "GET", parsed.resource().c_str());
-        request.wait();
-        if (request.responseStatus() == 200) {
-            return std::make_shared<std::string>(request.responseBody());
-        }
-    } else if (parsed.protocol() == "https") {
-        HTTPSRequest request(parsed.host().c_str(), parsed.port(), "GET", parsed.resource().c_str());
-        request.wait();
-        if (request.responseStatus() == 200) {
-            return std::make_shared<std::string>(request.responseBody());
-        }
-    }
-    
-    return nullptr;
+    HTTPRequest request(url);
+    request.wait();
+    return request.responseStatus() == 200 ? std::make_shared<std::string>(request.responseBody()) : nullptr;
 }
 
 }}

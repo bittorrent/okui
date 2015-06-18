@@ -90,10 +90,12 @@ private:
     ResourceManager* const _resourceManager;
     
     struct DownloadInfo {
+        std::mutex mutex;
         std::shared_ptr<const std::string> result = nullptr;
+        int inProgress = 0;
         std::vector<std::promise<std::shared_ptr<const std::string>>> promises;
     };
-    std::unordered_map<std::string, DownloadInfo> _downloads;
+    std::unordered_map<std::string, std::shared_ptr<DownloadInfo>> _downloads;
     
     std::vector<std::future<void>> _backgroundTasks;
 };

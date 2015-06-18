@@ -6,8 +6,18 @@
 
 class TestApplication : public onair::okui::Application {
 public:
-    TestApplication() : Application("Test Application", "BitTorrent Inc.", &platform, &resourceManager) {}
+    struct Essentials {
+        onair::okui::platforms::SDL platform;
+        onair::okui::FileResourceManager resourceManager{"./"};
+    };
 
-    onair::okui::platforms::SDL platform;
-    onair::okui::FileResourceManager resourceManager{"./"};
+    TestApplication() : TestApplication(std::unique_ptr<Essentials>(new Essentials())){}
+
+private:
+    TestApplication(std::unique_ptr<Essentials>&& essentials)
+        : Application("Test Application", "BitTorrent Inc.", &essentials->platform, &essentials->resourceManager)
+        , _essentials(std::move(essentials))
+    {}
+    
+    std::unique_ptr<Essentials> _essentials;
 };
