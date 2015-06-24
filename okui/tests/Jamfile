@@ -5,5 +5,7 @@ exe okui_tests :
     ../../third-party/sdl//sdl
 :
     <conditional>@require-desktop
+    <build>no
+    <target-os>darwin:<build>yes
     <target-os>darwin:<framework>CoreVideo
 ;

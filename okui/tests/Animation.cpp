@@ -131,4 +131,8 @@ TEST(Animation, interpolation) {
 
     C::set(200_s);
     EXPECT_NEAR(animation.current(), 10.0, 0.01);    
+
+    animation.target(10.0, 7_s, Interpolation::EaseOutExpo); // XXX: build fix for unused function
+
+    // TODO: test values for EaseOutExpo
 }
