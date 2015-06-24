@@ -28,7 +28,7 @@ struct WindowPosition {
 
     WindowPosition() = default;
     WindowPosition(Mode mode) : mode{mode} {}
-    WindowPosition(int x, int y) : mode{Mode::kAbsolute}, x{x}, y{x} {}
+    WindowPosition(int x, int y) : mode{Mode::kAbsolute}, x{x}, y{y} {}
 
     Mode mode = Mode::kUndefined;
     int x = 0;
