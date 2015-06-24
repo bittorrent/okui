@@ -19,6 +19,22 @@ namespace okui {
 class Application;
 class Platform;
 
+struct WindowPosition {
+    enum class Mode {
+        kUndefined,  // the os puts the window where it wants to
+        kCentered,   // centered on the desktop
+        kAbsolute,   // absolute position
+    };
+
+    WindowPosition() = default;
+    WindowPosition(Mode mode) : mode{mode} {}
+    WindowPosition(int x, int y) : mode{Mode::kAbsolute}, x{x}, y{x} {}
+
+    Mode mode = Mode::kUndefined;
+    int x = 0;
+    int y = 0;
+};
+
 class Window : public Responder {
 public:
     Window(Application* application);
@@ -26,18 +42,18 @@ public:
 
     void open();
     void close();
-    
+
     bool isOpen() const { return _isOpen; }
 
     Application* application() { return _application; }
 
-    int x() const { return _x; }
-    int y() const { return _y; }
+    const WindowPosition& position() const { return _position; }
 
     int width() const { return _width; }
     int height() const { return _height; }
 
-    void setPosition(int width, int height);
+    void setPosition(const WindowPosition& pos);
+    void setPosition(int x, int y);
     void setSize(int width, int height);
 
     const char* title() const { return _title.c_str(); }
@@ -45,8 +61,8 @@ public:
 
     /**
     * Sets the menu for the window.
-    * 
-    * For good portability, you should also set an application-wide menu that can be used on platforms that prefer 
+    *
+    * For good portability, you should also set an application-wide menu that can be used on platforms that prefer
     * them over window-specific menus (or simply don't support window-specific menus). (see Application::setMenu).
     */
     void setMenu(const Menu& menu);
@@ -65,7 +81,7 @@ public:
 
     View* focus() const { return _focus; }
     void setFocus(View* focus);
-    
+
     Responder* firstResponder() { return _focus ? dynamic_cast<Responder*>(_focus) : dynamic_cast<Responder*>(this); }
 
     /**
@@ -100,10 +116,10 @@ public:
 
 private:
     Application* const _application;
-    
+
     bool _isOpen = false;
 
-    int _x{100}, _y{100};
+    WindowPosition _position;
     int _width{800}, _height{480};
 
     double _renderScale = 1.0;

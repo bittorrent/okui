@@ -13,13 +13,13 @@ Window::Window(Application* application) : _application(application) {
 
 Window::~Window() {
     close();
-    
+
     // the content view should be destroyed before the window's other members
     _contentView.reset();
 }
 
 void Window::open() {
-    application()->platform()->openWindow(this, _title.c_str(), _x, _y, _width, _height);
+    application()->platform()->openWindow(this, _title.c_str(), _position, _width, _height);
     _isOpen = true;
     _updateContentLayout();
 }
@@ -30,10 +30,13 @@ void Window::close() {
     _isOpen = false;
 }
 
+void Window::setPosition(const WindowPosition& pos) {
+    _position = pos;
+    application()->platform()->setWindowPosition(this, pos);
+}
+
 void Window::setPosition(int x, int y) {
-    _x = x;
-    _y = y;
-    application()->platform()->setWindowPosition(this, x, y);
+    setPosition({x, y});
 }
 
 void Window::setSize(int width, int height) {
@@ -186,7 +189,7 @@ void Window::keyDown(KeyCode key, KeyModifiers mod, bool repeat) {
             return;
         }
     }
-    
+
     Responder::keyDown(key, mod, repeat);
 }
 

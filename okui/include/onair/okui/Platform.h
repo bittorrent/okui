@@ -36,12 +36,12 @@ public:
     */
     virtual void quit() = 0;
 
-    virtual void openWindow(Window* window, const char* title, int x, int y, int width, int height) = 0;
+    virtual void openWindow(Window* window, const char* title, const WindowPosition& pos, int width, int height) = 0;
     virtual void closeWindow(Window* window) = 0;
 
     virtual void getWindowRenderSize(Window* window, int* width, int* height) = 0;
 
-    virtual void setWindowPosition(Window* window, int x, int y) = 0;
+    virtual void setWindowPosition(Window* window, const WindowPosition& pos) = 0;
     virtual void setWindowSize(Window* window, int width, int height) = 0;
     virtual void setWindowTitle(Window* window, const char* title) = 0;
 

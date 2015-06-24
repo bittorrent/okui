@@ -33,12 +33,12 @@ public:
     virtual void run() override;
     virtual void quit() override;
 
-    virtual void openWindow(Window* window, const char* title, int x, int y, int width, int height) override;
+    virtual void openWindow(Window* window, const char* title, const WindowPosition& windowPosition, int width, int height) override;
     virtual void closeWindow(Window* window) override;
 
     virtual void getWindowRenderSize(Window* window, int* width, int* height) override;
 
-    virtual void setWindowPosition(Window* window, int x, int y) override;
+    virtual void setWindowPosition(Window* window, const WindowPosition& pos) override;
     virtual void setWindowSize(Window* window, int width, int height) override;
     virtual void setWindowTitle(Window* window, const char* title) override;
 
@@ -70,6 +70,11 @@ private:
         SDL_GLContext context;
     };
 
+    struct SDLWindowPosition {
+        int x;
+        int y;
+    };
+
     Window* _window(uint32_t id) const;
     SDL_Window* _sdlWindow(Window* window) const;
 
@@ -79,6 +84,8 @@ private:
     void _handleWindowEvent      (const SDL_WindowEvent& e);
     void _handleKeyboardEvent    (const SDL_KeyboardEvent& e);
     void _handleTextInputEvent   (const SDL_TextInputEvent& e);
+
+    static SDLWindowPosition _convertPosition(const WindowPosition& pos);
 
     std::unordered_map<Window*, uint32_t> _windowIds;
     std::unordered_map<uint32_t, WindowInfo> _windows;
@@ -117,7 +124,7 @@ inline void SDL::run() {
 
         auto eventTimeoutMS = std::chrono::duration_cast<std::chrono::milliseconds>(minFrameInterval - (std::chrono::steady_clock::now() - lastFrameTime)).count();
 
-        if (SDL_WaitEventTimeout(&e, std::max<int>(eventTimeoutMS, 1))) {
+        if (SDL_WaitEventTimeout(&e, std::max(static_cast<int>(eventTimeoutMS), 1))) {
             switch (e.type) {
                 case SDL_QUIT:            { shouldQuit = true; break; }
                 case SDL_MOUSEMOTION:     { _handleMouseMotionEvent(e.motion); break; }
@@ -162,13 +169,14 @@ inline void SDL::quit() {
     SDL_PushEvent(&event);
 }
 
-inline void SDL::openWindow(Window* window, const char* title, int x, int y, int width, int height) {
+inline void SDL::openWindow(Window* window, const char* title, const WindowPosition& position, int width, int height) {
     if (_windowIds.count(window)) {
         return;
     }
 
     SDL_GL_SetAttribute(SDL_GL_STENCIL_SIZE, 8);
-    auto sdlWindow = SDL_CreateWindow(title, x, y, width, height, SDL_WINDOW_OPENGL | SDL_WINDOW_RESIZABLE | SDL_WINDOW_ALLOW_HIGHDPI);
+    auto pos = _convertPosition(position);
+    auto sdlWindow = SDL_CreateWindow(title, pos.x, pos.y, width, height, SDL_WINDOW_OPENGL | SDL_WINDOW_RESIZABLE | SDL_WINDOW_ALLOW_HIGHDPI);
     auto context = SDL_GL_CreateContext(sdlWindow);
     auto id = SDL_GetWindowID(sdlWindow);
 
@@ -198,9 +206,10 @@ inline void SDL::getWindowRenderSize(Window* window, int* width, int* height) {
     }
 }
 
-inline void SDL::setWindowPosition(Window* window, int x, int y) {
+inline void SDL::setWindowPosition(Window* window, const WindowPosition& position) {
     if (auto w = _sdlWindow(window)) {
-        SDL_SetWindowPosition(w, x, y);
+        auto pos = _convertPosition(position);
+        SDL_SetWindowPosition(w, pos.x, pos.y);
     }
 }
 
@@ -397,5 +406,15 @@ inline MouseButton SDL::sMouseButton(uint8_t id) {
     }
     return MouseButton::kLeft;
 }
+
+inline SDL::SDLWindowPosition SDL::_convertPosition(const WindowPosition& pos) {
+    switch(pos.mode) {
+        case WindowPosition::Mode::kUndefined:  return {SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED};
+        case WindowPosition::Mode::kCentered:   return {SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED};
+        case WindowPosition::Mode::kAbsolute:   return {pos.x, pos.y};
+        default:                                return {SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED};
+    }
+}
+
 
 }}}
