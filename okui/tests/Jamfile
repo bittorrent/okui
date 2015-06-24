@@ -1,4 +1,9 @@
-exe okui_tests
-	: [ glob-tree *.cpp ] ..//okui ../../third-party/gtest//gtest_main ../../third-party/sdl//sdl
-	: <conditional>@require-desktop
+exe okui_tests :
+    [ glob-tree *.cpp ]
+    ..//okui
+    ../../third-party/gtest//gtest_main
+    ../../third-party/sdl//sdl
+:
+    <conditional>@require-desktop
+    <target-os>darwin:<framework>CoreVideo
 ;
