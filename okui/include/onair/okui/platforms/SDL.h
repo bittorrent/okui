@@ -61,7 +61,7 @@ public:
 
 private:
     struct WindowInfo {
-        WindowInfo() {}
+        WindowInfo() = default;
         WindowInfo(Window* window, SDL_Window* sdlWindow, SDL_GLContext& context)
             : window(window), sdlWindow(sdlWindow), context(context) {}
 
@@ -71,8 +71,11 @@ private:
     };
 
     struct SDLWindowPosition {
-        int x;
-        int y;
+        SDLWindowPosition() = default;
+        SDLWindowPosition(const WindowPosition& pos);
+
+        int x = 0;
+        int y = 0;
     };
 
     Window* _window(uint32_t id) const;
@@ -84,8 +87,6 @@ private:
     void _handleWindowEvent      (const SDL_WindowEvent& e);
     void _handleKeyboardEvent    (const SDL_KeyboardEvent& e);
     void _handleTextInputEvent   (const SDL_TextInputEvent& e);
-
-    static SDLWindowPosition _convertPosition(const WindowPosition& pos);
 
     std::unordered_map<Window*, uint32_t> _windowIds;
     std::unordered_map<uint32_t, WindowInfo> _windows;
@@ -175,7 +176,7 @@ inline void SDL::openWindow(Window* window, const char* title, const WindowPosit
     }
 
     SDL_GL_SetAttribute(SDL_GL_STENCIL_SIZE, 8);
-    auto pos = _convertPosition(position);
+    auto pos = SDLWindowPosition{position};
     auto sdlWindow = SDL_CreateWindow(title, pos.x, pos.y, width, height, SDL_WINDOW_OPENGL | SDL_WINDOW_RESIZABLE | SDL_WINDOW_ALLOW_HIGHDPI);
     auto context = SDL_GL_CreateContext(sdlWindow);
     auto id = SDL_GetWindowID(sdlWindow);
@@ -208,7 +209,7 @@ inline void SDL::getWindowRenderSize(Window* window, int* width, int* height) {
 
 inline void SDL::setWindowPosition(Window* window, const WindowPosition& position) {
     if (auto w = _sdlWindow(window)) {
-        auto pos = _convertPosition(position);
+        auto pos = SDLWindowPosition{position};
         SDL_SetWindowPosition(w, pos.x, pos.y);
     }
 }
@@ -388,33 +389,33 @@ inline void SDL::_handleTextInputEvent(const SDL_TextInputEvent& event) {
     }
 }
 
+inline SDL::SDLWindowPosition::SDLWindowPosition(const WindowPosition& pos) {
+    switch(pos.mode) {
+        case WindowPosition::Mode::kCentered:
+            x = SDL_WINDOWPOS_CENTERED;
+            y = SDL_WINDOWPOS_CENTERED;
+            break;
+        case WindowPosition::Mode::kAbsolute:
+            x = pos.x;
+            y = pos.y;
+            break;
+        case WindowPosition::Mode::kUndefined: // fall through
+        default:
+            x = SDL_WINDOWPOS_UNDEFINED;
+            y = SDL_WINDOWPOS_UNDEFINED;
+            break;
+    }
+}
 
 inline MouseButton SDL::sMouseButton(uint8_t id) {
     switch (id) {
-        case SDL_BUTTON_LEFT:
-            return MouseButton::kLeft;
-        case SDL_BUTTON_MIDDLE:
-            return MouseButton::kMiddle;
-        case SDL_BUTTON_RIGHT:
-            return MouseButton::kRight;
-        case SDL_BUTTON_X1:
-            return MouseButton::kX1;
-        case SDL_BUTTON_X2:
-            return MouseButton::kX2;
-        default:
-            return MouseButton::kLeft;
-    }
-    return MouseButton::kLeft;
-}
-
-inline SDL::SDLWindowPosition SDL::_convertPosition(const WindowPosition& pos) {
-    switch(pos.mode) {
-        case WindowPosition::Mode::kUndefined:  return {SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED};
-        case WindowPosition::Mode::kCentered:   return {SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED};
-        case WindowPosition::Mode::kAbsolute:   return {pos.x, pos.y};
-        default:                                return {SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED};
+        case SDL_BUTTON_LEFT:   return MouseButton::kLeft;
+        case SDL_BUTTON_MIDDLE: return MouseButton::kMiddle;
+        case SDL_BUTTON_RIGHT:  return MouseButton::kRight;
+        case SDL_BUTTON_X1:     return MouseButton::kX1;
+        case SDL_BUTTON_X2:     return MouseButton::kX2;
+        default:                return MouseButton::kLeft;
     }
 }
-
 
 }}}
