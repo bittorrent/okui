@@ -22,20 +22,20 @@ public:
 
     void setColor(double r, double g, double b, double a);
 
-    void setTexture(GLuint id, Rectangle<double> bounds) { setTexture(id, bounds.x, bounds.y, bounds.width, bounds.height); }
-    void setTexture(GLuint id, double x, double y, double w, double h);
+    void setTexture(GLuint id, Rectangle<double> bounds, const AffineTransformation& texCoordTransform = AffineTransformation{}) { setTexture(id, bounds.x, bounds.y, bounds.width, bounds.height, texCoordTransform); }
+    void setTexture(GLuint id, double x, double y, double w, double h, const AffineTransformation& texCoordTransform = AffineTransformation{});
 
     /**
     * Draws a texture, scaling it to fill the given area without stretching.
     */
-    void drawScaledFill(const Texture& texture, Rectangle<double> area);
-    void drawScaledFill(const Texture& texture, double x, double y, double w, double h) { drawScaledFill(texture, Rectangle<double>(x, y, w, h)); }
+    void drawScaledFill(const Texture& texture, Rectangle<double> area, double r = 0);
+    void drawScaledFill(const Texture& texture, double x, double y, double w, double h, double r = 0) { drawScaledFill(texture, Rectangle<double>(x, y, w, h), r); }
 
     /**
     * Draws a texture, scaling it to fit inside the given area without stretching.
     */
-    void drawScaledFit(const Texture& texture, Rectangle<double> area);
-    void drawScaledFit(const Texture& texture, double x, double y, double w, double h) { drawScaledFit(texture, Rectangle<double>(x, y, w, h)); }
+    void drawScaledFit(const Texture& texture, Rectangle<double> area, double r = 0);
+    void drawScaledFit(const Texture& texture, double x, double y, double w, double h, double r = 0) { drawScaledFit(texture, Rectangle<double>(x, y, w, h), r); }
 
     virtual void drawTriangle(double x1, double y1, double x2, double y2, double x3, double y3, Curve curve) override;
     virtual void flush() override;
@@ -44,7 +44,8 @@ private:
     opengl::ShaderProgram _program;
     opengl::ShaderProgram::Uniform _curveModeUniform;
     AffineTransformation _transformation;
-    
+    AffineTransformation _texCoordTransform;
+
     GLuint _texture = 0;
     double _textureX1, _textureY1, _textureWidth, _textureHeight;
 

@@ -96,7 +96,7 @@ void TextureShader::setColor(double r, double g, double b, double a) {
     _triangle.a.a = _triangle.b.a = _triangle.c.a = a;
 }
 
-void TextureShader::setTexture(GLuint id, double x, double y, double w, double h) {
+void TextureShader::setTexture(GLuint id, double x, double y, double w, double h, const AffineTransformation& texCoordTransform) {
     if (_texture != id) {
         flush();
     }
@@ -110,16 +110,18 @@ void TextureShader::setTexture(GLuint id, double x, double y, double w, double h
 
     _textureWidth  = x2 - _textureX1;
     _textureHeight = y2 - _textureY1;
+
+    _texCoordTransform = texCoordTransform;
 }
 
-void TextureShader::drawScaledFill(const Texture& texture, Rectangle<double> area) {
-    setTexture(texture.id(), area.scaledFill(texture.aspectRatio()));
-    okui::shapes::Rectangle(area).draw(this);
+void TextureShader::drawScaledFill(const Texture& texture, Rectangle<double> area, double r) {
+    setTexture(texture.id(), area.scaledFill(texture.aspectRatio()), AffineTransformation{0.5, 0.5, -0.5, -0.5, 1.0, 1.0, -r});
+    okui::shapes::Rectangle(area).rotate(r).draw(this);
 }
 
-void TextureShader::drawScaledFit(const Texture& texture, Rectangle<double> area) {
-    setTexture(texture.id(), area.scaledFit(texture.aspectRatio()));
-    okui::shapes::Rectangle(area).draw(this);
+void TextureShader::drawScaledFit(const Texture& texture, Rectangle<double> area, double r) {
+    setTexture(texture.id(), area.scaledFit(texture.aspectRatio()), AffineTransformation{0.5, 0.5, -0.5, -0.5, 1.0, 1.0, -r});
+    okui::shapes::Rectangle(area).rotate(r).draw(this);
 }
 
 void TextureShader::drawTriangle(double x1, double y1, double x2, double y2, double x3, double y3, Shader::Curve curve) {
@@ -155,20 +157,28 @@ void TextureShader::drawTriangle(double x1, double y1, double x2, double y2, dou
 
     _triangle.a.x  = x1;
     _triangle.a.y  = y1;
-    _triangle.a.s  = (x1 - _textureX1) / _textureWidth;
-    _triangle.a.t  = (y1 - _textureY1) / _textureHeight;
+    double s, t;
+    _texCoordTransform.transform((x1 - _textureX1) / _textureWidth, (y1 - _textureY1) / _textureHeight, &s, &t);
+    _triangle.a.s  = s;
+    _triangle.a.t  = t;
     _triangle.a.cm = curve;
 
     _triangle.b.x  = x2;
     _triangle.b.y  = y2;
     _triangle.b.s  = (x2 - _textureX1) / _textureWidth;
     _triangle.b.t  = (y2 - _textureY1) / _textureHeight;
+    _texCoordTransform.transform((x2 - _textureX1) / _textureWidth, (y2 - _textureY1) / _textureHeight, &s, &t);
+    _triangle.b.s  = s;
+    _triangle.b.t  = t;
     _triangle.b.cm = curve;
 
     _triangle.c.x  = x3;
     _triangle.c.y  = y3;
     _triangle.c.s  = (x3 - _textureX1) / _textureWidth;
     _triangle.c.t  = (y3 - _textureY1) / _textureHeight;
+    _texCoordTransform.transform((x3 - _textureX1) / _textureWidth, (y3 - _textureY1) / _textureHeight, &s, &t);
+    _triangle.c.s  = s;
+    _triangle.c.t  = t;
     _triangle.c.cm = curve;
 
     _vertices.push_back(_triangle.a);
