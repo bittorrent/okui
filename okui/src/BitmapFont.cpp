@@ -30,7 +30,7 @@ double BitmapFont::width(const GlyphId* glyphs, size_t count) const {
         if (i > 0) {
             width += kerning(glyphs[i - 1], glyphs[i]);
         }
-        width += (i + 1 == count) ? (g->width - _padding) : g->xAdvance;
+        width += g->xAdvance;
     }
     return width;
 }

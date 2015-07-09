@@ -47,6 +47,11 @@ public:
 
     void setWeight(Weight weight) { _weight = weight; }
 
+    Point<int> lineColumnPosition(size_t line, size_t column) const;
+    std::pair<size_t, size_t> lineColumnAtPosition(int x, int y) const;
+
+    double lineHeight() const;
+
     virtual void render() override;
     virtual void layout() override;
     virtual void windowChanged() override;
@@ -57,7 +62,7 @@ private:
     std::string _bitmapFontTexture;
     std::string _bitmapFontMetadata;
     double _bitmapFontSize = 0.0;
-    
+
     HorizontalAlignment _horizontalAlignment = HorizontalAlignment::kLeft;
     VerticalAlignment _verticalAlignment = VerticalAlignment::kCenter;
     Weight _weight = Weight::kRegular;
@@ -69,6 +74,8 @@ private:
 
     void _computeLines();
     void _renderBitmapText(shaders::DistanceFieldShader* shader);
+    double _calcXOffset(const std::basic_string<BitmapFont::GlyphId>& line) const;
+    double _calcYOffset() const;
 };
 
 }}}

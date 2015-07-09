@@ -18,6 +18,7 @@ Application::Application(const char* name, const char* organization, Platform* p
         MenuItem("Edit", Menu({
             MenuItem("Copy", kCommandCopy, KeyCode::kC, platform->defaultShortcutModifier()),
             MenuItem("Paste", kCommandPaste, KeyCode::kV, platform->defaultShortcutModifier()),
+            MenuItem("Select All", kCommandSelectAll, KeyCode::kA, platform->defaultShortcutModifier()),
         })),
     }));
 }
@@ -47,7 +48,7 @@ std::future<std::shared_ptr<const std::string>> Application::download(const std:
     auto it = _downloads.find(url);
     auto download = it == _downloads.end() ? (_downloads[url] = std::make_shared<DownloadInfo>()) : _downloads[url];
     std::lock_guard<std::mutex> lock(download->mutex);
-    
+
     if (useCache) {
         if (download->result) {
             std::promise<std::shared_ptr<const std::string>> promise;
@@ -58,10 +59,10 @@ std::future<std::shared_ptr<const std::string>> Application::download(const std:
             return download->promises.back().get_future();
         }
     }
-    
+
     std::promise<std::shared_ptr<const std::string>> promise;
     auto future = promise.get_future();
-    
+
     ++download->inProgress;
 
     for (auto it = _backgroundTasks.begin(); it != _backgroundTasks.end();) {
@@ -86,7 +87,7 @@ std::future<std::shared_ptr<const std::string>> Application::download(const std:
         download->promises.clear();
         --download->inProgress;
     }));
-    
+
     return future;
 }
 

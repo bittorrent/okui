@@ -15,7 +15,7 @@ View::~View() {
     if (_previousFocus) {
         _previousFocus->_nextFocus = _nextFocus;
     }
-    
+
     while (!_subviews.empty()) {
         removeSubview(*_subviews.begin());
     }
@@ -101,7 +101,7 @@ void View::setIsVisible(bool isVisible) {
             willDisappear();
         }
     }
-    
+
     _isVisible = isVisible;
 
     if (window() && ancestorsAreVisible()) {
@@ -234,8 +234,16 @@ Point<int> View::localToSuperview(int x, int y) {
     return Point<int>(bounds().x + x, bounds().y + y);
 }
 
+Point<int> View::localToSuperview(const Point<int>& p) {
+    return localToSuperview(p.x, p.y);
+}
+
 Point<int> View::superviewToLocal(int x, int y) {
     return Point<int>(x - bounds().x, y - bounds().y);
+}
+
+Point<int> View::superviewToLocal(const Point<int>& p) {
+    return superviewToLocal(p.x, p.y);
 }
 
 bool View::hitTest(int x, int y) {

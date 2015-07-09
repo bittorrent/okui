@@ -71,6 +71,54 @@ void TextView::windowChanged() {
     }
 }
 
+Point<int> TextView::lineColumnPosition(size_t lineNum, size_t col) const {
+    if (!_font) { return{0, 0}; }
+
+    auto fontScale = _fontSize / _font->size();
+    auto lineSpacing = _font->lineSpacing() * fontScale;
+
+    auto& line = _lines[lineNum];
+    col = std::min(col, line.size());
+
+    return {static_cast<int>(std::round(_calcXOffset(line) + (_font->width(line.data(), col) * fontScale))),
+            static_cast<int>(std::round(_calcYOffset() + (lineNum * lineSpacing)))};
+}
+
+std::pair<size_t, size_t> TextView::lineColumnAtPosition(int mouseX, int mouseY) const {
+    if (!_font || _lines.empty()) { return{0, 0}; }
+
+    auto fontScale   = _fontSize / _font->size();
+    auto lineSpacing = _font->lineSpacing() * fontScale;
+
+    auto lineNum = std::min<size_t>(_lines.size()-1, std::max(0, static_cast<int>((mouseY-_calcYOffset()) / lineSpacing)));
+    auto& line = _lines[lineNum];
+
+    double x = _calcXOffset(line);
+
+    for (size_t i = 0; i < line.size(); ++i) {
+        if (i > 0) {
+            x += _font->kerning(line[i - 1], line[i]);
+        }
+        auto glyph = _font->glyph(line[i]);
+        if (glyph) {
+            x += glyph->xAdvance * fontScale;
+        }
+
+        if (mouseX < x) {
+            return {lineNum, i};
+        }
+    }
+
+    return {lineNum, line.size()};
+}
+
+double TextView::lineHeight() const {
+    if (!_font) { return 0; }
+
+    auto fontScale = _fontSize / _font->size();
+    return _font->lineSpacing() * fontScale;
+}
+
 void TextView::_computeLines() {
     _textWidth = 0.0;
     _lines.clear();
@@ -126,29 +174,13 @@ void TextView::_computeLines() {
 
 void TextView::_renderBitmapText(shaders::DistanceFieldShader* shader) {
     // TODO: this could be much more optimized (e.g. via display list or vbo)
-
     auto fontScale = _fontSize / _font->size();
     auto texture = _font->texture();
-
     auto lineSpacing = _font->lineSpacing() * fontScale;
-    auto textHeight = _lines.empty() ? 0.0 : (lineSpacing * _lines.size());
-
-    auto y = 0.0;
-    if (_verticalAlignment == VerticalAlignment::kCenter) {
-        y = (bounds().height - textHeight) * 0.5;
-    } else if (_verticalAlignment == VerticalAlignment::kBottom) {
-        y = bounds().height - textHeight;
-    }
+    auto y = _calcYOffset();
 
     for (auto& line : _lines) {
-        auto textWidth = _font->width(line.data(), line.size()) * fontScale;
-
-        double x = 0.0;
-        if (_horizontalAlignment == HorizontalAlignment::kCenter) {
-            x = (bounds().width - textWidth) * 0.5;
-        } else if (_horizontalAlignment == HorizontalAlignment::kRight) {
-            x = bounds().width - textWidth;
-        }
+        double x = _calcXOffset(line);
 
         for (size_t i = 0; i < line.size(); ++i) {
             if (i > 0) {
@@ -166,6 +198,39 @@ void TextView::_renderBitmapText(shaders::DistanceFieldShader* shader) {
 
         y += lineSpacing;
     }
+}
+
+double TextView::_calcXOffset(const std::basic_string<BitmapFont::GlyphId>& line) const {
+    if (!_font) { return 0; }
+
+    auto fontScale = _fontSize / _font->size();
+    auto textWidth = _font->width(line.data(), line.size()) * fontScale;
+
+    double x = 0.0;
+    if (_horizontalAlignment == HorizontalAlignment::kCenter) {
+        x = (bounds().width - textWidth) * 0.5;
+    } else if (_horizontalAlignment == HorizontalAlignment::kRight) {
+        x = bounds().width - textWidth;
+    }
+
+    return x;
+}
+
+double TextView::_calcYOffset() const {
+    if (!_font) { return 0; }
+
+    auto fontScale   = _fontSize / _font->size();
+    auto lineSpacing = _font->lineSpacing() * fontScale;
+    auto textHeight  = lineSpacing * std::min(_lines.size(), 1ul);
+
+    auto y = 0.0;
+    if (_verticalAlignment == VerticalAlignment::kCenter) {
+        y = (bounds().height - textHeight) * 0.5;
+    } else if (_verticalAlignment == VerticalAlignment::kBottom) {
+        y = bounds().height - textHeight;
+    }
+
+    return y;
 }
 
 }}}

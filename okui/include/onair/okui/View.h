@@ -49,7 +49,7 @@ public:
 
     void setIsVisible(bool isVisible = true);
     bool isVisible() const { return _isVisible; }
-        
+
     /**
     * Allows scaling of the view by a particular factor.
     */
@@ -150,11 +150,13 @@ public:
     * Converts a point from local coordinates to superview coordinates.
     */
     Point<int> localToSuperview(int x, int y);
+    Point<int> localToSuperview(const Point<int>& p);
 
     /**
     * Converts a point from super coordinates to local coordinates.
     */
     Point<int> superviewToLocal(int x, int y);
+    Point<int> superviewToLocal(const Point<int>& p);
 
     /**
     * Override this to do drawing.
@@ -194,7 +196,7 @@ public:
     * Called before the view and all of its ancestors become visible in the window.
     */
     virtual void willAppear() {}
-        
+
     /**
     * Called when the view and all of its ancestors become visible in the window.
     */
@@ -250,9 +252,9 @@ private:
 
     View*            _nextFocus = nullptr;
     View*            _previousFocus = nullptr;
-    
+
     Point<double>    _scale{1.0, 1.0};
-        
+
     Color            _backgroundColor{0.0, 0.0};
 
     void _setBounds(const Rectangle<int>&& bounds);

@@ -21,9 +21,10 @@ constexpr Command kCommandNone = 0;
 */
 constexpr Command kCommandPrefixMask = UINT64_C(0x33359c3d) << 32;
 
-constexpr Command kCommandCopy  = kCommandPrefixMask | 1;
-constexpr Command kCommandPaste = kCommandPrefixMask | 2;
-constexpr Command kCommandQuit  = kCommandPrefixMask | 3;
+constexpr Command kCommandCopy       = kCommandPrefixMask | 1;
+constexpr Command kCommandPaste      = kCommandPrefixMask | 2;
+constexpr Command kCommandQuit       = kCommandPrefixMask | 3;
+constexpr Command kCommandSelectAll  = kCommandPrefixMask | 4;
 
 } // namespace
 
