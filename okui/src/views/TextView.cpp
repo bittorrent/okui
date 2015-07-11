@@ -2,6 +2,8 @@
 #include "onair/okui/shapes/Rectangle.h"
 #include "onair/okui/Window.h"
 
+#include <cmath>
+
 namespace onair {
 namespace okui {
 namespace views {
@@ -221,7 +223,7 @@ double TextView::_calcYOffset() const {
 
     auto fontScale   = _fontSize / _font->size();
     auto lineSpacing = _font->lineSpacing() * fontScale;
-    auto textHeight  = lineSpacing * std::min(_lines.size(), 1ul);
+    auto textHeight  = lineSpacing * std::min<size_t>(_lines.size(), 1);
 
     auto y = 0.0;
     if (_verticalAlignment == VerticalAlignment::kCenter) {
