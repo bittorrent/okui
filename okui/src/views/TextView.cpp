@@ -82,8 +82,8 @@ Point<int> TextView::lineColumnPosition(size_t lineNum, size_t col) const {
     auto& line = _lines[lineNum];
     col = std::min(col, line.size());
 
-    return {static_cast<int>(std::round(_calcXOffset(line) + (_font->width(line.data(), col) * fontScale))),
-            static_cast<int>(std::round(_calcYOffset() + (lineNum * lineSpacing)))};
+    return {static_cast<int>(round(_calcXOffset(line) + (_font->width(line.data(), col) * fontScale))),
+            static_cast<int>(round(_calcYOffset() + (lineNum * lineSpacing)))};
 }
 
 std::pair<size_t, size_t> TextView::lineColumnAtPosition(int mouseX, int mouseY) const {
