@@ -49,6 +49,10 @@ namespace onair {
 namespace okui {
 namespace platforms {
 
+OSX::~OSX() {
+    [NSApp setMainMenu:nil];
+}
+
 void OSX::selectFiles(bool allowFiles, bool allowDirectories, bool allowMultiple, std::function<void(std::vector<std::string>)> action) {
     NSOpenPanel* panel = [NSOpenPanel openPanel];
     [panel setLevel:CGShieldingWindowLevel()];

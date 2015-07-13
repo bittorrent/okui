@@ -153,11 +153,13 @@ void View::bringToFront() {
 }
 
 void View::focus() {
-    window()->setFocus(this);
+    if (window()) {
+        window()->setFocus(this);
+    }
 }
 
 void View::unfocus() {
-    if (isFocus()) {
+    if (window() && isFocus()) {
         window()->setFocus(nullptr);
     }
 }

@@ -34,6 +34,20 @@ public:
     void addSubview(View* view);
     void removeSubview(View* view);
 
+    void addSubviews() {}
+    template <typename... Views>
+    void addSubviews(View* view, Views&&... views) {
+        addSubview(view);
+        addSubviews(std::forward<Views>(views)...);
+    }
+
+    void removeSubviews() {}
+    template <typename... Views>
+    void removeSubviews(View* view, Views&&... views) {
+        removeSubview(view);
+        removeSubviews(std::forward<Views>(views)...);
+    }
+
     View* superview() const;
     Window* window() const { return _window; }
     Application* application() const;

@@ -114,7 +114,7 @@ std::shared_ptr<BitmapFont> Window::loadBitmapFontResource(const char* textureNa
 }
 
 void Window::setFocus(View* focus) {
-    if (_focus == focus) { return; }
+    if (_focus == focus || (focus && !focus->canBecomeFocus())) { return; }
     if (_focus) {
         _focus->focusLost();
     }

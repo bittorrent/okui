@@ -20,6 +20,8 @@ namespace platforms {
 */
 class OSX : public Apple {
 public:
+    virtual ~OSX();
+
     virtual NSWindow* nativeWindow(Window* window) const = 0;
     
     virtual bool canSelectFiles() const override { return true; }
