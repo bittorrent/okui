@@ -24,7 +24,7 @@ namespace {
     */
     
     const uint32_t kUTF8Accept = 0;
-    const uint32_t kUTF8Reject = 12;
+    // const uint32_t kUTF8Reject = 12;
     
     const uint8_t utf8d[] = {
          0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,  0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
