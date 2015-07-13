@@ -4,6 +4,7 @@
 
 #include "onair/okui/Menu.h"
 #include "onair/okui/Window.h"
+#include "onair/okui/CursorTypes.h"
 
 #include "onair/TaskQueue.h"
 
@@ -115,6 +116,8 @@ public:
     * Returns path to resources, if there is one.
     */
     virtual std::string resourcePath() const { return ""; }
+
+    virtual void setCursorType(CursorType type) {}
 
 protected:
     void _render(Window* window) { window->_render(); }

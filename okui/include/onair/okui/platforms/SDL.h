@@ -55,6 +55,8 @@ public:
     virtual std::string operatingSystem() const override { return SDL_GetPlatform(); }
     virtual void setScreenSaverEnabled(bool enabled = true) override { enabled ? SDL_EnableScreenSaver() : SDL_DisableScreenSaver(); }
 
+    virtual void setCursorType(CursorType type) override;
+
 #if ONAIR_MAC_OS_X
     NSWindow* nativeWindow(Window* window) const override;
 #endif
@@ -78,6 +80,12 @@ private:
         int y = 0;
     };
 
+    struct CursorDeleter {
+        void operator()(SDL_Cursor* p) {
+            SDL_FreeCursor(p);
+        }
+    };
+
     Window* _window(uint32_t id) const;
     SDL_Window* _sdlWindow(Window* window) const;
 
@@ -91,6 +99,7 @@ private:
     std::unordered_map<Window*, uint32_t> _windowIds;
     std::unordered_map<uint32_t, WindowInfo> _windows;
     Window* _activeWindow = nullptr;
+    std::unique_ptr<SDL_Cursor, CursorDeleter> _cursor;
 
     static MouseButton sMouseButton(uint8_t id);
 };
@@ -416,6 +425,29 @@ inline MouseButton SDL::sMouseButton(uint8_t id) {
         case SDL_BUTTON_X2:     return MouseButton::kX2;
         default:                return MouseButton::kLeft;
     }
+}
+
+inline void SDL::setCursorType(CursorType type) {
+    SDL_SystemCursor id = SDL_SYSTEM_CURSOR_ARROW;
+
+    switch (type) {
+        case  CursorType::kArrow:       id = SDL_SYSTEM_CURSOR_ARROW;     break;
+        case  CursorType::kText:        id = SDL_SYSTEM_CURSOR_IBEAM;     break;
+        case  CursorType::kWait:        id = SDL_SYSTEM_CURSOR_WAIT;      break;
+        case  CursorType::kCrosshair:   id = SDL_SYSTEM_CURSOR_CROSSHAIR; break;
+        case  CursorType::kWaitArrow:   id = SDL_SYSTEM_CURSOR_WAITARROW; break;
+        case  CursorType::kResizeNWSE:  id = SDL_SYSTEM_CURSOR_SIZENWSE;  break;
+        case  CursorType::kResizeNESW:  id = SDL_SYSTEM_CURSOR_SIZENESW;  break;
+        case  CursorType::kResizeWE:    id = SDL_SYSTEM_CURSOR_SIZEWE;    break;
+        case  CursorType::kResizeNS:    id = SDL_SYSTEM_CURSOR_SIZENS;    break;
+        case  CursorType::kResizeAll:   id = SDL_SYSTEM_CURSOR_SIZEALL;   break;
+        case  CursorType::kNo:          id = SDL_SYSTEM_CURSOR_NO;        break;
+        case  CursorType::kHand:        id = SDL_SYSTEM_CURSOR_HAND;      break;
+        default:                        id = SDL_SYSTEM_CURSOR_ARROW;     break;
+    }
+
+    _cursor.reset(SDL_CreateSystemCursor(id));
+    SDL_SetCursor(_cursor.get());
 }
 
 }}}

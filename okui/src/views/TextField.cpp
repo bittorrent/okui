@@ -83,6 +83,14 @@ void TextField::mouseDrag(int x, int y) {
     }
 }
 
+void TextField::mouseEnter() {
+    application()->platform()->setCursorType(CursorType::kText);
+}
+
+void TextField::mouseExit() {
+    application()->platform()->setCursorType(CursorType::kArrow);
+}
+
 void TextField::focusGained() {
     application()->platform()->startTextInput();
     _cursor.setIsVisible(true);
