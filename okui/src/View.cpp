@@ -168,7 +168,7 @@ void View::setNextFocus(View* view) {
     if (_nextFocus == view) { return; }
 
     if (_nextFocus) {
-        if (_nextFocus->_previousFocus) {
+        if (_nextFocus->_previousFocus && _nextFocus->_previousFocus != this) {
             _nextFocus->_previousFocus->_nextFocus = nullptr;
         }
         _nextFocus->_previousFocus = nullptr;
