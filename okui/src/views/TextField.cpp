@@ -10,6 +10,23 @@ namespace onair {
 namespace okui {
 namespace views {
 
+/**
+* Finds the end of the next word. Returns offset from current start.
+*/
+template<class Iterator>
+size_t endOfWord(Iterator start, Iterator end) {
+    bool prevIsAlNum = std::isalnum(*start) != 0;
+    for (auto i = start+1; i != end; ++i) {
+        auto isAlNum = std::isalnum(*i) != 0;
+        if (prevIsAlNum && !isAlNum) {
+            return i-start;
+        }
+        prevIsAlNum = isAlNum;
+    }
+
+    return end-start;
+}
+
 TextField::TextField() {
     _textView.setAlignment(TextView::HorizontalAlignment::kLeft, TextView::VerticalAlignment::kCenter);
     _textView.setTextColor(1, 1, 1, 1);
@@ -129,19 +146,26 @@ void TextField::keyDown(KeyCode key, KeyModifiers mod, bool repeat) {
         case KeyCode::kLeft: {
             bool shortcut = mod & application()->platform()->defaultShortcutModifier();
             bool dragging = mod & KeyModifier::kShift;
+            bool alt      = mod & KeyModifier::kAlt;
             auto range    = selectionRange();
+
             if      (shortcut)                      { _moveCursor(0, dragging); }
-            else if (range.length > 0 && !dragging) { _moveCursor(range.index); }
+            //  passing endOfWord reverse_iterators gives you the beginning of a word:
+            else if (alt && _cursorIndex > 0)       { _moveCursor(_cursorIndex - endOfWord(std::string::reverse_iterator(_text.begin() + _cursorIndex), _text.rend()), dragging); }
+            else if (range.length > 0 && !dragging) { _moveCursor(range.index, dragging); }
             else if (_cursorIndex > 0)              { _moveCursor(_cursorIndex-1, dragging); }
             break;
         }
         case KeyCode::kRight: {
             bool shortcut = mod & application()->platform()->defaultShortcutModifier();
             bool dragging = mod & KeyModifier::kShift;
+            bool alt      = mod & KeyModifier::kAlt;
             auto range    = selectionRange();
-            if      (shortcut)                      { _moveCursor(_text.size(), dragging); }
-            else if (range.length > 0 && !dragging) { _moveCursor(range.index + range.length); }
-            else if (_cursorIndex < _text.size())   { _moveCursor(_cursorIndex+1, dragging); }
+
+            if      (shortcut)                           { _moveCursor(_text.size(), dragging); }
+            else if (alt && _cursorIndex < _text.size()) { _moveCursor(_cursorIndex + endOfWord(_text.begin() + _cursorIndex, _text.end()), dragging); }
+            else if (range.length > 0 && !dragging)      { _moveCursor(range.index + range.length, dragging); }
+            else if (_cursorIndex < _text.size())        { _moveCursor(_cursorIndex+1, dragging); }
             break;
         }
         default: {
