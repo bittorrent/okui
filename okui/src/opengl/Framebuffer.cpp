@@ -24,7 +24,7 @@ void Framebuffer::bind() {
 
 Framebuffer::Attachment* Framebuffer::addColorAttachment(int width, int height) {
     bind();
-    
+
     _attachments.emplace_back(width, height);
     auto& attachment = _attachments.back();
 
@@ -34,7 +34,7 @@ Framebuffer::Attachment* Framebuffer::addColorAttachment(int width, int height) 
     glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0 + _colorAttachments, GL_TEXTURE_2D, attachment.texture(), 0);
     _drawBuffers.push_back(GL_COLOR_ATTACHMENT0 + _colorAttachments);
     ++_colorAttachments;
-    
+
     glBindTexture(GL_TEXTURE_2D, 0);
 
 #ifndef OPENGL_ES
@@ -46,7 +46,7 @@ Framebuffer::Attachment* Framebuffer::addColorAttachment(int width, int height) 
 #ifndef OPENGL_ES
 Framebuffer::Attachment* Framebuffer::addDepthStencilAttachment(int width, int height) {
     bind();
-    
+
     _attachments.emplace_back(width, height, true);
     auto& attachment = _attachments.back();
 
@@ -54,11 +54,8 @@ Framebuffer::Attachment* Framebuffer::addDepthStencilAttachment(int width, int h
     glBindTexture(GL_TEXTURE_2D, attachment.texture());
 
     glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_TEXTURE_2D, attachment.texture(), 0);
-    _drawBuffers.push_back(GL_DEPTH_STENCIL_ATTACHMENT);
-    
-    glBindTexture(GL_TEXTURE_2D, 0);
 
-    glDrawBuffers(_drawBuffers.size(), _drawBuffers.data());
+    glBindTexture(GL_TEXTURE_2D, 0);
 
     return &attachment;
 }
@@ -69,7 +66,7 @@ Framebuffer::Attachment::Attachment(int width, int height, bool isDepthStencil) 
 
     glActiveTexture(GL_TEXTURE0);
     glBindTexture(GL_TEXTURE_2D, _texture);
-    
+
     if (isDepthStencil) {
 #ifndef OPENGL_ES
         glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH24_STENCIL8, width, height, 0, GL_DEPTH_STENCIL, GL_UNSIGNED_INT_24_8, nullptr);
@@ -82,7 +79,7 @@ Framebuffer::Attachment::Attachment(int width, int height, bool isDepthStencil) 
 
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-    
+
     // GL_CLAMP_TO_EDGE is required for npot attachments
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);

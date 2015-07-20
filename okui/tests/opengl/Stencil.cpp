@@ -21,8 +21,8 @@ struct Pixel {
 
 struct TestFramebuffer {
     TestFramebuffer() {
-        auto width = 400;
-        auto height = 640;
+        auto width = 200;
+        auto height = 320;
         colorAttachment = framebuffer.addColorAttachment(width, height);
         framebuffer.addDepthStencilAttachment(width, height);
         EXPECT_TRUE(framebuffer.isComplete());
@@ -31,27 +31,27 @@ struct TestFramebuffer {
         glClearColor(0.0, 0.0, 0.0, 1.0);
         glClear(GL_COLOR_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
     }
-    
+
     GLuint texture() const { return colorAttachment->texture(); }
     int width() const { return colorAttachment->width(); }
     int height() const { return colorAttachment->height(); }
 
     void iteratePixels(std::function<void(int, int, const Pixel&)> f) {
         glFinish();
-        
+
         std::vector<Pixel> pixels;
-        pixels.resize(width() * height());            
-        
+        pixels.resize(width() * height());
+
         glBindTexture(GL_TEXTURE_2D, texture());
         glGetTexImage(GL_TEXTURE_2D, 0, GL_RGBA, GL_UNSIGNED_BYTE, pixels.data());
-        
+
         for (int y = 0; y < height(); ++y) {
             for (int x = 0; x < width(); ++x) {
                 f(x, y, pixels[x + width() * (height() - y)]);
             }
         }
     }
-    
+
     Framebuffer framebuffer;
     Framebuffer::Attachment* colorAttachment = nullptr;
 };

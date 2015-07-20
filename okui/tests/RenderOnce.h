@@ -11,17 +11,19 @@ inline void RenderOnce(std::function<void(onair::okui::View* view)> init, std::f
     struct RenderView : onair::okui::View {
         RenderView(bool* didRender, std::function<void(onair::okui::View* view)> init, std::function<void(onair::okui::View* view)> render)
             : didRender(didRender), initFunction(init), renderFunction(render) {}
-        
+
         virtual void render() override {
-            renderFunction(this);
-            
+            if (!*didRender) {
+                renderFunction(this);
+            }
+
             *didRender = true;
             application()->quit();
         }
-        
+
         virtual void windowChanged() override {
             EXPECT_TRUE(window());
-            
+
             if (initFunction) {
                 initFunction(this);
             }
@@ -36,12 +38,12 @@ inline void RenderOnce(std::function<void(onair::okui::View* view)> init, std::f
         RenderWindow(onair::okui::Application* application, bool* didRender, std::function<void(onair::okui::View* view)> init, std::function<void(onair::okui::View* view)> render)
             : Window(application), view(didRender, init, render)
         {}
-        
+
         virtual void layout() override {
             contentView()->addSubview(&view);
             view.setBounds(0, 0, contentView()->bounds().width, contentView()->bounds().height);
         }
-        
+
         RenderView view;
     } window(&application, &didRender, init, render);
 
