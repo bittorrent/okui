@@ -73,7 +73,7 @@ std::future<std::shared_ptr<const std::string>> Application::download(const std:
         }
     }
 
-    _backgroundTasks.emplace_back(std::async([url, download, promise = std::move(promise)] () mutable {
+    _backgroundTasks.emplace_back(std::async(std::launch::async, [url, download, promise = std::move(promise)] () mutable {
         auto result = Download(url);
 
         std::lock_guard<std::mutex> lock(download->mutex);
