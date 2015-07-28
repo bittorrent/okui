@@ -1,27 +1,15 @@
 #include "onair/okui/Application.h"
-
-#include "onair/okui/Platform.h"
-
 #include "onair/HTTPRequest.h"
 #include "onair/thread.h"
 
 namespace onair {
 namespace okui {
 
-Application::Application(const char* name, const char* organization, Platform* platform, ResourceManager* resourceManager)
+Application::Application(const char* name, const char* organization, ResourceManager* resourceManager)
     : _name{name}
     , _organization{organization}
-    , _platform{platform}
     , _resourceManager{resourceManager}
-{
-    setMenu(Menu({
-        MenuItem("Edit", Menu({
-            MenuItem("Copy", kCommandCopy, KeyCode::kC, platform->defaultShortcutModifier()),
-            MenuItem("Paste", kCommandPaste, KeyCode::kV, platform->defaultShortcutModifier()),
-            MenuItem("Select All", kCommandSelectAll, KeyCode::kA, platform->defaultShortcutModifier()),
-        })),
-    }));
-}
+{}
 
 Application::~Application() {
     for (auto& task : _backgroundTasks) {
@@ -30,18 +18,10 @@ Application::~Application() {
 }
 
 Responder* Application::firstResponder() {
-    if (auto window = _platform->activeWindow()) {
+    if (auto window = activeWindow()) {
         return window->firstResponder();
     }
     return this;
-}
-
-void Application::setMenu(const Menu& menu) {
-    _platform->setApplicationMenu(this, menu);
-}
-
-std::string Application::userStoragePath() const {
-    return _platform->userStoragePath(_name.c_str(), _organization.c_str());
 }
 
 std::future<std::shared_ptr<const std::string>> Application::download(const std::string& url, bool useCache) {
@@ -91,18 +71,6 @@ std::future<std::shared_ptr<const std::string>> Application::download(const std:
     return future;
 }
 
-void Application::run() {
-    _platform->run();
-}
-
-void Application::quit() {
-    _platform->quit();
-}
-
-Responder* Application::nextResponder() {
-    return _platform;
-}
-
 bool Application::canHandleCommand(Command command) {
     return command == kCommandQuit;
 }
@@ -119,6 +87,21 @@ std::shared_ptr<const std::string> Application::Download(const std::string& url)
     HTTPRequest request(url);
     request.wait();
     return request.responseStatus() == 200 ? std::make_shared<std::string>(request.responseBody()) : nullptr;
+}
+
+void Application::_init() {
+    setMenu(Menu({
+        MenuItem("Edit", Menu({
+            MenuItem("Copy", kCommandCopy, KeyCode::kC, defaultShortcutModifier()),
+            MenuItem("Paste", kCommandPaste, KeyCode::kV, defaultShortcutModifier()),
+            MenuItem("Select All", kCommandSelectAll, KeyCode::kA, defaultShortcutModifier()),
+        })),
+    }));
+
+    if (_resourceManager == nullptr) {
+        _defaultResourceManager = std::make_unique<okui::FileResourceManager>(resourcePath().c_str());
+        _resourceManager = _defaultResourceManager.get();
+    }
 }
 
 }}

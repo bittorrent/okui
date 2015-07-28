@@ -1,9 +1,6 @@
 #include "onair/okui/views/TextField.h"
-
 #include "onair/okui/Application.h"
-#include "onair/okui/Platform.h"
 #include "onair/okui/shapes/Rectangle.h"
-
 #include <algorithm>
 
 namespace onair {
@@ -101,20 +98,20 @@ void TextField::mouseDrag(int x, int y) {
 }
 
 void TextField::mouseEnter() {
-    application()->platform()->setCursorType(CursorType::kText);
+    application()->setCursorType(CursorType::kText);
 }
 
 void TextField::mouseExit() {
-    application()->platform()->setCursorType(CursorType::kArrow);
+    application()->setCursorType(CursorType::kArrow);
 }
 
 void TextField::focusGained() {
-    application()->platform()->startTextInput();
+    application()->startTextInput();
     _cursor.setIsVisible(true);
 }
 
 void TextField::focusLost() {
-    application()->platform()->stopTextInput();
+    application()->stopTextInput();
     _selectionHighlight.setIsVisible(false);
     _cursor.setIsVisible(false);
     if (_blurAction) {
@@ -144,7 +141,7 @@ void TextField::keyDown(KeyCode key, KeyModifiers mod, bool repeat) {
             break;
         }
         case KeyCode::kLeft: {
-            bool shortcut = mod & application()->platform()->defaultShortcutModifier();
+            bool shortcut = mod & application()->defaultShortcutModifier();
             bool dragging = mod & KeyModifier::kShift;
             bool alt      = mod & KeyModifier::kAlt;
             auto range    = selectionRange();
@@ -157,7 +154,7 @@ void TextField::keyDown(KeyCode key, KeyModifiers mod, bool repeat) {
             break;
         }
         case KeyCode::kRight: {
-            bool shortcut = mod & application()->platform()->defaultShortcutModifier();
+            bool shortcut = mod & application()->defaultShortcutModifier();
             bool dragging = mod & KeyModifier::kShift;
             bool alt      = mod & KeyModifier::kAlt;
             auto range    = selectionRange();
@@ -190,12 +187,12 @@ void TextField::handleCommand(Command command, CommandContext context) {
         case kCommandCopy: {
             auto range = selectionRange();
             if (range.length > 0) {
-                application()->platform()->setClipboardText(_text.substr(range.index, range.length).c_str());
+                application()->setClipboardText(_text.substr(range.index, range.length).c_str());
             }
             break;
         }
         case kCommandPaste: {
-            textInput(application()->platform()->getClipboardText());
+            textInput(application()->getClipboardText());
             break;
         }
         case kCommandSelectAll: {

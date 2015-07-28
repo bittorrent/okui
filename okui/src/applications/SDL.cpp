@@ -1,13 +1,13 @@
 #include "onair/okui/config.h"
 
-#include "onair/okui/Platform.h"
+#include "onair/okui/Application.h"
 
 #if ONAIR_MAC_OS_X
 
 #import <AppKit/AppKit.h>
 
 @interface OKUISDLApplication : NSApplication
-@property onair::okui::Platform* platform;
+@property onair::okui::Application* app;
 @end
 
 @implementation OKUISDLApplication
@@ -28,7 +28,7 @@
 }
 
 - (void)terminate:(id)sender {
-    _platform->quit();
+    _app->quit();
 }
 
 @end

@@ -17,7 +17,6 @@ namespace onair {
 namespace okui {
 
 class Application;
-class Platform;
 
 struct WindowPosition {
     enum class Mode {
@@ -147,7 +146,7 @@ private:
 
     std::unordered_set<View*> _draggedViews;
 
-    friend class Platform;
+    friend class Application;
     void _render();
     void _didResize(int width, int height);
 

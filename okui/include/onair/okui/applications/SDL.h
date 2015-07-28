@@ -1,10 +1,9 @@
 #pragma once
 
 #include "onair/okui/config.h"
-#include "onair/okui/Platform.h"
+#include "onair/okui/applications/Native.h"
+#include "onair/okui/applications/SDLKeycode.h"
 
-#include "onair/okui/platforms/Native.h"
-#include "onair/okui/platforms/SDLKeycode.h"
 
 #include <unordered_map>
 
@@ -17,17 +16,17 @@
 #pragma clang diagnostic pop
 
 @interface OKUISDLApplication : NSApplication
-@property onair::okui::Platform* platform;
+@property onair::okui::Application* app;
 @end
 #endif // ONAIR_MAC_OS_X
 
 namespace onair {
 namespace okui {
-namespace platforms {
+namespace applications {
 
 class SDL : public Native {
 public:
-    SDL();
+    SDL(const char* name, const char* organization, ResourceManager* resourceManager = nullptr);
     ~SDL();
 
     virtual void run() override;
@@ -44,7 +43,7 @@ public:
 
     virtual Window* activeWindow() override { return _activeWindow; }
 
-    virtual std::string userStoragePath(const char* application, const char* organization) const override;
+    virtual std::string userStoragePath() const override;
 
     virtual void setClipboardText(const char* text) override;
     virtual std::string getClipboardText() override;
@@ -104,15 +103,19 @@ private:
     static MouseButton sMouseButton(uint8_t id);
 };
 
-inline SDL::SDL() {
+inline SDL::SDL(const char* name, const char* organization, ResourceManager* resourceManager)
+    : Native(name, organization, resourceManager)
+{
 #if ONAIR_MAC_OS_X
     // make sure we use our application class instead of sdl's
-    ((OKUISDLApplication*)[OKUISDLApplication sharedApplication]).platform = this;
+    ((OKUISDLApplication*)[OKUISDLApplication sharedApplication]).app = this;
     [NSApp finishLaunching];
 #endif
     if (SDL_Init(SDL_INIT_EVERYTHING) < 0) {
         ONAIR_LOG_ERROR("error initializing sdl: %s", SDL_GetError());
     }
+
+    _init();
 }
 
 inline SDL::~SDL() {
@@ -136,20 +139,27 @@ inline void SDL::run() {
 
         if (SDL_WaitEventTimeout(&e, std::max(static_cast<int>(eventTimeoutMS), 1))) {
             switch (e.type) {
-                case SDL_QUIT:            { shouldQuit = true; break; }
-                case SDL_MOUSEMOTION:     { _handleMouseMotionEvent(e.motion); break; }
+                case SDL_QUIT:                    { shouldQuit = true; break; }
+                case SDL_MOUSEMOTION:             { _handleMouseMotionEvent(e.motion); break; }
                 case SDL_MOUSEBUTTONUP:
-                case SDL_MOUSEBUTTONDOWN: { _handleMouseButtonEvent(e.button); break; }
-                case SDL_MOUSEWHEEL:      { _handleMouseWheelEvent(e.wheel); break; }
-                case SDL_WINDOWEVENT:     { _handleWindowEvent(e.window); break; }
+                case SDL_MOUSEBUTTONDOWN:         { _handleMouseButtonEvent(e.button); break; }
+                case SDL_MOUSEWHEEL:              { _handleMouseWheelEvent(e.wheel); break; }
+                case SDL_WINDOWEVENT:             { _handleWindowEvent(e.window); break; }
                 case SDL_KEYUP:
-                case SDL_KEYDOWN:         { _handleKeyboardEvent(e.key); break;}
-                case SDL_TEXTINPUT:       { _handleTextInputEvent(e.text); break; }
-                default:                  break;
+                case SDL_KEYDOWN:                 { _handleKeyboardEvent(e.key); break; }
+                case SDL_TEXTEDITING:             { /* TODO for better localization support */ }
+                case SDL_TEXTINPUT:               { _handleTextInputEvent(e.text); break; }
+                case SDL_APP_TERMINATING:         { terminating(); break; }
+                case SDL_APP_LOWMEMORY:           { lowMemory(); break; }
+                case SDL_APP_WILLENTERBACKGROUND: { enteringBackground(); break; }
+                case SDL_APP_DIDENTERBACKGROUND:  { enteredBackground(); break; }
+                case SDL_APP_WILLENTERFOREGROUND: { enteringForeground(); break; }
+                case SDL_APP_DIDENTERFOREGROUND:  { enteredForeground(); break; }
+                default:                          { break; }
             }
         }
 
-        taskQueue()->run();
+        taskScheduler()->run();
 
         if (shouldQuit) { break; }
 
@@ -235,8 +245,8 @@ inline void SDL::setWindowTitle(Window* window, const char* title) {
     }
 }
 
-inline std::string SDL::userStoragePath(const char* application, const char* organization) const {
-    auto path = SDL_GetPrefPath(organization, application);
+inline std::string SDL::userStoragePath() const {
+    auto path = SDL_GetPrefPath(organization().c_str(), name().c_str());
     std::string ret(path);
     SDL_free(path);
     return ret;

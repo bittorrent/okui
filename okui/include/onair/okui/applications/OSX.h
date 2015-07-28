@@ -4,14 +4,14 @@
 
 #if ONAIR_MAC_OS_X
 
-#include "onair/okui/platforms/Apple.h"
+#include "onair/okui/applications/Apple.h"
 
 #import <AppKit/NSMenu.h>
 #import <AppKit/NSWindow.h>
 
 namespace onair {
 namespace okui {
-namespace platforms {
+namespace applications {
 
 /**
 * Provides some native Platform overrides for OS X.
@@ -20,10 +20,11 @@ namespace platforms {
 */
 class OSX : public Apple {
 public:
+    using Apple::Apple;
     virtual ~OSX();
 
     virtual NSWindow* nativeWindow(Window* window) const = 0;
-    
+
     virtual bool canSelectFiles() const override { return true; }
     virtual void selectFiles(bool allowFiles, bool allowDirectories, bool allowMultiple, std::function<void(std::vector<std::string>)> action) override;
 
@@ -32,7 +33,7 @@ public:
 
     virtual void openDialog(Window* window, const char* title, const char* message, const std::vector<std::string>& buttons, std::function<void(int)> action = std::function<void(int)>()) override;
 
-    virtual void setApplicationMenu(Application* application, const Menu& menu) override;
+    virtual void setMenu(const Menu& menu) override;
 
     virtual void keyDown(KeyCode key, KeyModifiers mod, bool repeat) override;
 
@@ -43,7 +44,7 @@ private:
     NSUInteger _convertKeyModifiers(KeyModifiers modifiers);
 
     id _applicationMenuTarget = nil;
-    Menu _applicationMenu;    
+    Menu _applicationMenu;
 };
 
 }}}

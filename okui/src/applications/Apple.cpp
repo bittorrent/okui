@@ -1,4 +1,4 @@
-#include "onair/okui/platforms/Apple.h"
+#include "onair/okui/applications/Apple.h"
 
 #if __APPLE__
 
@@ -6,12 +6,12 @@
 
 namespace onair {
 namespace okui {
-namespace platforms {
+namespace applications {
 
-std::string Apple::userStoragePath(const char* application, const char* organization) const {
+std::string Apple::userStoragePath() const {
     NSArray* paths = NSSearchPathForDirectoriesInDomains(NSApplicationSupportDirectory, NSUserDomainMask, YES);
     NSString* applicationSupportDirectory = [paths firstObject];
-    return std::string([applicationSupportDirectory UTF8String]) + '/' + organization + '/' + application;
+    return std::string{[applicationSupportDirectory UTF8String]} + '/' + organization() + '/' + name();
 }
 
 std::string Apple::resourcePath() const {

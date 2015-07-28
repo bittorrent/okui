@@ -1,6 +1,7 @@
 #pragma once
 #include "onair/okui/config.h"
 #include "onair/okui/View.h"
+#include "onair/okui/Application.h"
 #include "onair/okui/views/TextView.h"
 #include "onair/okui/views/ScrollView.h"
 #include "onair/okui/Color.h"

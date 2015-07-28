@@ -1,4 +1,4 @@
-#include "onair/okui/platforms/OSX.h"
+#include "onair/okui/applications/OSX.h"
 
 #if ONAIR_MAC_OS_X
 
@@ -47,7 +47,7 @@
 
 namespace onair {
 namespace okui {
-namespace platforms {
+namespace applications {
 
 OSX::~OSX() {
     [NSApp setMainMenu:nil];
@@ -64,7 +64,7 @@ void OSX::selectFiles(bool allowFiles, bool allowDirectories, bool allowMultiple
             action(std::vector<std::string>());
             return;
         }
-        
+
         std::vector<std::string> selection;
         for (NSString* filename in panel.filenames) {
             selection.push_back([filename UTF8String]);
@@ -96,15 +96,15 @@ void OSX::openDialog(Window* window, const char* title, const char* message, con
     }];
 }
 
-void OSX::setApplicationMenu(Application* application, const Menu& menu) {
-    _applicationMenuTarget = [[MenuTarget alloc] initWithApplication:application];
+void OSX::setMenu(const Menu& menu) {
+    _applicationMenuTarget = [[MenuTarget alloc] initWithApplication:this];
     _applicationMenu = menu;
     NSMenu* mainMenu = _convertMenu(_applicationMenu);
 
     // insert a standard "apple" menu (which is oddly the menu to the right of the menu with the apple icon)
 
     NSMenu* appleMenu = [NSMenu new];
-    
+
     NSString* appName = [[NSBundle mainBundle] objectForInfoDictionaryKey:@"CFBundleDisplayName"];
     if (!appName) {
         appName = [[NSBundle mainBundle] objectForInfoDictionaryKey:@"CFBundleName"];

@@ -4,20 +4,22 @@
 
 #if __APPLE__
 
-#include "onair/okui/Platform.h"
+#include "onair/okui/Application.h"
 
 namespace onair {
 namespace okui {
-namespace platforms {
+namespace applications {
 
 /**
-* Provides some native Platform overrides for iOS and OS X.
+* Provides some native Application overrides for iOS and OS X.
 *
 * This isn't intended to be a full implementation, but can be used as a base for other implementations.
 */
-class Apple : public Platform {
+class Apple : public Application {
 public:
-    virtual std::string userStoragePath(const char* application, const char* organization) const override;
+	using Application::Application;
+
+    virtual std::string userStoragePath() const override;
 
     virtual KeyModifier defaultShortcutModifier() const override { return KeyModifier::kSuper; }
 

@@ -1,4 +1,4 @@
-#include "onair/okui/platforms/IOS.h"
+#include "onair/okui/applications/IOS.h"
 
 #if ONAIR_IOS
 
@@ -8,7 +8,7 @@
 @interface AlertViewHelper : NSObject<UIAlertViewDelegate>
     typedef void(^CompletionHandler)(NSInteger buttonIndex);
     @property (strong,nonatomic) CompletionHandler completionHandler;
-    
+
     + (void)showAlertView:(UIAlertView*)alertView withCompletionHandler:(CompletionHandler)handler;
 @end
 
@@ -26,7 +26,7 @@
         [alertView show];
         #pragma clang diagnostic pop
     }
-    
+
     - (void)alertView:(UIAlertView *)alertView didDismissWithButtonIndex:(NSInteger)buttonIndex {
         self.completionHandler(buttonIndex);
     }
@@ -34,7 +34,7 @@
 
 namespace onair {
 namespace okui {
-namespace platforms {
+namespace applications {
 
 bool IOS::canOpenURL(const char* url) const {
     return [[UIApplication sharedApplication] canOpenURL:[NSURL URLWithString:[NSString stringWithUTF8String:url]]];

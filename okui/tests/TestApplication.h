@@ -2,12 +2,11 @@
 
 #include "onair/okui/Application.h"
 #include "onair/okui/FileResourceManager.h"
-#include "onair/okui/platforms/SDL.h"
+#include "onair/okui/applications/SDL.h"
 
-class TestApplication : public onair::okui::Application {
+class TestApplication : public onair::okui::applications::SDL {
 public:
     struct Essentials {
-        onair::okui::platforms::SDL platform;
         onair::okui::FileResourceManager resourceManager{"./resources/"};
     };
 
@@ -15,7 +14,7 @@ public:
 
 private:
     TestApplication(std::unique_ptr<Essentials>&& essentials)
-        : Application("Test Application", "BitTorrent Inc.", &essentials->platform, &essentials->resourceManager)
+        : SDL("Test Application", "BitTorrent Inc.", &essentials->resourceManager)
         , _essentials(std::move(essentials))
     {}
 

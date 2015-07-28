@@ -1,7 +1,5 @@
 #include "onair/okui/Window.h"
-
 #include "onair/okui/Application.h"
-#include "onair/okui/Platform.h"
 
 namespace onair {
 namespace okui {
@@ -19,20 +17,20 @@ Window::~Window() {
 }
 
 void Window::open() {
-    application()->platform()->openWindow(this, _title.c_str(), _position, _width, _height);
+    application()->openWindow(this, _title.c_str(), _position, _width, _height);
     _isOpen = true;
     _updateContentLayout();
 }
 
 void Window::close() {
     closing();
-    application()->platform()->closeWindow(this);
+    application()->closeWindow(this);
     _isOpen = false;
 }
 
 void Window::setPosition(const WindowPosition& pos) {
     _position = pos;
-    application()->platform()->setWindowPosition(this, pos);
+    application()->setWindowPosition(this, pos);
 }
 
 void Window::setPosition(int x, int y) {
@@ -42,17 +40,17 @@ void Window::setPosition(int x, int y) {
 void Window::setSize(int width, int height) {
     _width = width;
     _height = height;
-    application()->platform()->setWindowSize(this, width, height);
+    application()->setWindowSize(this, width, height);
 }
 
 void Window::setTitle(const char* title) {
     _title = title;
-    application()->platform()->setWindowTitle(this, title);
+    application()->setWindowTitle(this, title);
 }
 
 void Window::setMenu(const Menu& menu) {
     _menu = menu;
-    application()->platform()->setWindowMenu(this, menu);
+    application()->setWindowMenu(this, menu);
 }
 
 std::shared_ptr<Texture> Window::loadTextureResource(const char* name) {
@@ -237,7 +235,7 @@ void Window::_didResize(int width, int height) {
 
 void Window::_updateContentLayout() {
     int w, h;
-    application()->platform()->getWindowRenderSize(this, &w, &h);
+    application()->getWindowRenderSize(this, &w, &h);
     _renderScale = (double)w / _width;
     _contentView->setBounds(0, 0, _width, _height);
     layout();
