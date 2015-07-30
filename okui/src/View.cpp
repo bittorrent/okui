@@ -55,6 +55,8 @@ void View::addSubview(View* view) {
     if (isViewAppearance) {
         view->_dispatchVisibilityChange(true);
     }
+    
+    invalidateRenderCache();
 }
 
 void View::removeSubview(View* view) {
@@ -89,6 +91,8 @@ void View::removeSubview(View* view) {
     if (isViewDisappearance) {
         view->_dispatchVisibilityChange(false);
     }
+    
+    invalidateRenderCache();
 }
 
 void View::setIsVisible(bool isVisible) {
@@ -110,6 +114,10 @@ void View::setIsVisible(bool isVisible) {
         } else {
             disappeared();
         }
+    }
+
+    if (superview()) {
+        superview()->invalidateRenderCache();
     }
 }
 
@@ -139,6 +147,9 @@ void View::sendToBack() {
             return;
         }
     }
+    if (isVisible()) {
+        superview()->invalidateRenderCache();
+    }
 }
 
 void View::bringToFront() {
@@ -149,6 +160,9 @@ void View::bringToFront() {
             siblings.push_back(this);
             return;
         }
+    }
+    if (isVisible()) {
+        superview()->invalidateRenderCache();
     }
 }
 
@@ -216,6 +230,17 @@ bool View::isDescendantOf(const View* view) const {
 
 bool View::hasMouse() const {
     return superview() && superview()->_subviewWithMouse == this;
+}
+
+std::shared_ptr<Texture> View::renderTexture() const {
+    return _renderCacheTexture;
+}
+
+void View::invalidateRenderCache() {
+    _hasCachedRender = false;
+    if (isVisible() && superview()) {
+        superview()->invalidateRenderCache();
+    }
 }
 
 AffineTransformation View::renderTransformation() {
@@ -298,46 +323,65 @@ void View::keyDown(KeyCode key, KeyModifiers mod, bool repeat) {
 }
 
 void View::renderAndRenderSubviews(const RenderTarget* target, const Rectangle<int>& area, boost::optional<Rectangle<int>> clipBounds) {
-    if (!isVisible()) { return; }
+    if (!isVisible() || !area.width || !area.height) { return; }
+
+    if (!_requiresTextureRendering() && !_cachesRender) {
+        // render directly
+        _renderAndRenderSubviews(target, area, clipBounds);
+        _renderCacheTexture->set();
+        return;
+    }
+
+    // make sure the render cache is up-to-date
+
+    GLint previousFramebuffer = 0;
+    glGetIntegerv(GL_FRAMEBUFFER_BINDING, &previousFramebuffer);
+
+    if (!_renderCacheColorAttachment || _renderCacheColorAttachment->width() != area.width || _renderCacheColorAttachment->height() != area.height) {
+        // update the framebuffer
+        _renderCache = std::unique_ptr<opengl::Framebuffer>(new opengl::Framebuffer());
+        _renderCacheColorAttachment = _renderCache->addColorAttachment(area.width, area.height);
+        // TODO: stencil attachment
+        ONAIR_ASSERT(_renderCache->isComplete());
+        _renderCacheTexture->set(_renderCacheColorAttachment->texture(), area.width, area.height);
+        _hasCachedRender = false;
+    }
+    
+    if (!_cachesRender || !_hasCachedRender) {
+        // render to _renderCache
+        _renderCache->bind();
+        glClearColor(0.0, 0.0, 0.0, 0.0);
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
+        Rectangle<int> cacheArea(0, 0, area.width, area.height);
+        RenderTarget cacheTarget(area.width, area.height);
+        _renderAndRenderSubviews(&cacheTarget, cacheArea);
+        _hasCachedRender = true;
+    }
+    
+    glBindFramebuffer(GL_FRAMEBUFFER, previousFramebuffer);
+    
+    // do the actual rendering
 
     glViewport(area.x, target->height() - area.maxY(), area.width, area.height);
     glEnable(GL_BLEND);
-    glBlendFuncSeparate(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA, GL_ONE, GL_ONE);
+    glBlendFuncSeparate(GL_ONE, GL_ONE_MINUS_SRC_ALPHA, GL_ONE, GL_ONE);
 
-    if (_clipsToBounds) {
-        clipBounds = clipBounds ? clipBounds->intersection(area) : area;
-    }
+    clipBounds = clipBounds ? clipBounds->intersection(area) : area;
+    glEnable(GL_SCISSOR_TEST);
+    glScissor(clipBounds->x, target->height() - clipBounds->maxY(), clipBounds->width, clipBounds->height);
 
-    if (clipBounds) {
-        glEnable(GL_SCISSOR_TEST);
-        glScissor(clipBounds->x, target->height() - clipBounds->maxY(), clipBounds->width, clipBounds->height);
-    } else {
-        glDisable(GL_SCISSOR_TEST);
-    }
+    AffineTransformation transformation{-1, -1, 0, 0, 2.0/_bounds.width, 2.0/_bounds.height};
+    postRender(_renderCacheTexture, transformation);
 
-    if (_backgroundColor.a) {
-        auto backgroundShader = colorShader();
-        backgroundShader->setColor(_backgroundColor.r, _backgroundColor.g, _backgroundColor.b, _backgroundColor.a);
-        shapes::Rectangle(0.0, 0.0, bounds().width, bounds().height).draw(backgroundShader);
-        backgroundShader->flush();
-    }
+    glDisable(GL_SCISSOR_TEST);
+}
 
-    render();
-
-    auto xScale = (_bounds.width ? (double)area.width / _bounds.width : 1.0);
-    auto yScale = (_bounds.height ? (double)area.height / _bounds.height : 1.0);
-
-    for (auto& subview : _subviews) {
-        Rectangle<int> subarea(area.x + xScale * subview->_bounds.x,
-                               area.y + yScale * subview->_bounds.y,
-                               xScale * subview->_scale.x * subview->_bounds.width,
-                               yScale * subview->_scale.y * subview->_bounds.height);
-        subview->renderAndRenderSubviews(target, subarea, clipBounds);
-    }
-
-    if (clipBounds) {
-        glDisable(GL_SCISSOR_TEST);
-    }
+void View::postRender(std::shared_ptr<Texture> texture, const AffineTransformation& transformation) {
+    auto shader = textureShader();
+    shader->setTransformation(transformation);
+    shader->setColor(_tintColor.r, _tintColor.g, _tintColor.b, _tintColor.a);
+    shader->drawScaledFit(*_renderCacheTexture, Rectangle<double>(0.0, 0.0, bounds().width, bounds().height));
+    shader->flush();
 }
 
 bool View::dispatchMouseDown(MouseButton button, int x, int y) {
@@ -435,13 +479,23 @@ bool View::dispatchMouseWheel(int xPos, int yPos, int xWheel, int yWheel) {
     return false;
 }
 
-void View::_setBounds(const Rectangle<int>&& bounds) {
+void View::_setBounds(const Rectangle<int>& bounds) {
+    auto willMove = (_bounds.x != bounds.x || _bounds.y != bounds.y);
     auto willResize = (_bounds.width != bounds.width || _bounds.height != bounds.height);
+    
+    if (!willMove && !willResize) {
+        return;
+    }
 
     _bounds = std::move(bounds);
 
     if (willResize) {
         layout();
+        invalidateRenderCache();
+    }
+
+    if (isVisible() && superview()) {
+        superview()->invalidateRenderCache();
     }
 }
 
@@ -489,6 +543,51 @@ void View::_mouseExit() {
         _subviewWithMouse = nullptr;
     }
     mouseExit();
+}
+
+bool View::_requiresTextureRendering() {
+    return _rendersToTexture || _tintColor.r < 1.0 || _tintColor.g < 1.0 || _tintColor.b < 1.0 || _tintColor.a < 1.0;
+}
+
+void View::_renderAndRenderSubviews(const RenderTarget* target, const Rectangle<int>& area, boost::optional<Rectangle<int>> clipBounds) {
+    glViewport(area.x, target->height() - area.maxY(), area.width, area.height);
+    glEnable(GL_BLEND);
+    glBlendFuncSeparate(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA, GL_ONE, GL_ONE);
+
+    if (_clipsToBounds) {
+        clipBounds = clipBounds ? clipBounds->intersection(area) : area;
+    }
+
+    if (clipBounds) {
+        glEnable(GL_SCISSOR_TEST);
+        glScissor(clipBounds->x, target->height() - clipBounds->maxY(), clipBounds->width, clipBounds->height);
+    } else {
+        glDisable(GL_SCISSOR_TEST);
+    }
+
+    if (_backgroundColor.a) {
+        auto backgroundShader = colorShader();
+        backgroundShader->setColor(_backgroundColor.r, _backgroundColor.g, _backgroundColor.b, _backgroundColor.a);
+        shapes::Rectangle(0.0, 0.0, bounds().width, bounds().height).draw(backgroundShader);
+        backgroundShader->flush();
+    }
+
+    render();
+
+    auto xScale = (_bounds.width ? (double)area.width / _bounds.width : 1.0);
+    auto yScale = (_bounds.height ? (double)area.height / _bounds.height : 1.0);
+
+    for (auto& subview : _subviews) {
+        Rectangle<int> subarea(area.x + xScale * subview->_bounds.x,
+                               area.y + yScale * subview->_bounds.y,
+                               xScale * subview->_scale.x * subview->_bounds.width,
+                               yScale * subview->_scale.y * subview->_bounds.height);
+        subview->renderAndRenderSubviews(target, subarea, clipBounds);
+    }
+
+    if (clipBounds) {
+        glDisable(GL_SCISSOR_TEST);
+    }
 }
 
 }}

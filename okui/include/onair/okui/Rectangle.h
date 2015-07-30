@@ -16,6 +16,10 @@ struct Rectangle {
     */
     Rectangle(T x, T y, T width, T height);
 
+    template <typename U>
+    explicit Rectangle(const Rectangle<U>& other)
+        : Rectangle(other.x, other.y, other.width, other.height) {}
+
     Point<T> origin() const { return Point<T>{x, y}; }
     Point<T> size() const { return Point<T>{width, height}; }
 

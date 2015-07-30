@@ -3,6 +3,7 @@
 #include "onair/okui/Texture.h"
 
 #include <string>
+#include <unordered_map>
 
 namespace onair {
 namespace okui {

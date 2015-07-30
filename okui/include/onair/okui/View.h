@@ -7,6 +7,8 @@
 #include "onair/okui/RenderTarget.h"
 #include "onair/okui/Responder.h"
 #include "onair/okui/ShaderCache.h"
+#include "onair/okui/WeakTexture.h"
+#include "onair/okui/opengl/Framebuffer.h"
 #include "onair/okui/shaders/BoxShadowShader.h"
 #include "onair/okui/shaders/ColorShader.h"
 #include "onair/okui/shaders/DistanceFieldShader.h"
@@ -22,6 +24,10 @@ namespace okui {
 class Application;
 class Window;
 
+/**
+* View rendering can be cached or buffered to a texture. One reason this may be done to apply post-rendering
+* effects such as tinting or reflection. When this is done, the contents of the view are clipped to its bounds.
+*/
 class View : public Responder {
 public:
     View() {}
@@ -76,6 +82,25 @@ public:
     template <typename... Args>
     void setBackgroundColor(Args&&... args) { _backgroundColor = Color(std::forward<Args>(args)...); }
 
+    const Color& backgroundColor() const { return _backgroundColor; }
+
+    /**
+    * Sets the view's tint. If this is anything but opaque white, this is a post-rendering effect that 
+    * clips the view's contents.
+    */
+    template <typename... Args>
+    void setTintColor(Args&&... args) { _tintColor = Color(std::forward<Args>(args)...); }
+
+    const Color& tintColor() const { return _tintColor; }
+
+    /**
+    * Sets the view's opacity. If this is anything but 1, this is a post-rendering effect that 
+    * clips the view's contents.
+    *
+    * This effectively sets the alpha component of the view's tint color.
+    */
+    void setOpacity(double opacity) { _tintColor.a = opacity; }
+
     /**
     * Returns true if the view's ancestors are visible or if the view has no ancestors.
     */
@@ -123,6 +148,27 @@ public:
     bool isFocus() const;
 
     bool isDescendantOf(const View* view) const;
+
+    /**
+    * @param rendersToTexture if true, the view is rendered to a texture, making it available via renderTexture
+    */
+    void setRendersToTexture(bool rendersToTexture = true) { _rendersToTexture = rendersToTexture; }
+
+    /**
+    * If the view is set to render to a texture, this can be used to obtain said texture.
+    */
+    std::shared_ptr<Texture> renderTexture() const;
+
+    /**
+    * @param caches if true, the view will render to a texture and the render() method will only be called when 
+    *               the cache is invalid
+    */
+    void setCachesRender(bool cachesRender = true) { _cachesRender = cachesRender; }
+
+    /**
+    * Invalidates the view's render cache.
+    */
+    void invalidateRenderCache();
 
     /**
     * @param clipsToBounds if true, the view will not render itself or any subviews outside of its bounds
@@ -176,6 +222,14 @@ public:
     * Override this to do drawing.
     */
     virtual void render() {}
+
+    /**
+    * Override this to implement custom post-render effects. For this method to be called, the view must be
+    * set to render to texture. The default implementation provides the built-in effects such as tint and
+    * opacity. If this is overridden, you will need to implement those effects in your implementation in 
+    * order to use them.
+    */
+    virtual void postRender(std::shared_ptr<Texture> texture, const AffineTransformation& transformation);
 
     /**
     * Override this to lay out subviews whenever the view is resized.
@@ -252,6 +306,9 @@ private:
     std::string      _name;
     bool             _isVisible = true;
 
+    bool             _rendersToTexture = false;
+    bool             _cachesRender = false;
+    bool             _hasCachedRender = false;
     bool             _clipsToBounds = true;
 
     Rectangle<int>   _bounds;
@@ -270,13 +327,21 @@ private:
     Point<double>    _scale{1.0, 1.0};
 
     Color            _backgroundColor{0.0, 0.0};
-
-    void _setBounds(const Rectangle<int>&& bounds);
+    Color            _tintColor{1.0};
+        
+    std::unique_ptr<opengl::Framebuffer> _renderCache;
+    opengl::Framebuffer::Attachment* _renderCacheColorAttachment = nullptr;
+    std::shared_ptr<WeakTexture> _renderCacheTexture = std::make_shared<WeakTexture>();
+    
+    void _setBounds(const Rectangle<int>& bounds);
 
     void _dispatchFutureVisibilityChange(bool visible);
     void _dispatchVisibilityChange(bool visible);
     void _dispatchWindowChange(Window* window);
     void _mouseExit();
+
+    bool _requiresTextureRendering();
+    void _renderAndRenderSubviews(const RenderTarget* target, const Rectangle<int>& area, boost::optional<Rectangle<int>> clipBounds = boost::none);
 };
 
 }}

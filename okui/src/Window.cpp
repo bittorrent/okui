@@ -64,7 +64,7 @@ std::shared_ptr<Texture> Window::loadTextureResource(const char* name) {
     if (!resource) {
         return nullptr;
     }
-    auto ret = _textureCache.add(Texture(resource), hashable);
+    auto ret = _textureCache.add(std::make_shared<PNGTexture>(resource), hashable);
     _texturesToLoad.insert(ret);
     return ret;
 }
@@ -76,7 +76,7 @@ std::shared_ptr<Texture> Window::loadTextureFromMemory(std::shared_ptr<const std
         return hit;
     }
 
-    auto ret = _textureCache.add(Texture(data), hashable);
+    auto ret = _textureCache.add(std::make_shared<PNGTexture>(data), hashable);
     _texturesToLoad.insert(ret);
     return ret;
 }
@@ -89,7 +89,7 @@ std::shared_ptr<Texture> Window::loadTextureFromURL(const std::string& url) {
         }
     }
 
-    auto texture = std::make_shared<Texture>();
+    auto texture = std::make_shared<PNGTexture>();
     auto& download = _textureDownloads[url];
     download.texture = texture;
     download.download = application()->download(url);

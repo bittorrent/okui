@@ -1,4 +1,4 @@
-#include "onair/okui/Texture.h"
+#include "onair/okui/PNGTexture.h"
 
 #include <png.h>
 
@@ -23,7 +23,7 @@ static void PNGRead(png_structp png, png_bytep data, png_size_t length) {
     }
 }
 
-void Texture::setData(std::shared_ptr<const std::string> data) {
+void PNGTexture::setData(std::shared_ptr<const std::string> data) {
     _data = data;
     _cacheEntry = nullptr;
     
@@ -48,7 +48,7 @@ void Texture::setData(std::shared_ptr<const std::string> data) {
     png_destroy_read_struct(&png, &info, nullptr);
 }
 
-GLuint Texture::load(opengl::TextureCache* textureCache) {
+GLuint PNGTexture::load(opengl::TextureCache* textureCache) {
     PNGInput input(_data->data(), _data->size());
 
     png_structp png = png_create_read_struct(PNG_LIBPNG_VER_STRING, nullptr, nullptr, nullptr);

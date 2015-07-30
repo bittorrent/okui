@@ -10,46 +10,38 @@ namespace okui {
 
 class Texture {
 public:
-    Texture() {}
-    Texture(std::shared_ptr<const std::string> data) { setData(data); }
+    virtual ~Texture() {}
 
-    void setData(std::shared_ptr<const std::string> data);
-
-    bool hasMetadata() const { return _data != nullptr; }
+    virtual bool hasMetadata() const { return isLoaded(); }
 
     /**
     * Return the dimensions of the texture. Available only when hasMetadata returns true.
     *
     * Return 0 if the image data could not be parsed.
     */
-    int width() const { return _width; }
-    int height() const { return _height; }
+    virtual int width() const = 0;
+    virtual int height() const = 0;
 
     /**
     * Returns the aspect ratio (width / height) of the texture. Available only when hasMetadata returns true.
     */
-    double aspectRatio() const { return (double)_width / _height; }
-
-    bool isLoaded() const { return _cacheEntry ? true : false; }
+    double aspectRatio() const { return (double)width() / height(); }
 
     /**
     * Requires the render context to be active.
     *
-    * Loads the texture to the GPU.
+    * Loads the texture to the GPU if necessary.
     *
     * This object can be deleted at any time, regardless of whether the render context is still active.
     */
-    GLuint load(opengl::TextureCache* textureCache);
+    virtual GLuint load(opengl::TextureCache* textureCache) { return id(); }
+
+    virtual bool isLoaded() const { return id(); }
 
     /**
-    * If loaded, returns the id of the GPU texture.
+    * If loaded, returns the id of the GPU texture. Otherwise, returns 0.
     */
-    GLuint id() const { return _cacheEntry->id; }
-
-private:
-    std::shared_ptr<const std::string> _data;
-    int _width{0}, _height{0};
-    opengl::TextureCache::EntryReference _cacheEntry;
+    virtual GLuint id() const = 0;
 };
 
 }}
