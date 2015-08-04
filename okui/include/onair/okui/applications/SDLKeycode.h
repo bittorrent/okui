@@ -7,7 +7,8 @@
 namespace onair {
 namespace okui {
 
-constexpr KeyModifiers ConvertKeyModifiers(uint16_t mods) {
+// constexpr no worky for gcc 4.9
+/* constexpr */ inline KeyModifiers ConvertKeyModifiers(uint16_t mods) {
     KeyModifiers result = KeyModifier::kNone;
 
     if (mods & KMOD_LSHIFT) { result |= KeyModifier::kLShift; }
@@ -25,7 +26,7 @@ constexpr KeyModifiers ConvertKeyModifiers(uint16_t mods) {
     return result;
 }
 
-constexpr KeyCode ConvertKeyCode(SDL_Keycode keyCode) {
+/* constexpr */ inline KeyCode ConvertKeyCode(SDL_Keycode keyCode) {
     switch (keyCode) {
         case SDLK_UNKNOWN:           return KeyCode::kUnknown;
         case SDLK_RETURN:            return KeyCode::kReturn;

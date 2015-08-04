@@ -2,7 +2,7 @@ exe okui_tests :
     [ glob-tree *.cpp ]
     ..//okui
     ../../third-party/gtest//gtest_main
-    ../../third-party/sdl//sdl
+    ../../third-party/sdl//SDL2
 :
     <conditional>@require-desktop
     <build>no
