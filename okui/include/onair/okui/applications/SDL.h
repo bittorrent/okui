@@ -36,6 +36,7 @@ public:
     virtual void closeWindow(Window* window) override;
 
     virtual void getWindowRenderSize(Window* window, int* width, int* height) override;
+    virtual void getWindowSize(Window* window, int* width, int* height) override;
 
     virtual void setWindowPosition(Window* window, const WindowPosition& pos) override;
     virtual void setWindowSize(Window* window, int width, int height) override;
@@ -94,6 +95,7 @@ private:
     void _handleWindowEvent      (const SDL_WindowEvent& e);
     void _handleKeyboardEvent    (const SDL_KeyboardEvent& e);
     void _handleTextInputEvent   (const SDL_TextInputEvent& e);
+    void _handleMultiGestureEvent(const SDL_MultiGestureEvent& e);
 
     std::unordered_map<Window*, uint32_t> _windowIds;
     std::unordered_map<uint32_t, WindowInfo> _windows;
@@ -155,6 +157,7 @@ inline void SDL::run() {
                 case SDL_APP_DIDENTERBACKGROUND:  { enteredBackground(); break; }
                 case SDL_APP_WILLENTERFOREGROUND: { enteringForeground(); break; }
                 case SDL_APP_DIDENTERFOREGROUND:  { enteredForeground(); break; }
+                case SDL_MULTIGESTURE:            { _handleMultiGestureEvent(e.mgesture); }
                 default:                          { break; }
             }
         }
@@ -202,6 +205,9 @@ inline void SDL::openWindow(Window* window, const char* title, const WindowPosit
 
     _windowIds[window] = id;
     _windows[id] = WindowInfo(window, sdlWindow, context);
+
+    //  If the OS wasn't able to use the size we passed, assign the actual size that was created in that window
+    _assignWindowSize(window);
 }
 
 inline void SDL::closeWindow(Window* window) {
@@ -223,6 +229,12 @@ inline void SDL::closeWindow(Window* window) {
 inline void SDL::getWindowRenderSize(Window* window, int* width, int* height) {
     if (auto w = _sdlWindow(window)) {
         SDL_GL_GetDrawableSize(w, width, height);
+    }
+}
+
+inline void SDL::getWindowSize(Window* window, int* width, int* height) {
+    if (auto w = _sdlWindow(window)) {
+        SDL_GetWindowSize(w, width, height);
     }
 }
 
@@ -406,6 +418,10 @@ inline void SDL::_handleTextInputEvent(const SDL_TextInputEvent& event) {
         default:
             break;
     }
+}
+
+inline void SDL::_handleMultiGestureEvent(const SDL_MultiGestureEvent& e) {
+    // TODO: handle gestures with mulitple fingers (this does not trigger for 1 finger)
 }
 
 inline SDL::SDLWindowPosition::SDLWindowPosition(const WindowPosition& pos) {

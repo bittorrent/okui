@@ -23,6 +23,9 @@ public:
     virtual bool openURL(const char* url) override;
 
     virtual void openDialog(Window* window, const char* title, const char* message, const std::vector<std::string>& buttons, std::function<void(int)> action = std::function<void(int)>()) override;
+
+    virtual void showStatusBar() override;
+    virtual void hideStatusBar() override;
 };
 
 } // namespace applications

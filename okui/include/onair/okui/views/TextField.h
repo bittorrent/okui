@@ -76,7 +76,7 @@ public:
     virtual void focusLost() override;
 
     virtual void mouseDown(MouseButton button, int x, int y) override;
-    virtual void mouseDrag(int x, int y) override;
+    virtual void mouseDrag(int startX, int startY, int x, int y) override;
     virtual void mouseEnter() override;
     virtual void mouseExit() override;
     virtual void textInput(const std::string& text) override;

@@ -10,7 +10,7 @@ namespace okui {
 template <typename T>
 struct Rectangle {
     Rectangle();
-    
+
     /**
     * Constructs a rectangle with the given origin and dimensions.
     */
@@ -29,9 +29,9 @@ struct Rectangle {
     T maxY() const { return y + height; }
 
     /**
-    * Tests if the rectangle contains the given point. 
+    * Tests if the rectangle contains the given point.
     *
-    * The rectangle's dimensons are considered non-inclusive. For example, a 1x1 rectangle 
+    * The rectangle's dimensons are considered non-inclusive. For example, a 1x1 rectangle
     * at 0,0 does NOT contain the point at 1,1.
     */
     bool contains(T x, T y) const;
@@ -46,7 +46,7 @@ struct Rectangle {
 
     bool intersects(const Rectangle& other) const;
     Rectangle intersection(const Rectangle& other) const;
-    
+
     /**
     * Returns the area that another rectangle of the given aspect ratio (width / height) would
     * need to occupy to fill this rectangle via scaling only.
@@ -66,7 +66,7 @@ struct Rectangle {
     bool operator!=(const Rectangle& other) const {
         return !(*this == other);
     }
-    
+
     T x;
     T y;
     T width;

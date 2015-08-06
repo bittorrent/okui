@@ -112,6 +112,7 @@ public:
     virtual void closeWindow(Window* window) = 0;
 
     virtual void getWindowRenderSize(Window* window, int* width, int* height) = 0;
+    virtual void getWindowSize(Window* window, int* width, int* height) = 0;
 
     virtual void setWindowPosition(Window* window, const WindowPosition& pos) = 0;
     virtual void setWindowSize(Window* window, int width, int height) = 0;
@@ -199,6 +200,9 @@ public:
 
     virtual void setCursorType(CursorType type) {}
 
+    virtual void showStatusBar() {}
+    virtual void hideStatusBar() {}
+
 protected:
     /**
     * _init() must be called from any final derived class' ctor in order to properly
@@ -207,6 +211,7 @@ protected:
     void _init();
     void _render(Window* window) { window->_render(); }
     void _didResize(Window* window, int width, int height) { window->_didResize(width, height); }
+    void _assignWindowSize(Window* window) { getWindowSize(window, &window->_width, &window->_height); }
 
 private:
     struct DownloadInfo {

@@ -139,27 +139,27 @@ void Window::endDragging(View* view) {
 }
 
 void Window::dispatchMouseDown(MouseButton button, int x, int y) {
+    x *= _renderScale;
+    y *= _renderScale;
     _contentView->dispatchMouseDown(button, x, y);
-    for (auto& observer : _draggedViews) {
-        auto point = windowToView(observer, x, y);
-        observer->mouseDrag(point.x, point.y);
-    }
+    _lastMouseDown = Point<int>{x, y};
 }
 
 void Window::dispatchMouseUp(MouseButton button, int x, int y) {
+    x *= _renderScale;
+    y *= _renderScale;
     _contentView->dispatchMouseUp(button, x, y);
-    for (auto& observer : _draggedViews) {
-        auto point = windowToView(observer, x, y);
-        observer->mouseDrag(point.x, point.y);
-    }
     _draggedViews.clear();
 }
 
 void Window::dispatchMouseMovement(int x, int y) {
+    x *= _renderScale;
+    y *= _renderScale;
     _contentView->dispatchMouseMovement(x, y);
     for (auto& observer : _draggedViews) {
+        auto startPoint = windowToView(observer, _lastMouseDown.x, _lastMouseDown.y);
         auto point = windowToView(observer, x, y);
-        observer->mouseDrag(point.x, point.y);
+        observer->mouseDrag(startPoint.x, startPoint.y, point.x, point.y);
     }
 }
 
@@ -222,9 +222,8 @@ void Window::_render() {
 
     render();
 
-    Rectangle<int> area(0, 0, _contentView->bounds().width * _renderScale, _contentView->bounds().height * _renderScale);
-    RenderTarget target(area.width, area.height);
-    _contentView->renderAndRenderSubviews(&target, area);
+    RenderTarget target(_contentView->bounds().width, _contentView->bounds().height);
+    _contentView->renderAndRenderSubviews(&target, _contentView->bounds());
 }
 
 void Window::_didResize(int width, int height) {
@@ -237,7 +236,7 @@ void Window::_updateContentLayout() {
     int w, h;
     application()->getWindowRenderSize(this, &w, &h);
     _renderScale = (double)w / _width;
-    _contentView->setBounds(0, 0, _width, _height);
+    _contentView->setBounds(0, 0, w, h);
     layout();
 }
 

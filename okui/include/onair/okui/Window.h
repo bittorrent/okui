@@ -114,7 +114,13 @@ public:
     virtual void keyDown(KeyCode key, KeyModifiers mod, bool repeat) override;
 
 private:
-    Application* const _application;
+    void _render();
+    void _didResize(int width, int height);
+    void _updateContentLayout();
+
+    friend class Application;
+
+    Application* _application;
 
     bool _isOpen = false;
 
@@ -144,13 +150,8 @@ private:
 
     std::unordered_map<std::string, TextureDownload> _textureDownloads;
 
+    Point<int> _lastMouseDown{0, 0};
     std::unordered_set<View*> _draggedViews;
-
-    friend class Application;
-    void _render();
-    void _didResize(int width, int height);
-
-    void _updateContentLayout();
 };
 
 }}

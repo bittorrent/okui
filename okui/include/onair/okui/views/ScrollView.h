@@ -38,9 +38,14 @@ public:
     */
     virtual void scrolled() {}
 
+    virtual void mouseDown(MouseButton button, int x, int y) override;
     virtual void mouseWheel(int xPos, int yPos, int xWheel, int yWheel) override;
+    virtual void mouseDrag(int startX, int startY, int x, int y) override;
 
 private:
+    void _scroll(okui::Rectangle<int> newBounds);
+
+    Point<int> _lastMousePos{-1, -1};
     onair::okui::View _contentView;
 };
 

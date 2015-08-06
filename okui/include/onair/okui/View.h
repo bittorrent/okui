@@ -85,7 +85,7 @@ public:
     const Color& backgroundColor() const { return _backgroundColor; }
 
     /**
-    * Sets the view's tint. If this is anything but opaque white, this is a post-rendering effect that 
+    * Sets the view's tint. If this is anything but opaque white, this is a post-rendering effect that
     * clips the view's contents.
     */
     template <typename... Args>
@@ -94,7 +94,7 @@ public:
     const Color& tintColor() const { return _tintColor; }
 
     /**
-    * Sets the view's opacity. If this is anything but 1, this is a post-rendering effect that 
+    * Sets the view's opacity. If this is anything but 1, this is a post-rendering effect that
     * clips the view's contents.
     *
     * This effectively sets the alpha component of the view's tint color.
@@ -160,7 +160,7 @@ public:
     std::shared_ptr<Texture> renderTexture() const;
 
     /**
-    * @param caches if true, the view will render to a texture and the render() method will only be called when 
+    * @param caches if true, the view will render to a texture and the render() method will only be called when
     *               the cache is invalid
     */
     void setCachesRender(bool cachesRender = true) { _cachesRender = cachesRender; }
@@ -226,7 +226,7 @@ public:
     /**
     * Override this to implement custom post-render effects. For this method to be called, the view must be
     * set to render to texture. The default implementation provides the built-in effects such as tint and
-    * opacity. If this is overridden, you will need to implement those effects in your implementation in 
+    * opacity. If this is overridden, you will need to implement those effects in your implementation in
     * order to use them.
     */
     virtual void postRender(std::shared_ptr<Texture> texture, const AffineTransformation& transformation);
@@ -252,7 +252,7 @@ public:
     virtual void mouseDown(MouseButton button, int x, int y);
     virtual void mouseUp(MouseButton button, int x, int y);
     virtual void mouseWheel(int xPos, int yPos, int xWheel, int yWheel);
-    virtual void mouseDrag(int x, int y) {}
+    virtual void mouseDrag(int startX, int startY, int x, int y) {}
     virtual void mouseMovement(int x, int y) {}
     virtual void mouseEnter() {}
     virtual void mouseExit() {}
@@ -328,11 +328,11 @@ private:
 
     Color            _backgroundColor{0.0, 0.0};
     Color            _tintColor{1.0};
-        
+
     std::unique_ptr<opengl::Framebuffer> _renderCache;
     opengl::Framebuffer::Attachment* _renderCacheColorAttachment = nullptr;
     std::shared_ptr<WeakTexture> _renderCacheTexture = std::make_shared<WeakTexture>();
-    
+
     void _setBounds(const Rectangle<int>& bounds);
 
     void _dispatchFutureVisibilityChange(bool visible);

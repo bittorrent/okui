@@ -90,7 +90,7 @@ void TextField::mouseDown(MouseButton button, int x, int y) {
     }
 }
 
-void TextField::mouseDrag(int x, int y) {
+void TextField::mouseDrag(int startX, int startY, int x, int y) {
     if (_isEnabled) {
         auto localPt = _scrollView.contentView()->superviewToLocal(_scrollView.superviewToLocal(x, y));
         _moveCursor(_textView.lineColumnAtPosition(localPt.x, localPt.y).second, true);

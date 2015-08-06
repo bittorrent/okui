@@ -55,7 +55,7 @@ void View::addSubview(View* view) {
     if (isViewAppearance) {
         view->_dispatchVisibilityChange(true);
     }
-    
+
     invalidateRenderCache();
 }
 
@@ -91,7 +91,7 @@ void View::removeSubview(View* view) {
     if (isViewDisappearance) {
         view->_dispatchVisibilityChange(false);
     }
-    
+
     invalidateRenderCache();
 }
 
@@ -346,7 +346,7 @@ void View::renderAndRenderSubviews(const RenderTarget* target, const Rectangle<i
         _renderCacheTexture->set(_renderCacheColorAttachment->texture(), area.width, area.height);
         _hasCachedRender = false;
     }
-    
+
     if (!_cachesRender || !_hasCachedRender) {
         // render to _renderCache
         _renderCache->bind();
@@ -357,9 +357,9 @@ void View::renderAndRenderSubviews(const RenderTarget* target, const Rectangle<i
         _renderAndRenderSubviews(&cacheTarget, cacheArea);
         _hasCachedRender = true;
     }
-    
+
     glBindFramebuffer(GL_FRAMEBUFFER, previousFramebuffer);
-    
+
     // do the actual rendering
 
     glViewport(area.x, target->height() - area.maxY(), area.width, area.height);
@@ -380,7 +380,7 @@ void View::postRender(std::shared_ptr<Texture> texture, const AffineTransformati
     auto shader = textureShader();
     shader->setTransformation(transformation);
     shader->setColor(_tintColor.r, _tintColor.g, _tintColor.b, _tintColor.a);
-    shader->drawScaledFit(*_renderCacheTexture, Rectangle<double>(0.0, 0.0, bounds().width, bounds().height));
+    shader->drawScaledFit(*texture, Rectangle<double>(0.0, 0.0, bounds().width, bounds().height));
     shader->flush();
 }
 
@@ -482,7 +482,7 @@ bool View::dispatchMouseWheel(int xPos, int yPos, int xWheel, int yWheel) {
 void View::_setBounds(const Rectangle<int>& bounds) {
     auto willMove = (_bounds.x != bounds.x || _bounds.y != bounds.y);
     auto willResize = (_bounds.width != bounds.width || _bounds.height != bounds.height);
-    
+
     if (!willMove && !willResize) {
         return;
     }

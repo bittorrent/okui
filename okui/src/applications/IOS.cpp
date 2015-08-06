@@ -4,6 +4,8 @@
 
 #import <UIKit/UIAlertView.h>
 #import <UIKit/UIApplication.h>
+#import <UIKit/UIKit.h>
+#import <AVFoundation/AVFoundation.h>
 
 @interface AlertViewHelper : NSObject<UIAlertViewDelegate>
     typedef void(^CompletionHandler)(NSInteger buttonIndex);
@@ -56,6 +58,14 @@ void IOS::openDialog(Window* window, const char* title, const char* message, con
             action(buttonIndex);
         }
     }];
+}
+
+void IOS::showStatusBar() {
+    [[UIApplication sharedApplication] setStatusBarHidden:false withAnimation:UIStatusBarAnimationNone];
+}
+
+void IOS::hideStatusBar() {
+    [[UIApplication sharedApplication] setStatusBarHidden:true withAnimation:UIStatusBarAnimationNone];
 }
 
 }}}
