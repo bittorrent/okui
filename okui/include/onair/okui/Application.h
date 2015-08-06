@@ -154,7 +154,12 @@ public:
     * @param allowMultiple if false, only a single file or directory can be selected
     * @param action the action to be taken once a selection is made
     */
-    virtual void selectFiles(bool allowFiles, bool allowDirectories, bool allowMultiple, std::function<void(std::vector<std::string>)> action) { ONAIR_ASSERT(false); }
+    virtual void selectFiles(bool allowFiles,
+                             bool allowDirectories,
+                             bool allowMultiple,
+                             std::function<void(std::vector<std::string>)> action) {
+        ONAIR_ASSERT(false);
+    }
 
     /**
     * Should return true if the platform can open the given URL.
@@ -171,7 +176,11 @@ public:
     *
     * @param action the action to be taken once a choice is made
     */
-    virtual void openDialog(Window* window, const char* title, const char* message, const std::vector<std::string>& buttons, std::function<void(int)> action = std::function<void(int)>()) = 0;
+    virtual void openDialog(Window* window,
+                            const char* title,
+                            const char* message,
+                            const std::vector<std::string>& buttons,
+                            std::function<void(int)> action = std::function<void(int)>()) = 0;
 
     /**
     * Returns the name of the operating system.
@@ -203,7 +212,7 @@ private:
     struct DownloadInfo {
         std::mutex mutex;
         std::shared_ptr<const std::string> result = nullptr;
-        int inProgress = 0;
+        int inProgress                            = 0;
         std::vector<std::promise<std::shared_ptr<const std::string>>> promises;
     };
 
@@ -217,4 +226,5 @@ private:
     std::unique_ptr<okui::FileResourceManager> _defaultResourceManager;
 };
 
-}}
+} // namespace okui
+} // namespace onair

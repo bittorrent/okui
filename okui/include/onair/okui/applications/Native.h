@@ -7,6 +7,8 @@
 #include "onair/okui/applications/OSX.h"
 #elif ONAIR_IOS
 #include "onair/okui/applications/IOS.h"
+#elif ONAIR_ANDROID
+#include "onair/okui/applications/Android.h"
 #endif
 
 namespace onair {
@@ -17,8 +19,12 @@ namespace applications {
 using Native = OSX;
 #elif ONAIR_IOS
 using Native = IOS;
+#elif ONAIR_ANDROID
+using Native = Android;
 #else
 using Native = Application;
 #endif
 
-}}}
+} // namespace applications
+} // namespace okui
+} // namespace onair

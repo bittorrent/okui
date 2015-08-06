@@ -17,7 +17,7 @@ namespace applications {
 */
 class Apple : public Application {
 public:
-	using Application::Application;
+    using Application::Application;
 
     virtual std::string userStoragePath() const override;
 
