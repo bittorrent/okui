@@ -1,7 +1,7 @@
 #pragma once
 #include "onair/okui/config.h"
 
-#include "onair/Math.h"
+#include <cmath>
 
 /**
 * See easings.net and gizma.com/easing for examples/math
@@ -14,7 +14,7 @@
 namespace onair {
 namespace okui {
 namespace easings {
-
+    
 struct Linear {
     template<class T>
     static constexpr T EaseIn(double t, const T& b, const T& c, double d) {
@@ -24,18 +24,18 @@ struct Linear {
 
 struct Sine {
     template<class T>
-    static constexpr T EaseIn(double t, const T& b, const T& c, double d) {
-        return -c * math::cos(t/d * (math::kPi/2)) + c + b;
+    static T EaseIn(double t, const T& b, const T& c, double d) {
+        return -c * cos(t/d * (kPi/2)) + c + b;
     }
 
     template<class T>
-    static constexpr T EaseOut(double t, const T& b, const T& c, double d) {
-        return c * math::sin(t/d * (math::kPi/2)) + b;
+    static T EaseOut(double t, const T& b, const T& c, double d) {
+        return c * sin(t/d * (kPi/2)) + b;
     }
 
     template<class T>
-    static constexpr T EaseInOut(double t, const T& b, const T& c, double d) {
-        return -c/2 * (math::cos(math::kPi * t/d) - 1) + b;
+    static T EaseInOut(double t, const T& b, const T& c, double d) {
+        return -c/2 * (cos(kPi * t/d) - 1) + b;
     }
 };
 
@@ -137,47 +137,47 @@ struct Quintic {
 
 struct Exponential {
     template<class T>
-    static constexpr T EaseIn(double t, const T& b, const T& c, double d) {
-        return c * math::pow(2, 10 * (t/d - 1)) + b;
+    static T EaseIn(double t, const T& b, const T& c, double d) {
+        return c * pow(2, 10 * (t/d - 1)) + b;
     }
 
     template<class T>
-    static constexpr T EaseOut(double t, const T& b, const T& c, double d) {
-        return c * (-math::pow(2, -10 * t/d) + 1) + b;
+    static T EaseOut(double t, const T& b, const T& c, double d) {
+        return c * (-pow(2, -10 * t/d) + 1) + b;
     }
 
     template<class T>
-    static constexpr T EaseInOut(double t, const T& b, const T& c, double d) {
+    static T EaseInOut(double t, const T& b, const T& c, double d) {
         t /= d/2;
         if (t < 1) {
-            return c/2 * math::pow(2, 10 * (t - 1)) + b;
+            return c/2 * pow(2, 10 * (t - 1)) + b;
         }
         t -= 1;
-        return c/2 * (-math::pow(2, -10 * t) + 2) + b;
+        return c/2 * (-pow(2, -10 * t) + 2) + b;
     }
 };
 
 struct Circular {
     template<class T>
-    static constexpr T EaseIn(double t, const T& b, const T& c, double d) {
+    static T EaseIn(double t, const T& b, const T& c, double d) {
         t /= d;
-        return -c * (math::sqrt(1 - t*t) - 1) + b;
+        return -c * (sqrt(1 - t*t) - 1) + b;
     }
 
     template<class T>
-    static constexpr T EaseOut(double t, const T& b, const T& c, double d) {
+    static T EaseOut(double t, const T& b, const T& c, double d) {
         t = t/d - 1;
-        return c * math::sqrt(1 - t*t) + b;
+        return c * sqrt(1 - t*t) + b;
     }
 
     template<class T>
-    static constexpr T EaseInOut(double t, const T& b, const T& c, double d) {
+    static T EaseInOut(double t, const T& b, const T& c, double d) {
         t /= d/2;
         if (t < 1) {
-            return -c/2 * (math::sqrt(1 - t*t) - 1) + b;
+            return -c/2 * (sqrt(1 - t*t) - 1) + b;
         }
         t -= 2;
-        return c/2 * (math::sqrt(1 - t*t) + 1) + b;
+        return c/2 * (sqrt(1 - t*t) + 1) + b;
     }
 };
 
