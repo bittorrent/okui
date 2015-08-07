@@ -51,8 +51,8 @@ private:
     T _target;
     Interpolator _interpolator = nullptr;
 
-    typename Clock::time_point _start;
-    typename Clock::time_point _end;
+    typename Clock::time_point _start = Clock::time_point::min();
+    typename Clock::time_point _end = Clock::time_point::min();
 };
 
 template <typename T, typename Clock = std::chrono::steady_clock>
