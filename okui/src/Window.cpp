@@ -164,6 +164,8 @@ void Window::dispatchMouseMovement(int x, int y) {
 }
 
 void Window::dispatchMouseWheel(int xPos, int yPos, int xWheel, int yWheel) {
+    xPos *= _renderScale;
+    yPos *= _renderScale;
     _contentView->dispatchMouseWheel(xPos, yPos, xWheel, yWheel);
 }
 

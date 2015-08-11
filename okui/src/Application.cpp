@@ -93,6 +93,7 @@ void Application::_init() {
     setMenu(Menu({
         MenuItem("Edit", Menu({
             MenuItem("Copy", kCommandCopy, KeyCode::kC, defaultShortcutModifier()),
+            MenuItem("Cut", kCommandCut, KeyCode::kX, defaultShortcutModifier()),
             MenuItem("Paste", kCommandPaste, KeyCode::kV, defaultShortcutModifier()),
             MenuItem("Select All", kCommandSelectAll, KeyCode::kA, defaultShortcutModifier()),
         })),

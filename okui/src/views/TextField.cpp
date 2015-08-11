@@ -176,7 +176,8 @@ void TextField::keyDown(KeyCode key, KeyModifiers mod, bool repeat) {
 }
 
 bool TextField::canHandleCommand(Command command) {
-    return command == kCommandCopy ||
+    return command == kCommandCut ||
+           command == kCommandCopy ||
            command == kCommandPaste ||
            command == kCommandSelectAll ||
            View::canHandleCommand(command);
@@ -184,6 +185,11 @@ bool TextField::canHandleCommand(Command command) {
 
 void TextField::handleCommand(Command command, CommandContext context) {
     switch(command) {
+        case kCommandCut: {
+            handleCommand(kCommandCopy, 0);
+            keyDown(KeyCode::kBackspace, KeyModifier::kNone, false);
+            break;
+        }
         case kCommandCopy: {
             auto range = selectionRange();
             if (range.length > 0) {
