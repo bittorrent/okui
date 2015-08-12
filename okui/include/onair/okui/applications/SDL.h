@@ -4,6 +4,7 @@
 #include "onair/okui/applications/Native.h"
 #include "onair/okui/applications/SDLKeycode.h"
 
+#include "onair/Timer.h"
 
 #include <unordered_map>
 
@@ -128,18 +129,15 @@ inline void SDL::run() {
     SDL_Event e;
     bool shouldQuit = false;
 
-    constexpr auto frameRateLimit = 60;
-    constexpr auto minFrameInterval = std::chrono::microseconds(1000000 / frameRateLimit);
-    std::chrono::steady_clock::time_point lastFrameTime;
+    static constexpr auto minFrameInterval = std::chrono::milliseconds{1_s/60};
+    onair::SteadyTimer timer;
+    timer.start();
 
     while (!shouldQuit) {
 #if __APPLE__
         @autoreleasepool {
 #endif
-
-        auto eventTimeoutMS = std::chrono::duration_cast<std::chrono::milliseconds>(minFrameInterval - (std::chrono::steady_clock::now() - lastFrameTime)).count();
-
-        if (SDL_WaitEventTimeout(&e, std::max(static_cast<int>(eventTimeoutMS), 1))) {
+        while (!shouldQuit && SDL_WaitEventTimeout(&e, static_cast<int>(std::max(std::chrono::duration_cast<std::chrono::milliseconds>(minFrameInterval-timer.elapsed()), 0_ms).count()))) {
             switch (e.type) {
                 case SDL_QUIT:                    { shouldQuit = true; break; }
                 case SDL_MOUSEMOTION:             { _handleMouseMotionEvent(e.motion); break; }
@@ -149,7 +147,7 @@ inline void SDL::run() {
                 case SDL_WINDOWEVENT:             { _handleWindowEvent(e.window); break; }
                 case SDL_KEYUP:
                 case SDL_KEYDOWN:                 { _handleKeyboardEvent(e.key); break; }
-                case SDL_TEXTEDITING:             { /* TODO for better localization support */ }
+                case SDL_TEXTEDITING:             { break; /* TODO for better localization support */ }
                 case SDL_TEXTINPUT:               { _handleTextInputEvent(e.text); break; }
                 case SDL_APP_TERMINATING:         { terminating(); break; }
                 case SDL_APP_LOWMEMORY:           { lowMemory(); break; }
@@ -157,27 +155,24 @@ inline void SDL::run() {
                 case SDL_APP_DIDENTERBACKGROUND:  { enteredBackground(); break; }
                 case SDL_APP_WILLENTERFOREGROUND: { enteringForeground(); break; }
                 case SDL_APP_DIDENTERFOREGROUND:  { enteredForeground(); break; }
-                case SDL_MULTIGESTURE:            { _handleMultiGestureEvent(e.mgesture); }
+                case SDL_MULTIGESTURE:            { _handleMultiGestureEvent(e.mgesture); break; }
                 default:                          { break; }
             }
         }
 
-        taskScheduler()->run();
-
         if (shouldQuit) { break; }
 
-        auto now = std::chrono::steady_clock::now();
+        timer.restart();
 
-        if (now - lastFrameTime >= minFrameInterval) {
-            for (auto& kv : _windows) {
-                SDL_GL_MakeCurrent(kv.second.sdlWindow, kv.second.context);
-                glDisable(GL_SCISSOR_TEST);
-                glClearColor(0.0, 0.0, 0.0, 0.0);
-                glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
-                _render(kv.second.window);
-                SDL_GL_SwapWindow(kv.second.sdlWindow);
-            }
-            lastFrameTime = now;
+        taskScheduler()->run();
+
+        for (auto& kv : _windows) {
+            SDL_GL_MakeCurrent(kv.second.sdlWindow, kv.second.context);
+            glDisable(GL_SCISSOR_TEST);
+            glClearColor(0.0, 0.0, 0.0, 0.0);
+            glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
+            _render(kv.second.window);
+            SDL_GL_SwapWindow(kv.second.sdlWindow);
         }
 
 #if __APPLE__
