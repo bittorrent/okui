@@ -24,7 +24,6 @@ lib okui :
 :
 	<include>./include
 	<link>static
-	<define>ONAIR_LIBRARY
 : :
 	<include>./include
 	<conditional>@okui-frameworks
