@@ -129,7 +129,7 @@ inline void SDL::run() {
     SDL_Event e;
     bool shouldQuit = false;
 
-    static constexpr auto minFrameInterval = std::chrono::milliseconds{1_s/60};
+    static constexpr auto minFrameInterval = 1000_ms/60;
     onair::SteadyTimer timer;
     timer.start();
 
