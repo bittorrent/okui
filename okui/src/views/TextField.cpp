@@ -134,6 +134,18 @@ void TextField::keyDown(KeyCode key, KeyModifiers mod, bool repeat) {
             }
             break;
         }
+        case KeyCode::kDelete: {
+            auto range = selectionRange();
+            if (range.length > 0) {
+                _text.erase(range.index, range.length);
+                _textChanged();
+                _moveCursor(range.index);
+            } else if (!_text.empty() && range.index < _text.size()-1) {
+                _text.erase(range.index, 1);
+                _textChanged();
+            }
+            break;
+        }
         case KeyCode::kReturn: {
             if (_returnAction) {
                 _returnAction();
@@ -176,8 +188,8 @@ void TextField::keyDown(KeyCode key, KeyModifiers mod, bool repeat) {
 }
 
 bool TextField::canHandleCommand(Command command) {
-    return command == kCommandCut ||
-           command == kCommandCopy ||
+    return command == kCommandCopy ||
+           command == kCommandCut ||
            command == kCommandPaste ||
            command == kCommandSelectAll ||
            View::canHandleCommand(command);
@@ -185,15 +197,20 @@ bool TextField::canHandleCommand(Command command) {
 
 void TextField::handleCommand(Command command, CommandContext context) {
     switch(command) {
-        case kCommandCut: {
-            handleCommand(kCommandCopy, 0);
-            keyDown(KeyCode::kBackspace, KeyModifier::kNone, false);
-            break;
-        }
         case kCommandCopy: {
             auto range = selectionRange();
             if (range.length > 0) {
                 application()->setClipboardText(_text.substr(range.index, range.length).c_str());
+            }
+            break;
+        }
+        case kCommandCut: {
+            auto range = selectionRange();
+            if (range.length > 0) {
+                application()->setClipboardText(_text.substr(range.index, range.length).c_str());
+                _text.erase(range.index, range.length);
+                _textChanged();
+                _moveCursor(range.index);
             }
             break;
         }
