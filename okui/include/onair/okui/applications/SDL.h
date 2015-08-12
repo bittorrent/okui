@@ -248,6 +248,10 @@ inline void SDL::setWindowPosition(Window* window, const WindowPosition& positio
 inline void SDL::setWindowSize(Window* window, int width, int height) {
     if (auto w = _sdlWindow(window)) {
         SDL_SetWindowSize(w, width, height);
+
+        //  If the OS wasn't able to use the size we passed, assign the actual size the window was set to
+        //  in window->_width and window->_height
+        _assignWindowSize(window);
     }
 }
 

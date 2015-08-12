@@ -125,8 +125,10 @@ private:
     bool _isOpen = false;
 
     WindowPosition _position;
-    int _width{800}, _height{480};
-
+    int _width = 800;
+    int _height = 480;
+    int _renderWidth = 800;
+    int _renderHeight = 480;
     double _renderScale = 1.0;
 
     std::string _title{"Untitled"};

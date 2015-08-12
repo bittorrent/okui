@@ -17,7 +17,10 @@ Window::~Window() {
 }
 
 void Window::open() {
+    auto requestedWidth = _width;
     application()->openWindow(this, _title.c_str(), _position, _width, _height);
+    // application reset _width/_height to what the OS actually set the window to in setWindowSize
+    _renderScale = requestedWidth / _width;
     _isOpen = true;
     _updateContentLayout();
 }
@@ -41,6 +44,9 @@ void Window::setSize(int width, int height) {
     _width = width;
     _height = height;
     application()->setWindowSize(this, width, height);
+    // application reset _width/_height to what the OS actually set the window to in setWindowSize
+    _renderScale = width / _width;
+    _updateContentLayout();
 }
 
 void Window::setTitle(const char* title) {
@@ -224,8 +230,9 @@ void Window::_render() {
 
     render();
 
-    RenderTarget target(_contentView->bounds().width, _contentView->bounds().height);
-    _contentView->renderAndRenderSubviews(&target, _contentView->bounds());
+    Rectangle<int> area(0, 0, _renderWidth, _renderHeight);
+    RenderTarget target(area.width, area.height);
+    _contentView->renderAndRenderSubviews(&target, area);
 }
 
 void Window::_didResize(int width, int height) {
@@ -235,10 +242,8 @@ void Window::_didResize(int width, int height) {
 }
 
 void Window::_updateContentLayout() {
-    int w, h;
-    application()->getWindowRenderSize(this, &w, &h);
-    _renderScale = (double)w / _width;
-    _contentView->setBounds(0, 0, w, h);
+    application()->getWindowRenderSize(this, &_renderWidth, &_renderHeight);
+    _contentView->setBounds(0, 0, _renderScale * _width, _renderScale * _height);
     layout();
 }
 
