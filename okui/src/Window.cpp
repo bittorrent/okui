@@ -20,7 +20,7 @@ void Window::open() {
     auto requestedWidth = _width;
     application()->openWindow(this, _title.c_str(), _position, _width, _height);
     // application reset _width/_height to what the OS actually set the window to in setWindowSize
-    _renderScale = requestedWidth / _width;
+    _renderScale = requestedWidth / static_cast<double>(_width);
     _isOpen = true;
     _updateContentLayout();
 }
@@ -45,7 +45,7 @@ void Window::setSize(int width, int height) {
     _height = height;
     application()->setWindowSize(this, width, height);
     // application reset _width/_height to what the OS actually set the window to in setWindowSize
-    _renderScale = width / _width;
+    _renderScale = width / static_cast<double>(_width);
     _updateContentLayout();
 }
 
