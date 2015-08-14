@@ -102,6 +102,7 @@ private:
     std::unordered_map<uint32_t, WindowInfo> _windows;
     Window* _activeWindow = nullptr;
     std::unique_ptr<SDL_Cursor, CursorDeleter> _cursor;
+    bool _backgrounded = false;
 
     static MouseButton sMouseButton(uint8_t id);
 };
@@ -152,9 +153,9 @@ inline void SDL::run() {
                 case SDL_APP_TERMINATING:         { terminating(); break; }
                 case SDL_APP_LOWMEMORY:           { lowMemory(); break; }
                 case SDL_APP_WILLENTERBACKGROUND: { enteringBackground(); break; }
-                case SDL_APP_DIDENTERBACKGROUND:  { enteredBackground(); break; }
+                case SDL_APP_DIDENTERBACKGROUND:  { enteredBackground(); _backgrounded = true; break; }
                 case SDL_APP_WILLENTERFOREGROUND: { enteringForeground(); break; }
-                case SDL_APP_DIDENTERFOREGROUND:  { enteredForeground(); break; }
+                case SDL_APP_DIDENTERFOREGROUND:  { enteredForeground(); _backgrounded = false; break; }
                 case SDL_MULTIGESTURE:            { _handleMultiGestureEvent(e.mgesture); break; }
                 default:                          { break; }
             }
@@ -166,13 +167,15 @@ inline void SDL::run() {
 
         taskScheduler()->run();
 
-        for (auto& kv : _windows) {
-            SDL_GL_MakeCurrent(kv.second.sdlWindow, kv.second.context);
-            glDisable(GL_SCISSOR_TEST);
-            glClearColor(0.0, 0.0, 0.0, 0.0);
-            glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
-            _render(kv.second.window);
-            SDL_GL_SwapWindow(kv.second.sdlWindow);
+        if (!_backgrounded) {
+            for (auto& kv : _windows) {
+                SDL_GL_MakeCurrent(kv.second.sdlWindow, kv.second.context);
+                glDisable(GL_SCISSOR_TEST);
+                glClearColor(0.0, 0.0, 0.0, 0.0);
+                glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
+                _render(kv.second.window);
+                SDL_GL_SwapWindow(kv.second.sdlWindow);
+            }
         }
 
 #if __APPLE__
