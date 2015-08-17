@@ -6,26 +6,26 @@ namespace {
     /*
     Copyright (c) 2008-2010 Bjoern Hoehrmann <bjoern@hoehrmann.de>
     See http://bjoern.hoehrmann.de/utf-8/decoder/dfa/ for details.
-    
-    Permission is hereby granted, free of charge, to any person obtaining a copy of this software and 
-    associated documentation files (the "Software"), to deal in the Software without restriction, 
-    including without limitation the rights to use, copy, modify, merge, publish, distribute, 
-    sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is 
+
+    Permission is hereby granted, free of charge, to any person obtaining a copy of this software and
+    associated documentation files (the "Software"), to deal in the Software without restriction,
+    including without limitation the rights to use, copy, modify, merge, publish, distribute,
+    sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is
     furnished to do so, subject to the following conditions:
 
-    The above copyright notice and this permission notice shall be included in all copies or 
+    The above copyright notice and this permission notice shall be included in all copies or
     substantial portions of the Software.
-        
-    THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT 
-    NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND 
-    NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, 
-    DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, 
+
+    THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT
+    NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+    NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM,
+    DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
     OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
     */
-    
+
     const uint32_t kUTF8Accept = 0;
     // const uint32_t kUTF8Reject = 12;
-    
+
     const uint8_t utf8d[] = {
          0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,  0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
          0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,  0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
@@ -35,12 +35,12 @@ namespace {
          7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,  7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,
          8,8,2,2,2,2,2,2,2,2,2,2,2,2,2,2,  2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,
         10,3,3,3,3,3,3,3,3,3,3,3,3,4,3,3, 11,6,6,6,5,8,8,8,8,8,8,8,8,8,8,8,
-        
+
          0,12,24,36,60,96,84,12,12,12,48,72, 12,12,12,12,12,12,12,12,12,12,12,12,
         12, 0,12,12,12,12,12, 0,12, 0,12,12, 12,24,12,12,12,12,12,24,12,24,12,12,
         12,12,12,12,12,12,12,24,12,12,12,12, 12,24,12,12,12,12,12,12,12,24,12,12,
         12,12,12,12,12,12,12,36,12,36,12,12, 12,36,12,12,12,12,12,36,12,36,12,12,
-        12,36,12,12,12,12,12,12,12,12,12,12, 
+        12,36,12,12,12,12,12,12,12,12,12,12,
     };
 
     uint32_t inline UTF8Decode(uint32_t* state, uint32_t* codep, uint32_t byte) {
@@ -91,7 +91,10 @@ void TextView::setBitmapFont(const char* texture, const char* metadata, double s
     _bitmapFontMetadata = metadata;
     _bitmapFontSize = size;
     _font = nullptr;
-    setFont(loadBitmapFontResource(_bitmapFontTexture.c_str(), _bitmapFontMetadata.c_str()), _bitmapFontSize);
+    auto font = loadBitmapFontResource(_bitmapFontTexture.c_str(), _bitmapFontMetadata.c_str());
+    if (font) {
+        setFont(font, _bitmapFontSize);
+    }
 }
 
 void TextView::render() {
@@ -189,9 +192,9 @@ void TextView::_computeLines() {
             if (UTF8Decode(&state, &codePoint, static_cast<unsigned char>(c))) {
                 continue;
             }
-            
+
             BitmapFont::GlyphId glyph = codePoint;
-            
+
             if (glyph == '\n') {
                 _lines.emplace_back(std::move(line));
                 line.clear();
