@@ -12,6 +12,7 @@
 #include <future>
 #include <unordered_map>
 #include <unordered_set>
+#include <vector>
 
 namespace onair {
 namespace okui {
@@ -73,9 +74,9 @@ public:
 
     ShaderCache* shaderCache() { return &_shaderCache; }
 
-    std::shared_ptr<Texture> loadTextureResource(const char* name);
-    std::shared_ptr<Texture> loadTextureFromMemory(std::shared_ptr<const std::string> data);
-    std::shared_ptr<Texture> loadTextureFromURL(const std::string& url);
+    TextureHandle loadTextureResource(const char* name);
+    TextureHandle loadTextureFromMemory(std::shared_ptr<const std::string> data);
+    TextureHandle loadTextureFromURL(const std::string& url);
     std::shared_ptr<BitmapFont> loadBitmapFontResource(const char* textureName, const char* metadataName);
 
     View* focus() const { return _focus; }
@@ -139,14 +140,15 @@ private:
     View* _initialFocus = nullptr;
 
     ShaderCache _shaderCache;
-    Cache<Texture> _textureCache;
+    Cache<TextureHandle> _textureCache;
     Cache<BitmapFont> _bitmapFontCache;
-    std::unordered_set<std::shared_ptr<Texture>> _texturesToLoad;
+    std::vector<TextureHandle> _texturesToLoad;
     opengl::TextureCache _openGLTextureCache;
 
     struct TextureDownload {
         bool isComplete = false;
         std::weak_ptr<PNGTexture> texture;
+        TextureHandle handle;
         std::future<std::shared_ptr<const std::string>> download;
     };
 

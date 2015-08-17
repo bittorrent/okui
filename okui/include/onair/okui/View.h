@@ -7,6 +7,7 @@
 #include "onair/okui/RenderTarget.h"
 #include "onair/okui/Responder.h"
 #include "onair/okui/ShaderCache.h"
+#include "onair/okui/TextureHandle.h"
 #include "onair/okui/WeakTexture.h"
 #include "onair/okui/opengl/Framebuffer.h"
 #include "onair/okui/shaders/BoxShadowShader.h"
@@ -22,6 +23,7 @@ namespace onair {
 namespace okui {
 
 class Application;
+class BitmapFont;
 class Window;
 
 /**
@@ -189,6 +191,16 @@ public:
     shaders::TextureShader* textureShader() { return shader<shaders::TextureShader>("texture shader"); }
     shaders::BoxShadowShader* boxShadowShader() { return shader<shaders::BoxShadowShader>("box shadow shader"); }
     shaders::DistanceFieldShader* distanceFieldShader() { return shader<shaders::DistanceFieldShader>("distance field shader"); }
+
+    /**
+    * Begins loading a texture associated with the view. When the texture is loaded, the view's 
+    * render cache will be invalidated. If the texture should not be associated with the view, 
+    * use Window::loadTexture* instead.
+    */
+    TextureHandle loadTextureResource(const char* name);
+    TextureHandle loadTextureFromMemory(std::shared_ptr<const std::string> data);
+    TextureHandle loadTextureFromURL(const std::string& url);
+    std::shared_ptr<BitmapFont> loadBitmapFontResource(const char* textureName, const char* metadataName);
 
     /**
     * Get or create a shader cached via the window's shader cache.

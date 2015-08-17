@@ -1,6 +1,6 @@
 #pragma once
 
-#include "onair/okui/Texture.h"
+#include "onair/okui/TextureHandle.h"
 
 #include <string>
 #include <unordered_map>
@@ -10,9 +10,9 @@ namespace okui {
 
 class BitmapFont {
 public:
-    BitmapFont(std::shared_ptr<Texture> texture, const std::string& metadata);
+    BitmapFont(TextureHandle&& texture, const std::string& metadata);
 
-    std::shared_ptr<Texture> texture() const { return _texture; }
+    TextureHandle& texture() { return _texture; }
 
     double size() const { return _size; }
     double padding() const { return _padding; }
@@ -36,7 +36,7 @@ public:
     double width(const GlyphId* glyphs, size_t count) const;
 
 private:
-    std::shared_ptr<Texture> _texture;
+    TextureHandle _texture;
 
     double _size = 0.0;
     double _padding = 0.0;

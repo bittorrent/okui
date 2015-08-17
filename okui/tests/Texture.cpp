@@ -19,7 +19,7 @@ static void TextureTest(const unsigned char* imageData, size_t imageDataSize, in
     std::shared_ptr<Texture> texture;
 
     RenderOnce([&](View* view) {
-        texture = view->window()->loadTextureFromMemory(std::make_shared<std::string>((const char*)imageData, imageDataSize));
+        texture = view->loadTextureFromMemory(std::make_shared<std::string>((const char*)imageData, imageDataSize));
 
         EXPECT_NE(texture, nullptr);
         

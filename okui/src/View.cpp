@@ -1,5 +1,6 @@
 #include "onair/okui/View.h"
 
+#include "onair/okui/BitmapFont.h"
 #include "onair/okui/opengl/OpenGL.h"
 #include "onair/okui/shapes/Rectangle.h"
 #include "onair/okui/Window.h"
@@ -241,6 +242,34 @@ void View::invalidateRenderCache() {
     if (isVisible() && superview()) {
         superview()->invalidateRenderCache();
     }
+}
+
+TextureHandle View::loadTextureResource(const char* name) {
+    if (!window()) { return nullptr; }
+    auto handle = window()->loadTextureResource(name);
+    handle.onLoad([&]{ invalidateRenderCache(); });
+    return handle;
+}
+
+TextureHandle View::loadTextureFromMemory(std::shared_ptr<const std::string> data) {
+    if (!window()) { return nullptr; }
+    auto handle = window()->loadTextureFromMemory(data);
+    handle.onLoad([&]{ invalidateRenderCache(); });
+    return handle;
+}
+
+TextureHandle View::loadTextureFromURL(const std::string& url) {
+    if (!window()) { return nullptr; }
+    auto handle = window()->loadTextureFromURL(url);
+    handle.onLoad([&]{ invalidateRenderCache(); });
+    return handle;
+}
+
+std::shared_ptr<BitmapFont> View::loadBitmapFontResource(const char* textureName, const char* metadataName) {
+    if (!window()) { return nullptr; }
+    auto font = window()->loadBitmapFontResource(textureName, metadataName);
+    font->texture().onLoad([&]{ invalidateRenderCache(); });
+    return font;
 }
 
 AffineTransformation View::renderTransformation() {

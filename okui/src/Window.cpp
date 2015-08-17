@@ -59,47 +59,48 @@ void Window::setMenu(const Menu& menu) {
     application()->setWindowMenu(this, menu);
 }
 
-std::shared_ptr<Texture> Window::loadTextureResource(const char* name) {
+TextureHandle Window::loadTextureResource(const char* name) {
     auto hashable = std::string("resource:") + name;
 
     if (auto hit = _textureCache.get(hashable)) {
-        return hit;
+        return hit->newHandle();
     }
 
     auto resource = application()->loadResource(name);
     if (!resource) {
         return nullptr;
     }
-    auto ret = _textureCache.add(std::make_shared<PNGTexture>(resource), hashable);
-    _texturesToLoad.insert(ret);
-    return ret;
+    auto handle = _textureCache.add(TextureHandle{std::make_shared<PNGTexture>(resource)}, hashable);
+    _texturesToLoad.emplace_back(handle->newHandle());
+    return handle->newHandle();
 }
 
-std::shared_ptr<Texture> Window::loadTextureFromMemory(std::shared_ptr<const std::string> data) {
+TextureHandle Window::loadTextureFromMemory(std::shared_ptr<const std::string> data) {
     auto hashable = std::string("memory:") + std::to_string(reinterpret_cast<uintptr_t>(data->data())) + ":" + std::to_string(data->size());
 
     if (auto hit = _textureCache.get(hashable)) {
-        return hit;
+        return hit->newHandle();
     }
 
-    auto ret = _textureCache.add(std::make_shared<PNGTexture>(data), hashable);
-    _texturesToLoad.insert(ret);
-    return ret;
+    auto handle = _textureCache.add(TextureHandle{std::make_shared<PNGTexture>(data)}, hashable);
+    _texturesToLoad.emplace_back(handle->newHandle());
+    return handle->newHandle();
 }
 
-std::shared_ptr<Texture> Window::loadTextureFromURL(const std::string& url) {
+TextureHandle Window::loadTextureFromURL(const std::string& url) {
     auto it = _textureDownloads.find(url);
     if (it != _textureDownloads.end()) {
         if (auto texture = it->second.texture.lock()) {
-            return texture;
+            return TextureHandle{texture, it->second.handle};
         }
     }
 
     auto texture = std::make_shared<PNGTexture>();
     auto& download = _textureDownloads[url];
     download.texture = texture;
+    download.handle = TextureHandle{};
     download.download = application()->download(url);
-    return texture;
+    return TextureHandle{texture, download.handle};
 }
 
 std::shared_ptr<BitmapFont> Window::loadBitmapFontResource(const char* textureName, const char* metadataName) {
@@ -114,7 +115,7 @@ std::shared_ptr<BitmapFont> Window::loadBitmapFontResource(const char* textureNa
         return nullptr;
     }
     auto metadata = application()->loadResource(metadataName);
-    return _bitmapFontCache.add(BitmapFont(texture, *metadata), hashable);
+    return _bitmapFontCache.add(BitmapFont(std::move(texture), *metadata), hashable);
 }
 
 void Window::setFocus(View* focus) {
@@ -213,6 +214,7 @@ void Window::ensureTextures() {
                 if (auto data = download.download.get()) {
                     texture->setData(data);
                     texture->load(&_openGLTextureCache);
+                    download.handle.invokeLoadCallbacks();
                 }
                 download.isComplete = true;
             }
@@ -221,6 +223,7 @@ void Window::ensureTextures() {
     }
     for (auto& texture : _texturesToLoad) {
         texture->load(&_openGLTextureCache);
+        texture.invokeLoadCallbacks();
     }
     _texturesToLoad.clear();
 }

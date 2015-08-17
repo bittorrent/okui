@@ -5,7 +5,7 @@
 namespace onair {
 namespace okui {
 
-BitmapFont::BitmapFont(std::shared_ptr<Texture> texture, const std::string& metadata) : _texture(texture) {
+BitmapFont::BitmapFont(TextureHandle&& texture, const std::string& metadata) : _texture(std::move(texture)) {
     _parseMetadata(metadata.c_str());
 }
 

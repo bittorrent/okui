@@ -91,9 +91,7 @@ void TextView::setBitmapFont(const char* texture, const char* metadata, double s
     _bitmapFontMetadata = metadata;
     _bitmapFontSize = size;
     _font = nullptr;
-    if (window()) {
-        setFont(window()->loadBitmapFontResource(_bitmapFontTexture.c_str(), _bitmapFontMetadata.c_str()), _bitmapFontSize);
-    }
+    setFont(loadBitmapFontResource(_bitmapFontTexture.c_str(), _bitmapFontMetadata.c_str()), _bitmapFontSize);
 }
 
 void TextView::render() {
@@ -118,7 +116,7 @@ void TextView::layout() {
 
 void TextView::windowChanged() {
     if (!_font && !_bitmapFontTexture.empty() && window()) {
-        setFont(window()->loadBitmapFontResource(_bitmapFontTexture.c_str(), _bitmapFontMetadata.c_str()), _bitmapFontSize);
+        setFont(loadBitmapFontResource(_bitmapFontTexture.c_str(), _bitmapFontMetadata.c_str()), _bitmapFontSize);
     }
 }
 
@@ -235,7 +233,7 @@ void TextView::_computeLines() {
 void TextView::_renderBitmapText(shaders::DistanceFieldShader* shader) {
     // TODO: this could be much more optimized (e.g. via display list or vbo)
     auto fontScale = _fontSize / _font->size();
-    auto texture = _font->texture();
+    auto& texture = _font->texture();
     auto lineSpacing = _font->lineSpacing() * fontScale;
     auto y = _calcYOffset();
 
