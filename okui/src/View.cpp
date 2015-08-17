@@ -100,21 +100,13 @@ void View::setIsVisible(bool isVisible) {
     if (_isVisible == isVisible) { return; }
 
     if (window() && ancestorsAreVisible()) {
-        if (isVisible) {
-            willAppear();
-        } else {
-            willDisappear();
-        }
+        _dispatchFutureVisibilityChange(isVisible);
     }
 
     _isVisible = isVisible;
 
     if (window() && ancestorsAreVisible()) {
-        if (isVisible) {
-            appeared();
-        } else {
-            disappeared();
-        }
+        _dispatchVisibilityChange(isVisible);
     }
 
     if (superview()) {

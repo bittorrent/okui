@@ -235,8 +235,11 @@ void TextView::_computeLines() {
 
 void TextView::_renderBitmapText(shaders::DistanceFieldShader* shader) {
     // TODO: this could be much more optimized (e.g. via display list or vbo)
-    auto fontScale = _fontSize / _font->size();
+
     auto& texture = _font->texture();
+    if (!texture->isLoaded()) { return; }
+
+    auto fontScale = _fontSize / _font->size();
     auto lineSpacing = _font->lineSpacing() * fontScale;
     auto y = _calcYOffset();
 
