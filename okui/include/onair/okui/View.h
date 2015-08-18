@@ -200,7 +200,6 @@ public:
     TextureHandle loadTextureResource(const char* name);
     TextureHandle loadTextureFromMemory(std::shared_ptr<const std::string> data);
     TextureHandle loadTextureFromURL(const std::string& url);
-    std::shared_ptr<BitmapFont> loadBitmapFontResource(const char* textureName, const char* metadataName);
 
     /**
     * Get or create a shader cached via the window's shader cache.

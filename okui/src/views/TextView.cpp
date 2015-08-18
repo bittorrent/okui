@@ -91,9 +91,8 @@ void TextView::setBitmapFont(const char* texture, const char* metadata, double s
     _bitmapFontMetadata = metadata;
     _bitmapFontSize = size;
     _font = nullptr;
-    auto font = loadBitmapFontResource(_bitmapFontTexture.c_str(), _bitmapFontMetadata.c_str());
-    if (font) {
-        setFont(font, _bitmapFontSize);
+    if (window()) {
+        setFont(window()->loadBitmapFontResource(_bitmapFontTexture.c_str(), _bitmapFontMetadata.c_str()), _bitmapFontSize);
     }
 }
 
@@ -119,7 +118,7 @@ void TextView::layout() {
 
 void TextView::windowChanged() {
     if (!_font && !_bitmapFontTexture.empty() && window()) {
-        setFont(loadBitmapFontResource(_bitmapFontTexture.c_str(), _bitmapFontMetadata.c_str()), _bitmapFontSize);
+        setFont(window()->loadBitmapFontResource(_bitmapFontTexture.c_str(), _bitmapFontMetadata.c_str()), _bitmapFontSize);
     }
 }
 
