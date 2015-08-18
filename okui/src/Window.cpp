@@ -233,7 +233,7 @@ void Window::_render() {
 
     render();
 
-    Rectangle<int> area(0, 0, _renderWidth, _renderHeight);
+    Rectangle<double> area(0, 0, _renderWidth, _renderHeight);
     RenderTarget target(area.width, area.height);
     _contentView->renderAndRenderSubviews(&target, area);
 }

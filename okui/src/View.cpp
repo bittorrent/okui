@@ -337,8 +337,10 @@ void View::keyDown(KeyCode key, KeyModifiers mod, bool repeat) {
     Responder::keyDown(key, mod, repeat);
 }
 
-void View::renderAndRenderSubviews(const RenderTarget* target, const Rectangle<int>& area, boost::optional<Rectangle<int>> clipBounds) {
-    if (!isVisible() || !area.width || !area.height) { return; }
+void View::renderAndRenderSubviews(const RenderTarget* target, const Rectangle<double>& area, boost::optional<Rectangle<double>> clipBounds) {
+    Rectangle<int> pixelArea(std::round(area.x), std::round(area.y), std::round(area.width), std::round(area.height));
+
+    if (!isVisible() || !pixelArea.width || !pixelArea.height) { return; }
 
     if (!_requiresTextureRendering() && !_cachesRender) {
         // render directly
@@ -352,13 +354,13 @@ void View::renderAndRenderSubviews(const RenderTarget* target, const Rectangle<i
     GLint previousFramebuffer = 0;
     glGetIntegerv(GL_FRAMEBUFFER_BINDING, &previousFramebuffer);
 
-    if (!_renderCacheColorAttachment || _renderCacheColorAttachment->width() != area.width || _renderCacheColorAttachment->height() != area.height) {
+    if (!_renderCacheColorAttachment || _renderCacheColorAttachment->width() != pixelArea.width || _renderCacheColorAttachment->height() != pixelArea.height) {
         // update the framebuffer
         _renderCache = std::unique_ptr<opengl::Framebuffer>(new opengl::Framebuffer());
-        _renderCacheColorAttachment = _renderCache->addColorAttachment(area.width, area.height);
+        _renderCacheColorAttachment = _renderCache->addColorAttachment(pixelArea.width, pixelArea.height);
         // TODO: stencil attachment
         ONAIR_ASSERT(_renderCache->isComplete());
-        _renderCacheTexture->set(_renderCacheColorAttachment->texture(), area.width, area.height);
+        _renderCacheTexture->set(_renderCacheColorAttachment->texture(), pixelArea.width, pixelArea.height);
         _hasCachedRender = false;
     }
 
@@ -367,8 +369,8 @@ void View::renderAndRenderSubviews(const RenderTarget* target, const Rectangle<i
         _renderCache->bind();
         glClearColor(0.0, 0.0, 0.0, 0.0);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
-        Rectangle<int> cacheArea(0, 0, area.width, area.height);
-        RenderTarget cacheTarget(area.width, area.height);
+        Rectangle<double> cacheArea(0, 0, pixelArea.width, pixelArea.height);
+        RenderTarget cacheTarget(pixelArea.width, pixelArea.height);
         _renderAndRenderSubviews(&cacheTarget, cacheArea);
         _hasCachedRender = true;
     }
@@ -377,13 +379,13 @@ void View::renderAndRenderSubviews(const RenderTarget* target, const Rectangle<i
 
     // do the actual rendering
 
-    glViewport(area.x, target->height() - area.maxY(), area.width, area.height);
+    glViewport(pixelArea.x, target->height() - pixelArea.maxY(), pixelArea.width, pixelArea.height);
     glEnable(GL_BLEND);
     glBlendFuncSeparate(GL_ONE, GL_ONE_MINUS_SRC_ALPHA, GL_ONE, GL_ONE);
 
     clipBounds = clipBounds ? clipBounds->intersection(area) : area;
     glEnable(GL_SCISSOR_TEST);
-    glScissor(clipBounds->x, target->height() - clipBounds->maxY(), clipBounds->width, clipBounds->height);
+    glScissor(std::round(clipBounds->x), std::round(target->height() - clipBounds->maxY()), std::round(clipBounds->width), std::round(clipBounds->height));
 
     AffineTransformation transformation{-1, -1, 0, 0, 2.0/_bounds.width, 2.0/_bounds.height};
     postRender(_renderCacheTexture, transformation);
@@ -565,8 +567,10 @@ bool View::_requiresTextureRendering() {
     return _rendersToTexture || _tintColor.r < 1.0 || _tintColor.g < 1.0 || _tintColor.b < 1.0 || _tintColor.a < 1.0;
 }
 
-void View::_renderAndRenderSubviews(const RenderTarget* target, const Rectangle<int>& area, boost::optional<Rectangle<int>> clipBounds) {
-    glViewport(area.x, target->height() - area.maxY(), area.width, area.height);
+void View::_renderAndRenderSubviews(const RenderTarget* target, const Rectangle<double>& area, boost::optional<Rectangle<double>> clipBounds) {
+    Rectangle<int> pixelArea(std::round(area.x), std::round(area.y), std::round(area.width), std::round(area.height));
+
+    glViewport(pixelArea.x, target->height() - pixelArea.maxY(), pixelArea.width, pixelArea.height);
     glEnable(GL_BLEND);
     glBlendFuncSeparate(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA, GL_ONE, GL_ONE);
 
@@ -576,7 +580,7 @@ void View::_renderAndRenderSubviews(const RenderTarget* target, const Rectangle<
 
     if (clipBounds) {
         glEnable(GL_SCISSOR_TEST);
-        glScissor(clipBounds->x, target->height() - clipBounds->maxY(), clipBounds->width, clipBounds->height);
+        glScissor(std::round(clipBounds->x), std::round(target->height() - clipBounds->maxY()), std::round(clipBounds->width), std::round(clipBounds->height));
     } else {
         glDisable(GL_SCISSOR_TEST);
     }
@@ -590,11 +594,11 @@ void View::_renderAndRenderSubviews(const RenderTarget* target, const Rectangle<
 
     render();
 
-    auto xScale = (_bounds.width ? (double)area.width / _bounds.width : 1.0);
-    auto yScale = (_bounds.height ? (double)area.height / _bounds.height : 1.0);
+    auto xScale = (_bounds.width ? (double)pixelArea.width / _bounds.width : 1.0);
+    auto yScale = (_bounds.height ? (double)pixelArea.height / _bounds.height : 1.0);
 
     for (auto& subview : _subviews) {
-        Rectangle<int> subarea(area.x + xScale * subview->_bounds.x,
+        Rectangle<double> subarea(area.x + xScale * subview->_bounds.x,
                                area.y + yScale * subview->_bounds.y,
                                xScale * subview->_scale.x * subview->_bounds.width,
                                yScale * subview->_scale.y * subview->_bounds.height);

@@ -297,7 +297,7 @@ public:
     * @param area the area within the target to render to. the view will fill this area
     * @param clipBounds the bounds within the target to clip rendering of the view and its children to
     */
-    void renderAndRenderSubviews(const RenderTarget* target, const Rectangle<int>& area, boost::optional<Rectangle<int>> clipBounds = boost::none);
+    void renderAndRenderSubviews(const RenderTarget* target, const Rectangle<double>& area, boost::optional<Rectangle<double>> clipBounds = boost::none);
 
     bool dispatchMouseDown(MouseButton button, int x, int y);
     bool dispatchMouseUp(MouseButton button, int startX, int startY, int x, int y);
@@ -352,7 +352,7 @@ private:
     void _mouseExit();
 
     bool _requiresTextureRendering();
-    void _renderAndRenderSubviews(const RenderTarget* target, const Rectangle<int>& area, boost::optional<Rectangle<int>> clipBounds = boost::none);
+    void _renderAndRenderSubviews(const RenderTarget* target, const Rectangle<double>& area, boost::optional<Rectangle<double>> clipBounds = boost::none);
 };
 
 }}
