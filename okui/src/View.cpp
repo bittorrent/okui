@@ -300,10 +300,11 @@ void View::mouseDown(MouseButton button, int x, int y) {
     }
 }
 
-void View::mouseUp(MouseButton button, int x, int y) {
+void View::mouseUp(MouseButton button, int startX, int startY, int x, int y) {
     if (superview() && superview()->_interceptsMouseEvents) {
+        auto startPoint = localToSuperview(startX, startY);
         auto point = localToSuperview(x, y);
-        superview()->mouseUp(button, point.x, point.y);
+        superview()->mouseUp(button, startPoint.x, startPoint.y, point.x, point.y);
     }
 }
 
@@ -420,19 +421,20 @@ bool View::dispatchMouseDown(MouseButton button, int x, int y) {
     return false;
 }
 
-bool View::dispatchMouseUp(MouseButton button, int x, int y) {
+bool View::dispatchMouseUp(MouseButton button, int startX, int startY, int x, int y) {
     if (!isVisible()) { return false; }
 
     if (_childrenInterceptMouseEvents) {
         for (auto it = _subviews.rbegin(); it != _subviews.rend(); ++it) {
+            auto startPoint = (*it)->superviewToLocal(startX, startY);
             auto point = (*it)->superviewToLocal(x, y);
-            if ((!(*it)->clipsToBounds() || (*it)->hitTest(point.x, point.y)) && (*it)->dispatchMouseUp(button, point.x, point.y)) {
+            if ((!(*it)->clipsToBounds() || (*it)->hitTest(point.x, point.y)) && (*it)->dispatchMouseUp(button, startPoint.x, startPoint.y, point.x, point.y)) {
                 return true;
             }
         }
     }
     if (_interceptsMouseEvents && hitTest(x, y)) {
-        mouseUp(button, x, y);
+        mouseUp(button, startX, startY, x, y);
         return true;
     }
     return false;

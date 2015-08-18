@@ -261,7 +261,7 @@ public:
     * Override these to handle mouse events. Call the base implementation to pass on the event.
     */
     virtual void mouseDown(MouseButton button, int x, int y);
-    virtual void mouseUp(MouseButton button, int x, int y);
+    virtual void mouseUp(MouseButton button, int startX, int startY, int x, int y);
     virtual void mouseWheel(int xPos, int yPos, int xWheel, int yWheel);
     virtual void mouseDrag(int startX, int startY, int x, int y) {}
     virtual void mouseMovement(int x, int y) {}
@@ -300,7 +300,7 @@ public:
     void renderAndRenderSubviews(const RenderTarget* target, const Rectangle<int>& area, boost::optional<Rectangle<int>> clipBounds = boost::none);
 
     bool dispatchMouseDown(MouseButton button, int x, int y);
-    bool dispatchMouseUp(MouseButton button, int x, int y);
+    bool dispatchMouseUp(MouseButton button, int startX, int startY, int x, int y);
     void dispatchMouseMovement(int x, int y);
     bool dispatchMouseWheel(int xPos, int yPos, int xWheel, int yWheel);
 

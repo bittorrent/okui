@@ -155,7 +155,7 @@ void Window::dispatchMouseDown(MouseButton button, int x, int y) {
 void Window::dispatchMouseUp(MouseButton button, int x, int y) {
     x *= _renderScale;
     y *= _renderScale;
-    _contentView->dispatchMouseUp(button, x, y);
+    _contentView->dispatchMouseUp(button, _lastMouseDown.x, _lastMouseDown.y, x, y);
     _draggedViews.clear();
 }
 
