@@ -594,10 +594,10 @@ void View::_renderAndRenderSubviews(const RenderTarget* target, const Rectangle<
     auto yScale = (_bounds.height ? (double)area.height / _bounds.height : 1.0);
 
     for (auto& subview : _subviews) {
-        Rectangle<int> subarea(area.x + xScale * subview->_bounds.x,
-                               area.y + yScale * subview->_bounds.y,
-                               xScale * subview->_scale.x * subview->_bounds.width,
-                               yScale * subview->_scale.y * subview->_bounds.height);
+        Rectangle<int> subarea(std::round(area.x + xScale * subview->_bounds.x),
+                               std::round(area.y + yScale * subview->_bounds.y),
+                               std::round(xScale * subview->_scale.x * subview->_bounds.width),
+                               std::round(yScale * subview->_scale.y * subview->_bounds.height));
         subview->renderAndRenderSubviews(target, subarea, clipBounds);
     }
 
