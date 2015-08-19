@@ -167,8 +167,10 @@ inline void SDL::run() {
 
         taskScheduler()->run();
 
-        if (!_backgrounded) {
-            for (auto& kv : _windows) {
+        for (auto& kv : _windows) {
+            _update(kv.second.window);
+
+            if (!_backgrounded) {
                 SDL_GL_MakeCurrent(kv.second.sdlWindow, kv.second.context);
                 glDisable(GL_SCISSOR_TEST);
                 glClearColor(0.0, 0.0, 0.0, 0.0);

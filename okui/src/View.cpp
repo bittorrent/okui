@@ -337,6 +337,18 @@ void View::keyDown(KeyCode key, KeyModifiers mod, bool repeat) {
     Responder::keyDown(key, mod, repeat);
 }
 
+void View::updateAndUpdateSubviews() {
+    if (!isVisible()) {
+        return;
+    }
+
+    update();
+
+    for (auto& subview : _subviews) {
+        subview->updateAndUpdateSubviews();
+    }
+}
+
 void View::renderAndRenderSubviews(const RenderTarget* target, const Rectangle<int>& area, boost::optional<Rectangle<int>> clipBounds) {
     if (!isVisible() || !area.width || !area.height) { return; }
 

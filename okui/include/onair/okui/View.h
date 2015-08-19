@@ -193,8 +193,8 @@ public:
     shaders::DistanceFieldShader* distanceFieldShader() { return shader<shaders::DistanceFieldShader>("distance field shader"); }
 
     /**
-    * Begins loading a texture associated with the view. When the texture is loaded, the view's 
-    * render cache will be invalidated. If the texture should not be associated with the view, 
+    * Begins loading a texture associated with the view. When the texture is loaded, the view's
+    * render cache will be invalidated. If the texture should not be associated with the view,
     * use Window::loadTexture* instead.
     */
     TextureHandle loadTextureResource(const char* name);
@@ -228,6 +228,8 @@ public:
     */
     Point<int> superviewToLocal(int x, int y);
     Point<int> superviewToLocal(const Point<int>& p);
+
+    virtual void update() {}
 
     /**
     * Override this to do drawing.
@@ -290,6 +292,11 @@ public:
     * Called when the view or one of its ancestors become invisible in the window.
     */
     virtual void disappeared() {}
+
+    /**
+    * Calls update on this view and its subviews
+    */
+    void updateAndUpdateSubviews();
 
     /**
     * Renders the view and its subviews.

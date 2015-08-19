@@ -209,6 +209,7 @@ protected:
     * set up the application menu and default ResourceManager.
     */
     void _init();
+    void _update(Window* window) { window->_update(); }
     void _render(Window* window) { window->_render(); }
     void _didResize(Window* window, int width, int height) { window->_didResize(width, height); }
     void _assignWindowSize(Window* window) { getWindowSize(window, &window->_width, &window->_height); }

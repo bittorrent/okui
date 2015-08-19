@@ -115,6 +115,7 @@ public:
     virtual void keyDown(KeyCode key, KeyModifiers mod, bool repeat) override;
 
 private:
+    void _update() { _contentView->updateAndUpdateSubviews(); }
     void _render();
     void _didResize(int width, int height);
     void _updateContentLayout();
