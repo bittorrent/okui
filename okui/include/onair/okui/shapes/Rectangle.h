@@ -34,6 +34,8 @@ public:
     double x, y, w, h;
     double cornerRadius = 0.0;
     int roundedCorners = 0;
+    
+private:
     AffineTransformation _transform;
     double _rotation = 0;
 };

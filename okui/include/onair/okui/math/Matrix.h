@@ -9,15 +9,15 @@ namespace onair {
 namespace okui {
 namespace math {
 
-template <typename T, int R, int C> struct Matrix;
+template <typename T, size_t R, size_t C> struct Matrix;
 
-template <typename T, int R, int C>
+template <typename T, size_t R, size_t C>
 class MatrixBase {
 public:
     MatrixBase() {}
 
     MatrixBase(std::initializer_list<T> l) {
-        int r{0}, c{0};
+        size_t r{0}, c{0};
         for (auto& v : l) {
             (*this)(r, c) = v;
             if (++c >= R) {
@@ -27,16 +27,16 @@ public:
         }
     }
         
-    T& operator()(int r, int c) { return _columnMajor[c * C + r]; }
-    const T& operator()(int r, int c) const { return _columnMajor[c * C + r]; }
+    T& operator()(size_t r, size_t c) { return _columnMajor[c * C + r]; }
+    const T& operator()(size_t r, size_t c) const { return _columnMajor[c * C + r]; }
 
-    template <int C2>
+    template <size_t C2>
     Matrix<T, R, C2> operator*(const Matrix<T, C, C2>& right) const {
         Matrix<T, R, C2> ret;
-        for (int i = 0; i < R; ++i) {
-            for (int j = 0; j < C2; ++j) {
+        for (size_t i = 0; i < R; ++i) {
+            for (size_t j = 0; j < C2; ++j) {
                 T sum = 0;
-                for (int k = 0; k < C; ++k) {
+                for (size_t k = 0; k < C; ++k) {
                     sum += (*this)(i, k) * right(k, j);
                 }
                 ret(i, j) = sum;
@@ -46,7 +46,7 @@ public:
     }
     
     bool operator==(const Matrix<T, R, C>& other) const {
-        for (int i = 0; i < R * C; ++i) {
+        for (size_t i = 0; i < R * C; ++i) {
             if (_columnMajor[i] != other._columnMajor[i]) {
                 return false;
             }
@@ -67,7 +67,7 @@ protected:
     template <typename... Args> \
     Matrix(Args&&... args) : MatrixBase<T, rows, cols>{std::forward<Args>(args)...} {}
 
-template <typename T, int R, int C>
+template <typename T, size_t R, size_t C>
 struct Matrix : MatrixBase<T, R, C> {
     ONAIR_OKUI_MATH_MATRIX_INHERITANCE(R, C)
 };

@@ -1,22 +1,11 @@
 #pragma once
 
+#include "onair/okui/math/Vector.h"
+
 namespace onair {
 namespace okui {
 
 template <typename T>
-struct Point {
-    Point() : x{0}, y{0} {}
-    Point(T x, T y) : x{x}, y{y} {}
-
-    bool operator==(const Point& other) const {
-        return x == other.x && y == other.y;
-    }
-
-    bool operator!=(const Point& other) const {
-        return !(*this == other);
-    }
-
-    T x, y;
-};
+using Point = math::Vector<T, 2>;
 
 }}
