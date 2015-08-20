@@ -13,46 +13,44 @@
 */
 namespace onair {
 namespace okui {
-namespace easings {
+namespace interpolation {
     
-struct Linear {
-    template<class T>
-    static constexpr T EaseIn(double t, const T& b, const T& c, double d) {
-        return c * t/d + b;
-    }
-};
+template <class T>
+constexpr T Linear(double t, const T& b, const T& c, double d) {
+    return c * t/d + b;
+}
 
 struct Sine {
-    template<class T>
+    template <class T>
     static T EaseIn(double t, const T& b, const T& c, double d) {
         return -c * cos(t/d * (kPi/2)) + c + b;
     }
 
-    template<class T>
+    template <class T>
     static T EaseOut(double t, const T& b, const T& c, double d) {
         return c * sin(t/d * (kPi/2)) + b;
     }
 
-    template<class T>
+    template <class T>
     static T EaseInOut(double t, const T& b, const T& c, double d) {
         return -c/2 * (cos(kPi * t/d) - 1) + b;
     }
 };
 
 struct Quadratic {
-    template<class T>
+    template <class T>
     static constexpr T EaseIn(double t, const T& b, const T& c, double d) {
         t /= d;
         return c*t*t + b;
     }
 
-    template<class T>
+    template <class T>
     static constexpr T EaseOut(double t, const T& b, const T& c, double d) {
         t /= d;
         return -c * t*(t-2) + b;
     }
 
-    template<class T>
+    template <class T>
     static constexpr T EaseInOut(double t, const T& b, const T& c, double d) {
         t /= d/2;
         if (t < 1) {
@@ -64,19 +62,19 @@ struct Quadratic {
 };
 
 struct Cubic {
-    template<class T>
+    template <class T>
     static constexpr T EaseIn(double t, const T& b, const T& c, double d) {
         t /= d;
         return c * t*t*t + b;
     }
 
-    template<class T>
+    template <class T>
     static constexpr T EaseOut(double t, const T& b, const T& c, double d) {
         t = t/d - 1;
         return c * (t*t*t + 1) + b;
     }
 
-    template<class T>
+    template <class T>
     static constexpr T EaseInOut(double t, const T& b, const T& c, double d) {
         t /= d/2;
         if (t < 1) {
@@ -88,19 +86,19 @@ struct Cubic {
 };
 
 struct Quartic {
-    template<class T>
+    template <class T>
     static constexpr T EaseIn(double t, const T& b, const T& c, double d) {
         t /= d;
         return c * t*t*t*t + b;
     }
 
-    template<class T>
+    template <class T>
     static constexpr T EaseOut(double t, const T& b, const T& c, double d) {
         t = t/d - 1;
         return -c * (t*t*t*t - 1) + b;
     }
 
-    template<class T>
+    template <class T>
     static constexpr T EaseInOut(double t, const T& b, const T& c, double d) {
         t /= d/2;
         if (t < 1) {
@@ -112,19 +110,19 @@ struct Quartic {
 };
 
 struct Quintic {
-    template<class T>
+    template <class T>
     static constexpr T EaseIn(double t, const T& b, const T& c, double d) {
         t /= d;
         return c * t*t*t*t*t + b;
     }
 
-    template<class T>
+    template <class T>
     static constexpr T EaseOut(double t, const T& b, const T& c, double d) {
         t = t/d - 1;
         return c*(t*t*t*t*t + 1) + b;
     }
 
-    template<class T>
+    template <class T>
     static constexpr T EaseInOut(double t, const T& b, const T& c, double d) {
         t /= d/2;
         if (t < 1) {
@@ -136,17 +134,17 @@ struct Quintic {
 };
 
 struct Exponential {
-    template<class T>
+    template <class T>
     static T EaseIn(double t, const T& b, const T& c, double d) {
         return c * pow(2, 10 * (t/d - 1)) + b;
     }
 
-    template<class T>
+    template <class T>
     static T EaseOut(double t, const T& b, const T& c, double d) {
         return c * (-pow(2, -10 * t/d) + 1) + b;
     }
 
-    template<class T>
+    template <class T>
     static T EaseInOut(double t, const T& b, const T& c, double d) {
         t /= d/2;
         if (t < 1) {
@@ -158,19 +156,19 @@ struct Exponential {
 };
 
 struct Circular {
-    template<class T>
+    template <class T>
     static T EaseIn(double t, const T& b, const T& c, double d) {
         t /= d;
         return -c * (sqrt(1 - t*t) - 1) + b;
     }
 
-    template<class T>
+    template <class T>
     static T EaseOut(double t, const T& b, const T& c, double d) {
         t = t/d - 1;
         return c * sqrt(1 - t*t) + b;
     }
 
-    template<class T>
+    template <class T>
     static T EaseInOut(double t, const T& b, const T& c, double d) {
         t /= d/2;
         if (t < 1) {
@@ -182,21 +180,21 @@ struct Circular {
 };
 
 struct Back {
-    template<class T>
+    template <class T>
     static constexpr T EaseIn(double t, const T& b, const T& c, double d) {
         t /= d;
         double s = 1.70158;
         return c * t*t * ((s+1)*t - s) + b;
     }
 
-    template<class T>
+    template <class T>
     static constexpr T EaseOut(double t, const T& b, const T& c, double d) {
         t = t/d - 1;
         double s = 1.70158;
         return c * (t*t * ((s+1)*t + s) + 1) + b;
     }
 
-    template<class T>
+    template <class T>
     static constexpr T EaseInOut(double t, const T& b, const T& c, double d) {
         t /= d/2;
         double s = 1.70158 * 1.525;
@@ -208,4 +206,4 @@ struct Back {
     }
 };
 
-}}} // onair::okui::easings
+}}} // onair::okui::interpolation

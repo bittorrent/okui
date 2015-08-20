@@ -108,7 +108,7 @@ TEST(Animation, interpolation) {
     EXPECT_FLOAT_EQ(animation.current(), 3.0);
 
     C::set(20_s);
-    animation.target(10.0, 7_s, easings::Exponential::EaseIn);
+    animation.target(10.0, 7_s, interpolation::Exponential::EaseIn);
     EXPECT_FLOAT_EQ(animation.target(), 10);
 
     C::set(20_s);
@@ -132,7 +132,7 @@ TEST(Animation, interpolation) {
     C::set(200_s);
     EXPECT_NEAR(animation.current(), 10.0, 0.01);
 
-    animation.target(10.0, 7_s, easings::Exponential::EaseOut);
+    animation.target(10.0, 7_s, interpolation::Exponential::EaseOut);
 
     // TODO: test values for EaseOutExpo
 }

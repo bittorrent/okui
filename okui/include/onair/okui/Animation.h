@@ -1,6 +1,6 @@
 #pragma once
 
-#include "onair/okui/Easings.h"
+#include "onair/okui/interpolation.h"
 
 #include <chrono>
 #include <list>
@@ -27,7 +27,7 @@ public:
         return _interpolator(t, _initial, _target-_initial, d);
     }
 
-    void target(const T& target, typename Clock::duration duration, Interpolator interpolator = easings::Linear::EaseIn<T>) {
+    void target(const T& target, typename Clock::duration duration, Interpolator interpolator = interpolation::Linear<T>) {
         _initial = current();
         _target = target;
         _interpolator = interpolator;
@@ -97,7 +97,7 @@ private:
 
     template <typename... Args>
     void _appendTargets(const T& target, typename Clock::duration duration, Args&&... args) {
-        _chain.emplace_back(target, duration, easings::Linear::EaseIn<T>);
+        _chain.emplace_back(target, duration, interpolation::Linear<T>);
         _appendTargets(std::forward<Args>(args)...);
     }
 

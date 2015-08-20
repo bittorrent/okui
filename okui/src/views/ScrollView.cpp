@@ -1,5 +1,4 @@
 #include "onair/okui/views/ScrollView.h"
-#include "onair/okui/Easings.h"
 
 namespace onair {
 namespace okui {
@@ -71,11 +70,11 @@ void ScrollView::mouseUp(MouseButton button, int startX, int startY, int x, int 
     _animY.reset(_contentView.bounds().y);
 
     if (std::abs(distanceX) > kDistanceTreshold) {
-        _animX.target(_contentView.bounds().x + distanceX, 1300_ms, easings::Cubic::EaseOut);
+        _animX.target(_contentView.bounds().x + distanceX, 1300_ms, interpolation::Cubic::EaseOut);
     }
 
     if (std::abs(distanceY) > kDistanceTreshold) {
-        _animY.target(_contentView.bounds().y + distanceY, 1300_ms, easings::Cubic::EaseOut);
+        _animY.target(_contentView.bounds().y + distanceY, 1300_ms, interpolation::Cubic::EaseOut);
     }
 }
 
