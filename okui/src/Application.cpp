@@ -86,7 +86,11 @@ void Application::handleCommand(Command command, CommandContext context) {
 std::shared_ptr<const std::string> Application::Download(const std::string& url) {
     HTTPRequest request(url);
     request.wait();
-    return request.responseStatus() == 200 ? std::make_shared<std::string>(request.responseBody()) : nullptr;
+    if (request.responseStatus() != 200) {
+        ONAIR_LOG_WARNING("response code %d from %s", request.responseStatus(), url);
+        return nullptr;
+    }
+    return std::make_shared<std::string>(request.responseBody());
 }
 
 void Application::_init() {
