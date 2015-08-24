@@ -31,7 +31,7 @@ void View::addSubview(View* view) {
         return;
     }
 
-    bool isViewAppearance = view->isVisible() && window() && ancestorsAreVisible();
+    bool isViewAppearance = !view->isVisibleInOpenWindow() && view->isVisible() && isVisibleInOpenWindow();
 
     if (isViewAppearance) {
         view->_dispatchFutureVisibilityChange(true);
@@ -67,7 +67,7 @@ void View::removeSubview(View* view) {
 
     view->unfocus();
 
-    bool isViewDisappearance = view->isVisible() && view->window() && view->ancestorsAreVisible();
+    bool isViewDisappearance = view->isVisibleInOpenWindow();
 
     if (isViewDisappearance) {
         view->_dispatchFutureVisibilityChange(false);
@@ -99,13 +99,13 @@ void View::removeSubview(View* view) {
 void View::setIsVisible(bool isVisible) {
     if (_isVisible == isVisible) { return; }
 
-    if (window() && ancestorsAreVisible()) {
+    if (superview() && superview()->isVisibleInOpenWindow()) {
         _dispatchFutureVisibilityChange(isVisible);
     }
 
     _isVisible = isVisible;
 
-    if (window() && ancestorsAreVisible()) {
+    if (superview() && superview()->isVisibleInOpenWindow()) {
         _dispatchVisibilityChange(isVisible);
     }
 
@@ -535,7 +535,7 @@ void View::_dispatchFutureVisibilityChange(bool visible) {
     }
 
     for (auto& subview : _subviews) {
-        if (visible == subview->_isVisible) {
+        if (subview->isVisible()) {
             subview->_dispatchFutureVisibilityChange(visible);
         }
     }
@@ -549,7 +549,7 @@ void View::_dispatchVisibilityChange(bool visible) {
     }
 
     for (auto& subview : _subviews) {
-        if (visible == subview->_isVisible) {
+        if (subview->isVisible()) {
             subview->_dispatchVisibilityChange(visible);
         }
     }

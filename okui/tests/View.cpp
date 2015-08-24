@@ -157,3 +157,56 @@ TEST(View, isDescendantOf) {
     EXPECT_FALSE(a.isDescendantOf(&b));
     EXPECT_FALSE(a.isDescendantOf(&c));
 }
+
+TEST(View, appearedDisappeared) {
+    View a;
+    struct TestView : View {
+        virtual void willAppear() override {
+            EXPECT_EQ(step, 0);
+            EXPECT_FALSE(isVisibleInOpenWindow());
+            ++step;
+        }
+        virtual void appeared() override {
+            EXPECT_EQ(step, 1);
+            EXPECT_TRUE(isVisibleInOpenWindow());
+            ++step;
+        }
+        virtual void willDisappear() override {
+            EXPECT_EQ(step, 2);
+            EXPECT_TRUE(isVisibleInOpenWindow());
+            ++step;
+        }
+        virtual void disappeared() override {
+            EXPECT_EQ(step, 3);
+            EXPECT_FALSE(isVisibleInOpenWindow());
+            ++step;
+        }
+        
+        int step = 0;
+    } b;
+
+    EXPECT_FALSE(a.isVisibleInOpenWindow());
+
+    a.addSubview(&b);
+    EXPECT_FALSE(a.isVisibleInOpenWindow());
+    EXPECT_FALSE(b.isVisibleInOpenWindow());
+
+    TestApplication application;
+    Window window(&application);
+    window.contentView()->addSubview(&a);
+
+    EXPECT_FALSE(a.isVisibleInOpenWindow());
+    EXPECT_FALSE(b.isVisibleInOpenWindow());
+
+    window.open();
+
+    EXPECT_TRUE(a.isVisibleInOpenWindow());
+    EXPECT_TRUE(b.isVisibleInOpenWindow());
+
+    a.setIsVisible(false);
+
+    EXPECT_FALSE(a.isVisibleInOpenWindow());
+    EXPECT_FALSE(b.isVisibleInOpenWindow());
+
+    EXPECT_EQ(b.step, 4);
+}

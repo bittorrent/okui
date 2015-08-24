@@ -45,7 +45,7 @@ struct Vector : VectorComponents<T, N> {
     
     template <typename First, typename Second, typename... Rem>
     Vector(First&& first, Second&& second, Rem&&... rem) {
-        components = std::array<T, N>{std::forward<First>(first), std::forward<Second>(second), std::forward<Rem>(rem)...};
+        components = std::array<T, N>({std::forward<First>(first), std::forward<Second>(second), std::forward<Rem>(rem)...});
     }
     
     T& operator[](size_t i) { return components[i]; }

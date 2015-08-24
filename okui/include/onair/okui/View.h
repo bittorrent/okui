@@ -72,6 +72,9 @@ public:
     void setIsVisible(bool isVisible = true);
     bool isVisible() const { return _isVisible; }
 
+    void show() { setIsVisible(); }
+    void hide() { setIsVisible(false); }
+
     /**
     * Allows scaling of the view by a particular factor.
     */
@@ -205,10 +208,10 @@ public:
     * Get or create a shader cached via the window's shader cache.
     */
     template <typename T>
-    T* shader(const char* indentifier) {
-        auto s = shaderCache()->get(std::string(indentifier));
+    T* shader(const char* identifier) {
+        auto s = shaderCache()->get(std::string(identifier));
         if (!s) {
-            s = shaderCache()->add(std::unique_ptr<Shader>(new T()), std::string(indentifier), ShaderCache::Policy::kKeepForever);
+            s = shaderCache()->add(std::unique_ptr<Shader>(new T()), std::string(identifier), ShaderCache::Policy::kKeepForever);
         }
         auto ret = dynamic_cast<T*>(s->get());
         ret->setTransformation(renderTransformation());
@@ -229,6 +232,10 @@ public:
     Point<int> superviewToLocal(int x, int y);
     Point<int> superviewToLocal(const Point<int>& p);
 
+    /**
+    * Override this to perform updates for each frame. This is invoked exactly once per frame, before any views
+    * begin rendering.
+    */
     virtual void update() {}
 
     /**
@@ -239,7 +246,7 @@ public:
     /**
     * Override this to implement custom post-render effects. For this method to be called, the view must be
     * set to render to texture. The default implementation provides the built-in effects such as tint and
-    * opacity. If this is overridden, you will need to implement those effects in your implementation in
+    * opacity. If this is overridden, you will need to provide those effects in your implementation in
     * order to use them.
     */
     virtual void postRender(std::shared_ptr<Texture> texture, const AffineTransformation& transformation);
@@ -294,7 +301,8 @@ public:
     virtual void disappeared() {}
 
     /**
-    * Calls update on this view and its subviews
+    * Calls update on this view and its subviews. This is normally done by the window each
+    * frame before rendering is done.
     */
     void updateAndUpdateSubviews();
 

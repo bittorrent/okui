@@ -17,18 +17,22 @@ Window::~Window() {
 }
 
 void Window::open() {
+    _contentView->_dispatchFutureVisibilityChange(true);
     auto requestedWidth = _width;
     application()->openWindow(this, _title.c_str(), _position, _width, _height);
     // application reset _width/_height to what the OS actually set the window to in setWindowSize
     _renderScale = requestedWidth / static_cast<double>(_width);
     _isOpen = true;
     _updateContentLayout();
+    _contentView->_dispatchVisibilityChange(true);
 }
 
 void Window::close() {
     closing();
+    _contentView->_dispatchFutureVisibilityChange(false);
     application()->closeWindow(this);
     _isOpen = false;
+    _contentView->_dispatchVisibilityChange(false);
 }
 
 void Window::setPosition(const WindowPosition& pos) {
