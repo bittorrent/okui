@@ -18,7 +18,7 @@ cpp-pch pch :
 
 lib okui :
 	pch
-	[ glob-tree *.cpp : tests ]
+	[ glob-tree *.cpp : tests tools ]
 	../foundation//foundation
 	../third-party/libpng//png
 :
