@@ -1,0 +1,1 @@
+exe sdf-generator : main.cpp ../../../third-party/libpng//png ;
