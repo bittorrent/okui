@@ -236,7 +236,7 @@ void View::invalidateRenderCache() {
     }
 }
 
-TextureHandle View::loadTextureResource(const char* name) {
+TextureHandle View::loadTextureResource(const std::string& name) {
     if (!window()) { return nullptr; }
     auto handle = window()->loadTextureResource(name);
     handle.onLoad([this]{ invalidateRenderCache(); });

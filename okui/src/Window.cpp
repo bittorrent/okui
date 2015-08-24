@@ -49,9 +49,9 @@ void Window::setSize(int width, int height) {
     _updateContentLayout();
 }
 
-void Window::setTitle(const char* title) {
-    _title = title;
-    application()->setWindowTitle(this, title);
+void Window::setTitle(std::string title) {
+    _title = std::move(title);
+    application()->setWindowTitle(this, _title.c_str());
 }
 
 void Window::setMenu(const Menu& menu) {
@@ -59,14 +59,14 @@ void Window::setMenu(const Menu& menu) {
     application()->setWindowMenu(this, menu);
 }
 
-TextureHandle Window::loadTextureResource(const char* name) {
+TextureHandle Window::loadTextureResource(const std::string& name) {
     auto hashable = std::string("resource:") + name;
-
+    
     if (auto hit = _textureCache.get(hashable)) {
         return hit->newHandle();
     }
 
-    auto resource = application()->loadResource(name);
+    auto resource = application()->loadResource(name.c_str());
     if (!resource) {
         return nullptr;
     }
@@ -100,6 +100,7 @@ TextureHandle Window::loadTextureFromURL(const std::string& url) {
     download.texture = texture;
     download.handle = TextureHandle{};
     download.download = application()->download(url);
+    download.isComplete = false;
     return TextureHandle{texture, download.handle};
 }
 
@@ -236,6 +237,8 @@ void Window::_render() {
     Rectangle<int> area(0, 0, _renderWidth, _renderHeight);
     RenderTarget target(area.width, area.height);
     _contentView->renderAndRenderSubviews(&target, area);
+
+    ONAIR_OKUI_GL_ERROR_CHECK();
 }
 
 void Window::_didResize(int width, int height) {

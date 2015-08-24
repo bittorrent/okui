@@ -115,9 +115,20 @@ inline SDL::SDL(const char* name, const char* organization, ResourceManager* res
     ((OKUISDLApplication*)[OKUISDLApplication sharedApplication]).app = this;
     [NSApp finishLaunching];
 #endif
+
     if (SDL_Init(SDL_INIT_EVERYTHING) < 0) {
         ONAIR_LOG_ERROR("error initializing sdl: %s", SDL_GetError());
     }
+
+#if OPENGL_ES
+    SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 2);
+    SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 0);
+    SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_ES);
+#else
+    SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 3);
+    SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 1);
+    SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_CORE);
+#endif
 
     _init();
 }

@@ -19,3 +19,41 @@
 	#endif
 	#include <GL/gl.h>
 #endif
+
+#if OPENGL_ES
+#define ONAIR_OKUI_COMMON_SHADER_HEADER \
+    "precision highp float;\n" \
+    "#define VARYING_IN varying\n" \
+    "#define VARYING_OUT varying\n" \
+    "#define ATTRIBUTE_IN attribute\n" \
+    "#define SAMPLE texture2D\n" \
+
+#define ONAIR_OKUI_VERTEX_SHADER_HEADER ONAIR_OKUI_COMMON_SHADER_HEADER
+#define ONAIR_OKUI_FRAGMENT_SHADER_HEADER ONAIR_OKUI_COMMON_SHADER_HEADER \
+    "#define COLOR_OUT gl_FragColor\n"
+
+#else
+#define ONAIR_OKUI_COMMON_SHADER_HEADER \
+    "#version 140\n" \
+    "#define VARYING_IN in\n" \
+    "#define VARYING_OUT out\n" \
+    "#define ATTRIBUTE_IN in\n" \
+    "#define SAMPLE texture\n" \
+
+#define ONAIR_OKUI_VERTEX_SHADER_HEADER ONAIR_OKUI_COMMON_SHADER_HEADER
+#define ONAIR_OKUI_FRAGMENT_SHADER_HEADER ONAIR_OKUI_COMMON_SHADER_HEADER \
+    "out vec4 COLOR_OUT;\n"
+
+#endif
+
+#if !NDEBUG
+#define ONAIR_OKUI_GL_ERROR_CHECK() \
+    { \
+        auto err = glGetError(); \
+        if (err != GL_NO_ERROR) { \
+            ONAIR_LOG_WARNING("opengl error 0x%x", err);\
+        } \
+    }
+#else
+#define ONAIR_OKUI_GL_ERROR_CHECK()
+#endif

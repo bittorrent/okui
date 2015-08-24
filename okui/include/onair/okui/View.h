@@ -33,11 +33,11 @@ class Window;
 class View : public Responder {
 public:
     View() {}
-    View(const char* name) : _name(name) {}
+    View(std::string name) : _name(std::move(name)) {}
     virtual ~View();
 
-    const char* name() const { return _name.c_str(); }
-    void setName(const char* name) { _name = name; }
+    const std::string& name() const { return _name; }
+    void setName(std::string name) { _name = std::move(name); }
 
     void addSubview(View* view);
     void removeSubview(View* view);
@@ -197,7 +197,7 @@ public:
     * render cache will be invalidated. If the texture should not be associated with the view,
     * use Window::loadTexture* instead.
     */
-    TextureHandle loadTextureResource(const char* name);
+    TextureHandle loadTextureResource(const std::string& name);
     TextureHandle loadTextureFromMemory(std::shared_ptr<const std::string> data);
     TextureHandle loadTextureFromURL(const std::string& url);
 

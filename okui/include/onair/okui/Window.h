@@ -56,8 +56,8 @@ public:
     void setPosition(int x, int y);
     void setSize(int width, int height);
 
-    const char* title() const { return _title.c_str(); }
-    void setTitle(const char* title);
+    const std::string& title() const { return _title; }
+    void setTitle(std::string title);
 
     /**
     * Sets the menu for the window.
@@ -74,7 +74,7 @@ public:
 
     ShaderCache* shaderCache() { return &_shaderCache; }
 
-    TextureHandle loadTextureResource(const char* name);
+    TextureHandle loadTextureResource(const std::string& name);
     TextureHandle loadTextureFromMemory(std::shared_ptr<const std::string> data);
     TextureHandle loadTextureFromURL(const std::string& url);
     std::shared_ptr<BitmapFont> loadBitmapFontResource(const char* textureName, const char* metadataName);

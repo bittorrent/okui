@@ -65,6 +65,24 @@ GLuint PNGTexture::load(opengl::TextureCache* textureCache) {
     png_read_info(png, info);
 
     auto colorType = png_get_color_type(png, info);
+    auto glFormat =
+#if GL_RED && GL_RG
+        colorType == PNG_COLOR_TYPE_GRAY ? GL_RED :
+        colorType == PNG_COLOR_TYPE_GRAY_ALPHA ? GL_RG :
+#else
+        colorType == PNG_COLOR_TYPE_GRAY ? GL_LUMINANCE :
+        colorType == PNG_COLOR_TYPE_GRAY_ALPHA ? GL_LUMINANCE_ALPHA :
+#endif
+        colorType == PNG_COLOR_TYPE_RGB ? GL_RGB :
+        colorType == PNG_COLOR_TYPE_RGB_ALPHA ? GL_RGBA :
+    0;
+
+    if (!glFormat) {
+        ONAIR_LOG_ERROR("unsupported color type");
+        png_destroy_read_struct(&png, &info, nullptr);
+        return 0;
+    }
+    
     int bytesPerRow = png_get_rowbytes(png, info);
     
     int bitDepth = png_get_bit_depth(png, info);
@@ -73,7 +91,24 @@ GLuint PNGTexture::load(opengl::TextureCache* textureCache) {
         png_destroy_read_struct(&png, &info, nullptr);
         return 0;
     }
-        
+
+    const auto components = ((colorType & PNG_COLOR_MASK_COLOR) ? 3 : 1) + ((colorType & PNG_COLOR_MASK_ALPHA) ? 1 : 0);
+    if (bytesPerRow != components * (bitDepth >> 3) * _width) {
+        assert(false);
+        ONAIR_LOG_ERROR("unknown error");
+        png_destroy_read_struct(&png, &info, nullptr);
+        return 0;
+    }
+    
+#if OPENGL_ES
+    if (bitDepth == 16) {
+        // opengl es doesn't do 16-bit textures
+        bitDepth = 8;
+        png_set_strip_16(png);
+        bytesPerRow = components * (bitDepth >> 3) * _width;
+    }
+#endif
+
     if (bitDepth > 8) {
         // libpng stores pixels as big endian. we need them in native endianness for opengl
         union {
@@ -87,24 +122,20 @@ GLuint PNGTexture::load(opengl::TextureCache* textureCache) {
         }
     }
 
-    ONAIR_ASSERT(bytesPerRow == ((colorType & PNG_COLOR_MASK_ALPHA) ? 4 : 3) * (bitDepth >> 3) * _width);
-
     // align rows to 4-byte boundaries
     if (bytesPerRow % 4) {
         bytesPerRow += 4 - (bytesPerRow % 4);
     }
 
-    png_byte* image = reinterpret_cast<png_byte*>(malloc(bytesPerRow * _height));
-    png_bytep* rowPointers = reinterpret_cast<png_bytep*>(malloc(_height * sizeof(png_bytep)));
+    std::vector<png_byte> image;
+    image.resize(bytesPerRow * _height);
 
+    std::vector<png_byte*> rowPointers;
     for (int i = 0; i < _height; ++i) {
-        rowPointers[i] = image + i * bytesPerRow;
+        rowPointers.emplace_back(image.data() + i * bytesPerRow);
     }
 
-    png_read_image(png, rowPointers);
-
-    free(rowPointers);
-
+    png_read_image(png, rowPointers.data());
     png_destroy_read_struct(&png, &info, nullptr);
 
     // image now contains our raw bytes. send it to the gpu
@@ -115,17 +146,27 @@ GLuint PNGTexture::load(opengl::TextureCache* textureCache) {
 
     glPixelStorei(GL_UNPACK_ALIGNMENT, 4);
 
-    auto format = (colorType & PNG_COLOR_MASK_ALPHA) ? GL_RGBA : GL_RGB;
-    glTexImage2D(GL_TEXTURE_2D, 0, format, _width, _height, 0, format, bitDepth == 8 ? GL_UNSIGNED_BYTE : GL_UNSIGNED_SHORT, image);
+    glTexImage2D(GL_TEXTURE_2D, 0, glFormat, _width, _height, 0, glFormat, bitDepth == 8 ? GL_UNSIGNED_BYTE : GL_UNSIGNED_SHORT, image.data());
 
     glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
     glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
 
-    _cacheEntry = textureCache->add(texture, texture);
+#if GL_RED && GL_RG
+    if (colorType == PNG_COLOR_TYPE_GRAY || colorType == PNG_COLOR_TYPE_GRAY_ALPHA) {
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_SWIZZLE_G, GL_RED);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_SWIZZLE_B, GL_RED);
+        
+        if (colorType == PNG_COLOR_TYPE_GRAY_ALPHA) {
+            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_SWIZZLE_A, GL_GREEN);
+        }
+    }
+#endif
 
-    free(image);
+    ONAIR_OKUI_GL_ERROR_CHECK();
+    
+    _cacheEntry = textureCache->add(texture, texture);
 
     return _cacheEntry->id;
 }

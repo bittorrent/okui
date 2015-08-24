@@ -4,8 +4,6 @@
 
 #include "onair/okui/Rectangle.h"
 #include "onair/okui/Shader.h"
-#include "onair/okui/opengl/ShaderProgram.h"
-#include "onair/okui/AffineTransformation.h"
 
 namespace onair {
 namespace okui {
@@ -14,11 +12,17 @@ class Texture;
 
 namespace shaders {
 
-class TextureShader : public Shader {
+struct TextureVertex {
+    GLfloat x, y;
+    GLfloat r{1.0}, g{1.0}, b{1.0}, a{1.0};
+    GLfloat cu, cv, cm, caa;
+    GLfloat s, t;
+};
+    
+class TextureShader : public ShaderBase<TextureVertex> {
 public:
-    TextureShader();
-
-    void setTransformation(const AffineTransformation& transformation) { _transformation = transformation; }
+    TextureShader(const char* fragmentShader = nullptr);
+    virtual ~TextureShader() {}
 
     void setColor(double r, double g, double b, double a);
 
@@ -37,37 +41,16 @@ public:
     void drawScaledFit(const Texture& texture, Rectangle<double> area, double r = 0);
     void drawScaledFit(const Texture& texture, double x, double y, double w, double h, double r = 0) { drawScaledFit(texture, Rectangle<double>(x, y, w, h), r); }
 
-    virtual void drawTriangle(double x1, double y1, double x2, double y2, double x3, double y3, Curve curve) override;
     virtual void flush() override;
 
 private:
-    opengl::ShaderProgram _program;
     opengl::ShaderProgram::Uniform _curveModeUniform;
-    AffineTransformation _transformation;
     AffineTransformation _texCoordTransform;
-
+    
     GLuint _texture = 0;
     double _textureX1, _textureY1, _textureWidth, _textureHeight;
 
-    enum : GLuint {
-        kVertexPositionAttribute,
-        kVertexColorAttribute,
-        kVertexCurveAttribute,
-        kVertexTextureCoordinateAttribute,
-    };
-
-    struct Vertex {
-        GLfloat x, y;
-        GLfloat r{1.0}, g{1.0}, b{1.0}, a{1.0};
-        GLfloat cu, cv, cm, caa;
-        GLfloat s, t;
-    };
-
-    struct Triangle {
-        Vertex a, b, c;
-    } _triangle;
-
-    std::vector<Vertex> _vertices;
+    virtual void _processTriangle(const std::array<Point<double>, 3>& p, const std::array<Point<double>, 3>& pT, Shader::Curve curve) override;
 };
 
 }}}
