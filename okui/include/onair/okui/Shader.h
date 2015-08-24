@@ -51,7 +51,7 @@ public:
     void setTransformation(const AffineTransformation& transformation) { _transformation = transformation; }
 
     virtual void drawTriangle(double x1, double y1, double x2, double y2, double x3, double y3, Curve curve) override {
-        std::array<Point<double>, 3> p{Point<double>{x1, y1}, Point<double>{x2, y2}, Point<double>{x3, y3}};
+        std::array<Point<double>, 3> p{{Point<double>{x1, y1}, Point<double>{x2, y2}, Point<double>{x3, y3}}};
         std::array<Point<double>, 3> pT;
 
         _transformation.transform(p[0].x, p[0].y, &pT[0].x, &pT[0].y);
