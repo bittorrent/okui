@@ -149,26 +149,33 @@ inline void SDL::run() {
 #if __APPLE__
         @autoreleasepool {
 #endif
-        while (!shouldQuit && SDL_WaitEventTimeout(&e, static_cast<int>(std::max(std::chrono::duration_cast<std::chrono::milliseconds>(minFrameInterval-timer.elapsed()), 0_ms).count()))) {
-            switch (e.type) {
-                case SDL_QUIT:                    { shouldQuit = true; break; }
-                case SDL_MOUSEMOTION:             { _handleMouseMotionEvent(e.motion); break; }
-                case SDL_MOUSEBUTTONUP:
-                case SDL_MOUSEBUTTONDOWN:         { _handleMouseButtonEvent(e.button); break; }
-                case SDL_MOUSEWHEEL:              { _handleMouseWheelEvent(e.wheel); break; }
-                case SDL_WINDOWEVENT:             { _handleWindowEvent(e.window); break; }
-                case SDL_KEYUP:
-                case SDL_KEYDOWN:                 { _handleKeyboardEvent(e.key); break; }
-                case SDL_TEXTEDITING:             { break; /* TODO for better localization support */ }
-                case SDL_TEXTINPUT:               { _handleTextInputEvent(e.text); break; }
-                case SDL_APP_TERMINATING:         { terminating(); break; }
-                case SDL_APP_LOWMEMORY:           { lowMemory(); break; }
-                case SDL_APP_WILLENTERBACKGROUND: { enteringBackground(); break; }
-                case SDL_APP_DIDENTERBACKGROUND:  { enteredBackground(); _backgrounded = true; break; }
-                case SDL_APP_WILLENTERFOREGROUND: { enteringForeground(); break; }
-                case SDL_APP_DIDENTERFOREGROUND:  { enteredForeground(); _backgrounded = false; break; }
-                case SDL_MULTIGESTURE:            { _handleMultiGestureEvent(e.mgesture); break; }
-                default:                          { break; }
+
+        while(!shouldQuit) {
+            if (SDL_PollEvent(&e)) {
+                switch (e.type) {
+                    case SDL_QUIT:                    { shouldQuit = true; break; }
+                    case SDL_MOUSEMOTION:             { _handleMouseMotionEvent(e.motion); break; }
+                    case SDL_MOUSEBUTTONUP:
+                    case SDL_MOUSEBUTTONDOWN:         { _handleMouseButtonEvent(e.button); break; }
+                    case SDL_MOUSEWHEEL:              { _handleMouseWheelEvent(e.wheel); break; }
+                    case SDL_WINDOWEVENT:             { _handleWindowEvent(e.window); break; }
+                    case SDL_KEYUP:
+                    case SDL_KEYDOWN:                 { _handleKeyboardEvent(e.key); break; }
+                    case SDL_TEXTEDITING:             { break; /* TODO for better localization support */ }
+                    case SDL_TEXTINPUT:               { _handleTextInputEvent(e.text); break; }
+                    case SDL_APP_TERMINATING:         { terminating(); break; }
+                    case SDL_APP_LOWMEMORY:           { lowMemory(); break; }
+                    case SDL_APP_WILLENTERBACKGROUND: { enteringBackground(); break; }
+                    case SDL_APP_DIDENTERBACKGROUND:  { enteredBackground(); _backgrounded = true; break; }
+                    case SDL_APP_WILLENTERFOREGROUND: { enteringForeground(); break; }
+                    case SDL_APP_DIDENTERFOREGROUND:  { enteredForeground(); _backgrounded = false; break; }
+                    case SDL_MULTIGESTURE:            { _handleMultiGestureEvent(e.mgesture); break; }
+                    default:                          { break; }
+                }
+            } else if ((minFrameInterval - timer.elapsed()) > 2_ms) {
+                std::this_thread::sleep_for(1_ms);
+            } else {
+                break;
             }
         }
 
