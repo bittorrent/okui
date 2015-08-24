@@ -27,7 +27,7 @@ class BitmapFont;
 class Window;
 
 /**
-* View rendering can be cached or buffered to a texture. One reason this may be done to apply post-rendering
+* View rendering can be cached or buffered to a texture. One reason this may be done is to apply post-rendering
 * effects such as tinting or reflection. When this is done, the contents of the view are clipped to its bounds.
 */
 class View : public Responder {
