@@ -27,7 +27,7 @@ size_t endOfWord(Iterator start, Iterator end) {
 TextField::TextField() {
     _textView.setAlignment(TextView::HorizontalAlignment::kLeft, TextView::VerticalAlignment::kCenter);
     _textView.setTextColor(1, 1, 1, 1);
-    _textView.setMultiLine(false);
+    _textView.setOverflowBehavior(TextView::OverflowBehavior::kNone);
 
     addSubview(&_scrollView);
     _scrollView.contentView()->addSubview(&_selectionHighlight);

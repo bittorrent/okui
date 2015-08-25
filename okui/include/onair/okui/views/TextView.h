@@ -22,6 +22,12 @@ public:
         kCenter,
         kTop,
     };
+    
+    enum class OverflowBehavior {
+        kNone,
+        kWrap,
+        kEllipses,
+    };
 
     void setAlignment(HorizontalAlignment horizontal, VerticalAlignment vertical = VerticalAlignment::kCenter);
     void setFont(std::shared_ptr<BitmapFont> font, double size);
@@ -35,8 +41,7 @@ public:
     */
     void setBitmapFont(const char* texture, const char* metadata, double size);
 
-    void setMultiLine(bool enabled) { _multiLine = enabled;  _computeLines(); }
-    bool multiLine() const          { return _multiLine; }
+    void setOverflowBehavior(OverflowBehavior behavior) { _overflowBehavior = behavior;  _computeLines(); }
 
     double textWidth() const { return _textWidth; }
 
@@ -70,7 +75,7 @@ private:
     std::vector<std::basic_string<BitmapFont::GlyphId>> _lines;
     double _textWidth;
     double _textColorR{0.0}, _textColorG{0.0}, _textColorB{0.0}, _textColorA{1.0};
-    bool _multiLine = true;
+    OverflowBehavior _overflowBehavior = OverflowBehavior::kEllipses;
 
     void _computeLines();
     void _renderBitmapText(shaders::DistanceFieldShader* shader);

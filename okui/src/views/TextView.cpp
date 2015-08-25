@@ -178,30 +178,44 @@ void TextView::_computeLines() {
 
     auto fontScale = _fontSize / _font->size();
 
-    if (!_multiLine) {
-        _lines.push_back(_text);
-    } else {
-        auto width = bounds().width;
-        std::basic_string<BitmapFont::GlyphId> line;
+    auto width = bounds().width;
+    std::basic_string<BitmapFont::GlyphId> line;
 
-        uint32_t codePoint;
-        uint32_t state = 0;
+    uint32_t codePoint;
+    uint32_t state = 0;
 
-        for (auto& c : _text) {
-            if (UTF8Decode(&state, &codePoint, static_cast<unsigned char>(c))) {
-                continue;
-            }
+    static constexpr std::array<BitmapFont::GlyphId, 3> ellipses{{ 0x2e, 0x2e, 0x2e }};
+    auto ellipsesWidth = _font->width(ellipses.data(), ellipses.size()) * fontScale;
+    bool skipUntilNewLine = false;
 
-            BitmapFont::GlyphId glyph = codePoint;
+    for (auto& c : _text) {
+        if (UTF8Decode(&state, &codePoint, static_cast<unsigned char>(c))) {
+            continue;
+        }
 
-            if (glyph == '\n') {
-                _lines.emplace_back(std::move(line));
-                line.clear();
-                continue;
-            }
-            line.push_back(glyph);
-            auto lineWidth = _font->width(line.data(), line.size()) * fontScale;
-            if (lineWidth > width) {
+        BitmapFont::GlyphId glyph = codePoint;
+
+        if (glyph == '\n') {
+            _lines.emplace_back(std::move(line));
+            line.clear();
+            skipUntilNewLine = false;
+            continue;
+        } else if (skipUntilNewLine) {
+            continue;
+        }
+
+        line.push_back(glyph);
+        
+        auto lineWidth = _font->width(line.data(), line.size()) * fontScale;
+        if (lineWidth > width) {
+            if (_overflowBehavior == OverflowBehavior::kEllipses) {
+                // rewind, insert the ellipses, and skip until a new line
+                do {
+                    line.pop_back();
+                } while (!line.empty() && _font->width(line.data(), line.size()) * fontScale + ellipsesWidth > width);
+                line.insert(line.end(), ellipses.begin(), ellipses.end());
+                skipUntilNewLine = true;
+            } else if (_overflowBehavior == OverflowBehavior::kWrap) {
                 // try to break
                 for (size_t i = line.size(); i > 0; --i) {
                     auto& candidate = line[i - 1];
@@ -221,10 +235,10 @@ void TextView::_computeLines() {
                 }
             }
         }
+    }
 
-        if (!line.empty()) {
-            _lines.emplace_back(std::move(line));
-        }
+    if (!line.empty()) {
+        _lines.emplace_back(std::move(line));
     }
 
     for (auto& line : _lines) {
