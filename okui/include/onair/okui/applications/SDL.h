@@ -1,6 +1,8 @@
 #pragma once
 
 #include "onair/okui/config.h"
+#include "onair/okui/FileResourceManager.h"
+
 #include "onair/okui/applications/Native.h"
 #include "onair/okui/applications/SDLKeycode.h"
 
@@ -27,8 +29,10 @@ namespace applications {
 
 class SDL : public Native {
 public:
-    SDL(const char* name, const char* organization, ResourceManager* resourceManager = nullptr);
+    SDL(std::string name, std::string organization, ResourceManager* resourceManager = nullptr, bool shouldInitialize = true);
     ~SDL();
+    
+    virtual void initialize() override;
 
     virtual void run() override;
     virtual void quit() override;
@@ -104,11 +108,13 @@ private:
     std::unique_ptr<SDL_Cursor, CursorDeleter> _cursor;
     bool _backgrounded = false;
 
+    std::unique_ptr<ResourceManager> _resourceManager;
+
     static MouseButton sMouseButton(uint8_t id);
 };
 
-inline SDL::SDL(const char* name, const char* organization, ResourceManager* resourceManager)
-    : Native(name, organization, resourceManager)
+inline SDL::SDL(std::string name, std::string organization, ResourceManager* resourceManager, bool shouldInitialize)
+    : Native(std::move(name), std::move(organization), resourceManager, false)
 {
 #if ONAIR_MAC_OS_X
     // make sure we use our application class instead of sdl's
@@ -130,11 +136,37 @@ inline SDL::SDL(const char* name, const char* organization, ResourceManager* res
     SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_CORE);
 #endif
 
-    _init();
+#if ONAIR_ANDROID
+    auto env = reinterpret_cast<JNIEnv*>(SDL_AndroidGetJNIEnv());
+    auto activity = reinterpret_cast<jobject>(SDL_AndroidGetActivity());
+    if (activity) {
+        setActivity(env, activity);
+        env->DeleteLocalRef(activity);
+    } else {
+        ONAIR_LOG_ERROR("unable to get android activity");
+    }
+#endif
+
+    if (shouldInitialize) {
+        initialize();
+    }
 }
 
 inline SDL::~SDL() {
     SDL_Quit();
+}
+
+inline void SDL::initialize() {
+    if (!resourceManager()) {
+        if (auto path = SDL_GetBasePath()) {
+            _resourceManager.reset(new FileResourceManager(path));
+            ONAIR_LOG_DEBUG("using resources in %s", path);
+            setResourceManager(_resourceManager.get());
+            SDL_free(path);
+        }
+    }
+    
+    Native::initialize();
 }
 
 inline void SDL::run() {

@@ -5,16 +5,31 @@
 namespace onair {
 namespace okui {
 
-Application::Application(const char* name, const char* organization, ResourceManager* resourceManager)
-    : _name{name}
-    , _organization{organization}
+Application::Application(std::string name, std::string organization, ResourceManager* resourceManager, bool shouldInitialize)
+    : _name{std::move(name)}
+    , _organization{std::move(organization)}
     , _resourceManager{resourceManager}
-{}
+{
+    if (shouldInitialize) {
+        initialize();
+    }
+}
 
 Application::~Application() {
     for (auto& task : _backgroundTasks) {
         task.wait();
     }
+}
+
+void Application::initialize() {
+    setMenu(Menu({
+        MenuItem("Edit", Menu({
+            MenuItem("Copy", kCommandCopy, KeyCode::kC, defaultShortcutModifier()),
+            MenuItem("Cut", kCommandCut, KeyCode::kX, defaultShortcutModifier()),
+            MenuItem("Paste", kCommandPaste, KeyCode::kV, defaultShortcutModifier()),
+            MenuItem("Select All", kCommandSelectAll, KeyCode::kA, defaultShortcutModifier()),
+        })),
+    }));
 }
 
 Responder* Application::firstResponder() {
@@ -91,22 +106,6 @@ std::shared_ptr<const std::string> Application::Download(const std::string& url)
         return nullptr;
     }
     return std::make_shared<std::string>(request.responseBody());
-}
-
-void Application::_init() {
-    setMenu(Menu({
-        MenuItem("Edit", Menu({
-            MenuItem("Copy", kCommandCopy, KeyCode::kC, defaultShortcutModifier()),
-            MenuItem("Cut", kCommandCut, KeyCode::kX, defaultShortcutModifier()),
-            MenuItem("Paste", kCommandPaste, KeyCode::kV, defaultShortcutModifier()),
-            MenuItem("Select All", kCommandSelectAll, KeyCode::kA, defaultShortcutModifier()),
-        })),
-    }));
-
-    if (_resourceManager == nullptr) {
-        _defaultResourceManager = std::make_unique<okui::FileResourceManager>(resourcePath().c_str());
-        _resourceManager = _defaultResourceManager.get();
-    }
 }
 
 }}

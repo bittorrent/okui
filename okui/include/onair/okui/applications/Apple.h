@@ -18,12 +18,15 @@ namespace applications {
 class Apple : public Application {
 public:
     using Application::Application;
+    
+    virtual void initialize() override;
 
     virtual std::string userStoragePath() const override;
 
     virtual KeyModifier defaultShortcutModifier() const override { return KeyModifier::kSuper; }
 
-    virtual std::string resourcePath() const override;
+private:
+    std::unique_ptr<ResourceManager> _resourceManager;
 };
 
 }}}

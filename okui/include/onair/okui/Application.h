@@ -7,7 +7,6 @@
 #include "onair/okui/Menu.h"
 #include "onair/okui/Window.h"
 #include "onair/okui/CursorTypes.h"
-#include "onair/okui/FileResourceManager.h"
 
 #include "onair/TaskQueue.h"
 
@@ -22,11 +21,20 @@ public:
     /**
     * @param name human readable application name. e.g. "Example Application"
     * @param organization human readable organization name. e.g. "My Organization"
-    * @param resourceManager if left as nullptr, a FileResourceManager is used which uses resourcePath()
+    * @param resourceManager the resource manager. this is typically provided by subclass implementations
+    * @param shouldInitialize if true, the application is ready for use immediately after construction. otherwise
+    *                         initialize() must be called afterwards
     */
-    Application(const char* name, const char* organization, ResourceManager* resourceManager = nullptr);
+    Application(std::string name, std::string organization, ResourceManager* resourceManager = nullptr, bool shouldInitialize = true);
     virtual ~Application();
 
+    /**
+    * Initializes the application. This must be called before it is ready to be used if the constructor's 
+    * shouldInitialize parameter is false.
+    */
+    virtual void initialize();
+
+    ResourceManager* resourceManager() { return _resourceManager; }
     void setResourceManager(ResourceManager* resourceManager) { _resourceManager = resourceManager; }
 
     const std::string& name() const { return _name; }
@@ -193,22 +201,12 @@ public:
     */
     virtual void setScreenSaverEnabled(bool enabled = true) {}
 
-    /**
-    * Returns path to resources, if there is one.
-    */
-    virtual std::string resourcePath() const { return ""; }
-
     virtual void setCursorType(CursorType type) {}
 
     virtual void showStatusBar() {}
     virtual void hideStatusBar() {}
 
 protected:
-    /**
-    * _init() must be called from any final derived class' ctor in order to properly
-    * set up the application menu and default ResourceManager.
-    */
-    void _init();
     void _update(Window* window) { window->_update(); }
     void _render(Window* window) { window->_render(); }
     void _didResize(Window* window, int width, int height) { window->_didResize(width, height); }
@@ -229,7 +227,6 @@ private:
     std::vector<std::future<void>> _backgroundTasks;
     TaskQueue _taskQueue;
     std::string _clipboard;
-    std::unique_ptr<okui::FileResourceManager> _defaultResourceManager;
 };
 
 } // namespace okui
