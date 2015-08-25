@@ -78,7 +78,7 @@ GLuint PNGTexture::load(opengl::TextureCache* textureCache) {
     0;
 
     if (!glFormat) {
-        ONAIR_LOG_ERROR("unsupported color type");
+        ONAIR_LOG_ERROR("unsupported color type (%d)", static_cast<int>(colorType));
         png_destroy_read_struct(&png, &info, nullptr);
         return 0;
     }
