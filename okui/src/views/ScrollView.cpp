@@ -6,7 +6,9 @@ namespace views {
 
 namespace {
     constexpr auto kAvgVelocityTime = 0.06;
-    constexpr auto kDistanceTreshold = 50.0;
+    constexpr auto kMaxVelocity = 2000.0;
+    constexpr auto kDistanceThreshold = 50.0;
+    constexpr auto kEndVelocityThreshold = 150.0;
 }
 
 ScrollView::ScrollView() {
@@ -45,36 +47,46 @@ void ScrollView::mouseUp(MouseButton button, int startX, int startY, int x, int 
     auto dT = 0.0;
     auto distanceX = 0.0;
     auto distanceY = 0.0;
+    auto count = 0;
 
-    for (auto i = _velocities.rbegin(); i != _velocities.rend() && dT < kAvgVelocityTime; ++i) {
-        std::tie(elapsed, dX, dY) = *i;
-        distanceX += dX * elapsed;
-        distanceY += dY * elapsed;
-        dT += elapsed;
-
-        if (std::abs(dY) < 5 || std::abs(dX) < 5) {
+    for (auto i = _velocities.rbegin(); i != _velocities.rend(); ++i) {
+        if (dT < kAvgVelocityTime || (count < 3 && dT < (kAvgVelocityTime * 2))){
+            std::tie(elapsed, dX, dY) = *i;
+            distanceX += std::min(std::max(dX / elapsed, -kMaxVelocity), kMaxVelocity);
+            distanceY += std::min(std::max(dY / elapsed, -kMaxVelocity), kMaxVelocity);
+            dT += elapsed;
+            ++count;
+        } else {
             break;
         }
     }
 
-    _velocities.clear();
+    if (!_velocities.empty()) {
+        std::tie(elapsed, dX, dY) = *_velocities.rbegin();
+        if (std::abs(dX/elapsed) < kEndVelocityThreshold) {
+            distanceX = 0;
+        }
 
-    if (dT < kAvgVelocityTime) {
-        dT = kAvgVelocityTime;
+        if (std::abs(dY/elapsed) < kEndVelocityThreshold) {
+            distanceX = 0;
+        }
     }
 
-    distanceX /= dT * dT;
-    distanceY /= dT * dT;
-
+    _velocities.clear();
     _animX.reset(_contentView.bounds().x);
     _animY.reset(_contentView.bounds().y);
 
-    if (std::abs(distanceX) > kDistanceTreshold) {
-        _animX.target(_contentView.bounds().x + distanceX, 1300_ms, interpolation::Cubic::EaseOut);
-    }
+    if (count >= 3) {
+        distanceX /= count;
+        distanceY /= count;
 
-    if (std::abs(distanceY) > kDistanceTreshold) {
-        _animY.target(_contentView.bounds().y + distanceY, 1300_ms, interpolation::Cubic::EaseOut);
+        if (std::abs(distanceX) > kDistanceThreshold) {
+            _animX.target(_contentView.bounds().x + distanceX, 1300_ms, interpolation::Cubic::EaseOut);
+        }
+
+        if (std::abs(distanceY) > kDistanceThreshold) {
+            _animY.target(_contentView.bounds().y + distanceY, 1300_ms, interpolation::Cubic::EaseOut);
+        }
     }
 }
 
