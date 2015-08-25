@@ -4,6 +4,8 @@
 
 #include <algorithm>
 #include <array>
+#include <cmath>
+#include <functional>
 
 namespace onair {
 namespace okui {
@@ -95,7 +97,7 @@ struct Vector : VectorComponents<T, N> {
         return ret;
     }
 
-    T magnitude() const { return sqrt(magnitudeSquared()); }
+    T magnitude() const { return std::sqrt(magnitudeSquared()); }
 
     void normalize() {
         *this /= magnitude();

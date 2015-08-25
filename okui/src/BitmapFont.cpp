@@ -1,5 +1,6 @@
 #include "onair/okui/BitmapFont.h"
 
+#include <cstdlib>
 #include <cstring>
 
 namespace onair {
