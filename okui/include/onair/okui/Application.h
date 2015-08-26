@@ -29,7 +29,7 @@ public:
     virtual ~Application();
 
     /**
-    * Initializes the application. This must be called before it is ready to be used if the constructor's 
+    * Initializes the application. This must be called before it is ready to be used if the constructor's
     * shouldInitialize parameter is false.
     */
     virtual void initialize();
@@ -70,7 +70,7 @@ public:
     static std::shared_ptr<const std::string> Download(const std::string& url);
 
     /**
-    * iOS: applicationWillTerminate(), Android: applicationWillTerminate()
+    * iOS: applicationWillTerminate(), Android: onDestroy()
     */
     virtual void terminating() {}
 
