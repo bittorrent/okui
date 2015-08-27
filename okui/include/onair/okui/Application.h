@@ -54,7 +54,17 @@ public:
     void command(Command command, CommandContext context) { firstResponder()->handleCommand(command, context); }
 
     /**
-    * Downloads from the given URL.
+    * Sets the CA bundle path to be used for secure requests made by the application.
+    */
+    void setCABundlePath(std::string caBundlePath) { _caBundlePath = std::move(caBundlePath); }
+
+    /**
+    * Returns the current CA bundle path.
+    */
+    const std::string& caBundlePath() const { return _caBundlePath; }
+
+    /**
+    * Asynchronously downloads from the given URL.
     *
     * @param useCache if true, the results of a previously successful download may be provided
     */
@@ -63,11 +73,6 @@ public:
     // Responder overrides
     virtual bool canHandleCommand(Command command) override;
     virtual void handleCommand(Command command, CommandContext context) override;
-
-    /**
-    * Synchronously downloads from the given URL.
-    */
-    static std::shared_ptr<const std::string> Download(const std::string& url);
 
     /**
     * iOS: applicationWillTerminate(), Android: onDestroy()
@@ -223,6 +228,7 @@ private:
     std::string _name;
     std::string _organization;
     ResourceManager* _resourceManager;
+    std::string _caBundlePath;
     std::unordered_map<std::string, std::shared_ptr<DownloadInfo>> _downloads;
     std::vector<std::future<void>> _backgroundTasks;
     TaskQueue _taskQueue;

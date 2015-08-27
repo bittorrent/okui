@@ -7,8 +7,9 @@
 using namespace onair;
 using namespace onair::okui;
 
-TEST(Application, Download) {
-    auto result = Application::Download("https://www.random.org/integers/?num=1&min=12340&max=12341&col=1&base=10&format=plain");
+TEST(Application, download) {
+    TestApplication application;
+    auto result = application.download("https://www.random.org/integers/?num=1&min=12340&max=12341&col=1&base=10&format=plain").get();
     
     ASSERT_TRUE(result != nullptr);
     EXPECT_TRUE(*result == "12340\n" || *result == "12341\n");

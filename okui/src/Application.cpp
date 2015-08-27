@@ -68,8 +68,18 @@ std::future<std::shared_ptr<const std::string>> Application::download(const std:
         }
     }
 
-    _backgroundTasks.emplace_back(std::async(std::launch::async, [url, download, promise = std::move(promise)] () mutable {
-        auto result = Download(url);
+    _backgroundTasks.emplace_back(std::async(std::launch::async, [caBundlePath = _caBundlePath, url, download, promise = std::move(promise)] () mutable {
+        std::shared_ptr<std::string> result;
+
+        HTTPRequest request;
+        request.setCABundlePath(std::move(caBundlePath));
+        request.initiate(url);
+        request.wait();
+        if (request.responseStatus() != 200) {
+            ONAIR_LOG_WARNING("response code %d from %s", request.responseStatus(), url);
+        } else {
+            result = std::make_shared<std::string>(request.responseBody());
+        }
 
         std::lock_guard<std::mutex> lock(download->mutex);
         download->result = result;
@@ -96,16 +106,6 @@ void Application::handleCommand(Command command, CommandContext context) {
     } else {
         Responder::handleCommand(command, context);
     }
-}
-
-std::shared_ptr<const std::string> Application::Download(const std::string& url) {
-    HTTPRequest request(url);
-    request.wait();
-    if (request.responseStatus() != 200) {
-        ONAIR_LOG_WARNING("response code %d from %s", request.responseStatus(), url);
-        return nullptr;
-    }
-    return std::make_shared<std::string>(request.responseBody());
 }
 
 }}
