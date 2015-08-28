@@ -25,12 +25,13 @@ std::set<double> ActiveEdges(NSVGshape* shape, double y) {
     std::set<double> ret;
     
     IterateCubicBeziers(shape, [&](const float* pts) {
-        constexpr auto step = 0.0005;
+        constexpr auto step = 0.00005;
         constexpr auto threshold = 0.005;
+        constexpr auto gapThreshold = 8 * threshold;
         for (auto t = 0.0; t <= 1.0; t += step) {
             auto by = CubicBezier(t, pts[1], pts[3], pts[5], pts[7]);
             if (std::fabs(y - by) < threshold) {
-                ret.insert(std::round(CubicBezier(t, pts[0], pts[2], pts[4], pts[6]) / threshold) * threshold);
+                ret.insert(std::round(CubicBezier(t, pts[0], pts[2], pts[4], pts[6]) / gapThreshold) * gapThreshold);
             }
         }
     });
@@ -43,7 +44,7 @@ double Distance(NSVGimage* svg, double x, double y) {
 
     for (auto shape = svg->shapes; shape; shape = shape->next) {
         IterateCubicBeziers(shape, [&](const float* pts) {
-            constexpr auto step = 0.0005;
+            constexpr auto step = 0.00005;
             for (auto t = 0.0; t <= 1.0; t += step) {
                 auto yd = std::fabs(y - CubicBezier(t, pts[1], pts[3], pts[5], pts[7]));
                 auto yd2 = yd * yd;
