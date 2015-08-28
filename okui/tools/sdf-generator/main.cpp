@@ -27,7 +27,7 @@ std::set<double> ActiveEdges(NSVGshape* shape, double y) {
     IterateCubicBeziers(shape, [&](const float* pts) {
         constexpr auto step = 0.00005;
         constexpr auto threshold = 0.005;
-        constexpr auto gapThreshold = 8 * threshold;
+        constexpr auto gapThreshold = 16 * threshold;
         for (auto t = 0.0; t <= 1.0; t += step) {
             auto by = CubicBezier(t, pts[1], pts[3], pts[5], pts[7]);
             if (std::fabs(y - by) < threshold) {
