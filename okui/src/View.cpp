@@ -366,7 +366,7 @@ void View::renderAndRenderSubviews(const RenderTarget* target, const Rectangle<i
 
     if (!_renderCacheColorAttachment || _renderCacheColorAttachment->width() != area.width || _renderCacheColorAttachment->height() != area.height) {
         // update the framebuffer
-        _renderCache = std::unique_ptr<opengl::Framebuffer>(new opengl::Framebuffer());
+        _renderCache.reset(new opengl::Framebuffer());
         _renderCacheColorAttachment = _renderCache->addColorAttachment(area.width, area.height);
         // TODO: stencil attachment
         ONAIR_ASSERT(_renderCache->isComplete());
@@ -407,7 +407,7 @@ void View::postRender(std::shared_ptr<Texture> texture, const AffineTransformati
     auto shader = textureShader();
     shader->setTransformation(transformation);
     shader->setColor(_tintColor.r, _tintColor.g, _tintColor.b, _tintColor.a);
-    shader->drawScaledFit(*texture, Rectangle<double>(0.0, 0.0, bounds().width, bounds().height));
+    shader->drawScaledFill(*texture, Rectangle<double>(0.0, 0.0, bounds().width, bounds().height));
     shader->flush();
 }
 
