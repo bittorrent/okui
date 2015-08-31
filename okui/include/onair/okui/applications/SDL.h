@@ -170,6 +170,8 @@ inline void SDL::initialize() {
 }
 
 inline void SDL::run() {
+    SDL_SetThreadPriority(SDL_THREAD_PRIORITY_HIGH);
+    
     SDL_Event e;
     bool shouldQuit = false;
 

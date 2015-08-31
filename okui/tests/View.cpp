@@ -210,3 +210,100 @@ TEST(View, appearedDisappeared) {
 
     EXPECT_EQ(b.step, 4);
 }
+
+TEST(View, hasRelation) {
+    View a, b, c;
+
+    EXPECT_FALSE(a.hasRelation(View::Relation::kApplication, &b));
+    EXPECT_FALSE(a.hasRelation(View::Relation::kWindow, &b));
+    EXPECT_FALSE(a.hasRelation(View::Relation::kDescendant, &b));
+    EXPECT_FALSE(a.hasRelation(View::Relation::kAncestor, &b));
+    EXPECT_FALSE(a.hasRelation(View::Relation::kSibling, &b));
+
+    a.addSubview(&b);
+    EXPECT_FALSE(a.hasRelation(View::Relation::kApplication, &b));
+    EXPECT_FALSE(a.hasRelation(View::Relation::kWindow, &b));
+    EXPECT_FALSE(a.hasRelation(View::Relation::kDescendant, &b));
+    EXPECT_TRUE(a.hasRelation(View::Relation::kAncestor, &b));
+    EXPECT_TRUE(b.hasRelation(View::Relation::kDescendant, &a));
+    EXPECT_FALSE(a.hasRelation(View::Relation::kSibling, &b));
+
+    a.addSubview(&c);
+    EXPECT_FALSE(c.hasRelation(View::Relation::kApplication, &b));
+    EXPECT_FALSE(c.hasRelation(View::Relation::kWindow, &b));
+    EXPECT_FALSE(c.hasRelation(View::Relation::kDescendant, &b));
+    EXPECT_FALSE(c.hasRelation(View::Relation::kAncestor, &b));
+    EXPECT_FALSE(a.hasRelation(View::Relation::kSibling, &c));
+    EXPECT_FALSE(c.hasRelation(View::Relation::kSibling, &a));
+    EXPECT_TRUE(c.hasRelation(View::Relation::kSibling, &b));
+    EXPECT_TRUE(b.hasRelation(View::Relation::kSibling, &c));
+
+    TestApplication application;
+    Window window(&application);
+    window.contentView()->addSubview(&a);
+
+    EXPECT_TRUE(a.hasRelation(View::Relation::kApplication, &b));
+    EXPECT_TRUE(a.hasRelation(View::Relation::kWindow, &b));
+    EXPECT_TRUE(a.hasRelation(View::Relation::kApplication, &c));
+    EXPECT_TRUE(a.hasRelation(View::Relation::kWindow, &c));
+    EXPECT_TRUE(b.hasRelation(View::Relation::kApplication, &c));
+    EXPECT_TRUE(b.hasRelation(View::Relation::kWindow, &c));
+
+    Window secondWindow(&application);
+    secondWindow.contentView()->addSubview(&c);
+
+    EXPECT_TRUE(a.hasRelation(View::Relation::kApplication, &b));
+    EXPECT_TRUE(a.hasRelation(View::Relation::kWindow, &b));
+    EXPECT_TRUE(a.hasRelation(View::Relation::kApplication, &c));
+    EXPECT_FALSE(a.hasRelation(View::Relation::kWindow, &c));
+    EXPECT_TRUE(b.hasRelation(View::Relation::kApplication, &c));
+    EXPECT_FALSE(b.hasRelation(View::Relation::kWindow, &c));
+}
+
+TEST(View, messagePosting) {
+    View a, b, c;
+
+    int received = 0;
+
+    b.listen([&] (const int& message) {
+        EXPECT_EQ(message, 7);
+        ++received;
+    }, View::Relation::kAncestor);
+
+    c.listen([&] (const int& message, View* sender) {
+        EXPECT_EQ(sender, &a);
+        EXPECT_EQ(message, 7);
+        ++received;
+    }, View::Relation::kAncestor);
+
+    TestApplication application;
+    Window window(&application);
+    window.contentView()->addSubview(&a);
+    a.addSubview(&b);
+    a.addSubview(&c);
+
+    int message = 7;
+    a.post(message, View::Relation::kDescendant);
+        
+    EXPECT_EQ(received, 2);
+}
+
+TEST(View, provisions) {
+    View a, b, c;
+
+    int n = 0;
+    
+    a.provide(&n);
+
+    a.addSubview(&b);
+    b.addSubview(&c);
+    
+    EXPECT_EQ(b.get<int>(), &n);
+    EXPECT_EQ(c.get<int>(), &n);
+
+    int x = 1;
+    a.provide(&x, 1);
+    
+    EXPECT_EQ(b.get<int>(1), &x);
+    EXPECT_EQ(c.get<int>(1), &x);
+}

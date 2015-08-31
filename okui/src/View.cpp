@@ -1,5 +1,6 @@
 #include "onair/okui/View.h"
 
+#include "onair/okui/Application.h"
 #include "onair/okui/BitmapFont.h"
 #include "onair/okui/opengl/OpenGL.h"
 #include "onair/okui/shapes/Rectangle.h"
@@ -9,6 +10,10 @@ namespace onair {
 namespace okui {
 
 View::~View() {
+    if (application()) {
+        application()->removeListeners(this);
+    }
+
     if (_nextFocus) {
         _nextFocus->_previousFocus = _previousFocus;
     }
@@ -337,6 +342,23 @@ void View::keyDown(KeyCode key, KeyModifiers mod, bool repeat) {
     Responder::keyDown(key, mod, repeat);
 }
 
+bool View::hasRelation(View::Relation relation, const View* view) const {
+    switch (relation) {
+        case Relation::kApplication:
+            return application() && application() == view->application();
+        case Relation::kWindow:
+            return window() && window() == view->window();
+        case Relation::kDescendant:
+            return isDescendantOf(view);
+        case Relation::kAncestor:
+            return view->isDescendantOf(this);
+        case Relation::kSibling:
+            return superview() && superview() == view->superview();
+    }
+    assert(false);
+    return false;
+}
+
 void View::updateAndUpdateSubviews() {
     if (!isVisible()) {
         return;
@@ -556,7 +578,17 @@ void View::_dispatchVisibilityChange(bool visible) {
 }
 
 void View::_dispatchWindowChange(Window* window) {
+    if (application()) {
+        application()->removeListeners(this);
+    }
+    
     _window = window;
+    
+    if (application()) {
+        for (auto& listener : _listeners) {
+            application()->addListener(this, listener.index, &listener.action, listener.relation);
+        }
+    }
 
     windowChanged();
 
@@ -616,6 +648,34 @@ void View::_renderAndRenderSubviews(const RenderTarget* target, const Rectangle<
     if (clipBounds) {
         glDisable(GL_SCISSOR_TEST);
     }
+}
+
+void View::_post(std::type_index index, const void* ptr, View::Relation relation) {
+    if (application()) {
+        application()->post(this, index, ptr, relation);
+    }
+}
+
+void View::_listen(std::type_index index, std::function<void(const void*, View*)> action, View::Relation relation) {
+    _listeners.emplace_back(index, std::move(action), relation);
+    if (application()) {
+        application()->addListener(this, index, &_listeners.back().action, relation);
+    }
+}
+
+void* View::_get(size_t hash) const {
+    auto it = _provisions.find(hash);
+    if (it != _provisions.end()) {
+        return it->second;
+    }
+    if (superview()) {
+        return superview()->_get(hash);
+    }
+    return nullptr;
+}
+
+AbstractTaskScheduler* View::_taskScheduler() const {
+    return application()->taskScheduler();
 }
 
 }}

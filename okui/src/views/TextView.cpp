@@ -60,6 +60,7 @@ namespace views {
 void TextView::setAlignment(HorizontalAlignment horizontal, VerticalAlignment vertical) {
     _horizontalAlignment = horizontal;
     _verticalAlignment = vertical;
+    invalidateRenderCache();
 }
 
 void TextView::setFont(std::shared_ptr<BitmapFont> font, double size) {
@@ -84,6 +85,7 @@ void TextView::setTextColor(double r, double g, double b, double a) {
     _textColorG = g;
     _textColorB = b;
     _textColorA = a;
+    invalidateRenderCache();
 }
 
 void TextView::setBitmapFont(const char* texture, const char* metadata, double size) {
@@ -244,6 +246,8 @@ void TextView::_computeLines() {
     for (auto& line : _lines) {
         _textWidth = std::max(_textWidth, _font->width(line.data(), line.size()) * fontScale);
     }
+
+    invalidateRenderCache();
 }
 
 void TextView::_renderBitmapText(shaders::DistanceFieldShader* shader) {

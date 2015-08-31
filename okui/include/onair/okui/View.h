@@ -1,6 +1,9 @@
 #pragma once
 
 #include "onair/okui/config.h"
+
+#include "onair/AbstractTaskScheduler.h"
+
 #include "onair/okui/Color.h"
 #include "onair/okui/Point.h"
 #include "onair/okui/Rectangle.h"
@@ -18,6 +21,8 @@
 #include <boost/optional.hpp>
 
 #include <list>
+#include <typeindex>
+#include <unordered_map>
 
 namespace onair {
 namespace okui {
@@ -232,6 +237,100 @@ public:
     Point<int> superviewToLocal(int x, int y);
     Point<int> superviewToLocal(const Point<int>& p);
 
+    enum class Relation {
+        kApplication, 
+        kWindow, 
+        kAncestor, 
+        kDescendant, 
+        kSibling,
+    };
+    
+    /**
+    * Returns true if this view has the given relation to the given view.
+    *
+    * For example, hasRelation(kDescendant, superview()) should return true.
+    */
+    bool hasRelation(Relation relation, const View* view) const;
+
+    /**
+    * Posts a message to listeners with the given relation. The view and its potential listeners must have an 
+    * associated application for the message to be delivered.
+    *
+    * For example, post(message, Relation::kAncestor) posts the message to listeners that are ancestors of this view.
+    */
+    template <typename T>
+    void post(T& message, Relation relation = Relation::kWindow) {
+        _post(std::type_index(typeid(typename std::decay<T>::type)), &message, relation);
+    }
+
+    template <typename T>
+    struct ListenerAction : ListenerAction<decltype(&T::operator())> {};
+
+    template <typename C, typename R, typename... Args>
+    struct ListenerAction<R(C::*)(Args...) const> {
+        using ArgumentTuple = std::tuple<Args...>;
+        using ArgumentCount = std::tuple_size<ArgumentTuple>;
+        using MessageType = typename std::decay<typename std::tuple_element<0, ArgumentTuple>::type>::type;
+    };
+
+    /**
+    * Listens for messages from senders with the given relation.
+    *
+    * For example, listen([](const Message& message) {}, Relation::kAncestor) listens for messages from posters that 
+    * are ancestors of this view.
+    *
+    * @param action an action that takes a constant reference to the message type to listen for and optionally a View pointer to the sender
+    */
+    template <typename Action>
+    auto listen(Action&& action, Relation relation = Relation::kWindow) -> typename std::enable_if<ListenerAction<Action>::ArgumentCount::value == 1, void>::type {
+        using MessageType = typename ListenerAction<Action>::MessageType;
+        _listen(std::type_index(typeid(MessageType)), [action = std::forward<Action>(action)](const void* message, View* sender) { action(*reinterpret_cast<const MessageType*>(message)); }, relation);
+    }
+
+    template <typename Action>
+    auto listen(Action&& action, Relation relation = Relation::kWindow) -> typename std::enable_if<ListenerAction<Action>::ArgumentCount::value == 2, void>::type {
+        using MessageType = typename ListenerAction<Action>::MessageType;
+        _listen(std::type_index(typeid(MessageType)), [action = std::forward<Action>(action)](const void* message, View* sender) { action(*reinterpret_cast<const MessageType*>(message), sender); }, relation);
+    }
+
+    /**
+    * Makes the given object available to all descendants via get().
+    *
+    * @param key to provide multiple objects of the same type, you can specify a hash to use as a key
+    */
+    template <typename T>
+    void provide(T* provision, size_t key = 0) {
+        _provisions[std::type_index(typeid(T)).hash_code() ^ key] = provision;
+    }
+
+    /**
+    * Gets an object provided by an ancestor.
+    */
+    template <typename T>
+    T* get(size_t key = 0) const {
+        return reinterpret_cast<T*>(_get(std::type_index(typeid(T)).hash_code() ^ key));
+    }
+
+    /**
+    * Asynchronously schedules a function to be invoked using the application's task scheduler.
+    *
+    * If the view is destroyed, the invocation will be canceled.
+    */
+    template <typename... Args>
+    auto async(Args&&... args) -> decltype(std::declval<AbstractTaskScheduler>().async(std::forward<Args>(args)...)) {
+        return _taskScheduler()->async(_taskScope, std::forward<Args>(args)...);
+    }
+
+    /**
+    * Asynchronously schedules a function to be invoked after a delay using the application's task scheduler.
+    *
+    * If the view is destroyed, the invocation will be canceled.
+    */
+    template <typename... Args>
+    auto asyncAfter(Args&&... args) -> decltype(std::declval<AbstractTaskScheduler>().asyncAfter(std::forward<Args>(args)...)) {
+        return _taskScheduler()->asyncAfter(_taskScope, std::forward<Args>(args)...);
+    }
+
     /**
     * Override this to perform updates for each frame. This is invoked exactly once per frame, before any views
     * begin rendering.
@@ -358,6 +457,20 @@ private:
     std::unique_ptr<opengl::Framebuffer> _renderCache;
     opengl::Framebuffer::Attachment* _renderCacheColorAttachment = nullptr;
     std::shared_ptr<WeakTexture> _renderCacheTexture = std::make_shared<WeakTexture>();
+    
+    struct Listener {
+        Listener(std::type_index index, std::function<void(const void*, View*)> action, Relation relation)
+            : index{index}, action{std::move(action)}, relation{relation} {}
+
+        std::type_index index;
+        std::function<void(const void*, View*)> action;
+        Relation relation;
+    };
+    std::list<Listener> _listeners;
+    
+    std::unordered_map<size_t, void*> _provisions;
+    
+    AbstractTaskScheduler::TaskScope _taskScope;
 
     void _setBounds(const Rectangle<int>& bounds);
 
@@ -368,6 +481,12 @@ private:
 
     bool _requiresTextureRendering();
     void _renderAndRenderSubviews(const RenderTarget* target, const Rectangle<int>& area, boost::optional<Rectangle<int>> clipBounds = boost::none);
+    
+    void _post(std::type_index index, const void* ptr, Relation relation);
+    void _listen(std::type_index index, std::function<void(const void*, View*)> action, Relation relation);
+    void* _get(size_t hash) const;
+    
+    AbstractTaskScheduler* _taskScheduler() const;
 };
 
 }}

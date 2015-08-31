@@ -72,6 +72,8 @@ public:
     double renderScale() const { return _renderScale; }
     void setRenderScale(double scale) { _renderScale = scale; }
 
+    double framesPerSecond() const { return _framesPerSecond; }
+
     ShaderCache* shaderCache() { return &_shaderCache; }
 
     TextureHandle loadTextureResource(const std::string& name);
@@ -94,19 +96,38 @@ public:
     */
     Point<int> windowToView(View* view, int x, int y);
 
+    /**
+    * Makes the given object available to all views via get().
+    *
+    * @param key to provide multiple objects of the same type, you can specify a hash to use as a key
+    */
+    template <typename T>
+    void provide(T* provision, size_t key = 0) {
+        contentView()->provide<T>(provision, key);
+    }
+    
     void beginDragging(View* view);
     void endDragging(View* view);
 
+    /**
+    * Override this to perform updates for each frame. This is invoked exactly once per frame, before any views
+    * begin rendering.
+    */
+    virtual void update() {}
+
+    /**
+    * Override this to lay out views whenever the window is resized.
+    */
     virtual void layout() {}
+
+    virtual void render() {}
+
+    virtual void closing() {}
 
     void dispatchMouseDown(MouseButton button, int x, int y);
     void dispatchMouseUp(MouseButton button, int x, int y);
     void dispatchMouseMovement(int x, int y);
     void dispatchMouseWheel(int xPos, int yPos, int xWheel, int yWheel);
-
-    virtual void render() {}
-
-    virtual void closing() {}
 
     void ensureTextures();
 
@@ -115,7 +136,7 @@ public:
     virtual void keyDown(KeyCode key, KeyModifiers mod, bool repeat) override;
 
 private:
-    void _update() { _contentView->updateAndUpdateSubviews(); }
+    void _update();
     void _render();
     void _didResize(int width, int height);
     void _updateContentLayout();
@@ -157,6 +178,9 @@ private:
 
     Point<int> _lastMouseDown{0, 0};
     std::unordered_set<View*> _draggedViews;
+
+    double _framesPerSecond{0};
+    std::chrono::high_resolution_clock::time_point _lastRenderTime = std::chrono::high_resolution_clock::now();
 };
 
 }}

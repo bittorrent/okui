@@ -233,7 +233,18 @@ void Window::ensureTextures() {
     _texturesToLoad.clear();
 }
 
+void Window::_update() {
+    update();
+    _contentView->updateAndUpdateSubviews();
+}
+
 void Window::_render() {
+    auto now = std::chrono::high_resolution_clock::now();
+    auto elapsed = std::chrono::duration_cast<std::chrono::duration<double>>(now - _lastRenderTime).count();
+    constexpr auto hysteresis = 0.5;
+    _framesPerSecond = _framesPerSecond * hysteresis + 1.0 / elapsed * (1.0 - hysteresis);
+    _lastRenderTime = now;
+    
     ensureTextures();
 
     render();

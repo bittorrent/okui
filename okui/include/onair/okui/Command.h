@@ -1,6 +1,7 @@
 #pragma once
 
 #include "onair/okui/config.h"
+#include "onair/utility.h"
 
 namespace onair {
 namespace okui {
@@ -13,19 +14,19 @@ using CommandContext = int;
 
 namespace {
 
+inline namespace literals {
+    constexpr Command operator "" _cmd(const char* str, size_t length) {
+        return FNV1A64(str, length);
+    }
+}
+
 constexpr Command kCommandNone = 0;
 
-/**
-* Commands in the onair::okui namespace are OR'd with this value to avoid
-* collisions with user or third-party commands.
-*/
-constexpr Command kCommandPrefixMask = UINT64_C(0x33359c3d) << 32;
-
-constexpr Command kCommandCopy       = kCommandPrefixMask | 1;
-constexpr Command kCommandCut        = kCommandPrefixMask | 2;
-constexpr Command kCommandPaste      = kCommandPrefixMask | 3;
-constexpr Command kCommandQuit       = kCommandPrefixMask | 4;
-constexpr Command kCommandSelectAll  = kCommandPrefixMask | 5;
+constexpr Command kCommandCopy       = "copy"_cmd;
+constexpr Command kCommandCut        = "cut"_cmd;
+constexpr Command kCommandPaste      = "paste"_cmd;
+constexpr Command kCommandQuit       = "quit"_cmd;
+constexpr Command kCommandSelectAll  = "select all"_cmd;
 
 } // namespace
 

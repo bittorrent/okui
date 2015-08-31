@@ -12,6 +12,8 @@
 
 #include <unordered_map>
 #include <thread>
+#include <typeindex>
+#include <map>
 
 namespace onair {
 namespace okui {
@@ -112,7 +114,7 @@ public:
     TaskQueue* taskScheduler() { return &_taskQueue; }
 
     /**
-    * Override this to set up the main run loop. The run loop must regularly call work().
+    * Override this to set up the main run loop.
     */
     virtual void run() = 0;
 
@@ -211,6 +213,17 @@ public:
     virtual void showStatusBar() {}
     virtual void hideStatusBar() {}
 
+    /**
+    * Used by views to post messages to listeners.
+    */
+    void post(View* sender, std::type_index index, const void* message, View::Relation relation);
+    
+    /**
+    * Used by views to listed for posted messages.
+    */
+    void addListener(View* view, std::type_index index, std::function<void(const void*, View*)>* action, View::Relation relation);
+    void removeListeners(View* view);
+
 protected:
     void _update(Window* window) { window->_update(); }
     void _render(Window* window) { window->_render(); }
@@ -233,6 +246,17 @@ private:
     std::vector<std::future<void>> _backgroundTasks;
     TaskQueue _taskQueue;
     std::string _clipboard;
+
+    struct Listener {
+        Listener(View* view, std::function<void(const void*, View*)>* action, View::Relation relation)
+            : view{view}, action{action}, relation{relation} {}
+
+        View* view;
+        std::function<void(const void*, View*)>* action;
+        View::Relation relation;
+    };
+
+    std::multimap<std::type_index, Listener> _listeners;
 };
 
 } // namespace okui
