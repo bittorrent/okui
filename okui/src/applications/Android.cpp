@@ -6,7 +6,14 @@ namespace onair {
 namespace okui {
 namespace applications {
 
+namespace {
+std::weak_ptr<jni::JNIContext> gJNIContext;
+}
+
 Android::~Android() {
+    if (_javaHelper) {
+        _javaHelper.reset();
+    }
     if (_activity) {
         _jniEnv->DeleteGlobalRef(_activity);
     }
@@ -29,6 +36,23 @@ void Android::initialize() {
         setResourceManager(_resourceManager.get());
 
         _jniEnv->PopLocalFrame(nullptr);
+
+        JavaVM* jvm = nullptr;
+        _jniEnv->GetJavaVM(&jvm);
+        
+        auto existingContext = gJNIContext.lock();
+        assert(!existingContext || existingContext->jvm == jvm);
+
+        if (existingContext) {
+            _jniContext = existingContext;
+        } else {
+            _jniContext = std::make_shared<jni::JNIContext>(jvm, _jniEnv->GetVersion());
+            JavaHelper::Traits::Register(_jniContext.get(), "tv/watchonair/okui/Helper");
+            JavaHelper::JavaOpenDialogCallback::Traits::Register(_jniContext.get(), "tv/watchonair/okui/Helper$OpenDialogCallback");
+            gJNIContext = _jniContext;
+        }
+
+        _javaHelper.reset(new JavaHelper(android::app::Activity{_jniEnv, _activity}));
     }
     
     Application::initialize();
@@ -39,8 +63,11 @@ void Android::openDialog(Window* window,
                          const char* message,
                          const std::vector<std::string>& buttons,
                          std::function<void(int)> action) {
-    // TODO: implement
-    ONAIR_ASSERT(false);
+    _javaHelper->openDialog(title, message, buttons, new JavaHelper::OpenDialogCallback([=] (int button) {
+        taskScheduler()->async([=] {
+            action(button);
+        });
+    }));
 }
 
 std::shared_ptr<std::string> Android::AssetResourceManager::load(const char* name) {

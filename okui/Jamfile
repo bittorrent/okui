@@ -21,6 +21,7 @@ lib okui :
 	[ glob-tree *.cpp : tests tools ]
 	../foundation//foundation
 	../third-party/libpng//png
+	../jni//jni
 :
 	<include>./include
 	<link>static
@@ -30,3 +31,11 @@ lib okui :
 	<target-os>linux:<linkflags>-lm
 	<target-os>android:<linkflags>"-lGLESv2"
 ;
+
+jar okui_jar : [ glob-tree *.java ] :
+	<build>no
+	<target-os>android:<build>yes
+	<classpath>java
+;
+
+explicit okui_jar ;
