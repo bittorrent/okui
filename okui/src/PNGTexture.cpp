@@ -26,14 +26,14 @@ static void PNGRead(png_structp png, png_bytep data, png_size_t length) {
 void PNGTexture::setData(std::shared_ptr<const std::string> data) {
     _data = data;
     _cacheEntry = nullptr;
-    
+
     PNGInput input(_data->data(), _data->size());
 
     png_structp png = png_create_read_struct(PNG_LIBPNG_VER_STRING, nullptr, nullptr, nullptr);
     png_infop info = png_create_info_struct(png);
 
     if (setjmp(png_jmpbuf(png))) {
-        ONAIR_LOG_ERROR("error reading png data");
+        ONAIR_LOGF_ERROR("error reading png data");
         png_destroy_read_struct(&png, &info, nullptr);
         return;
     }
@@ -55,7 +55,7 @@ GLuint PNGTexture::load(opengl::TextureCache* textureCache) {
     png_infop info = png_create_info_struct(png);
 
     if (setjmp(png_jmpbuf(png))) {
-        ONAIR_LOG_ERROR("error reading png data");
+        ONAIR_LOGF_ERROR("error reading png data");
         png_destroy_read_struct(&png, &info, nullptr);
         return 0;
     }
@@ -78,16 +78,16 @@ GLuint PNGTexture::load(opengl::TextureCache* textureCache) {
     0;
 
     if (!glFormat) {
-        ONAIR_LOG_ERROR("unsupported color type (%d)", static_cast<int>(colorType));
+        ONAIR_LOGF_ERROR("unsupported color type (%d)", static_cast<int>(colorType));
         png_destroy_read_struct(&png, &info, nullptr);
         return 0;
     }
-    
+
     int bytesPerRow = png_get_rowbytes(png, info);
-    
+
     int bitDepth = png_get_bit_depth(png, info);
     if (bitDepth != 8 && bitDepth != 16) {
-        ONAIR_LOG_ERROR("unsupported bit depth");
+        ONAIR_LOGF_ERROR("unsupported bit depth");
         png_destroy_read_struct(&png, &info, nullptr);
         return 0;
     }
@@ -95,11 +95,11 @@ GLuint PNGTexture::load(opengl::TextureCache* textureCache) {
     const auto components = ((colorType & PNG_COLOR_MASK_COLOR) ? 3 : 1) + ((colorType & PNG_COLOR_MASK_ALPHA) ? 1 : 0);
     if (bytesPerRow != components * (bitDepth >> 3) * _width) {
         assert(false);
-        ONAIR_LOG_ERROR("unknown error");
+        ONAIR_LOGF_ERROR("unknown error");
         png_destroy_read_struct(&png, &info, nullptr);
         return 0;
     }
-    
+
 #if OPENGL_ES
     if (bitDepth == 16) {
         // opengl es doesn't do 16-bit textures
@@ -157,7 +157,7 @@ GLuint PNGTexture::load(opengl::TextureCache* textureCache) {
     if (colorType == PNG_COLOR_TYPE_GRAY || colorType == PNG_COLOR_TYPE_GRAY_ALPHA) {
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_SWIZZLE_G, GL_RED);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_SWIZZLE_B, GL_RED);
-        
+
         if (colorType == PNG_COLOR_TYPE_GRAY_ALPHA) {
             glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_SWIZZLE_A, GL_GREEN);
         }
@@ -165,7 +165,7 @@ GLuint PNGTexture::load(opengl::TextureCache* textureCache) {
 #endif
 
     ONAIR_OKUI_GL_ERROR_CHECK();
-    
+
     _cacheEntry = textureCache->add(texture, texture);
 
     return _cacheEntry->id;

@@ -31,7 +31,7 @@ class SDL : public Native {
 public:
     SDL(std::string name, std::string organization, ResourceManager* resourceManager = nullptr, bool shouldInitialize = true);
     ~SDL();
-    
+
     virtual void initialize() override;
 
     virtual void run() override;
@@ -123,7 +123,7 @@ inline SDL::SDL(std::string name, std::string organization, ResourceManager* res
 #endif
 
     if (SDL_Init(SDL_INIT_EVERYTHING) < 0) {
-        ONAIR_LOG_ERROR("error initializing sdl: %s", SDL_GetError());
+        ONAIR_LOGF_ERROR("error initializing sdl: %s", SDL_GetError());
     }
 
 #if OPENGL_ES
@@ -143,7 +143,7 @@ inline SDL::SDL(std::string name, std::string organization, ResourceManager* res
         setActivity(env, activity);
         env->DeleteLocalRef(activity);
     } else {
-        ONAIR_LOG_ERROR("unable to get android activity");
+        ONAIR_LOGF_ERROR("unable to get android activity");
     }
 #endif
 
@@ -160,18 +160,18 @@ inline void SDL::initialize() {
     if (!resourceManager()) {
         if (auto path = SDL_GetBasePath()) {
             _resourceManager.reset(new FileResourceManager(path));
-            ONAIR_LOG_DEBUG("using resources in %s", path);
+            ONAIR_LOGF_DEBUG("using resources in %s", path);
             setResourceManager(_resourceManager.get());
             SDL_free(path);
         }
     }
-    
+
     Native::initialize();
 }
 
 inline void SDL::run() {
     SDL_SetThreadPriority(SDL_THREAD_PRIORITY_HIGH);
-    
+
     SDL_Event e;
     bool shouldQuit = false;
 

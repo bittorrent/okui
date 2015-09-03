@@ -76,7 +76,7 @@ std::future<std::shared_ptr<const std::string>> Application::download(const std:
         request.initiate(url);
         request.wait();
         if (request.responseStatus() != 200) {
-            ONAIR_LOG_WARNING("response code %d from %s", request.responseStatus(), url);
+            ONAIR_LOGF_WARNING("response code %d from %s", request.responseStatus(), url);
         } else {
             result = std::make_shared<std::string>(request.responseBody());
         }

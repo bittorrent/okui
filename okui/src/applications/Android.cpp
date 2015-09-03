@@ -26,7 +26,7 @@ void Android::setActivity(JNIEnv* env, jobject activity) {
 
 void Android::initialize() {
     if (!resourceManager() && _activity) {
-        ONAIR_LOG_DEBUG("using resources from asset manager");
+        ONAIR_LOGF_DEBUG("using resources from asset manager");
 
         _jniEnv->PushLocalFrame(10);
 
@@ -39,7 +39,7 @@ void Android::initialize() {
 
         JavaVM* jvm = nullptr;
         _jniEnv->GetJavaVM(&jvm);
-        
+
         auto existingContext = gJNIContext.lock();
         assert(!existingContext || existingContext->jvm == jvm);
 
@@ -54,7 +54,7 @@ void Android::initialize() {
 
         _javaHelper.reset(new JavaHelper(android::app::Activity{_jniEnv, _activity}));
     }
-    
+
     Application::initialize();
 }
 

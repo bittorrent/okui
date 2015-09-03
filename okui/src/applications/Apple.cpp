@@ -14,10 +14,10 @@ void Apple::initialize() {
     if (!resourceManager()) {
         	NSString* path = [[NSBundle mainBundle] resourcePath];
         _resourceManager.reset(new FileResourceManager([path UTF8String]));
-        ONAIR_LOG_DEBUG("using resources in %s", [path UTF8String]);
+        ONAIR_LOGF_DEBUG("using resources in %s", [path UTF8String]);
         setResourceManager(_resourceManager.get());
     }
-    
+
     Application::initialize();
 }
 

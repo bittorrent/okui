@@ -70,7 +70,7 @@ TextureShader::TextureShader(const char* fragmentShader) {
     _program.uniform("texture") = 0;
 
     if (!_program.error().empty()) {
-        ONAIR_LOG_ERROR("error creating shader: %s", _program.error().c_str());
+        ONAIR_LOGF_ERROR("error creating shader: %s", _program.error().c_str());
         return;
     }
 

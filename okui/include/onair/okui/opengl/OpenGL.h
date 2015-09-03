@@ -51,7 +51,7 @@
     { \
         auto err = glGetError(); \
         if (err != GL_NO_ERROR) { \
-            ONAIR_LOG_WARNING("opengl error 0x%x", err);\
+            ONAIR_LOGF_WARNING("opengl error 0x%x", err);\
         } \
     }
 #else

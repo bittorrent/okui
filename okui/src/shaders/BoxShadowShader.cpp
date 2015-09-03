@@ -10,11 +10,11 @@ BoxShadowShader::BoxShadowShader() {
         ATTRIBUTE_IN vec4 colorAttrib;
         ATTRIBUTE_IN vec4 shadowBoxAttrib;
         ATTRIBUTE_IN vec2 shadowParametersAttrib;
-        
+
         VARYING_OUT vec4 color;
         VARYING_OUT vec4 shadowBox;
         VARYING_OUT vec2 shadowParameters;
-        
+
         void main() {
             color = colorAttrib;
             shadowBox = shadowBoxAttrib;
@@ -27,7 +27,7 @@ BoxShadowShader::BoxShadowShader() {
         VARYING_IN vec4 color;
         VARYING_IN vec4 shadowBox;
         VARYING_IN vec2 shadowParameters;
-        
+
         void main() {
             vec2 boxDistance = vec2(0.0);
             if (shadowBox.x < 0.0) {
@@ -42,16 +42,16 @@ BoxShadowShader::BoxShadowShader() {
             }
             float opacity = 1.0 - min(length(boxDistance) / shadowParameters.s, 1.0);
             if (shadowParameters.t > 0.5) { opacity = 1.0 - opacity; }
-            
+
             COLOR_OUT = vec4(color.rgb, color.a * opacity * opacity);
         }
     )", opengl::Shader::kFragmentShader);
-    
+
     _program.attachShaders(vsh, fsh);
     _program.link();
-    
+
     if (!_program.error().empty()) {
-        ONAIR_LOG_ERROR("error creating shader: %s", _program.error().c_str());
+        ONAIR_LOGF_ERROR("error creating shader: %s", _program.error().c_str());
         return;
     }
 
@@ -74,7 +74,7 @@ void BoxShadowShader::setColor(double r, double g, double b, double a) {
 void BoxShadowShader::setBox(double x, double y, double w, double h) {
     _boxX = x;
     _boxY = y;
-    
+
     _triangle.a.boxWidth = _triangle.b.boxWidth = _triangle.c.boxWidth = w;
     _triangle.a.boxHeight = _triangle.b.boxHeight = _triangle.c.boxHeight = h;
 }
@@ -97,7 +97,7 @@ void BoxShadowShader::drawShadow(double x, double y, double w, double h, double 
 
 void BoxShadowShader::_processTriangle(const std::array<Point<double>, 3>& p, const std::array<Point<double>, 3>& pT, Shader::Curve curve) {
     assert(curve == kCurveNone);
-    
+
     _triangle.a.boxX = p[0].x - _boxX;
     _triangle.a.boxY = p[0].y - _boxY;
 

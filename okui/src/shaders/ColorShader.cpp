@@ -23,7 +23,7 @@ ColorShader::ColorShader() {
     opengl::Shader fsh(ONAIR_OKUI_FRAGMENT_SHADER_HEADER R"(
         VARYING_IN vec4 color;
         VARYING_IN vec4 curve;
-        
+
         void main() {
             vec4 c = color;
             float alphaMultiplier = 1.0;
@@ -54,12 +54,12 @@ ColorShader::ColorShader() {
             COLOR_OUT = vec4(c.rgb, color.a * alphaMultiplier);
         }
     )", opengl::Shader::kFragmentShader);
-    
+
     _program.attachShaders(vsh, fsh);
     _program.link();
-    
+
     if (!_program.error().empty()) {
-        ONAIR_LOG_ERROR("error creating shader: %s", _program.error().c_str());
+        ONAIR_LOGF_ERROR("error creating shader: %s", _program.error().c_str());
         return;
     }
 
@@ -119,10 +119,10 @@ double ColorShader::_calculateGradientPosition(double x, double y) {
     } else if (_gradientPointA.x == _gradientPointB.x) {
         return (y - _gradientPointA.y) / (_gradientPointB.y - _gradientPointA.y);
     }
-    
-    // otherwise we need to calculate the x coordinate of the intersection of the pointA-pointB line 
+
+    // otherwise we need to calculate the x coordinate of the intersection of the pointA-pointB line
     // and the perpendicular that passes through (x, y)
-    
+
     auto gradientSlope = (_gradientPointB.y - _gradientPointA.y) / (_gradientPointB.x - _gradientPointA.x);
     auto perpendicularSlope = -1.0 / gradientSlope;
 
