@@ -146,22 +146,22 @@ void Window::endDragging(View* view) {
 }
 
 void Window::dispatchMouseDown(MouseButton button, double x, double y) {
-    x *= _renderScale;
-    y *= _renderScale;
+    x /= _renderScale;
+    y /= _renderScale;
     _contentView->dispatchMouseDown(button, x, y);
     _lastMouseDown = Point<double>{x, y};
 }
 
 void Window::dispatchMouseUp(MouseButton button, double x, double y) {
-    x *= _renderScale;
-    y *= _renderScale;
+    x /= _renderScale;
+    y /= _renderScale;
     _contentView->dispatchMouseUp(button, _lastMouseDown.x, _lastMouseDown.y, x, y);
     _draggedViews.clear();
 }
 
 void Window::dispatchMouseMovement(double x, double y) {
-    x *= _renderScale;
-    y *= _renderScale;
+    x /= _renderScale;
+    y /= _renderScale;
     _contentView->dispatchMouseMovement(x, y);
     for (auto& observer : _draggedViews) {
         auto startPoint = windowToView(observer, _lastMouseDown.x, _lastMouseDown.y);
@@ -171,8 +171,8 @@ void Window::dispatchMouseMovement(double x, double y) {
 }
 
 void Window::dispatchMouseWheel(double xPos, double yPos, int xWheel, int yWheel) {
-    xPos *= _renderScale;
-    yPos *= _renderScale;
+    xPos /= _renderScale;
+    yPos /= _renderScale;
     _contentView->dispatchMouseWheel(xPos, yPos, xWheel, yWheel);
 }
 
@@ -258,7 +258,7 @@ void Window::_didResize(int width, int height) {
 
 void Window::_updateContentLayout() {
     application()->getWindowRenderSize(this, &_renderWidth, &_renderHeight);
-    _contentView->setBounds(0, 0, _width * _renderScale, _height * _renderScale);
+    _contentView->setBounds(0, 0, _width/_renderScale, _height/_renderScale);
     layout();
 }
 
