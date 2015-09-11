@@ -82,7 +82,7 @@ TextField::SelectionRange TextField::selectionRange() const {
     return {_cursorIndex, _selectionStartIndex-_cursorIndex};
 }
 
-void TextField::mouseDown(MouseButton button, int x, int y) {
+void TextField::mouseDown(MouseButton button, double x, double y) {
     if (_isEnabled && button == MouseButton::kLeft) {
         focus();
         auto localPt = _scrollView.contentView()->superviewToLocal(_scrollView.superviewToLocal(x, y));
@@ -90,7 +90,7 @@ void TextField::mouseDown(MouseButton button, int x, int y) {
     }
 }
 
-void TextField::mouseDrag(int startX, int startY, int x, int y) {
+void TextField::mouseDrag(double startX, double startY, double x, double y) {
     if (_isEnabled) {
         auto localPt = _scrollView.contentView()->superviewToLocal(_scrollView.superviewToLocal(x, y));
         _moveCursor(_textView.lineColumnAtPosition(localPt.x, localPt.y).second, true);

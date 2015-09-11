@@ -15,31 +15,32 @@ ScrollView::ScrollView() {
     addSubview(&_contentView);
 }
 
-void ScrollView::setContentOffset(int x, int y) {
+void ScrollView::setContentOffset(double x, double y) {
     _contentView.setBounds(x, y, _contentView.bounds().width, _contentView.bounds().height);
 }
 
-void ScrollView::setContentSize(int width, int height) {
+void ScrollView::setContentSize(double width, double height) {
     _contentView.setBounds(_contentView.bounds().x, _contentView.bounds().y, width, height);
 }
 
-void ScrollView::mouseWheel(int xPos, int yPos, int xWheel, int yWheel) {
+void ScrollView::mouseWheel(double xPos, double yPos, int xWheel, int yWheel) {
     static constexpr auto multiplier = 10.0f;
 
     auto contentViewBounds = _contentView.bounds();
     contentViewBounds.x += xWheel * multiplier;
     contentViewBounds.y += yWheel * multiplier;
 
+    _mouseDown = true;
     _scroll(contentViewBounds);
 }
 
-void ScrollView::mouseDown(MouseButton button, int x, int y) {
-    _lastMousePos = Point<int>{x, y};
+void ScrollView::mouseDown(MouseButton button, double x, double y) {
+    _lastMousePos = Point<double>{x, y};
     _velocityTimer.restart();
     _mouseDown = true;
 }
 
-void ScrollView::mouseUp(MouseButton button, int startX, int startY, int x, int y) {
+void ScrollView::mouseUp(MouseButton button, double startX, double startY, double x, double y) {
     _mouseDown = false;
     auto elapsed = 0.0;
     auto dX = 0.0;
@@ -90,11 +91,11 @@ void ScrollView::mouseUp(MouseButton button, int startX, int startY, int x, int 
     }
 }
 
-void ScrollView::mouseDrag(int startX, int startY, int x, int y) {
+void ScrollView::mouseDrag(double startX, double startY, double x, double y) {
     auto dX = x - _lastMousePos.x,
          dY = y - _lastMousePos.y;
 
-    _lastMousePos = Point<int>{x, y};
+    _lastMousePos = Point<double>{x, y};
 
     auto contentViewBounds = _contentView.bounds();
     contentViewBounds.x += dX;
@@ -115,7 +116,7 @@ void ScrollView::update() {
     }
 }
 
-void ScrollView::_scroll(okui::Rectangle<int> newBounds) {
+void ScrollView::_scroll(okui::Rectangle<double> newBounds) {
     auto bottom = newBounds.y + newBounds.height,
          right = newBounds.x + newBounds.width;
 

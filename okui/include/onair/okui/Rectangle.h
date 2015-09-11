@@ -10,23 +10,24 @@ namespace okui {
 template <typename T>
 struct Rectangle {
     Rectangle();
-
-    /**
-    * Constructs a rectangle with the given origin and dimensions.
-    */
     Rectangle(T x, T y, T width, T height);
+    Rectangle(Point<T> position, T width, T height);
+    Rectangle(Point<T> position, math::Vector<T, 2> size);
 
     template <typename U>
     explicit Rectangle(const Rectangle<U>& other)
         : Rectangle(other.x, other.y, other.width, other.height) {}
 
-    Point<T> origin() const { return Point<T>{x, y}; }
-    Point<T> size() const { return Point<T>{width, height}; }
+    Point<T> position() const { return Point<T>{x, y}; }
+    math::Vector<T, 2> size() const { return math::Vector<T, 2>{width, height}; }
 
     T minX() const { return x; }
     T maxX() const { return x + width; }
     T minY() const { return y; }
     T maxY() const { return y + height; }
+
+    Rectangle<T> withPosition(T x, T y) const { return {x, y, width, height}; }
+    Rectangle<T> withSize(T width, T height) const { return {x, y, width, height}; }
 
     /**
     * Tests if the rectangle contains the given point.
@@ -87,6 +88,22 @@ Rectangle<T>::Rectangle(T x, T y, T width, T height)
     , y{y}
     , width{width}
     , height{height}
+{}
+
+template <typename T>
+Rectangle<T>::Rectangle(Point<T> pos, T width, T height)
+    : x{pos.x}
+    , y{pos.y}
+    , width{width}
+    , height{height}
+{}
+
+template <typename T>
+Rectangle<T>::Rectangle(Point<T> pos, math::Vector<T, 2> size)
+    : x{pos.x}
+    , y{pos.y}
+    , width{size.x}
+    , height{size.y}
 {}
 
 template <typename T>

@@ -70,7 +70,7 @@ public:
 
     View* contentView() { return _contentView.get(); }
     double renderScale() const { return _renderScale; }
-    void setRenderScale(double scale) { _renderScale = scale; }
+    void setRenderScale(double scale) { _renderScale = scale; _updateContentLayout(); }
 
     double framesPerSecond() const { return _framesPerSecond; }
 
@@ -94,7 +94,7 @@ public:
     /**
     * Converts a window coordinate to a view coordinate.
     */
-    Point<int> windowToView(View* view, int x, int y);
+    Point<double> windowToView(View* view, double x, double y);
 
     /**
     * Makes the given object available to all views via get().
@@ -105,7 +105,7 @@ public:
     void provide(T* provision, size_t key = 0) {
         contentView()->provide<T>(provision, key);
     }
-    
+
     void beginDragging(View* view);
     void endDragging(View* view);
 
@@ -124,10 +124,10 @@ public:
 
     virtual void closing() {}
 
-    void dispatchMouseDown(MouseButton button, int x, int y);
-    void dispatchMouseUp(MouseButton button, int x, int y);
-    void dispatchMouseMovement(int x, int y);
-    void dispatchMouseWheel(int xPos, int yPos, int xWheel, int yWheel);
+    void dispatchMouseDown(MouseButton button, double x, double y);
+    void dispatchMouseUp(MouseButton button, double x, double y);
+    void dispatchMouseMovement(double x, double y);
+    void dispatchMouseWheel(double xPos, double yPos, int xWheel, int yWheel);
 
     void ensureTextures();
 
@@ -176,10 +176,10 @@ private:
 
     std::unordered_map<std::string, TextureDownload> _textureDownloads;
 
-    Point<int> _lastMouseDown{0, 0};
+    Point<double> _lastMouseDown{0.0, 0.0};
     std::unordered_set<View*> _draggedViews;
 
-    double _framesPerSecond{0};
+    double _framesPerSecond = 0.0;
     std::chrono::high_resolution_clock::time_point _lastRenderTime = std::chrono::high_resolution_clock::now();
 };
 

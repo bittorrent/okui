@@ -18,39 +18,39 @@ public:
     /**
     * Returns the offset that the content view is currently scrolled to.
     */
-    Point<int> contentOffset() const { return _contentView.bounds().origin(); }
+    Point<double> contentOffset() const { return _contentView.bounds().position(); }
 
     /**
     * Sets the content offset.
     */
-    void setContentOffset(int x, int y);
+    void setContentOffset(double x, double y);
 
     /**
     * Returns the current content size.
     */
-    Point<int> contentSize() const { return _contentView.bounds().size(); }
+    Point<double> contentSize() const { return _contentView.bounds().size(); }
 
     /**
     * Sets the content size.
     */
-    void setContentSize(int width, int height);
+    void setContentSize(double width, double height);
 
     /**
     * Override this to take action when the view scrolls.
     */
     virtual void scrolled() {}
 
-    virtual void mouseDown(MouseButton button, int x, int y) override;
-    virtual void mouseUp(MouseButton button, int startX, int startY, int x, int y) override;
-    virtual void mouseDrag(int startX, int startY, int x, int y) override;
-    virtual void mouseWheel(int xPos, int yPos, int xWheel, int yWheel) override;
+    virtual void mouseDown(MouseButton button, double x, double y) override;
+    virtual void mouseUp(MouseButton button, double startX, double startY, double x, double y) override;
+    virtual void mouseDrag(double startX, double startY, double x, double y) override;
+    virtual void mouseWheel(double xPos, double yPos, int xWheel, int yWheel) override;
 
     virtual void update() override;
 
 private:
-    void _scroll(okui::Rectangle<int> newBounds);
+    void _scroll(okui::Rectangle<double> newBounds);
 
-    Point<int> _lastMousePos{-1, -1};
+    Point<double> _lastMousePos{-1.0, -1.0};
     onair::okui::View _contentView;
     onair::SteadyTimer _velocityTimer;
 

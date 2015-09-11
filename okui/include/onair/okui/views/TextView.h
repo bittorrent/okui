@@ -22,7 +22,7 @@ public:
         kCenter,
         kTop,
     };
-    
+
     enum class OverflowBehavior {
         kNone,
         kWrap,
@@ -51,6 +51,7 @@ public:
     };
 
     void setWeight(Weight weight) { _weight = weight; }
+    void setSize(double size) { _fontSize = size; _computeLines(); }
 
     Point<int> lineColumnPosition(size_t line, size_t column) const;
     std::pair<size_t, size_t> lineColumnAtPosition(int x, int y) const;

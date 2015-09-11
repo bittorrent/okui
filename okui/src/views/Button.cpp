@@ -42,7 +42,7 @@ void Button::render() {
     }
 
     auto defaultBrightness = _state == State::kDepressed ? 0.8 : 1.0;
-    
+
     if (current != _textures.end() && current->second.color) {
         shader->setColor(current->second.color->r, current->second.color->g, current->second.color->b, current->second.color->a);
     } else if (normal != _textures.end() && normal->second.color) {
@@ -60,12 +60,12 @@ void Button::render() {
     shader->flush();
 }
 
-void Button::mouseDown(MouseButton button, int x, int y) {
+void Button::mouseDown(MouseButton button, double x, double y) {
     _state = State::kDepressed;
     invalidateRenderCache();
 }
 
-void Button::mouseUp(MouseButton button, int startX, int startY, int x, int y) {
+void Button::mouseUp(MouseButton button, double startX, double startY, double x, double y) {
     if (_state == State::kDepressed) {
         _action();
     }
@@ -83,7 +83,7 @@ void Button::keyDown(KeyCode key, KeyModifiers mod, bool repeat) {
         _action();
         return;
     }
-    
+
     onair::okui::View::keyDown(key, mod, repeat);
 }
 

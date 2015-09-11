@@ -21,10 +21,10 @@ TEST(Rectangle, defaultConstruction) {
     EXPECT_EQ(r.height, 0);
 }
 
-TEST(Rectangle, origin) {
+TEST(Rectangle, position) {
     Rectangle<int> r(1, 2, 3, 4);
-    EXPECT_EQ(r.origin().x, 1);
-    EXPECT_EQ(r.origin().y, 2);
+    EXPECT_EQ(r.position().x, 1);
+    EXPECT_EQ(r.position().y, 2);
 }
 
 TEST(Rectangle, size) {
@@ -60,21 +60,21 @@ TEST(Rectangle, intersection) {
     {
         Rectangle<int> a(1, 2, 3, 4);
         Rectangle<int> b(2, 1, 3, 4);
-        
+
         EXPECT_TRUE(a.intersects(b));
     }
 
     {
         Rectangle<int> a(1, 2, 3, 4);
         Rectangle<int> b(0, 1, 3, 4);
-        
+
         EXPECT_TRUE(a.intersects(b));
     }
 
     {
         Rectangle<int> a(1, 2, 3, 4);
         Rectangle<int> b(0, 0, 1, 2);
-        
+
         EXPECT_FALSE(a.intersects(b));
         EXPECT_EQ(a.intersection(b), Rectangle<int>());
     }
@@ -82,14 +82,14 @@ TEST(Rectangle, intersection) {
     {
         Rectangle<int> a(-1, -2, 3, 4);
         Rectangle<int> b(0, 0, 1, 2);
-        
+
         EXPECT_TRUE(a.intersects(b));
     }
 
     {
         Rectangle<int> a(-1, -2, 3, 4);
         Rectangle<int> b(10, 10, 1, 2);
-        
+
         EXPECT_FALSE(a.intersects(b));
         EXPECT_EQ(a.intersection(b), Rectangle<int>());
     }
@@ -97,14 +97,14 @@ TEST(Rectangle, intersection) {
     {
         Rectangle<int> a(1, 2, 3, 4);
         Rectangle<int> b(2, 1, 3, 4);
-        
+
         EXPECT_EQ(a.intersection(b), Rectangle<int>(2, 2, 2, 3));
     }
 
     {
         Rectangle<int> a(270, 760, 500, 0);
         Rectangle<int> b(270, 760, 2000, 600);
-        
+
         EXPECT_FALSE(a.intersects(b));
         EXPECT_EQ(a.intersection(b), Rectangle<int>());
     }
@@ -112,7 +112,7 @@ TEST(Rectangle, intersection) {
     {
         Rectangle<int> a(770, 0, 1130, 500);
         Rectangle<int> b(270, 0, 2230, 1400);
-        
+
         EXPECT_EQ(a.intersection(b), Rectangle<int>(770, 0, 1130, 500));
     }
 }

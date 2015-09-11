@@ -18,10 +18,7 @@ Window::~Window() {
 
 void Window::open() {
     _contentView->_dispatchFutureVisibilityChange(true);
-    auto requestedWidth = _width;
     application()->openWindow(this, _title.c_str(), _position, _width, _height);
-    // application reset _width/_height to what the OS actually set the window to in setWindowSize
-    _renderScale = requestedWidth / static_cast<double>(_width);
     _isOpen = true;
     _updateContentLayout();
     _contentView->_dispatchVisibilityChange(true);
@@ -47,9 +44,7 @@ void Window::setPosition(int x, int y) {
 void Window::setSize(int width, int height) {
     _width = width;
     _height = height;
-    application()->setWindowSize(this, width, height);
-    // application reset _width/_height to what the OS actually set the window to in setWindowSize
-    _renderScale = width / static_cast<double>(_width);
+    application()->setWindowSize(this, _width, _height);
     _updateContentLayout();
 }
 
@@ -65,7 +60,7 @@ void Window::setMenu(const Menu& menu) {
 
 TextureHandle Window::loadTextureResource(const std::string& name) {
     auto hashable = std::string("resource:") + name;
-    
+
     if (auto hit = _textureCache.get(hashable)) {
         return hit->newHandle();
     }
@@ -134,9 +129,9 @@ void Window::setFocus(View* focus) {
     }
 }
 
-Point<int> Window::windowToView(View* view, int x, int y) {
+Point<double> Window::windowToView(View* view, double x, double y) {
     if (!view) {
-        return Point<int>(x, y);
+        return {x, y};
     }
     auto superPoint = windowToView(view->superview(), x, y);
     return view->superviewToLocal(superPoint.x, superPoint.y);
@@ -150,21 +145,21 @@ void Window::endDragging(View* view) {
     _draggedViews.erase(view);
 }
 
-void Window::dispatchMouseDown(MouseButton button, int x, int y) {
+void Window::dispatchMouseDown(MouseButton button, double x, double y) {
     x *= _renderScale;
     y *= _renderScale;
     _contentView->dispatchMouseDown(button, x, y);
-    _lastMouseDown = Point<int>{x, y};
+    _lastMouseDown = Point<double>{x, y};
 }
 
-void Window::dispatchMouseUp(MouseButton button, int x, int y) {
+void Window::dispatchMouseUp(MouseButton button, double x, double y) {
     x *= _renderScale;
     y *= _renderScale;
     _contentView->dispatchMouseUp(button, _lastMouseDown.x, _lastMouseDown.y, x, y);
     _draggedViews.clear();
 }
 
-void Window::dispatchMouseMovement(int x, int y) {
+void Window::dispatchMouseMovement(double x, double y) {
     x *= _renderScale;
     y *= _renderScale;
     _contentView->dispatchMouseMovement(x, y);
@@ -175,7 +170,7 @@ void Window::dispatchMouseMovement(int x, int y) {
     }
 }
 
-void Window::dispatchMouseWheel(int xPos, int yPos, int xWheel, int yWheel) {
+void Window::dispatchMouseWheel(double xPos, double yPos, int xWheel, int yWheel) {
     xPos *= _renderScale;
     yPos *= _renderScale;
     _contentView->dispatchMouseWheel(xPos, yPos, xWheel, yWheel);
@@ -244,14 +239,13 @@ void Window::_render() {
     constexpr auto hysteresis = 0.5;
     _framesPerSecond = _framesPerSecond * hysteresis + 1.0 / elapsed * (1.0 - hysteresis);
     _lastRenderTime = now;
-    
+
     ensureTextures();
 
     render();
 
-    Rectangle<int> area(0, 0, _renderWidth, _renderHeight);
-    RenderTarget target(area.width, area.height);
-    _contentView->renderAndRenderSubviews(&target, area);
+    RenderTarget target(_renderWidth, _renderHeight);
+    _contentView->renderAndRenderSubviews(&target, {0, 0, _renderWidth, _renderHeight});
 
     ONAIR_OKUI_GL_ERROR_CHECK();
 }
@@ -264,7 +258,7 @@ void Window::_didResize(int width, int height) {
 
 void Window::_updateContentLayout() {
     application()->getWindowRenderSize(this, &_renderWidth, &_renderHeight);
-    _contentView->setBounds(0, 0, _renderScale * _width, _renderScale * _height);
+    _contentView->setBounds(0, 0, _width * _renderScale, _height * _renderScale);
     layout();
 }
 

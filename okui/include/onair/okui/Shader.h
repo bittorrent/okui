@@ -79,7 +79,7 @@ public:
 
         _vertexArrayBuffer.bind();
         _vertexArrayBuffer.stream(_vertices.data(), _vertices.size());
-        glDrawArrays(GL_TRIANGLES, 0, _vertices.size());
+        glDrawArrays(GL_TRIANGLES, 0, static_cast<GLsizei>(_vertices.size()));
         _vertexArrayBuffer.unbind();
     
         _vertices.clear();

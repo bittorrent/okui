@@ -276,28 +276,35 @@ Application* View::application() const {
     return window() ? window()->application() : nullptr;
 }
 
-Point<int> View::localToSuperview(int x, int y) {
-    return Point<int>(bounds().x + x, bounds().y + y);
+void View::setBoundsRelative(double x, double y, double width, double height) {
+    if (_superview) {
+        auto& superBounds = _superview->bounds();
+        setBounds(x * superBounds.width, y * superBounds.height, width * superBounds.width, height * superBounds.height);
+    }
 }
 
-Point<int> View::localToSuperview(const Point<int>& p) {
+Point<double> View::localToSuperview(double x, double y) {
+    return Point<double>(bounds().x + x, bounds().y + y);
+}
+
+Point<double> View::localToSuperview(const Point<double>& p) {
     return localToSuperview(p.x, p.y);
 }
 
-Point<int> View::superviewToLocal(int x, int y) {
-    return Point<int>(x - bounds().x, y - bounds().y);
+Point<double> View::superviewToLocal(double x, double y) {
+    return Point<double>(x - bounds().x, y - bounds().y);
 }
 
-Point<int> View::superviewToLocal(const Point<int>& p) {
+Point<double> View::superviewToLocal(const Point<double>& p) {
     return superviewToLocal(p.x, p.y);
 }
 
-bool View::hitTest(int x, int y) {
+bool View::hitTest(double x, double y) {
     return x >= 0 && x < bounds().width &&
            y >= 0 && y < bounds().height;
 }
 
-void View::mouseDown(MouseButton button, int x, int y) {
+void View::mouseDown(MouseButton button, double x, double y) {
     if (superview() && superview()->_interceptsMouseEvents) {
         auto point = localToSuperview(x, y);
         superview()->mouseDown(button, point.x, point.y);
@@ -305,7 +312,7 @@ void View::mouseDown(MouseButton button, int x, int y) {
     }
 }
 
-void View::mouseUp(MouseButton button, int startX, int startY, int x, int y) {
+void View::mouseUp(MouseButton button, double startX, double startY, double x, double y) {
     if (superview() && superview()->_interceptsMouseEvents) {
         auto startPoint = localToSuperview(startX, startY);
         auto point = localToSuperview(x, y);
@@ -313,7 +320,7 @@ void View::mouseUp(MouseButton button, int startX, int startY, int x, int y) {
     }
 }
 
-void View::mouseWheel(int xPos, int yPos, int xWheel, int yWheel) {
+void View::mouseWheel(double xPos, double yPos, int xWheel, int yWheel) {
     if (superview() && superview()->_interceptsMouseEvents) {
         auto point = localToSuperview(xPos, yPos);
         superview()->mouseWheel(point.x, point.y, xWheel, yWheel);
@@ -433,7 +440,7 @@ void View::postRender(std::shared_ptr<Texture> texture, const AffineTransformati
     shader->flush();
 }
 
-bool View::dispatchMouseDown(MouseButton button, int x, int y) {
+bool View::dispatchMouseDown(MouseButton button, double x, double y) {
     if (!isVisible()) { return false; }
 
     if (_childrenInterceptMouseEvents) {
@@ -455,7 +462,7 @@ bool View::dispatchMouseDown(MouseButton button, int x, int y) {
     return false;
 }
 
-bool View::dispatchMouseUp(MouseButton button, int startX, int startY, int x, int y) {
+bool View::dispatchMouseUp(MouseButton button, double startX, double startY, double x, double y) {
     if (!isVisible()) { return false; }
 
     if (_childrenInterceptMouseEvents) {
@@ -474,7 +481,7 @@ bool View::dispatchMouseUp(MouseButton button, int startX, int startY, int x, in
     return false;
 }
 
-void View::dispatchMouseMovement(int x, int y) {
+void View::dispatchMouseMovement(double x, double y) {
     if (!isVisible()) { return; }
 
     View* subview = nullptr;
@@ -508,7 +515,7 @@ void View::dispatchMouseMovement(int x, int y) {
     }
 }
 
-bool View::dispatchMouseWheel(int xPos, int yPos, int xWheel, int yWheel) {
+bool View::dispatchMouseWheel(double xPos, double yPos, int xWheel, int yWheel) {
     if (!isVisible()) { return false; }
 
     if (_childrenInterceptMouseEvents) {
@@ -529,7 +536,7 @@ bool View::dispatchMouseWheel(int xPos, int yPos, int xWheel, int yWheel) {
     return false;
 }
 
-void View::_setBounds(const Rectangle<int>& bounds) {
+void View::_setBounds(const Rectangle<double>& bounds) {
     auto willMove = (_bounds.x != bounds.x || _bounds.y != bounds.y);
     auto willResize = (_bounds.width != bounds.width || _bounds.height != bounds.height);
 
@@ -581,9 +588,9 @@ void View::_dispatchWindowChange(Window* window) {
     if (application()) {
         application()->removeListeners(this);
     }
-    
+
     _window = window;
-    
+
     if (application()) {
         for (auto& listener : _listeners) {
             application()->addListener(this, listener.index, &listener.action, listener.relation);
@@ -634,8 +641,8 @@ void View::_renderAndRenderSubviews(const RenderTarget* target, const Rectangle<
 
     render();
 
-    auto xScale = (_bounds.width ? (double)area.width / _bounds.width : 1.0);
-    auto yScale = (_bounds.height ? (double)area.height / _bounds.height : 1.0);
+    auto xScale = (_bounds.width != 0.0 ? area.width / _bounds.width : 1.0);
+    auto yScale = (_bounds.height != 0.0 ? area.height / _bounds.height : 1.0);
 
     for (auto& subview : _subviews) {
         Rectangle<int> subarea(std::round(area.x + xScale * subview->_bounds.x),

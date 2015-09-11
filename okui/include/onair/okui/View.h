@@ -65,10 +65,15 @@ public:
     Window* window() const { return _window; }
     Application* application() const;
 
-    const Rectangle<int>& bounds() const { return _bounds; }
+    const Rectangle<double>& bounds() const { return _bounds; }
 
     template <typename... Args>
-    void setBounds(Args&&... args) { _setBounds(Rectangle<int>(std::forward<Args>(args)...)); }
+    void setBounds(Args&&... args) { _setBounds(Rectangle<double>(std::forward<Args>(args)...)); }
+
+    /**
+    * Sets bounds as a percent of superview bounds (0-1)
+    */
+    void setBoundsRelative(double x, double y, double width, double height);
 
     void setInterceptsMouseEvents(bool intercepts, bool childrenIntercept);
 
@@ -228,23 +233,23 @@ public:
     /**
     * Converts a point from local coordinates to superview coordinates.
     */
-    Point<int> localToSuperview(int x, int y);
-    Point<int> localToSuperview(const Point<int>& p);
+    Point<double> localToSuperview(double x, double y);
+    Point<double> localToSuperview(const Point<double>& p);
 
     /**
     * Converts a point from super coordinates to local coordinates.
     */
-    Point<int> superviewToLocal(int x, int y);
-    Point<int> superviewToLocal(const Point<int>& p);
+    Point<double> superviewToLocal(double x, double y);
+    Point<double> superviewToLocal(const Point<double>& p);
 
     enum class Relation {
-        kApplication, 
-        kWindow, 
-        kAncestor, 
-        kDescendant, 
+        kApplication,
+        kWindow,
+        kAncestor,
+        kDescendant,
         kSibling,
     };
-    
+
     /**
     * Returns true if this view has the given relation to the given view.
     *
@@ -253,7 +258,7 @@ public:
     bool hasRelation(Relation relation, const View* view) const;
 
     /**
-    * Posts a message to listeners with the given relation. The view and its potential listeners must have an 
+    * Posts a message to listeners with the given relation. The view and its potential listeners must have an
     * associated application for the message to be delivered.
     *
     * For example, post(message, Relation::kAncestor) posts the message to listeners that are ancestors of this view.
@@ -276,7 +281,7 @@ public:
     /**
     * Listens for messages from senders with the given relation.
     *
-    * For example, listen([](const Message& message) {}, Relation::kAncestor) listens for messages from posters that 
+    * For example, listen([](const Message& message) {}, Relation::kAncestor) listens for messages from posters that
     * are ancestors of this view.
     *
     * @param action an action that takes a constant reference to the message type to listen for and optionally a View pointer to the sender
@@ -363,16 +368,16 @@ public:
     /**
     * Override this if you want odd-shaped views to have accurate hit boxes.
     */
-    virtual bool hitTest(int x, int y);
+    virtual bool hitTest(double x, double y);
 
     /**
     * Override these to handle mouse events. Call the base implementation to pass on the event.
     */
-    virtual void mouseDown(MouseButton button, int x, int y);
-    virtual void mouseUp(MouseButton button, int startX, int startY, int x, int y);
-    virtual void mouseWheel(int xPos, int yPos, int xWheel, int yWheel);
-    virtual void mouseDrag(int startX, int startY, int x, int y) {}
-    virtual void mouseMovement(int x, int y) {}
+    virtual void mouseDown(MouseButton button, double x, double y);
+    virtual void mouseUp(MouseButton button, double startX, double startY, double x, double y);
+    virtual void mouseWheel(double xPos, double yPos, int xWheel, int yWheel);
+    virtual void mouseDrag(double startX, double startY, double x, double y) {}
+    virtual void mouseMovement(double x, double y) {}
     virtual void mouseEnter() {}
     virtual void mouseExit() {}
 
@@ -413,10 +418,10 @@ public:
     */
     void renderAndRenderSubviews(const RenderTarget* target, const Rectangle<int>& area, boost::optional<Rectangle<int>> clipBounds = boost::none);
 
-    bool dispatchMouseDown(MouseButton button, int x, int y);
-    bool dispatchMouseUp(MouseButton button, int startX, int startY, int x, int y);
-    void dispatchMouseMovement(int x, int y);
-    bool dispatchMouseWheel(int xPos, int yPos, int xWheel, int yWheel);
+    bool dispatchMouseDown(MouseButton button, double x, double y);
+    bool dispatchMouseUp(MouseButton button, double startX, double startY, double x, double y);
+    void dispatchMouseMovement(double x, double y);
+    bool dispatchMouseWheel(double xPos, double yPos, int xWheel, int yWheel);
 
     // Responder overrides
     virtual Responder* nextResponder() override;
@@ -428,36 +433,36 @@ private:
 
     friend class Window;
 
-    std::string      _name;
-    bool             _isVisible = true;
+    std::string       _name;
+    bool              _isVisible = true;
 
-    bool             _rendersToTexture = false;
-    bool             _cachesRender = false;
-    bool             _hasCachedRender = false;
-    bool             _clipsToBounds = true;
+    bool              _rendersToTexture = false;
+    bool              _cachesRender = false;
+    bool              _hasCachedRender = false;
+    bool              _clipsToBounds = true;
 
-    Rectangle<int>   _bounds;
-    bool             _interceptsMouseEvents = true;
-    bool             _childrenInterceptMouseEvents = true;
+    Rectangle<double> _bounds;
+    bool              _interceptsMouseEvents = true;
+    bool              _childrenInterceptMouseEvents = true;
 
-    View*            _superview = nullptr;
-    std::list<View*> _subviews; // ordered back to front
-    Window*          _window = nullptr;
+    View*             _superview = nullptr;
+    std::list<View*>  _subviews; // ordered back to front
+    Window*           _window = nullptr;
 
-    View*            _subviewWithMouse = nullptr;
+    View*             _subviewWithMouse = nullptr;
 
-    View*            _nextFocus = nullptr;
-    View*            _previousFocus = nullptr;
+    View*             _nextFocus = nullptr;
+    View*             _previousFocus = nullptr;
 
-    Point<double>    _scale{1.0, 1.0};
+    Point<double>     _scale{1.0, 1.0};
 
-    Color            _backgroundColor{0.0, 0.0};
-    Color            _tintColor{1.0};
+    Color             _backgroundColor{0.0, 0.0};
+    Color             _tintColor{1.0};
 
     std::unique_ptr<opengl::Framebuffer> _renderCache;
     opengl::Framebuffer::Attachment* _renderCacheColorAttachment = nullptr;
     std::shared_ptr<WeakTexture> _renderCacheTexture = std::make_shared<WeakTexture>();
-    
+
     struct Listener {
         Listener(std::type_index index, std::function<void(const void*, View*)> action, Relation relation)
             : index{index}, action{std::move(action)}, relation{relation} {}
@@ -467,12 +472,12 @@ private:
         Relation relation;
     };
     std::list<Listener> _listeners;
-    
+
     std::unordered_map<size_t, void*> _provisions;
-    
+
     AbstractTaskScheduler::TaskScope _taskScope;
 
-    void _setBounds(const Rectangle<int>& bounds);
+    void _setBounds(const Rectangle<double>& bounds);
 
     void _dispatchFutureVisibilityChange(bool visible);
     void _dispatchVisibilityChange(bool visible);
@@ -481,11 +486,11 @@ private:
 
     bool _requiresTextureRendering();
     void _renderAndRenderSubviews(const RenderTarget* target, const Rectangle<int>& area, boost::optional<Rectangle<int>> clipBounds = boost::none);
-    
+
     void _post(std::type_index index, const void* ptr, Relation relation);
     void _listen(std::type_index index, std::function<void(const void*, View*)> action, Relation relation);
     void* _get(size_t hash) const;
-    
+
     AbstractTaskScheduler* _taskScheduler() const;
 };
 

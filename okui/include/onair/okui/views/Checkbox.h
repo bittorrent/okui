@@ -21,7 +21,7 @@ public:
     virtual void render() = 0;
 
     virtual bool canBecomeFocus() override { return true; }
-    virtual void mouseDown(MouseButton button, int x, int y) override;
+    virtual void mouseDown(MouseButton button, double x, double y) override;
     virtual void keyDown(KeyCode key, KeyModifiers mod, bool repeat) override;
 
 private:

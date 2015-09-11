@@ -13,7 +13,7 @@ void Checkbox::setState(State state, bool invokeAction) {
     }
 }
 
-void Checkbox::mouseDown(MouseButton button, int x, int y) {
+void Checkbox::mouseDown(MouseButton button, double x, double y) {
     setState(_state == State::kChecked ? State::kUnchecked : State::kChecked, true);
 }
 
@@ -22,7 +22,7 @@ void Checkbox::keyDown(KeyCode key, KeyModifiers mod, bool repeat) {
         setState(_state == State::kChecked ? State::kUnchecked : State::kChecked, true);
         return;
     }
-    
+
     onair::okui::View::keyDown(key, mod, repeat);
 }
 
