@@ -70,6 +70,14 @@ void Android::openDialog(Window* window,
     }));
 }
 
+double Android::renderScale() const {
+    return _javaHelper->renderScale();
+}
+
+std::string Android::distinctId() const {
+    return _javaHelper->distinctId();
+}
+
 std::shared_ptr<std::string> Android::AssetResourceManager::load(const char* name) {
     auto ret = std::make_shared<std::string>();
     auto a = AAssetManager_open(_assetManager, name, AASSET_MODE_BUFFER);

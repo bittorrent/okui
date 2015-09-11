@@ -198,6 +198,10 @@ public:
                             const std::vector<std::string>& buttons,
                             std::function<void(int)> action = std::function<void(int)>()) = 0;
 
+    virtual double renderScale() const { return 1.0; }
+
+    virtual std::string distinctId() const { return ""; }
+
     /**
     * Returns the name of the operating system.
     */
@@ -217,7 +221,7 @@ public:
     * Used by views to post messages to listeners.
     */
     void post(View* sender, std::type_index index, const void* message, View::Relation relation);
-    
+
     /**
     * Used by views to listed for posted messages.
     */

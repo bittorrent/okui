@@ -26,6 +26,8 @@ public:
 
     virtual void showStatusBar() override;
     virtual void hideStatusBar() override;
+
+    virtual std::string distinctId() const override;
 };
 
 } // namespace applications

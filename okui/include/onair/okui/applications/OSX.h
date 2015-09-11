@@ -37,6 +37,8 @@ public:
 
     virtual void keyDown(KeyCode key, KeyModifiers mod, bool repeat) override;
 
+    virtual std::string distinctId() const override;
+
 private:
     NSMenu* _convertMenu(const Menu& menu);
     NSMenuItem* _convertMenuItem(const MenuItem& item);

@@ -26,7 +26,7 @@ class Android : public Application {
 public:
     using Application::Application;
     virtual ~Android();
-    
+
     void setActivity(JNIEnv* env, jobject activity);
 
     virtual void initialize() override;
@@ -36,6 +36,10 @@ public:
                             const char* message,
                             const std::vector<std::string>& buttons,
                             std::function<void(int)> action = std::function<void(int)>()) override;
+
+    virtual double renderScale() const override;
+
+    virtual std::string distinctId() const override;
 
     class AssetResourceManager : public ResourceManager {
     public:
@@ -48,7 +52,7 @@ public:
         ~AssetResourceManager() {
             _env->DeleteGlobalRef(_assetManagerReference);
         }
-        
+
         virtual std::shared_ptr<std::string> load(const char* name) override;
 
     private:
@@ -60,9 +64,9 @@ public:
 private:
     JNIEnv* _jniEnv = nullptr;
     jobject _activity = nullptr;
-    
+
     std::unique_ptr<ResourceManager> _resourceManager;
-    
+
     ONAIR_JNI_JAVA_CLASS_BEGIN(JavaHelper);
         ONAIR_JNI_JAVA_CLASS_CONSTRUCTOR(JavaHelper, android::app::Activity);
 
@@ -77,8 +81,10 @@ private:
         ONAIR_JNI_NATIVE_CLASS_END();
 
         ONAIR_JNI_JAVA_CLASS_METHOD(void, openDialog, const char*, const char*, const std::vector<std::string>&, OpenDialogCallback*);
+        ONAIR_JNI_JAVA_CLASS_METHOD(std::string, distinctId);
+        ONAIR_JNI_JAVA_CLASS_METHOD(float, renderScale);
     ONAIR_JNI_JAVA_CLASS_END();
-    
+
     std::shared_ptr<jni::JNIContext> _jniContext;
     std::unique_ptr<JavaHelper> _javaHelper;
 };

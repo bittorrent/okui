@@ -152,7 +152,8 @@ private:
     int _height = 480;
     int _renderWidth = 800;
     int _renderHeight = 480;
-    double _renderScale = 1.0;
+    double _renderScale = 1.0; // user defined scale
+    double _deviceRenderScale = 1.0; // scale determimed by the device used to handle high dpi displays
 
     std::string _title{"Untitled"};
     Menu _menu;

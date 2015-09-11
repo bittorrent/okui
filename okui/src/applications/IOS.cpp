@@ -68,6 +68,11 @@ void IOS::hideStatusBar() {
     [[UIApplication sharedApplication] setStatusBarHidden:true withAnimation:UIStatusBarAnimationNone];
 }
 
+std::string IOS::distinctId() const {
+    auto* uuid = [UIDevice currentDevice].identifierForVendor.UUIDString;
+    return std::string([uuid UTF8String]);
+}
+
 }}}
 
 #endif

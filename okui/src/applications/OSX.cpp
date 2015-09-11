@@ -4,6 +4,9 @@
 
 #include "onair/okui/Application.h"
 
+#include <IOKit/IOKitLib.h>
+#include <CoreFoundation/CFString.h>
+
 #import <AppKit/NSAlert.h>
 #import <AppKit/NSOpenPanel.h>
 
@@ -150,6 +153,16 @@ void OSX::keyDown(KeyCode key, KeyModifiers mod, bool repeat) {
         default:
             NSBeep();
     }
+}
+
+std::string OSX::distinctId() const {
+    io_registry_entry_t ioRegistryRoot = IORegistryEntryFromPath(kIOMasterPortDefault, "IOService:/");
+    CFStringRef uuidCf = (CFStringRef) IORegistryEntryCreateCFProperty(ioRegistryRoot, CFSTR(kIOPlatformUUIDKey), kCFAllocatorDefault, 0);
+    IOObjectRelease(ioRegistryRoot);
+    char distinctId[128] = {};
+    CFStringGetCString(uuidCf, distinctId, 128, kCFStringEncodingUTF8);
+    CFRelease(uuidCf);
+    return distinctId;
 }
 
 NSMenu* OSX::_convertMenu(const Menu& menu) {
