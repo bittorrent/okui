@@ -18,7 +18,7 @@ public:
 
     void setAction(std::function<void()> action) { _action = action; }
 
-    virtual void render() = 0;
+    virtual void render() override = 0;
 
     virtual bool canBecomeFocus() override { return true; }
     virtual void mouseDown(MouseButton button, double x, double y) override;

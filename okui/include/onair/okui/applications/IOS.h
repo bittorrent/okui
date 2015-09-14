@@ -2,7 +2,7 @@
 
 #include "onair/okui/config.h"
 
-#if ONAIR_IOS
+#if ONAIR_IOS || ONAIR_TVOS
 
 #include "onair/okui/applications/Apple.h"
 

@@ -1,5 +1,5 @@
 rule okui-frameworks ( properties * ) {
-	if <target-os>iphone in $(properties) || <target-os>darwin in $(properties) {
+	if <target-os>iphone in $(properties) || <target-os>appletv in $(properties) || <target-os>darwin in $(properties) {
 		local result ;
 		result += <framework>OpenGL ;
 		return $(result) ;

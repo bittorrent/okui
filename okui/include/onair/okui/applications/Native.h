@@ -7,6 +7,8 @@
 #include "onair/okui/applications/OSX.h"
 #elif ONAIR_IOS
 #include "onair/okui/applications/IOS.h"
+#elif ONAIR_TVOS
+#include "onair/okui/applications/IOS.h"
 #elif ONAIR_ANDROID
 #include "onair/okui/applications/Android.h"
 #endif

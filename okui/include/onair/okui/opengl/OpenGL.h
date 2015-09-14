@@ -2,7 +2,7 @@
 
 #include "onair/platform.h"
 
-#if ONAIR_IOS
+#if ONAIR_IOS || ONAIR_TVOS
 	#include <OpenGLES/ES2/gl.h>
 	#include <OpenGLES/ES2/glext.h>
 	#define OPENGL_ES 1

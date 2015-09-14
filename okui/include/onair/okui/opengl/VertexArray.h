@@ -10,7 +10,7 @@ namespace onair {
 namespace okui {
 namespace opengl {
 
-#if OPENGL_ES && !ONAIR_IOS
+#if OPENGL_ES && !ONAIR_IOS && !ONAIR_TVOS
 // for now we need to emulate this for opengl es
 // TODO: use extension for android? (some vendor implementations are allegedly crashy...)
 #define ONAIR_OKUI_EMULATE_VERTEX_ARRAY 1
