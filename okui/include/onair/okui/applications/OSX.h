@@ -33,6 +33,7 @@ public:
 
     virtual void openDialog(Window* window, const char* title, const char* message, const std::vector<std::string>& buttons, std::function<void(int)> action = std::function<void(int)>()) override;
 
+    virtual const Menu* getMenu() const { return &_applicationMenu; }
     virtual void setMenu(const Menu& menu) override;
 
     virtual void keyDown(KeyCode key, KeyModifiers mod, bool repeat) override;

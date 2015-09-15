@@ -14,25 +14,16 @@ class MenuItem;
 
 class Menu {
 public:
-    /**
-    * Creates an uninitialized menu.
-    */
     Menu() {}
-
-    /**
-    * Creates a menu with the given items.
-    */
     Menu(const std::vector<MenuItem>& items) : _items(items) {}
-    
+
     /**
     * Returns the top level items of the menu bar.
     */
     const std::vector<MenuItem>& items() const { return _items; }
+    std::vector<MenuItem>& items() { return _items; }
 
-    /**
-    * Returns false if the menu is uninitialized.
-    */
-    explicit operator bool() const { return !_items.empty(); }
+    bool isEmpty() const { return _items.empty(); }
 
 private:
     std::vector<MenuItem> _items;
@@ -40,6 +31,12 @@ private:
 
 class MenuItem {
 public:
+    enum class State {
+        kOff,   // nothing
+        kMixed, // dash
+        kOn,    // check mark
+    };
+
     /**
     * Creates a non-interactive separator item.
     */
@@ -62,6 +59,7 @@ public:
     */
     MenuItem(const char* label, const Menu& submenu) : _label(label), _submenu(submenu) {}
 
+    void setState(State state) { _state = state; }
     /**
     * Indicates whether or not the item is a separator rather than interactive item.
     */
@@ -87,23 +85,21 @@ public:
     */
     const KeyCode& keyCode() const { return _keyCode; }
 
-    /**
-    * Returns the key code that can be used to dispatch the menu item's command.
-    */
     const KeyModifiers& keyModifiers() const { return _keyModifiers; }
 
-    /**
-    * Returns the item's submenu.
-    */
     const Menu& submenu() const { return _submenu; }
+    Menu& submenu() { return _submenu; }
+
+    State state() const { return _state; }
 
 private:
-    std::string _label;
-    Command _command = kCommandNone;
+    std::string    _label;
+    Command        _command = kCommandNone;
     CommandContext _commandContext;
-    KeyCode _keyCode = KeyCode::kNone;
-    KeyModifiers _keyModifiers = KeyModifier::kNone;
-    Menu _submenu;
+    KeyCode        _keyCode = KeyCode::kNone;
+    KeyModifiers   _keyModifiers = KeyModifier::kNone;
+    Menu           _submenu;
+    State          _state = State::kOff;
 };
 
 }}

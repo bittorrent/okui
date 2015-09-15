@@ -1,7 +1,6 @@
 #pragma once
 
 #include "onair/okui/config.h"
-#include "onair/okui/Menu.h"
 #include "onair/okui/ResourceManager.h"
 #include "onair/okui/Responder.h"
 #include "onair/okui/Menu.h"
@@ -133,6 +132,7 @@ public:
     virtual void setWindowSize(Window* window, int width, int height) = 0;
     virtual void setWindowTitle(Window* window, const char* title) = 0;
 
+    virtual const Menu* getMenu() const { return nullptr; }
     virtual void setMenu(const Menu& menu) {}
     virtual void setWindowMenu(Window* window, const Menu& menu) {}
 

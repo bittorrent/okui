@@ -182,7 +182,7 @@ NSMenuItem* OSX::_convertMenuItem(const MenuItem& item) {
     if (key) {
         ret.keyEquivalentModifierMask = _convertKeyModifiers(item.keyModifiers());
     }
-    if (item.submenu()) {
+    if (!item.submenu().isEmpty()) {
         NSMenu* submenu = _convertMenu(item.submenu());
         submenu.title = [NSString stringWithUTF8String:item.label().c_str()];
         [ret setSubmenu:submenu];
@@ -190,6 +190,14 @@ NSMenuItem* OSX::_convertMenuItem(const MenuItem& item) {
     ret.target = _applicationMenuTarget;
     ret.action = @selector(menuItemAction:);
     ret.tag = [_applicationMenuTarget addMenuItem:&item];
+
+    switch (item.state()) {
+        case MenuItem::State::kOff:   [ret setState: 0]; break;
+        case MenuItem::State::kMixed: [ret setState: -1]; break;
+        case MenuItem::State::kOn:    [ret setState: 1]; break;
+        default: break;
+    }
+
     return ret;
 }
 
@@ -197,22 +205,29 @@ unichar OSX::_convertKeyCode(KeyCode keyCode) {
     if (static_cast<unichar>(keyCode) < 256) {
         return static_cast<unichar>(keyCode);
     }
-    // TODO: convert non-ascii keys: https://developer.apple.com/library/mac/documentation/Cocoa/Reference/ApplicationKit/Classes/NSEvent_Class/#//apple_ref/doc/constant_group/Function_Key_Unicodes
-    return 0;
+
+    // https://developer.apple.com/library/mac/documentation/Cocoa/Reference/ApplicationKit/Classes/NSEvent_Class/#//apple_ref/doc/constant_group/Function_Key_Unicodes
+    switch (keyCode) {
+        case KeyCode::kUp:    return NSUpArrowFunctionKey;
+        case KeyCode::kDown:  return NSDownArrowFunctionKey;
+        case KeyCode::kLeft:  return NSLeftArrowFunctionKey;
+        case KeyCode::kRight: return NSRightArrowFunctionKey;
+        default:              return 0;
+    };
 }
 
 NSUInteger OSX::_convertKeyModifiers(KeyModifiers modifiers) {
     NSUInteger ret = 0;
-    if (modifiers & kShift) {
+    if (modifiers & KeyModifier::kShift) {
         ret |= NSShiftKeyMask;
     }
-    if (modifiers & kAlt) {
+    if (modifiers & KeyModifier::kAlt) {
         ret |= NSAlternateKeyMask;
     }
-    if (modifiers & kControl) {
+    if (modifiers & KeyModifier::kControl) {
         ret |= NSControlKeyMask;
     }
-    if (modifiers & kSuper) {
+    if (modifiers & KeyModifier::kSuper) {
         ret |= NSCommandKeyMask;
     }
     return ret;
