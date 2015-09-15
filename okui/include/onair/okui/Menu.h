@@ -45,21 +45,40 @@ public:
     /**
     * Creates an item with the given label and command.
     */
-    MenuItem(const char* label, Command command, KeyCode keyCode = KeyCode::kNone, KeyModifiers keyModifiers = KeyModifier::kNone)
-        : _label(label), _command(command), _keyCode(keyCode), _keyModifiers(keyModifiers) {}
+    MenuItem(std::string label
+            , Command command
+            , KeyCode keyCode = KeyCode::kNone
+            , KeyModifiers keyModifiers = KeyModifier::kNone
+            , std::function<State()> stateFunc = {})
+        : _label{std::move(label)}
+        , _command{command}
+        , _keyCode{keyCode}
+        , _keyModifiers{keyModifiers}
+        , _stateFunc{std::move(stateFunc)}
+    {}
 
     /**
     * Creates an item with the given label and command.
     */
-    MenuItem(const char* label, Command command, CommandContext commandContext, KeyCode keyCode = KeyCode::kNone, KeyModifiers keyModifiers = KeyModifier::kNone)
-        : _label(label), _command(command), _commandContext(commandContext), _keyCode(keyCode), _keyModifiers(keyModifiers) {}
+    MenuItem(std::string label
+            , Command command
+            , CommandContext commandContext
+            , KeyCode keyCode = KeyCode::kNone
+            , KeyModifiers keyModifiers = KeyModifier::kNone
+            , std::function<State()> stateFunc = {})
+        : _label{std::move(label)}
+        , _command{command}
+        , _commandContext{commandContext}
+        , _keyCode{keyCode}
+        , _keyModifiers{keyModifiers}
+        , _stateFunc{std::move(stateFunc)}
+    {}
 
     /**
     * Creates an item with the given label and submenu.
     */
     MenuItem(const char* label, const Menu& submenu) : _label(label), _submenu(submenu) {}
 
-    void setState(State state) { _state = state; }
     /**
     * Indicates whether or not the item is a separator rather than interactive item.
     */
@@ -90,7 +109,7 @@ public:
     const Menu& submenu() const { return _submenu; }
     Menu& submenu() { return _submenu; }
 
-    State state() const { return _state; }
+    State state() const { return _stateFunc ? _stateFunc() : State::kOff; }
 
 private:
     std::string    _label;
@@ -99,7 +118,7 @@ private:
     KeyCode        _keyCode = KeyCode::kNone;
     KeyModifiers   _keyModifiers = KeyModifier::kNone;
     Menu           _submenu;
-    State          _state = State::kOff;
+    std::function<State()> _stateFunc = {};
 };
 
 }}

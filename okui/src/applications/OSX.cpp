@@ -7,6 +7,7 @@
 #include <IOKit/IOKitLib.h>
 #include <CoreFoundation/CFString.h>
 
+#import <AppKit/AppKit.h>
 #import <AppKit/NSAlert.h>
 #import <AppKit/NSOpenPanel.h>
 
@@ -38,7 +39,16 @@
 }
 
 - (BOOL)validateUserInterfaceItem:(id<NSValidatedUserInterfaceItem>)item {
-    auto command = [self itemForObject:item]->command();
+    auto menuItem = [self itemForObject:item];
+    auto command = menuItem->command();
+
+     switch (menuItem->state()) {
+         case onair::okui::MenuItem::State::kOff:   [(id)item setState: NSOffState]; break;
+         case onair::okui::MenuItem::State::kMixed: [(id)item setState: NSMixedState]; break;
+         case onair::okui::MenuItem::State::kOn:    [(id)item setState: NSOnState]; break;
+         default: break;
+     }
+
     return !command || _application->firstResponder()->chainCanHandleCommand(command);
 }
 
@@ -190,13 +200,6 @@ NSMenuItem* OSX::_convertMenuItem(const MenuItem& item) {
     ret.target = _applicationMenuTarget;
     ret.action = @selector(menuItemAction:);
     ret.tag = [_applicationMenuTarget addMenuItem:&item];
-
-    switch (item.state()) {
-        case MenuItem::State::kOff:   [ret setState: 0]; break;
-        case MenuItem::State::kMixed: [ret setState: -1]; break;
-        case MenuItem::State::kOn:    [ret setState: 1]; break;
-        default: break;
-    }
 
     return ret;
 }
