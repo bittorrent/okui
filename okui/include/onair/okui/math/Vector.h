@@ -109,6 +109,16 @@ struct Vector : VectorComponents<T, N> {
         return ret;
     }
 
+    T dot(const Vector& other) {
+        T result{};
+        auto start = other.components.begin();
+        for (auto& component : components) {
+            result += *start*component;
+            ++start;
+        }
+        return result;
+    }
+
     bool operator==(const Vector& other) const {
         return components == other.components;
     }

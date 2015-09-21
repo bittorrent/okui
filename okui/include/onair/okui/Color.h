@@ -24,6 +24,10 @@ struct Color {
         return r == other.r && g == other.g && b == other.b && a == other.a;
     }
 
+    bool operator!=(const Color& other) const {
+        return !(*this == other);
+    }
+
     double r{1.0}, g{1.0}, b{1.0}, a{1.0};
 };
 
