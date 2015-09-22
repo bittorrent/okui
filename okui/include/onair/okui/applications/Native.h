@@ -8,7 +8,7 @@
 #elif ONAIR_IOS
 #include "onair/okui/applications/IOS.h"
 #elif ONAIR_TVOS
-#include "onair/okui/applications/IOS.h"
+#include "onair/okui/applications/TvOS.h"
 #elif ONAIR_ANDROID
 #include "onair/okui/applications/Android.h"
 #endif
@@ -17,10 +17,12 @@ namespace onair {
 namespace okui {
 namespace applications {
 
-#if ONAIR_MAC_OS_X
+#if ONAIR_OS_X
 using Native = OSX;
 #elif ONAIR_IOS
 using Native = IOS;
+#elif ONAIR_TVOS
+using Native = TvOS;
 #elif ONAIR_ANDROID
 using Native = Android;
 #else

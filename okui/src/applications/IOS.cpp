@@ -7,6 +7,7 @@
 #import <UIKit/UIKit.h>
 #import <AVFoundation/AVFoundation.h>
 
+#if ONAIR_IOS
 @interface AlertViewHelper : NSObject<UIAlertViewDelegate>
     typedef void(^CompletionHandler)(NSInteger buttonIndex);
     @property (strong,nonatomic) CompletionHandler completionHandler;
@@ -33,6 +34,7 @@
         self.completionHandler(buttonIndex);
     }
 @end
+#endif
 
 namespace onair {
 namespace okui {
@@ -47,6 +49,7 @@ bool IOS::openURL(const char* url) {
 }
 
 void IOS::openDialog(Window* window, const char* title, const char* message, const std::vector<std::string>& buttons, std::function<void(int)> action) {
+#if ONAIR_IOS
     UIAlertView* alert = [UIAlertView new];
     alert.title = [NSString stringWithUTF8String:title];
     alert.message = [NSString stringWithUTF8String:message];
@@ -58,14 +61,19 @@ void IOS::openDialog(Window* window, const char* title, const char* message, con
             action(buttonIndex);
         }
     }];
+#endif
 }
 
 void IOS::showStatusBar() {
+#if ONAIR_IOS
     [[UIApplication sharedApplication] setStatusBarHidden:false withAnimation:UIStatusBarAnimationNone];
+#endif
 }
 
 void IOS::hideStatusBar() {
+#if ONAIR_IOS
     [[UIApplication sharedApplication] setStatusBarHidden:true withAnimation:UIStatusBarAnimationNone];
+#endif
 }
 
 std::string IOS::distinctId() const {
@@ -73,6 +81,8 @@ std::string IOS::distinctId() const {
     return std::string([uuid UTF8String]);
 }
 
-}}}
+} // namespace applications
+} // namespace okui
+} // namespace onair
 
 #endif
