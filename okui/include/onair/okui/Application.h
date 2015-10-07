@@ -200,12 +200,20 @@ public:
 
     virtual double renderScale() const { return 1.0; }
 
+    /**
+    * Returns an id unique to this device.
+    */
     virtual std::string distinctId() const { return ""; }
 
     /**
     * Returns the name of the operating system.
     */
-    virtual std::string operatingSystem() const { return "Unknown"; }
+    virtual std::string operatingSystem() const { return ""; }
+
+    /**
+    * Returns the name of the device model.
+    */
+    virtual std::string deviceModel() const  { return ""; }
 
     /**
     * Enables or disables the screen saver.

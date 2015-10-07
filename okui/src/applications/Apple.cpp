@@ -6,6 +6,8 @@
 
 #import <Foundation/Foundation.h>
 
+#include <sys/utsname.h>
+
 namespace onair {
 namespace okui {
 namespace applications {
@@ -25,6 +27,12 @@ std::string Apple::userStoragePath() const {
     NSArray* paths = NSSearchPathForDirectoriesInDomains(NSApplicationSupportDirectory, NSUserDomainMask, YES);
     NSString* applicationSupportDirectory = [paths firstObject];
     return std::string{[applicationSupportDirectory UTF8String]} + '/' + organization() + '/' + name();
+}
+
+std::string Apple::deviceModel() const {
+    utsname systemInfo;
+    uname(&systemInfo);
+    return systemInfo.machine;
 }
 
 }}}
