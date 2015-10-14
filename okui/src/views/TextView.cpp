@@ -127,7 +127,7 @@ void TextView::windowChanged() {
 Point<int> TextView::lineColumnPosition(size_t lineNum, size_t col) const {
     if (!_font) { return{0, 0}; }
 
-    auto fontScale = _fontSize / _font->size();
+    auto fontScale = _fontScale();
     auto lineSpacing = _font->lineSpacing() * fontScale;
 
     auto& line = _lines[lineNum];
@@ -140,7 +140,7 @@ Point<int> TextView::lineColumnPosition(size_t lineNum, size_t col) const {
 std::pair<size_t, size_t> TextView::lineColumnAtPosition(int mouseX, int mouseY) const {
     if (!_font || _lines.empty()) { return{0, 0}; }
 
-    auto fontScale   = _fontSize / _font->size();
+    auto fontScale   = _fontScale();
     auto lineSpacing = _font->lineSpacing() * fontScale;
 
     auto lineNum = std::min<size_t>(_lines.size()-1, std::max(0, static_cast<int>((mouseY-_calcYOffset()) / lineSpacing)));
@@ -167,9 +167,7 @@ std::pair<size_t, size_t> TextView::lineColumnAtPosition(int mouseX, int mouseY)
 
 double TextView::lineHeight() const {
     if (!_font) { return 0; }
-
-    auto fontScale = _fontSize / _font->size();
-    return _font->lineSpacing() * fontScale;
+    return _font->lineSpacing() * _fontScale();
 }
 
 void TextView::_computeLines() {
@@ -256,7 +254,7 @@ void TextView::_renderBitmapText(shaders::DistanceFieldShader* shader) {
     auto& texture = _font->texture();
     if (!texture->isLoaded()) { return; }
 
-    auto fontScale = _fontSize / _font->size();
+    auto fontScale = _fontScale();
     auto lineSpacing = _font->lineSpacing() * fontScale;
     auto y = _calcYOffset();
 
@@ -284,8 +282,7 @@ void TextView::_renderBitmapText(shaders::DistanceFieldShader* shader) {
 double TextView::_calcXOffset(const std::basic_string<BitmapFont::GlyphId>& line) const {
     if (!_font) { return 0; }
 
-    auto fontScale = _fontSize / _font->size();
-    auto textWidth = _font->width(line.data(), line.size()) * fontScale;
+    auto textWidth = _font->width(line.data(), line.size()) * _fontScale();
 
     double x = 0.0;
     if (_horizontalAlignment == HorizontalAlignment::kCenter) {
@@ -300,8 +297,7 @@ double TextView::_calcXOffset(const std::basic_string<BitmapFont::GlyphId>& line
 double TextView::_calcYOffset() const {
     if (!_font) { return 0; }
 
-    auto fontScale   = _fontSize / _font->size();
-    auto lineSpacing = _font->lineSpacing() * fontScale;
+    auto lineSpacing = _font->lineSpacing() * _fontScale();
     auto textHeight  = lineSpacing * std::min<size_t>(_lines.size(), 1);
 
     auto y = 0.0;
@@ -312,6 +308,13 @@ double TextView::_calcYOffset() const {
     }
 
     return y;
+}
+
+double TextView::_fontScale() const {
+    if (_overflowBehavior == OverflowBehavior::kShrink && _textWidth > bounds().width) {
+        return _fontSize / _font->size() * bounds().width / _textWidth;
+    }
+    return _fontSize / _font->size();
 }
 
 }}}

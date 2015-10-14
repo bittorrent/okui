@@ -27,6 +27,7 @@ public:
         kNone,
         kWrap,
         kEllipses,
+        kShrink,
     };
 
     void setAlignment(HorizontalAlignment horizontal, VerticalAlignment vertical = VerticalAlignment::kCenter);
@@ -82,6 +83,7 @@ private:
     void _renderBitmapText(shaders::DistanceFieldShader* shader);
     double _calcXOffset(const std::basic_string<BitmapFont::GlyphId>& line) const;
     double _calcYOffset() const;
+    double _fontScale() const;
 };
 
 }}}
