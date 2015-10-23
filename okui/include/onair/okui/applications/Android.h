@@ -41,6 +41,9 @@ public:
 
     virtual std::string distinctId() const override;
 
+    virtual std::string operatingSystem() const override;
+    virtual std::string deviceModel() const override;
+
     class AssetResourceManager : public ResourceManager {
     public:
         AssetResourceManager(JNIEnv* env, jobject assetManager)
@@ -82,6 +85,8 @@ private:
 
         ONAIR_JNI_JAVA_CLASS_METHOD(void, openDialog, const char*, const char*, const std::vector<std::string>&, OpenDialogCallback*);
         ONAIR_JNI_JAVA_CLASS_METHOD(std::string, distinctId);
+        ONAIR_JNI_JAVA_CLASS_METHOD(std::string, operatingSystem);
+        ONAIR_JNI_JAVA_CLASS_METHOD(std::string, deviceModel);
         ONAIR_JNI_JAVA_CLASS_METHOD(float, renderScale);
     ONAIR_JNI_JAVA_CLASS_END();
 

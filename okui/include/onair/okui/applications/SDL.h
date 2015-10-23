@@ -57,7 +57,7 @@ public:
     virtual void startTextInput() override;
     virtual void stopTextInput() override;
 
-    virtual std::string operatingSystem() const override { return SDL_GetPlatform(); }
+    virtual std::string operatingSystem() const override;
     virtual void setScreenSaverEnabled(bool enabled = true) override { enabled ? SDL_EnableScreenSaver() : SDL_DisableScreenSaver(); }
 
     virtual void setCursorType(CursorType type) override;
@@ -337,6 +337,11 @@ inline void SDL::startTextInput() {
 
 inline void SDL::stopTextInput() {
     SDL_StopTextInput();
+}
+
+inline std::string SDL::operatingSystem() const {
+    auto native = Native::operatingSystem();
+    return native.empty() ? SDL_GetPlatform() : native;
 }
 
 #if ONAIR_MAC_OS_X

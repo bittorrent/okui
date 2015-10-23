@@ -78,6 +78,14 @@ std::string Android::distinctId() const {
     return _javaHelper->distinctId();
 }
 
+std::string Android::operatingSystem() const {
+    return _javaHelper->operatingSystem();
+}
+
+std::string Android::deviceModel() const {
+    return _javaHelper->deviceModel();
+}
+
 std::shared_ptr<std::string> Android::AssetResourceManager::load(const char* name) {
     auto ret = std::make_shared<std::string>();
     auto a = AAssetManager_open(_assetManager, name, AASSET_MODE_BUFFER);

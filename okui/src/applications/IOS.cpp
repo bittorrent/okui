@@ -76,6 +76,11 @@ void IOS::hideStatusBar() {
 #endif
 }
 
+std::string IOS::operatingSystem() const {
+    UIDevice* device = [UIDevice currentDevice];
+    return Format("{} {}", [[device systemName] UTF8String], [[device systemVersion] UTF8String]);
+}
+
 std::string IOS::distinctId() const {
     auto* uuid = [UIDevice currentDevice].identifierForVendor.UUIDString;
     return std::string([uuid UTF8String]);

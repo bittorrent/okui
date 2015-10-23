@@ -27,6 +27,7 @@ public:
     virtual void showStatusBar() override;
     virtual void hideStatusBar() override;
 
+    virtual std::string operatingSystem() const override;
     virtual std::string distinctId() const override;
 };
 

@@ -3,6 +3,7 @@ package tv.watchonair.okui;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
+import android.os.Build;
 import android.os.Handler;
 import android.content.Context;
 import android.provider.Settings.Secure;
@@ -65,6 +66,14 @@ public class Helper {
     public String distinctId() {
         String id = Secure.getString(_activity.getContentResolver(), Secure.ANDROID_ID);
         return id;
+    }
+
+    public String operatingSystem() {
+        return "Android " + Build.VERSION.RELEASE;
+    }
+
+    public String deviceModel() {
+        return Build.MODEL;
     }
 
     public float renderScale() {
