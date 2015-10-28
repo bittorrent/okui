@@ -25,9 +25,9 @@ std::set<double> ActiveEdges(NSVGshape* shape, double y) {
     std::set<double> ret;
     
     IterateCubicBeziers(shape, [&](const float* pts) {
-        constexpr auto step = 0.00005;
-        constexpr auto threshold = 0.005;
-        constexpr auto gapThreshold = 16 * threshold;
+        constexpr auto step = 0.000005;
+        constexpr auto threshold = 0.002;
+        constexpr auto gapThreshold = 1.0;
         for (auto t = 0.0; t <= 1.0; t += step) {
             auto by = CubicBezier(t, pts[1], pts[3], pts[5], pts[7]);
             if (std::fabs(y - by) < threshold) {
@@ -35,6 +35,16 @@ std::set<double> ActiveEdges(NSVGshape* shape, double y) {
             }
         }
     });
+
+    if (ret.size() == 1) {
+        // this is most likely a sharp corner. just ignore it
+        ret.clear();
+    } else if (ret.size() % 2) {
+        // this is bad. tweak the parameters until we detect an even number of edges for each line
+        printf("\n");
+        for (auto d : ret) { printf("%f ", d); }
+        printf("\n              ");
+    }
 
     return ret;
 }
