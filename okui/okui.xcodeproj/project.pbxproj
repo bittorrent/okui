@@ -27,12 +27,12 @@
 /* Begin PBXLegacyTarget section */
 		52B8EF521B557FC800A0F1D5 /* okui */ = {
 			isa = PBXLegacyTarget;
-			buildArgumentsString = "$(ACTION:rfc1034identifier:lower) toolset=darwin target-os=darwin link=static $(CONFIGURATION:rfc1034identifier:lower)";
+			buildArgumentsString = "$(ACTION:rfc1034identifier:lower) toolset=darwin target-os=darwin link=static $(CONFIGURATION:rfc1034identifier:lower) $(ACTION:rfc1034identifier:lower)";
 			buildConfigurationList = 52B8EF551B557FC800A0F1D5 /* Build configuration list for PBXLegacyTarget "okui" */;
 			buildPhases = (
 			);
-			buildToolPath = "../third-party/boost-build/bin/b2";
-			buildWorkingDirectory = "$(PROJECT_DIR)";
+			buildToolPath = ./build;
+			buildWorkingDirectory = "$(PROJECT_DIR)/..";
 			dependencies = (
 			);
 			name = okui;
@@ -41,12 +41,12 @@
 		};
 		52B8EF5E1B55806800A0F1D5 /* okui_tests */ = {
 			isa = PBXLegacyTarget;
-			buildArgumentsString = "$(ACTION:rfc1034identifier:lower) toolset=darwin target-os=darwin link=static $(CONFIGURATION:rfc1034identifier:lower)";
+			buildArgumentsString = "$(ACTION:rfc1034identifier:lower) toolset=darwin target-os=darwin link=static $(CONFIGURATION:rfc1034identifier:lower) $(ACTION:rfc1034identifier:lower)";
 			buildConfigurationList = 52B8EF5F1B55806800A0F1D5 /* Build configuration list for PBXLegacyTarget "okui_tests" */;
 			buildPhases = (
 			);
-			buildToolPath = "../../third-party/boost-build/bin/b2";
-			buildWorkingDirectory = "$(PROJECT_DIR)/tests";
+			buildToolPath = ./build;
+			buildWorkingDirectory = "$(PROJECT_DIR)/..";
 			dependencies = (
 			);
 			name = okui_tests;

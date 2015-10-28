@@ -1,8 +1,17 @@
-exe okui_tests :
+alias okui-tests-common :
     [ glob-tree *.cpp ]
     ..//okui
-    ../../third-party/gtest//gtest_main
+    ../../third-party/gtest//gtest
     ../../third-party/sdl//SDL2
+;
+
+lib okui-gtests : okui-tests-common :
+    <link>static
+;
+
+exe okui-tests :
+    okui-tests-common
+    ../../third-party/gtest//gtest_main
 :
     <conditional>@require-desktop
     <build>no
