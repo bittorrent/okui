@@ -37,13 +37,13 @@ Framebuffer::Attachment* Framebuffer::addColorAttachment(int width, int height) 
 
     glBindTexture(GL_TEXTURE_2D, 0);
 
-#ifndef OPENGL_ES
+#if !OPENGL_ES
     glDrawBuffers(_drawBuffers.size(), _drawBuffers.data());
 #endif
     return &attachment;
 }
 
-#ifndef OPENGL_ES
+#if !OPENGL_ES
 Framebuffer::Attachment* Framebuffer::addDepthStencilAttachment(int width, int height) {
     bind();
 
@@ -68,7 +68,7 @@ Framebuffer::Attachment::Attachment(int width, int height, bool isDepthStencil) 
     glBindTexture(GL_TEXTURE_2D, _texture);
 
     if (isDepthStencil) {
-#ifndef OPENGL_ES
+#if !OPENGL_ES
         glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH24_STENCIL8, width, height, 0, GL_DEPTH_STENCIL, GL_UNSIGNED_INT_24_8, nullptr);
 #else
         ONAIR_ASSERT(false);

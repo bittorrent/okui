@@ -8,7 +8,9 @@
 struct TestFramebuffer {
     TestFramebuffer(int width, int height) {
         colorAttachment = framebuffer.addColorAttachment(width, height);
+#if !OPENGL_ES
         framebuffer.addDepthStencilAttachment(width, height);
+#endif
         EXPECT_TRUE(framebuffer.isComplete());
         framebuffer.bind();
         glViewport(0, 0, width, height);
@@ -22,7 +24,9 @@ struct TestFramebuffer {
         pixels.resize(colorAttachment->width()*colorAttachment->height()*4);
 
         glBindTexture(GL_TEXTURE_2D, colorAttachment->texture());
+#if !OPENGL_ES
         glGetTexImage(GL_TEXTURE_2D, 0, GL_RGBA, GL_UNSIGNED_BYTE, pixels.data());
+#endif
     }
 
     onair::okui::Color getPixel(size_t x, size_t y) {

@@ -35,7 +35,9 @@ static void TextureTest(const unsigned char* imageData, size_t imageDataSize, in
         pixels.resize(texture->width() * texture->height());            
         
         glBindTexture(GL_TEXTURE_2D, texture->id());
+#if !OPENGL_ES
         glGetTexImage(GL_TEXTURE_2D, 0, GL_RGBA, GL_UNSIGNED_BYTE, pixels.data());
+#endif
 
         for (int y = 0; y < texture->height(); ++y) {
             for (int x = 0; x < texture->width(); ++x) {
