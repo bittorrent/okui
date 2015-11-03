@@ -24,6 +24,8 @@ public:
     void setTextureColor(Color color, State state = State::kNormal);
     void setTextureDistanceField(double edge = 0.5, State state = State::kNormal);
 
+    void press();
+
     virtual void render() override;
 
     virtual bool canBecomeFocus() override { return true; }

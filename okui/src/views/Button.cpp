@@ -25,6 +25,10 @@ void Button::setTextureDistanceField(double edge, State state) {
     invalidateRenderCache();
 }
 
+void Button::press() {
+    _action();
+}
+
 void Button::render() {
     auto current = _textures.find(_state);
     auto normal = _textures.find(State::kNormal);
