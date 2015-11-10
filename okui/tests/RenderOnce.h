@@ -3,6 +3,8 @@
 #include "TestApplication.h"
 #include "onair/okui/Window.h"
 
+#if ONAIR_OKUI_HAS_NATIVE_APPLICATION
+
 inline void RenderOnce(std::function<void(onair::okui::View* view)> init, std::function<void(onair::okui::View* view)> render) {
     TestApplication application;
 
@@ -57,3 +59,5 @@ inline void RenderOnce(std::function<void(onair::okui::View* view)> init, std::f
 inline void RenderOnce(std::function<void(onair::okui::View* view)> render) {
     return RenderOnce(std::function<void(onair::okui::View* view)>(), render);
 }
+
+#endif // ONAIR_OKUI_HAS_NATIVE_APPLICATION

@@ -5,6 +5,8 @@
 
 #include <iostream>
 
+#if ONAIR_OKUI_HAS_NATIVE_APPLICATION
+
 using namespace onair;
 using namespace onair::okui;
 
@@ -32,3 +34,5 @@ TEST(BitmapFont, parsing) {
         CheckGlyph(*bmpFont->glyph(95 ), 833, 391, 46, 21, -5, 42, 35);
     });
 }
+
+#endif // ONAIR_OKUI_HAS_NATIVE_APPLICATION

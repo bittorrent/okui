@@ -3,6 +3,8 @@
 #include "RenderOnce.h"
 #include "onair/okui/Texture.h"
 
+#if ONAIR_OKUI_HAS_NATIVE_APPLICATION
+
 using namespace onair;
 using namespace onair::okui;
 
@@ -95,3 +97,5 @@ TEST(Texture, png8BitRGBA) {
     
     TextureTest(imageData, sizeof(imageData), 32, 32, png8BitRGBAPixels);
 }
+
+#endif // ONAIR_OKUI_HAS_NATIVE_APPLICATION

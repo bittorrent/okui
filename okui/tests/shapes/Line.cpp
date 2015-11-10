@@ -5,6 +5,8 @@
 
 #include "onair/okui/shapes/Line.h"
 
+#if ONAIR_OKUI_HAS_NATIVE_APPLICATION
+
 using namespace onair;
 using namespace onair::okui;
 
@@ -47,3 +49,5 @@ TEST(LineShape, normal) {
         });
     });
 }
+
+#endif // ONAIR_OKUI_HAS_NATIVE_APPLICATION

@@ -8,6 +8,8 @@
 using namespace onair;
 using namespace onair::okui;
 
+#if ONAIR_OKUI_HAS_NATIVE_APPLICATION
+
 TEST(CircleShape, normal) {
     RenderOnce([&] (View* view) {
         TestFramebuffer framebuffer(320, 200);
@@ -35,3 +37,5 @@ TEST(CircleShape, normal) {
         });
     });
 }
+
+#endif // ONAIR_OKUI_HAS_NATIVE_APPLICATION

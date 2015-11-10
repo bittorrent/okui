@@ -17,6 +17,8 @@ namespace onair {
 namespace okui {
 namespace applications {
 
+#define ONAIR_OKUI_HAS_NATIVE_APPLICATION 1
+
 #if ONAIR_OS_X
 using Native = OSX;
 #elif ONAIR_IOS
@@ -26,6 +28,7 @@ using Native = TvOS;
 #elif ONAIR_ANDROID
 using Native = Android;
 #else
+#undef ONAIR_OKUI_HAS_NATIVE_APPLICATION
 using Native = Application;
 #endif
 
