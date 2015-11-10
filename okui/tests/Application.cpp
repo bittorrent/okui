@@ -25,6 +25,7 @@ struct TestServer : TCPAcceptor<TestHTTPConnection> {
     std::string response;
 };
 
+#if ONAIR_OKUI_HAS_NATIVE_APPLICATION
 TEST(Application, download) {
     TestApplication application;
     TestServer server;
@@ -61,3 +62,4 @@ TEST(Application, downloadCaching) {
 
     EXPECT_NE(*result2, *result3);
 }
+#endif // ONAIR_OKUI_HAS_NATIVE_APPLICATION
