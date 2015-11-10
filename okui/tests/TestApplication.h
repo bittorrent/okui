@@ -4,6 +4,8 @@
 #include "onair/okui/FileResourceManager.h"
 #include "onair/okui/applications/SDL.h"
 
+#if ONAIR_OKUI_HAS_NATIVE_APPLICATION
+
 class TestApplication : public onair::okui::applications::SDL {
 public:
     struct Essentials {
@@ -20,3 +22,5 @@ private:
 
     std::unique_ptr<Essentials> _essentials;
 };
+
+#endif // ONAIR_OKUI_HAS_NATIVE_APPLICATION

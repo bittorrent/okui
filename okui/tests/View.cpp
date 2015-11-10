@@ -29,6 +29,7 @@ TEST(View, ancestorsAreVisible) {
     EXPECT_FALSE(a.ancestorsAreVisible());
 }
 
+#if ONAIR_OKUI_HAS_NATIVE_APPLICATION
 TEST(View, isVisibleInOpenWindow) {
     View a;
     EXPECT_FALSE(a.isVisibleInOpenWindow());
@@ -45,7 +46,9 @@ TEST(View, isVisibleInOpenWindow) {
     a.setIsVisible(false);
     EXPECT_FALSE(a.isVisibleInOpenWindow());
 }
+#endif // ONAIR_OKUI_HAS_NATIVE_APPLICATION
 
+#if ONAIR_OKUI_HAS_NATIVE_APPLICATION
 TEST(View, focus) {
     struct FocusableView : View {
         virtual bool canBecomeFocus() override { return true; }
@@ -89,6 +92,7 @@ TEST(View, focus) {
     EXPECT_FALSE(a.isFocus());
     EXPECT_FALSE(b.isFocus());
 }
+#endif // ONAIR_OKUI_HAS_NATIVE_APPLICATION
 
 TEST(View, focusCycle) {
     struct FocusableView : View {
@@ -158,6 +162,7 @@ TEST(View, isDescendantOf) {
     EXPECT_FALSE(a.isDescendantOf(&c));
 }
 
+#if ONAIR_OKUI_HAS_NATIVE_APPLICATION
 TEST(View, appearedDisappeared) {
     View a;
     struct TestView : View {
@@ -210,7 +215,9 @@ TEST(View, appearedDisappeared) {
 
     EXPECT_EQ(b.step, 4);
 }
+#endif // ONAIR_OKUI_HAS_NATIVE_APPLICATION
 
+#if ONAIR_OKUI_HAS_NATIVE_APPLICATION
 TEST(View, hasRelation) {
     View a, b, c;
 
@@ -259,7 +266,9 @@ TEST(View, hasRelation) {
     EXPECT_TRUE(b.hasRelation(View::Relation::kApplication, &c));
     EXPECT_FALSE(b.hasRelation(View::Relation::kWindow, &c));
 }
+#endif // ONAIR_OKUI_HAS_NATIVE_APPLICATION
 
+#if ONAIR_OKUI_HAS_NATIVE_APPLICATION
 TEST(View, messagePosting) {
     View a, b, c;
 
@@ -287,6 +296,7 @@ TEST(View, messagePosting) {
         
     EXPECT_EQ(received, 2);
 }
+#endif // ONAIR_OKUI_HAS_NATIVE_APPLICATION
 
 TEST(View, provisions) {
     View a, b, c;
