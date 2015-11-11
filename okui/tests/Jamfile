@@ -1,19 +1,20 @@
 alias okui-tests-common :
     [ glob-tree *.cpp ]
     ..//okui
-    ../../third-party/gtest//gtest
-    ../../third-party/sdl//SDL2
+    ../../third-party/gtest//gtest/<link>static
+    ../../third-party/sdl//SDL2/<link>static
 ;
 
 lib okui-gtests : okui-tests-common :
+    <conditional>@unit-test-library
     <link>static
 ;
 
 exe okui-tests :
-    okui-tests-common
-    ../../third-party/gtest//gtest_main
+    okui-tests-common/<link>static
+    ../../third-party/gtest//gtest_main/<link>static
 :
-    <conditional>@require-desktop
+    <conditional>@unit-test-executable
     <build>no
     <target-os>darwin:<build>yes
     <target-os>darwin:<framework>CoreVideo
