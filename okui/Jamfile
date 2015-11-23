@@ -12,7 +12,7 @@ cpp-pch pch :
 	../foundation//foundation_headers
 	src/pch.h
 :
-	<conditional>@not-multi-arch
+	<conditional>@use-pch
 	<include>./include
 ;
 
