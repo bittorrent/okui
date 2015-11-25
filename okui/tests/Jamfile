@@ -1,8 +1,12 @@
+path-constant OKUI_TEST_RESOURCES_PATH : ./resources ;
+
 alias okui-tests-common :
     [ glob-tree *.cpp ]
     ..//okui
     ../../third-party/gtest//gtest/<link>static
     ../../third-party/sdl//SDL2/<link>static
+: : :
+    <define>OKUI_TEST_RESOURCES_PATH=\\\"$(OKUI_TEST_RESOURCES_PATH)\\\"
 ;
 
 lib okui-gtests : okui-tests-common :
