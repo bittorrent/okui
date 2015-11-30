@@ -42,7 +42,10 @@ public:
     virtual std::string distinctId() const override;
 
     virtual std::string operatingSystem() const override;
+
     virtual std::string deviceModel() const override;
+
+    virtual bool wifiConnection() const override;
 
     class AssetResourceManager : public ResourceManager {
     public:
@@ -88,6 +91,7 @@ private:
         ONAIR_JNI_JAVA_CLASS_METHOD(std::string, operatingSystem);
         ONAIR_JNI_JAVA_CLASS_METHOD(std::string, deviceModel);
         ONAIR_JNI_JAVA_CLASS_METHOD(float, renderScale);
+        ONAIR_JNI_JAVA_CLASS_METHOD(bool, wifiConnection);
     ONAIR_JNI_JAVA_CLASS_END();
 
     std::shared_ptr<jni::JNIContext> _jniContext;

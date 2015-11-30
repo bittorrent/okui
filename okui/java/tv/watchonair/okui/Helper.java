@@ -8,6 +8,8 @@ import android.os.Handler;
 import android.content.Context;
 import android.provider.Settings.Secure;
 import android.util.DisplayMetrics;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 
 import java.lang.Runnable;
 import java.lang.String;
@@ -80,5 +82,11 @@ public class Helper {
         DisplayMetrics metrics = new DisplayMetrics();
         _activity.getWindowManager().getDefaultDisplay().getMetrics(metrics);
         return metrics.density;
+    }
+
+    public boolean wifiConnection() {
+         ConnectivityManager connectivityManager = (ConnectivityManager) _activity.getSystemService(Context.CONNECTIVITY_SERVICE);
+         NetworkInfo mWifi = connectivityManager.getNetworkInfo(ConnectivityManager.TYPE_WIFI);
+         return mWifi.isConnected();
     }
 }
