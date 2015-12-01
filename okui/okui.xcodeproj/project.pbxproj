@@ -520,7 +520,7 @@
 			isa = PBXProject;
 			attributes = {
 				LastUpgradeCheck = 0710;
-				ORGANIZATIONNAME = BitTorrent;
+				ORGANIZATIONNAME = "OnAir Live Developers Inc.";
 				TargetAttributes = {
 					0C5CA4AF1BED4BB500F7800E = {
 						CreatedOnToolsVersion = 7.1;

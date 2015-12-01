@@ -1,11 +1,3 @@
-//
-//  ViewController.m
-//  okui-tests-ios-host
-//
-//  Created by Work on 11/6/15.
-//  Copyright © 2015 BitTorrent. All rights reserved.
-//
-
 #import "ViewController.h"
 
 @interface ViewController ()
