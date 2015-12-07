@@ -12,7 +12,7 @@ using namespace onair;
 using namespace onair::okui;
 using namespace onair::okui::opengl;
 
-#if ONAIR_OKUI_HAS_NATIVE_APPLICATION
+#if ONAIR_OKUI_HAS_NATIVE_APPLICATION && !OPENGL_ES // TODO: fix for OpenGL ES
 
 constexpr auto width = 320;
 constexpr auto height = 200;

@@ -37,7 +37,7 @@ Framebuffer::Attachment* Framebuffer::addColorAttachment(int width, int height) 
 
     glBindTexture(GL_TEXTURE_2D, 0);
 
-#if !OPENGL_ES
+#if !OPENGL_ES // TODO: fix for OpenGL ES
     glDrawBuffers(_drawBuffers.size(), _drawBuffers.data());
 #endif
     return &attachment;
