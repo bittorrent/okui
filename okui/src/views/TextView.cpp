@@ -98,7 +98,7 @@ void TextView::setBitmapFont(const char* texture, const char* metadata, double s
     }
 }
 
-void TextView::render() {
+void TextView::render(const RenderTarget* renderTarget, const Rectangle<int>& area) {
     if (!_font) { return; }
 
     auto distanceFieldShader = this->distanceFieldShader();
@@ -107,11 +107,28 @@ void TextView::render() {
         distanceFieldShader->setEdge(0.45);
     }
 
+    auto glyphId = BitmapFont::GlyphId{0x4f}; // 'O'
+
+    double fontScale   = _fontSize / _font->size(),
+           glyphWidth  = _font->width(&glyphId, 1) * fontScale,
+           glyphHeight = _font->capHeight() * fontScale,
+           clipWidth   = 0,
+           clipHeight  = 0;
+    renderTransformation().transform(glyphWidth, glyphHeight, &clipWidth, &clipHeight);
+    auto pixelWidth = (clipWidth / 2 + 0.5) * area.width,
+         pixelHeight = (1 - (clipHeight / 2 + 0.5)) * area.height;
+
+    if ((pixelWidth * pixelHeight) < 150) {
+        // If this text is very small, in number of pixels on screen, enable supersampling
+        distanceFieldShader->enableSupersampling(true);
+    }
+
     distanceFieldShader->setColor(_textColorR, _textColorG, _textColorB, _textColorA);
     _renderBitmapText(distanceFieldShader);
 
     distanceFieldShader->flush();
     distanceFieldShader->setEdge(0.5);
+    distanceFieldShader->enableSupersampling(false);
 }
 
 void TextView::layout() {
@@ -205,7 +222,7 @@ void TextView::_computeLines() {
         }
 
         line.push_back(glyph);
-        
+
         auto lineWidth = _font->width(line.data(), line.size()) * fontScale;
         if (lineWidth > width) {
             if (_overflowBehavior == OverflowBehavior::kEllipses) {

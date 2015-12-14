@@ -347,6 +347,8 @@ public:
     */
     virtual void render() {}
 
+    virtual void render(const RenderTarget* renderTarget, const Rectangle<int>& area) { render(); }
+
     /**
     * Override this to implement custom post-render effects. For this method to be called, the view must be
     * set to render to texture. The default implementation provides the built-in effects such as tint and

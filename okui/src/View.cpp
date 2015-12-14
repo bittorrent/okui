@@ -639,7 +639,7 @@ void View::_renderAndRenderSubviews(const RenderTarget* target, const Rectangle<
         backgroundShader->flush();
     }
 
-    render();
+    render(target, area);
 
     auto xScale = (_bounds.width != 0.0 ? area.width / _bounds.width : 1.0);
     auto yScale = (_bounds.height != 0.0 ? area.height / _bounds.height : 1.0);

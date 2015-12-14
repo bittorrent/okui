@@ -59,7 +59,7 @@ public:
 
     double lineHeight() const;
 
-    virtual void render() override;
+    virtual void render(const RenderTarget* renderTarget, const Rectangle<int>& area) override;
     virtual void layout() override;
     virtual void windowChanged() override;
 
