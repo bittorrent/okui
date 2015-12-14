@@ -6,14 +6,12 @@
 
 #if ONAIR_OKUI_HAS_NATIVE_APPLICATION
 
-#if !defined(OKUI_TEST_RESOURCES_PATH)
-#error You must define OKUI_TEST_RESOURCES_PATH in your build.
-#endif
-
 class TestApplication : public onair::okui::applications::SDL {
 public:
     struct Essentials {
-        onair::okui::FileResourceManager resourceManager{OKUI_TEST_RESOURCES_PATH};
+        onair::okui::FileResourceManager resourceManager{ResourceManagerPath().c_str()};
+
+        static std::string ResourceManagerPath();
     };
 
     TestApplication() : TestApplication(std::unique_ptr<Essentials>(new Essentials())){}

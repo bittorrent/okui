@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Scheme
-   LastUpgradeVersion = "0710"
+   LastUpgradeVersion = "0720"
    version = "1.3">
    <BuildAction
       parallelizeBuildables = "YES"
@@ -14,9 +14,9 @@
             buildForAnalyzing = "NO">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "0C5CA4C61BED4C3E00F7800E"
-               BuildableName = "okui-tests-ios-host.app"
-               BlueprintName = "okui-tests-ios-host"
+               BlueprintIdentifier = "0CBA32D51C1F4F240000D621"
+               BuildableName = "okui-tests-iphoneos-host.app"
+               BlueprintName = "okui-tests-iphoneos-host"
                ReferencedContainer = "container:okui.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
@@ -32,9 +32,9 @@
             skipped = "NO">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "0C5CA5121BED4D8600F7800E"
-               BuildableName = "okui-tests-ios-bundle.xctest"
-               BlueprintName = "okui-tests-ios-bundle"
+               BlueprintIdentifier = "0CBA333B1C1F4F610000D621"
+               BuildableName = "okui-tests-iphoneos-bundle.xctest"
+               BlueprintName = "okui-tests-iphoneos-bundle"
                ReferencedContainer = "container:okui.xcodeproj">
             </BuildableReference>
          </TestableReference>
@@ -42,9 +42,9 @@
       <MacroExpansion>
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "0C5CA4C61BED4C3E00F7800E"
-            BuildableName = "okui-tests-ios-host.app"
-            BlueprintName = "okui-tests-ios-host"
+            BlueprintIdentifier = "0CBA32D51C1F4F240000D621"
+            BuildableName = "okui-tests-iphoneos-host.app"
+            BlueprintName = "okui-tests-iphoneos-host"
             ReferencedContainer = "container:okui.xcodeproj">
          </BuildableReference>
       </MacroExpansion>

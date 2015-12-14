@@ -2,11 +2,13 @@
 
 #include "onair/okui/FileResourceManager.h"
 
+#include <boost/filesystem.hpp>
+
 using namespace onair;
 using namespace onair::okui;
 
 TEST(FileResourceManager, loading) {
-    std::string path = tmpnam(nullptr);
+    std::string path = (boost::filesystem::temp_directory_path() / "FileResourceManager.loading").string();
 
     FILE* f = fopen(path.c_str(), "w");
     fprintf(f, "file contents");

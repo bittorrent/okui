@@ -7,113 +7,95 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		0C5CA4CC1BED4C3E00F7800E /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 0C5CA4CB1BED4C3E00F7800E /* main.m */; };
-		0C5CA4CF1BED4C3E00F7800E /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 0C5CA4CE1BED4C3E00F7800E /* AppDelegate.m */; };
-		0C5CA4D21BED4C3E00F7800E /* ViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 0C5CA4D11BED4C3E00F7800E /* ViewController.m */; };
-		0C5CA4D51BED4C3E00F7800E /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 0C5CA4D31BED4C3E00F7800E /* Main.storyboard */; };
-		0C5CA4D71BED4C3E00F7800E /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 0C5CA4D61BED4C3E00F7800E /* Assets.xcassets */; };
-		0C5CA4DA1BED4C3E00F7800E /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 0C5CA4D81BED4C3E00F7800E /* LaunchScreen.storyboard */; };
-		0C5CA4E71BED4C5A00F7800E /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 0C5CA4E61BED4C5A00F7800E /* main.m */; };
-		0C5CA4EA1BED4C5A00F7800E /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 0C5CA4E91BED4C5A00F7800E /* AppDelegate.m */; };
-		0C5CA4ED1BED4C5A00F7800E /* ViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 0C5CA4EC1BED4C5A00F7800E /* ViewController.m */; };
-		0C5CA4F01BED4C5A00F7800E /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 0C5CA4EE1BED4C5A00F7800E /* Main.storyboard */; };
-		0C5CA4F21BED4C5A00F7800E /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 0C5CA4F11BED4C5A00F7800E /* Assets.xcassets */; };
 		0C5CA50C1BED4D4900F7800E /* libc++.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 0C5CA50B1BED4D4900F7800E /* libc++.tbd */; };
 		0C5CA50E1BED4D6400F7800E /* GoogleTests.mm in Sources */ = {isa = PBXBuildFile; fileRef = 0C5CA50D1BED4D6400F7800E /* GoogleTests.mm */; };
-		0C5CA51D1BED4D9C00F7800E /* GoogleTests.mm in Sources */ = {isa = PBXBuildFile; fileRef = 0C5CA50D1BED4D6400F7800E /* GoogleTests.mm */; };
-		0C5CA52C1BED4E3B00F7800E /* GoogleTests.mm in Sources */ = {isa = PBXBuildFile; fileRef = 0C5CA50D1BED4D6400F7800E /* GoogleTests.mm */; };
 		0C5CA52E1BED4EDA00F7800E /* OpenGL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0C5CA52D1BED4EDA00F7800E /* OpenGL.framework */; };
 		0C5CA5301BED4F7000F7800E /* IOKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0C5CA52F1BED4F7000F7800E /* IOKit.framework */; };
 		0C5CA5321BED4F8F00F7800E /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0C5CA5311BED4F8F00F7800E /* Cocoa.framework */; };
 		0C5CA53B1BED511800F7800E /* ForceFeedback.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0C5CA53A1BED511800F7800E /* ForceFeedback.framework */; };
 		0C5CA53D1BED51D400F7800E /* Carbon.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0C5CA53C1BED51D400F7800E /* Carbon.framework */; };
 		0C5CA53E1BED529800F7800E /* AudioUnit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0C5CA5351BED503400F7800E /* AudioUnit.framework */; };
-		0C5CA5421BED531E00F7800E /* libc++.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 0C5CA5411BED531E00F7800E /* libc++.tbd */; };
-		0C5CA5441BED532400F7800E /* libc++.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 0C5CA5431BED532400F7800E /* libc++.tbd */; };
-		0C5CA5461BED535500F7800E /* AudioToolbox.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0C5CA5451BED535500F7800E /* AudioToolbox.framework */; };
-		0C5CA5481BED536800F7800E /* GameController.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0C5CA5471BED536800F7800E /* GameController.framework */; };
-		0C5CA54C1BED538E00F7800E /* CoreMotion.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0C5CA54B1BED538E00F7800E /* CoreMotion.framework */; };
-		0C5CA54F1BED53BC00F7800E /* OpenGLES.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0C5CA54D1BED539E00F7800E /* OpenGLES.framework */; };
-		0C5CA5511BED53CB00F7800E /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0C5CA5501BED53CB00F7800E /* UIKit.framework */; };
-		0C5CA5561BED548300F7800E /* GameController.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0C5CA5541BED547300F7800E /* GameController.framework */; };
-		0C5CA5571BED548800F7800E /* AudioToolbox.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0C5CA5521BED546400F7800E /* AudioToolbox.framework */; };
-		0C5CA5591BED549900F7800E /* OpenGLES.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0C5CA5581BED549900F7800E /* OpenGLES.framework */; };
-		0C5CA55B1BED54A600F7800E /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0C5CA55A1BED54A600F7800E /* UIKit.framework */; };
+		0CBA33711C1F4FF40000D621 /* libc++.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 0CBA33701C1F4FF40000D621 /* libc++.tbd */; };
+		0CBA33721C1F4FF90000D621 /* libc++.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 0CBA33701C1F4FF40000D621 /* libc++.tbd */; };
+		0CBA33741C1F4FFF0000D621 /* libc++.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 0CBA33731C1F4FFF0000D621 /* libc++.tbd */; };
+		0CBA33751C1F50040000D621 /* libc++.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 0CBA33731C1F4FFF0000D621 /* libc++.tbd */; };
+		0CBA33771C1F50300000D621 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 0CBA33761C1F50300000D621 /* main.m */; };
+		0CBA33781C1F503F0000D621 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 0CBA33761C1F50300000D621 /* main.m */; };
+		0CBA33791C1F50510000D621 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 0CBA33761C1F50300000D621 /* main.m */; };
+		0CBA337A1C1F50AA0000D621 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 0CBA33761C1F50300000D621 /* main.m */; };
+		0CBA337B1C1F50B50000D621 /* GoogleTests.mm in Sources */ = {isa = PBXBuildFile; fileRef = 0C5CA50D1BED4D6400F7800E /* GoogleTests.mm */; };
+		0CBA337C1C1F50C70000D621 /* GoogleTests.mm in Sources */ = {isa = PBXBuildFile; fileRef = 0C5CA50D1BED4D6400F7800E /* GoogleTests.mm */; };
+		0CBA337D1C1F50CA0000D621 /* GoogleTests.mm in Sources */ = {isa = PBXBuildFile; fileRef = 0C5CA50D1BED4D6400F7800E /* GoogleTests.mm */; };
+		0CBA337E1C1F50CE0000D621 /* GoogleTests.mm in Sources */ = {isa = PBXBuildFile; fileRef = 0C5CA50D1BED4D6400F7800E /* GoogleTests.mm */; };
+		0CBA338C1C1F517A0000D621 /* Montserrat-regular.fnt in Resources */ = {isa = PBXBuildFile; fileRef = 0CBA33871C1F51630000D621 /* Montserrat-regular.fnt */; };
+		0CBA338D1C1F517A0000D621 /* Montserrat-regular.png in Resources */ = {isa = PBXBuildFile; fileRef = 0CBA33881C1F51630000D621 /* Montserrat-regular.png */; };
+		0CBA338E1C1F51810000D621 /* Montserrat-regular.fnt in Resources */ = {isa = PBXBuildFile; fileRef = 0CBA33871C1F51630000D621 /* Montserrat-regular.fnt */; };
+		0CBA338F1C1F51810000D621 /* Montserrat-regular.png in Resources */ = {isa = PBXBuildFile; fileRef = 0CBA33881C1F51630000D621 /* Montserrat-regular.png */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
-		0C5CA4F71BED4CB200F7800E /* PBXContainerItemProxy */ = {
+		0CBA33411C1F4F610000D621 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 52B8EF4E1B557FC800A0F1D5 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 0CBA32D51C1F4F240000D621;
+			remoteInfo = "okui-test-iphoneos-host";
+		};
+		0CBA334F1C1F4F6C0000D621 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 52B8EF4E1B557FC800A0F1D5 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 0CBA32F01C1F4F300000D621;
+			remoteInfo = "okui-test-iphonesimulator-host";
+		};
+		0CBA335D1C1F4F790000D621 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 52B8EF4E1B557FC800A0F1D5 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 0CBA330B1C1F4F3E0000D621;
+			remoteInfo = "okui-test-appletvos-host";
+		};
+		0CBA336B1C1F4F830000D621 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 52B8EF4E1B557FC800A0F1D5 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 0CBA33231C1F4F480000D621;
+			remoteInfo = "okui-test-appletvsimulator-host";
+		};
+		0CBA337F1C1F50DB0000D621 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 52B8EF4E1B557FC800A0F1D5 /* Project object */;
 			proxyType = 1;
 			remoteGlobalIDString = 0C5CA4B31BED4BC000F7800E;
 			remoteInfo = "okui-tests-iphoneos";
 		};
-		0C5CA4F91BED4CB200F7800E /* PBXContainerItemProxy */ = {
+		0CBA33811C1F50DE0000D621 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 52B8EF4E1B557FC800A0F1D5 /* Project object */;
 			proxyType = 1;
 			remoteGlobalIDString = 0C5CA4B71BED4BCA00F7800E;
 			remoteInfo = "okui-tests-iphonesimulator";
 		};
-		0C5CA4FB1BED4CB700F7800E /* PBXContainerItemProxy */ = {
+		0CBA33831C1F50E10000D621 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 52B8EF4E1B557FC800A0F1D5 /* Project object */;
 			proxyType = 1;
 			remoteGlobalIDString = 0C5CA4BB1BED4BD300F7800E;
 			remoteInfo = "okui-tests-appletvos";
 		};
-		0C5CA4FD1BED4CB700F7800E /* PBXContainerItemProxy */ = {
+		0CBA33851C1F50E40000D621 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 52B8EF4E1B557FC800A0F1D5 /* Project object */;
 			proxyType = 1;
 			remoteGlobalIDString = 0C5CA4BF1BED4BDB00F7800E;
 			remoteInfo = "okui-tests-appletvsimulator";
 		};
-		0C5CA5181BED4D8600F7800E /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 52B8EF4E1B557FC800A0F1D5 /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = 0C5CA4C61BED4C3E00F7800E;
-			remoteInfo = "okui-tests-ios-host";
-		};
-		0C5CA5271BED4E1600F7800E /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 52B8EF4E1B557FC800A0F1D5 /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = 0C5CA4E21BED4C5900F7800E;
-			remoteInfo = "okui-tests-tvos-host";
-		};
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
-		0C5CA4C71BED4C3E00F7800E /* okui-tests-ios-host.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "okui-tests-ios-host.app"; sourceTree = BUILT_PRODUCTS_DIR; };
-		0C5CA4CB1BED4C3E00F7800E /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
-		0C5CA4CD1BED4C3E00F7800E /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
-		0C5CA4CE1BED4C3E00F7800E /* AppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AppDelegate.m; sourceTree = "<group>"; };
-		0C5CA4D01BED4C3E00F7800E /* ViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ViewController.h; sourceTree = "<group>"; };
-		0C5CA4D11BED4C3E00F7800E /* ViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ViewController.m; sourceTree = "<group>"; };
-		0C5CA4D41BED4C3E00F7800E /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
-		0C5CA4D61BED4C3E00F7800E /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
-		0C5CA4D91BED4C3E00F7800E /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
-		0C5CA4DB1BED4C3E00F7800E /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		0C5CA4E31BED4C5900F7800E /* okui-tests-tvos-host.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "okui-tests-tvos-host.app"; sourceTree = BUILT_PRODUCTS_DIR; };
-		0C5CA4E61BED4C5A00F7800E /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
-		0C5CA4E81BED4C5A00F7800E /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
-		0C5CA4E91BED4C5A00F7800E /* AppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AppDelegate.m; sourceTree = "<group>"; };
-		0C5CA4EB1BED4C5A00F7800E /* ViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ViewController.h; sourceTree = "<group>"; };
-		0C5CA4EC1BED4C5A00F7800E /* ViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ViewController.m; sourceTree = "<group>"; };
-		0C5CA4EF1BED4C5A00F7800E /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
-		0C5CA4F11BED4C5A00F7800E /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
-		0C5CA4F31BED4C5A00F7800E /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		0C5CA5031BED4D3B00F7800E /* okui-tests-osx-bundle.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "okui-tests-osx-bundle.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
-		0C5CA5071BED4D3B00F7800E /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		0C5CA50B1BED4D4900F7800E /* libc++.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = "libc++.tbd"; path = "usr/lib/libc++.tbd"; sourceTree = SDKROOT; };
 		0C5CA50D1BED4D6400F7800E /* GoogleTests.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; name = GoogleTests.mm; path = "../third-party/gtest-xcode/src/GoogleTests.mm"; sourceTree = "<group>"; };
-		0C5CA5131BED4D8600F7800E /* okui-tests-ios-bundle.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "okui-tests-ios-bundle.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
-		0C5CA5171BED4D8600F7800E /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		0C5CA5221BED4E1600F7800E /* okui-tests-tvos-bundle.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "okui-tests-tvos-bundle.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
-		0C5CA5261BED4E1600F7800E /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		0C5CA52D1BED4EDA00F7800E /* OpenGL.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenGL.framework; path = System/Library/Frameworks/OpenGL.framework; sourceTree = SDKROOT; };
 		0C5CA52F1BED4F7000F7800E /* IOKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = IOKit.framework; path = System/Library/Frameworks/IOKit.framework; sourceTree = SDKROOT; };
 		0C5CA5311BED4F8F00F7800E /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = System/Library/Frameworks/Cocoa.framework; sourceTree = SDKROOT; };
@@ -134,33 +116,25 @@
 		0C5CA5541BED547300F7800E /* GameController.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = GameController.framework; path = Platforms/AppleTVOS.platform/Developer/SDKs/AppleTVOS9.0.sdk/System/Library/Frameworks/GameController.framework; sourceTree = DEVELOPER_DIR; };
 		0C5CA5581BED549900F7800E /* OpenGLES.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenGLES.framework; path = Platforms/AppleTVOS.platform/Developer/SDKs/AppleTVOS9.0.sdk/System/Library/Frameworks/OpenGLES.framework; sourceTree = DEVELOPER_DIR; };
 		0C5CA55A1BED54A600F7800E /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = Platforms/AppleTVOS.platform/Developer/SDKs/AppleTVOS9.0.sdk/System/Library/Frameworks/UIKit.framework; sourceTree = DEVELOPER_DIR; };
+		0CBA32D61C1F4F240000D621 /* okui-tests-iphoneos-host.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "okui-tests-iphoneos-host.app"; sourceTree = BUILT_PRODUCTS_DIR; };
+		0CBA32F11C1F4F300000D621 /* okui-tests-iphonesimulator-host.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "okui-tests-iphonesimulator-host.app"; sourceTree = BUILT_PRODUCTS_DIR; };
+		0CBA330C1C1F4F3E0000D621 /* okui-tests-appletvos-host.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "okui-tests-appletvos-host.app"; sourceTree = BUILT_PRODUCTS_DIR; };
+		0CBA33241C1F4F480000D621 /* okui-tests-appletvsimulator-host.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "okui-tests-appletvsimulator-host.app"; sourceTree = BUILT_PRODUCTS_DIR; };
+		0CBA333C1C1F4F610000D621 /* okui-tests-iphoneos-bundle.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "okui-tests-iphoneos-bundle.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
+		0CBA334A1C1F4F6C0000D621 /* okui-tests-iphonesimulator-bundle.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "okui-tests-iphonesimulator-bundle.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
+		0CBA33581C1F4F790000D621 /* okui-tests-appletvos-bundle.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "okui-tests-appletvos-bundle.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
+		0CBA33661C1F4F830000D621 /* okui-tests-appletvsimulator-bundle.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "okui-tests-appletvsimulator-bundle.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
+		0CBA33701C1F4FF40000D621 /* libc++.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = "libc++.tbd"; path = "Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS9.2.sdk/usr/lib/libc++.tbd"; sourceTree = DEVELOPER_DIR; };
+		0CBA33731C1F4FFF0000D621 /* libc++.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = "libc++.tbd"; path = "Platforms/AppleTVOS.platform/Developer/SDKs/AppleTVOS9.1.sdk/usr/lib/libc++.tbd"; sourceTree = DEVELOPER_DIR; };
+		0CBA33761C1F50300000D621 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; name = main.m; path = "../third-party/gtest-xcode/src/ios-host/main.m"; sourceTree = "<group>"; };
+		0CBA33871C1F51630000D621 /* Montserrat-regular.fnt */ = {isa = PBXFileReference; lastKnownFileType = text; name = "Montserrat-regular.fnt"; path = "tests/resources/Montserrat-regular.fnt"; sourceTree = "<group>"; };
+		0CBA33881C1F51630000D621 /* Montserrat-regular.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "Montserrat-regular.png"; path = "tests/resources/Montserrat-regular.png"; sourceTree = "<group>"; };
 		52B8EF5B1B55805800A0F1D5 /* include */ = {isa = PBXFileReference; lastKnownFileType = folder; path = include; sourceTree = "<group>"; };
 		52B8EF5C1B55805800A0F1D5 /* src */ = {isa = PBXFileReference; lastKnownFileType = folder; path = src; sourceTree = "<group>"; };
 		52B8EF5D1B55805800A0F1D5 /* tests */ = {isa = PBXFileReference; lastKnownFileType = folder; path = tests; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
-		0C5CA4C41BED4C3E00F7800E /* Frameworks */ = {
-			isa = PBXFrameworksBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				0C5CA54C1BED538E00F7800E /* CoreMotion.framework in Frameworks */,
-				0C5CA5481BED536800F7800E /* GameController.framework in Frameworks */,
-				0C5CA5461BED535500F7800E /* AudioToolbox.framework in Frameworks */,
-				0C5CA5421BED531E00F7800E /* libc++.tbd in Frameworks */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		0C5CA4E01BED4C5900F7800E /* Frameworks */ = {
-			isa = PBXFrameworksBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				0C5CA5571BED548800F7800E /* AudioToolbox.framework in Frameworks */,
-				0C5CA5561BED548300F7800E /* GameController.framework in Frameworks */,
-				0C5CA5441BED532400F7800E /* libc++.tbd in Frameworks */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 		0C5CA5001BED4D3B00F7800E /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
@@ -175,21 +149,63 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		0C5CA5101BED4D8600F7800E /* Frameworks */ = {
+		0CBA32D31C1F4F240000D621 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				0C5CA5511BED53CB00F7800E /* UIKit.framework in Frameworks */,
-				0C5CA54F1BED53BC00F7800E /* OpenGLES.framework in Frameworks */,
+				0CBA33711C1F4FF40000D621 /* libc++.tbd in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		0C5CA51F1BED4E1600F7800E /* Frameworks */ = {
+		0CBA32EE1C1F4F300000D621 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				0C5CA55B1BED54A600F7800E /* UIKit.framework in Frameworks */,
-				0C5CA5591BED549900F7800E /* OpenGLES.framework in Frameworks */,
+				0CBA33721C1F4FF90000D621 /* libc++.tbd in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		0CBA33091C1F4F3E0000D621 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				0CBA33741C1F4FFF0000D621 /* libc++.tbd in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		0CBA33211C1F4F480000D621 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				0CBA33751C1F50040000D621 /* libc++.tbd in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		0CBA33391C1F4F610000D621 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		0CBA33471C1F4F6C0000D621 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		0CBA33551C1F4F790000D621 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		0CBA33631C1F4F830000D621 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -199,95 +215,25 @@
 		0C5CA4C81BED4C3E00F7800E /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				0C5CA4C71BED4C3E00F7800E /* okui-tests-ios-host.app */,
-				0C5CA4E31BED4C5900F7800E /* okui-tests-tvos-host.app */,
 				0C5CA5031BED4D3B00F7800E /* okui-tests-osx-bundle.xctest */,
-				0C5CA5131BED4D8600F7800E /* okui-tests-ios-bundle.xctest */,
-				0C5CA5221BED4E1600F7800E /* okui-tests-tvos-bundle.xctest */,
+				0CBA32D61C1F4F240000D621 /* okui-tests-iphoneos-host.app */,
+				0CBA32F11C1F4F300000D621 /* okui-tests-iphonesimulator-host.app */,
+				0CBA330C1C1F4F3E0000D621 /* okui-tests-appletvos-host.app */,
+				0CBA33241C1F4F480000D621 /* okui-tests-appletvsimulator-host.app */,
+				0CBA333C1C1F4F610000D621 /* okui-tests-iphoneos-bundle.xctest */,
+				0CBA334A1C1F4F6C0000D621 /* okui-tests-iphonesimulator-bundle.xctest */,
+				0CBA33581C1F4F790000D621 /* okui-tests-appletvos-bundle.xctest */,
+				0CBA33661C1F4F830000D621 /* okui-tests-appletvsimulator-bundle.xctest */,
 			);
 			name = Products;
-			sourceTree = "<group>";
-		};
-		0C5CA4C91BED4C3E00F7800E /* okui-tests-ios-host */ = {
-			isa = PBXGroup;
-			children = (
-				0C5CA4CD1BED4C3E00F7800E /* AppDelegate.h */,
-				0C5CA4CE1BED4C3E00F7800E /* AppDelegate.m */,
-				0C5CA4D01BED4C3E00F7800E /* ViewController.h */,
-				0C5CA4D11BED4C3E00F7800E /* ViewController.m */,
-				0C5CA4D31BED4C3E00F7800E /* Main.storyboard */,
-				0C5CA4D61BED4C3E00F7800E /* Assets.xcassets */,
-				0C5CA4D81BED4C3E00F7800E /* LaunchScreen.storyboard */,
-				0C5CA4DB1BED4C3E00F7800E /* Info.plist */,
-				0C5CA4CA1BED4C3E00F7800E /* Supporting Files */,
-			);
-			path = "okui-tests-ios-host";
-			sourceTree = "<group>";
-		};
-		0C5CA4CA1BED4C3E00F7800E /* Supporting Files */ = {
-			isa = PBXGroup;
-			children = (
-				0C5CA4CB1BED4C3E00F7800E /* main.m */,
-			);
-			name = "Supporting Files";
-			sourceTree = "<group>";
-		};
-		0C5CA4E41BED4C5A00F7800E /* okui-tests-tvos-host */ = {
-			isa = PBXGroup;
-			children = (
-				0C5CA4E81BED4C5A00F7800E /* AppDelegate.h */,
-				0C5CA4E91BED4C5A00F7800E /* AppDelegate.m */,
-				0C5CA4EB1BED4C5A00F7800E /* ViewController.h */,
-				0C5CA4EC1BED4C5A00F7800E /* ViewController.m */,
-				0C5CA4EE1BED4C5A00F7800E /* Main.storyboard */,
-				0C5CA4F11BED4C5A00F7800E /* Assets.xcassets */,
-				0C5CA4F31BED4C5A00F7800E /* Info.plist */,
-				0C5CA4E51BED4C5A00F7800E /* Supporting Files */,
-			);
-			path = "okui-tests-tvos-host";
-			sourceTree = "<group>";
-		};
-		0C5CA4E51BED4C5A00F7800E /* Supporting Files */ = {
-			isa = PBXGroup;
-			children = (
-				0C5CA4E61BED4C5A00F7800E /* main.m */,
-			);
-			name = "Supporting Files";
-			sourceTree = "<group>";
-		};
-		0C5CA5041BED4D3B00F7800E /* okui-tests-osx-bundle */ = {
-			isa = PBXGroup;
-			children = (
-				0C5CA5071BED4D3B00F7800E /* Info.plist */,
-			);
-			path = "okui-tests-osx-bundle";
-			sourceTree = "<group>";
-		};
-		0C5CA5141BED4D8600F7800E /* okui-tests-ios-bundle */ = {
-			isa = PBXGroup;
-			children = (
-				0C5CA5171BED4D8600F7800E /* Info.plist */,
-			);
-			path = "okui-tests-ios-bundle";
-			sourceTree = "<group>";
-		};
-		0C5CA5231BED4E1600F7800E /* okui-tests-tvos-bundle */ = {
-			isa = PBXGroup;
-			children = (
-				0C5CA5261BED4E1600F7800E /* Info.plist */,
-			);
-			path = "okui-tests-tvos-bundle";
 			sourceTree = "<group>";
 		};
 		0C5CA53F1BED52D700F7800E /* tests */ = {
 			isa = PBXGroup;
 			children = (
+				0CBA33761C1F50300000D621 /* main.m */,
 				0C5CA50D1BED4D6400F7800E /* GoogleTests.mm */,
-				0C5CA4C91BED4C3E00F7800E /* okui-tests-ios-host */,
-				0C5CA4E41BED4C5A00F7800E /* okui-tests-tvos-host */,
-				0C5CA5041BED4D3B00F7800E /* okui-tests-osx-bundle */,
-				0C5CA5141BED4D8600F7800E /* okui-tests-ios-bundle */,
-				0C5CA5231BED4E1600F7800E /* okui-tests-tvos-bundle */,
+				0CBA338B1C1F51670000D621 /* resources */,
 				0C5CA5401BED52EF00F7800E /* frameworks */,
 			);
 			name = tests;
@@ -296,6 +242,10 @@
 		0C5CA5401BED52EF00F7800E /* frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				0C5CA55A1BED54A600F7800E /* UIKit.framework */,
+				0C5CA5581BED549900F7800E /* OpenGLES.framework */,
+				0C5CA5541BED547300F7800E /* GameController.framework */,
+				0C5CA5521BED546400F7800E /* AudioToolbox.framework */,
 				0C5CA5431BED532400F7800E /* libc++.tbd */,
 				0C5CA5411BED531E00F7800E /* libc++.tbd */,
 				0C5CA50B1BED4D4900F7800E /* libc++.tbd */,
@@ -317,18 +267,25 @@
 			name = frameworks;
 			sourceTree = "<group>";
 		};
+		0CBA338B1C1F51670000D621 /* resources */ = {
+			isa = PBXGroup;
+			children = (
+				0CBA33871C1F51630000D621 /* Montserrat-regular.fnt */,
+				0CBA33881C1F51630000D621 /* Montserrat-regular.png */,
+			);
+			name = resources;
+			sourceTree = "<group>";
+		};
 		52B8EF4D1B557FC800A0F1D5 = {
 			isa = PBXGroup;
 			children = (
-				0C5CA55A1BED54A600F7800E /* UIKit.framework */,
-				0C5CA5581BED549900F7800E /* OpenGLES.framework */,
-				0C5CA5541BED547300F7800E /* GameController.framework */,
-				0C5CA5521BED546400F7800E /* AudioToolbox.framework */,
+				0CBA33731C1F4FFF0000D621 /* libc++.tbd */,
+				0CBA33701C1F4FF40000D621 /* libc++.tbd */,
 				52B8EF5B1B55805800A0F1D5 /* include */,
 				52B8EF5C1B55805800A0F1D5 /* src */,
 				52B8EF5D1B55805800A0F1D5 /* tests */,
-				0C5CA4C81BED4C3E00F7800E /* Products */,
 				0C5CA53F1BED52D700F7800E /* tests */,
+				0C5CA4C81BED4C3E00F7800E /* Products */,
 			);
 			sourceTree = "<group>";
 		};
@@ -422,44 +379,6 @@
 /* End PBXLegacyTarget section */
 
 /* Begin PBXNativeTarget section */
-		0C5CA4C61BED4C3E00F7800E /* okui-tests-ios-host */ = {
-			isa = PBXNativeTarget;
-			buildConfigurationList = 0C5CA4DC1BED4C3E00F7800E /* Build configuration list for PBXNativeTarget "okui-tests-ios-host" */;
-			buildPhases = (
-				0C5CA4C31BED4C3E00F7800E /* Sources */,
-				0C5CA4C41BED4C3E00F7800E /* Frameworks */,
-				0C5CA4C51BED4C3E00F7800E /* Resources */,
-			);
-			buildRules = (
-			);
-			dependencies = (
-				0C5CA4F81BED4CB200F7800E /* PBXTargetDependency */,
-				0C5CA4FA1BED4CB200F7800E /* PBXTargetDependency */,
-			);
-			name = "okui-tests-ios-host";
-			productName = "okui-tests-ios-host";
-			productReference = 0C5CA4C71BED4C3E00F7800E /* okui-tests-ios-host.app */;
-			productType = "com.apple.product-type.application";
-		};
-		0C5CA4E21BED4C5900F7800E /* okui-tests-tvos-host */ = {
-			isa = PBXNativeTarget;
-			buildConfigurationList = 0C5CA4F41BED4C5A00F7800E /* Build configuration list for PBXNativeTarget "okui-tests-tvos-host" */;
-			buildPhases = (
-				0C5CA4DF1BED4C5900F7800E /* Sources */,
-				0C5CA4E01BED4C5900F7800E /* Frameworks */,
-				0C5CA4E11BED4C5900F7800E /* Resources */,
-			);
-			buildRules = (
-			);
-			dependencies = (
-				0C5CA4FC1BED4CB700F7800E /* PBXTargetDependency */,
-				0C5CA4FE1BED4CB700F7800E /* PBXTargetDependency */,
-			);
-			name = "okui-tests-tvos-host";
-			productName = "okui-tests-tvos-host";
-			productReference = 0C5CA4E31BED4C5900F7800E /* okui-tests-tvos-host.app */;
-			productType = "com.apple.product-type.application";
-		};
 		0C5CA5021BED4D3B00F7800E /* okui-tests-osx-bundle */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = 0C5CA5081BED4D3B00F7800E /* Build configuration list for PBXNativeTarget "okui-tests-osx-bundle" */;
@@ -477,40 +396,148 @@
 			productReference = 0C5CA5031BED4D3B00F7800E /* okui-tests-osx-bundle.xctest */;
 			productType = "com.apple.product-type.bundle.unit-test";
 		};
-		0C5CA5121BED4D8600F7800E /* okui-tests-ios-bundle */ = {
+		0CBA32D51C1F4F240000D621 /* okui-tests-iphoneos-host */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 0C5CA51A1BED4D8600F7800E /* Build configuration list for PBXNativeTarget "okui-tests-ios-bundle" */;
+			buildConfigurationList = 0CBA32EA1C1F4F240000D621 /* Build configuration list for PBXNativeTarget "okui-tests-iphoneos-host" */;
 			buildPhases = (
-				0C5CA50F1BED4D8600F7800E /* Sources */,
-				0C5CA5101BED4D8600F7800E /* Frameworks */,
-				0C5CA5111BED4D8600F7800E /* Resources */,
+				0CBA32D21C1F4F240000D621 /* Sources */,
+				0CBA32D31C1F4F240000D621 /* Frameworks */,
+				0CBA32D41C1F4F240000D621 /* Resources */,
 			);
 			buildRules = (
 			);
 			dependencies = (
-				0C5CA5191BED4D8600F7800E /* PBXTargetDependency */,
 			);
-			name = "okui-tests-ios-bundle";
-			productName = "okui-tests-ios-bundle";
-			productReference = 0C5CA5131BED4D8600F7800E /* okui-tests-ios-bundle.xctest */;
+			name = "okui-tests-iphoneos-host";
+			productName = "okui-test-iphoneos-host";
+			productReference = 0CBA32D61C1F4F240000D621 /* okui-tests-iphoneos-host.app */;
+			productType = "com.apple.product-type.application";
+		};
+		0CBA32F01C1F4F300000D621 /* okui-tests-iphonesimulator-host */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 0CBA33051C1F4F300000D621 /* Build configuration list for PBXNativeTarget "okui-tests-iphonesimulator-host" */;
+			buildPhases = (
+				0CBA32ED1C1F4F300000D621 /* Sources */,
+				0CBA32EE1C1F4F300000D621 /* Frameworks */,
+				0CBA32EF1C1F4F300000D621 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = "okui-tests-iphonesimulator-host";
+			productName = "okui-test-iphonesimulator-host";
+			productReference = 0CBA32F11C1F4F300000D621 /* okui-tests-iphonesimulator-host.app */;
+			productType = "com.apple.product-type.application";
+		};
+		0CBA330B1C1F4F3E0000D621 /* okui-tests-appletvos-host */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 0CBA331D1C1F4F3E0000D621 /* Build configuration list for PBXNativeTarget "okui-tests-appletvos-host" */;
+			buildPhases = (
+				0CBA33081C1F4F3E0000D621 /* Sources */,
+				0CBA33091C1F4F3E0000D621 /* Frameworks */,
+				0CBA330A1C1F4F3E0000D621 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = "okui-tests-appletvos-host";
+			productName = "okui-test-appletvos-host";
+			productReference = 0CBA330C1C1F4F3E0000D621 /* okui-tests-appletvos-host.app */;
+			productType = "com.apple.product-type.application";
+		};
+		0CBA33231C1F4F480000D621 /* okui-tests-appletvsimulator-host */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 0CBA33351C1F4F480000D621 /* Build configuration list for PBXNativeTarget "okui-tests-appletvsimulator-host" */;
+			buildPhases = (
+				0CBA33201C1F4F480000D621 /* Sources */,
+				0CBA33211C1F4F480000D621 /* Frameworks */,
+				0CBA33221C1F4F480000D621 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = "okui-tests-appletvsimulator-host";
+			productName = "okui-test-appletvsimulator-host";
+			productReference = 0CBA33241C1F4F480000D621 /* okui-tests-appletvsimulator-host.app */;
+			productType = "com.apple.product-type.application";
+		};
+		0CBA333B1C1F4F610000D621 /* okui-tests-iphoneos-bundle */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 0CBA33431C1F4F610000D621 /* Build configuration list for PBXNativeTarget "okui-tests-iphoneos-bundle" */;
+			buildPhases = (
+				0CBA33381C1F4F610000D621 /* Sources */,
+				0CBA33391C1F4F610000D621 /* Frameworks */,
+				0CBA333A1C1F4F610000D621 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				0CBA33421C1F4F610000D621 /* PBXTargetDependency */,
+				0CBA33801C1F50DB0000D621 /* PBXTargetDependency */,
+			);
+			name = "okui-tests-iphoneos-bundle";
+			productName = "okui-test-iphoneos-bundle";
+			productReference = 0CBA333C1C1F4F610000D621 /* okui-tests-iphoneos-bundle.xctest */;
 			productType = "com.apple.product-type.bundle.unit-test";
 		};
-		0C5CA5211BED4E1600F7800E /* okui-tests-tvos-bundle */ = {
+		0CBA33491C1F4F6C0000D621 /* okui-tests-iphonesimulator-bundle */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 0C5CA5291BED4E1600F7800E /* Build configuration list for PBXNativeTarget "okui-tests-tvos-bundle" */;
+			buildConfigurationList = 0CBA33511C1F4F6C0000D621 /* Build configuration list for PBXNativeTarget "okui-tests-iphonesimulator-bundle" */;
 			buildPhases = (
-				0C5CA51E1BED4E1600F7800E /* Sources */,
-				0C5CA51F1BED4E1600F7800E /* Frameworks */,
-				0C5CA5201BED4E1600F7800E /* Resources */,
+				0CBA33461C1F4F6C0000D621 /* Sources */,
+				0CBA33471C1F4F6C0000D621 /* Frameworks */,
+				0CBA33481C1F4F6C0000D621 /* Resources */,
 			);
 			buildRules = (
 			);
 			dependencies = (
-				0C5CA5281BED4E1600F7800E /* PBXTargetDependency */,
+				0CBA33501C1F4F6C0000D621 /* PBXTargetDependency */,
+				0CBA33821C1F50DE0000D621 /* PBXTargetDependency */,
 			);
-			name = "okui-tests-tvos-bundle";
-			productName = "okui-tests-tvos-bundle";
-			productReference = 0C5CA5221BED4E1600F7800E /* okui-tests-tvos-bundle.xctest */;
+			name = "okui-tests-iphonesimulator-bundle";
+			productName = "okui-test-iphonesimulator-bundle";
+			productReference = 0CBA334A1C1F4F6C0000D621 /* okui-tests-iphonesimulator-bundle.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
+		0CBA33571C1F4F790000D621 /* okui-tests-appletvos-bundle */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 0CBA335F1C1F4F790000D621 /* Build configuration list for PBXNativeTarget "okui-tests-appletvos-bundle" */;
+			buildPhases = (
+				0CBA33541C1F4F790000D621 /* Sources */,
+				0CBA33551C1F4F790000D621 /* Frameworks */,
+				0CBA33561C1F4F790000D621 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				0CBA335E1C1F4F790000D621 /* PBXTargetDependency */,
+				0CBA33841C1F50E10000D621 /* PBXTargetDependency */,
+			);
+			name = "okui-tests-appletvos-bundle";
+			productName = "okui-test-appletvos-bundle";
+			productReference = 0CBA33581C1F4F790000D621 /* okui-tests-appletvos-bundle.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
+		0CBA33651C1F4F830000D621 /* okui-tests-appletvsimulator-bundle */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 0CBA336D1C1F4F830000D621 /* Build configuration list for PBXNativeTarget "okui-tests-appletvsimulator-bundle" */;
+			buildPhases = (
+				0CBA33621C1F4F830000D621 /* Sources */,
+				0CBA33631C1F4F830000D621 /* Frameworks */,
+				0CBA33641C1F4F830000D621 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				0CBA336C1C1F4F830000D621 /* PBXTargetDependency */,
+				0CBA33861C1F50E40000D621 /* PBXTargetDependency */,
+			);
+			name = "okui-tests-appletvsimulator-bundle";
+			productName = "okui-test-appletvsimulator-bundle";
+			productReference = 0CBA33661C1F4F830000D621 /* okui-tests-appletvsimulator-bundle.xctest */;
 			productType = "com.apple.product-type.bundle.unit-test";
 		};
 /* End PBXNativeTarget section */
@@ -537,22 +564,36 @@
 					0C5CA4BF1BED4BDB00F7800E = {
 						CreatedOnToolsVersion = 7.1;
 					};
-					0C5CA4C61BED4C3E00F7800E = {
-						CreatedOnToolsVersion = 7.1;
-					};
-					0C5CA4E21BED4C5900F7800E = {
-						CreatedOnToolsVersion = 7.1;
-					};
 					0C5CA5021BED4D3B00F7800E = {
 						CreatedOnToolsVersion = 7.1;
 					};
-					0C5CA5121BED4D8600F7800E = {
-						CreatedOnToolsVersion = 7.1;
-						TestTargetID = 0C5CA4C61BED4C3E00F7800E;
+					0CBA32D51C1F4F240000D621 = {
+						CreatedOnToolsVersion = 7.2;
 					};
-					0C5CA5211BED4E1600F7800E = {
-						CreatedOnToolsVersion = 7.1;
-						TestTargetID = 0C5CA4E21BED4C5900F7800E;
+					0CBA32F01C1F4F300000D621 = {
+						CreatedOnToolsVersion = 7.2;
+					};
+					0CBA330B1C1F4F3E0000D621 = {
+						CreatedOnToolsVersion = 7.2;
+					};
+					0CBA33231C1F4F480000D621 = {
+						CreatedOnToolsVersion = 7.2;
+					};
+					0CBA333B1C1F4F610000D621 = {
+						CreatedOnToolsVersion = 7.2;
+						TestTargetID = 0CBA32D51C1F4F240000D621;
+					};
+					0CBA33491C1F4F6C0000D621 = {
+						CreatedOnToolsVersion = 7.2;
+						TestTargetID = 0CBA32F01C1F4F300000D621;
+					};
+					0CBA33571C1F4F790000D621 = {
+						CreatedOnToolsVersion = 7.2;
+						TestTargetID = 0CBA330B1C1F4F3E0000D621;
+					};
+					0CBA33651C1F4F830000D621 = {
+						CreatedOnToolsVersion = 7.2;
+						TestTargetID = 0CBA33231C1F4F480000D621;
 					};
 					52B8EF521B557FC800A0F1D5 = {
 						CreatedOnToolsVersion = 6.3.2;
@@ -578,35 +619,20 @@
 				0C5CA4B71BED4BCA00F7800E /* okui-tests-iphonesimulator */,
 				0C5CA4BB1BED4BD300F7800E /* okui-tests-appletvos */,
 				0C5CA4BF1BED4BDB00F7800E /* okui-tests-appletvsimulator */,
-				0C5CA4C61BED4C3E00F7800E /* okui-tests-ios-host */,
-				0C5CA4E21BED4C5900F7800E /* okui-tests-tvos-host */,
 				0C5CA5021BED4D3B00F7800E /* okui-tests-osx-bundle */,
-				0C5CA5121BED4D8600F7800E /* okui-tests-ios-bundle */,
-				0C5CA5211BED4E1600F7800E /* okui-tests-tvos-bundle */,
+				0CBA333B1C1F4F610000D621 /* okui-tests-iphoneos-bundle */,
+				0CBA33491C1F4F6C0000D621 /* okui-tests-iphonesimulator-bundle */,
+				0CBA33571C1F4F790000D621 /* okui-tests-appletvos-bundle */,
+				0CBA33651C1F4F830000D621 /* okui-tests-appletvsimulator-bundle */,
+				0CBA32D51C1F4F240000D621 /* okui-tests-iphoneos-host */,
+				0CBA32F01C1F4F300000D621 /* okui-tests-iphonesimulator-host */,
+				0CBA330B1C1F4F3E0000D621 /* okui-tests-appletvos-host */,
+				0CBA33231C1F4F480000D621 /* okui-tests-appletvsimulator-host */,
 			);
 		};
 /* End PBXProject section */
 
 /* Begin PBXResourcesBuildPhase section */
-		0C5CA4C51BED4C3E00F7800E /* Resources */ = {
-			isa = PBXResourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				0C5CA4DA1BED4C3E00F7800E /* LaunchScreen.storyboard in Resources */,
-				0C5CA4D71BED4C3E00F7800E /* Assets.xcassets in Resources */,
-				0C5CA4D51BED4C3E00F7800E /* Main.storyboard in Resources */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		0C5CA4E11BED4C5900F7800E /* Resources */ = {
-			isa = PBXResourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				0C5CA4F21BED4C5A00F7800E /* Assets.xcassets in Resources */,
-				0C5CA4F01BED4C5A00F7800E /* Main.storyboard in Resources */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 		0C5CA5011BED4D3B00F7800E /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -614,14 +640,60 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		0C5CA5111BED4D8600F7800E /* Resources */ = {
+		0CBA32D41C1F4F240000D621 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		0C5CA5201BED4E1600F7800E /* Resources */ = {
+		0CBA32EF1C1F4F300000D621 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		0CBA330A1C1F4F3E0000D621 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		0CBA33221C1F4F480000D621 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		0CBA333A1C1F4F610000D621 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				0CBA338C1C1F517A0000D621 /* Montserrat-regular.fnt in Resources */,
+				0CBA338D1C1F517A0000D621 /* Montserrat-regular.png in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		0CBA33481C1F4F6C0000D621 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		0CBA33561C1F4F790000D621 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				0CBA338E1C1F51810000D621 /* Montserrat-regular.fnt in Resources */,
+				0CBA338F1C1F51810000D621 /* Montserrat-regular.png in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		0CBA33641C1F4F830000D621 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -631,26 +703,6 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
-		0C5CA4C31BED4C3E00F7800E /* Sources */ = {
-			isa = PBXSourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				0C5CA4D21BED4C3E00F7800E /* ViewController.m in Sources */,
-				0C5CA4CF1BED4C3E00F7800E /* AppDelegate.m in Sources */,
-				0C5CA4CC1BED4C3E00F7800E /* main.m in Sources */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		0C5CA4DF1BED4C5900F7800E /* Sources */ = {
-			isa = PBXSourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				0C5CA4ED1BED4C5A00F7800E /* ViewController.m in Sources */,
-				0C5CA4EA1BED4C5A00F7800E /* AppDelegate.m in Sources */,
-				0C5CA4E71BED4C5A00F7800E /* main.m in Sources */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 		0C5CA4FF1BED4D3B00F7800E /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -659,83 +711,114 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		0C5CA50F1BED4D8600F7800E /* Sources */ = {
+		0CBA32D21C1F4F240000D621 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				0C5CA51D1BED4D9C00F7800E /* GoogleTests.mm in Sources */,
+				0CBA33771C1F50300000D621 /* main.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		0C5CA51E1BED4E1600F7800E /* Sources */ = {
+		0CBA32ED1C1F4F300000D621 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				0C5CA52C1BED4E3B00F7800E /* GoogleTests.mm in Sources */,
+				0CBA33781C1F503F0000D621 /* main.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		0CBA33081C1F4F3E0000D621 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				0CBA33791C1F50510000D621 /* main.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		0CBA33201C1F4F480000D621 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				0CBA337A1C1F50AA0000D621 /* main.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		0CBA33381C1F4F610000D621 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				0CBA337B1C1F50B50000D621 /* GoogleTests.mm in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		0CBA33461C1F4F6C0000D621 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				0CBA337C1C1F50C70000D621 /* GoogleTests.mm in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		0CBA33541C1F4F790000D621 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				0CBA337D1C1F50CA0000D621 /* GoogleTests.mm in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		0CBA33621C1F4F830000D621 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				0CBA337E1C1F50CE0000D621 /* GoogleTests.mm in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
-		0C5CA4F81BED4CB200F7800E /* PBXTargetDependency */ = {
+		0CBA33421C1F4F610000D621 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 0CBA32D51C1F4F240000D621 /* okui-tests-iphoneos-host */;
+			targetProxy = 0CBA33411C1F4F610000D621 /* PBXContainerItemProxy */;
+		};
+		0CBA33501C1F4F6C0000D621 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 0CBA32F01C1F4F300000D621 /* okui-tests-iphonesimulator-host */;
+			targetProxy = 0CBA334F1C1F4F6C0000D621 /* PBXContainerItemProxy */;
+		};
+		0CBA335E1C1F4F790000D621 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 0CBA330B1C1F4F3E0000D621 /* okui-tests-appletvos-host */;
+			targetProxy = 0CBA335D1C1F4F790000D621 /* PBXContainerItemProxy */;
+		};
+		0CBA336C1C1F4F830000D621 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 0CBA33231C1F4F480000D621 /* okui-tests-appletvsimulator-host */;
+			targetProxy = 0CBA336B1C1F4F830000D621 /* PBXContainerItemProxy */;
+		};
+		0CBA33801C1F50DB0000D621 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = 0C5CA4B31BED4BC000F7800E /* okui-tests-iphoneos */;
-			targetProxy = 0C5CA4F71BED4CB200F7800E /* PBXContainerItemProxy */;
+			targetProxy = 0CBA337F1C1F50DB0000D621 /* PBXContainerItemProxy */;
 		};
-		0C5CA4FA1BED4CB200F7800E /* PBXTargetDependency */ = {
+		0CBA33821C1F50DE0000D621 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = 0C5CA4B71BED4BCA00F7800E /* okui-tests-iphonesimulator */;
-			targetProxy = 0C5CA4F91BED4CB200F7800E /* PBXContainerItemProxy */;
+			targetProxy = 0CBA33811C1F50DE0000D621 /* PBXContainerItemProxy */;
 		};
-		0C5CA4FC1BED4CB700F7800E /* PBXTargetDependency */ = {
+		0CBA33841C1F50E10000D621 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = 0C5CA4BB1BED4BD300F7800E /* okui-tests-appletvos */;
-			targetProxy = 0C5CA4FB1BED4CB700F7800E /* PBXContainerItemProxy */;
+			targetProxy = 0CBA33831C1F50E10000D621 /* PBXContainerItemProxy */;
 		};
-		0C5CA4FE1BED4CB700F7800E /* PBXTargetDependency */ = {
+		0CBA33861C1F50E40000D621 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = 0C5CA4BF1BED4BDB00F7800E /* okui-tests-appletvsimulator */;
-			targetProxy = 0C5CA4FD1BED4CB700F7800E /* PBXContainerItemProxy */;
-		};
-		0C5CA5191BED4D8600F7800E /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = 0C5CA4C61BED4C3E00F7800E /* okui-tests-ios-host */;
-			targetProxy = 0C5CA5181BED4D8600F7800E /* PBXContainerItemProxy */;
-		};
-		0C5CA5281BED4E1600F7800E /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = 0C5CA4E21BED4C5900F7800E /* okui-tests-tvos-host */;
-			targetProxy = 0C5CA5271BED4E1600F7800E /* PBXContainerItemProxy */;
+			targetProxy = 0CBA33851C1F50E40000D621 /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
-
-/* Begin PBXVariantGroup section */
-		0C5CA4D31BED4C3E00F7800E /* Main.storyboard */ = {
-			isa = PBXVariantGroup;
-			children = (
-				0C5CA4D41BED4C3E00F7800E /* Base */,
-			);
-			name = Main.storyboard;
-			sourceTree = "<group>";
-		};
-		0C5CA4D81BED4C3E00F7800E /* LaunchScreen.storyboard */ = {
-			isa = PBXVariantGroup;
-			children = (
-				0C5CA4D91BED4C3E00F7800E /* Base */,
-			);
-			name = LaunchScreen.storyboard;
-			sourceTree = "<group>";
-		};
-		0C5CA4EE1BED4C5A00F7800E /* Main.storyboard */ = {
-			isa = PBXVariantGroup;
-			children = (
-				0C5CA4EF1BED4C5A00F7800E /* Base */,
-			);
-			name = Main.storyboard;
-			sourceTree = "<group>";
-		};
-/* End PBXVariantGroup section */
 
 /* Begin XCBuildConfiguration section */
 		0C5CA4B11BED4BB500F7800E /* Debug */ = {
@@ -858,72 +941,6 @@
 			};
 			name = Release;
 		};
-		0C5CA4DD1BED4C3E00F7800E /* Debug */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
-				ENABLE_BITCODE = NO;
-				ENABLE_TESTABILITY = YES;
-				INFOPLIST_FILE = "okui-tests-ios-host/Info.plist";
-				IPHONEOS_DEPLOYMENT_TARGET = 9.1;
-				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
-				PRODUCT_BUNDLE_IDENTIFIER = "tv.watchonair.okui-tests-ios-host";
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				SDKROOT = iphoneos;
-				TARGETED_DEVICE_FAMILY = "1,2";
-			};
-			name = Debug;
-		};
-		0C5CA4DE1BED4C3E00F7800E /* Release */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
-				ENABLE_BITCODE = NO;
-				INFOPLIST_FILE = "okui-tests-ios-host/Info.plist";
-				IPHONEOS_DEPLOYMENT_TARGET = 9.1;
-				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
-				PRODUCT_BUNDLE_IDENTIFIER = "tv.watchonair.okui-tests-ios-host";
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				SDKROOT = iphoneos;
-				TARGETED_DEVICE_FAMILY = "1,2";
-				VALIDATE_PRODUCT = YES;
-			};
-			name = Release;
-		};
-		0C5CA4F51BED4C5A00F7800E /* Debug */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				ASSETCATALOG_COMPILER_APPICON_NAME = "App Icon & Top Shelf Image";
-				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
-				ENABLE_TESTABILITY = YES;
-				INFOPLIST_FILE = "okui-tests-tvos-host/Info.plist";
-				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
-				PRODUCT_BUNDLE_IDENTIFIER = "tv.watchonair.okui-tests-tvos-host";
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				SDKROOT = appletvos;
-				TARGETED_DEVICE_FAMILY = 3;
-				TVOS_DEPLOYMENT_TARGET = 9.0;
-			};
-			name = Debug;
-		};
-		0C5CA4F61BED4C5A00F7800E /* Release */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				ASSETCATALOG_COMPILER_APPICON_NAME = "App Icon & Top Shelf Image";
-				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
-				INFOPLIST_FILE = "okui-tests-tvos-host/Info.plist";
-				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
-				PRODUCT_BUNDLE_IDENTIFIER = "tv.watchonair.okui-tests-tvos-host";
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				SDKROOT = appletvos;
-				TARGETED_DEVICE_FAMILY = 3;
-				TVOS_DEPLOYMENT_TARGET = 9.0;
-				VALIDATE_PRODUCT = YES;
-			};
-			name = Release;
-		};
 		0C5CA5091BED4D3B00F7800E /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -951,64 +968,570 @@
 			};
 			name = Release;
 		};
-		0C5CA51B1BED4D8600F7800E /* Debug */ = {
+		0CBA32EB1C1F4F240000D621 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				BUNDLE_LOADER = "$(TEST_HOST)";
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
-				ENABLE_TESTABILITY = YES;
-				INFOPLIST_FILE = "okui-tests-ios-bundle/Info.plist";
-				IPHONEOS_DEPLOYMENT_TARGET = 9.1;
-				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
-				PRODUCT_BUNDLE_IDENTIFIER = "tv.watchonair.okui-tests-ios-bundle";
+				COMPRESS_PNG_FILES = NO;
+				ENABLE_BITCODE = NO;
+				INFOPLIST_FILE = "$(PROJECT_DIR)/../third-party/gtest-xcode/src/ios-host/Info.plist";
+				IPHONEOS_DEPLOYMENT_TARGET = 9.2;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
+				OTHER_LDFLAGS = (
+					"$(inherited)",
+					"-framework",
+					UIKit,
+					"-framework",
+					OpenGLES,
+					"-framework",
+					GameController,
+					"-framework",
+					AudioToolbox,
+					"-framework",
+					CoreAudio,
+					"-framework",
+					CoreMedia,
+					"-framework",
+					CoreMotion,
+					"-framework",
+					GameController,
+					"-framework",
+					IOKit,
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = "tv.watchonair.okui-test-iphoneos-host";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = iphoneos;
-				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/okui-tests-ios-host.app/okui-tests-ios-host";
+				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Debug;
 		};
-		0C5CA51C1BED4D8600F7800E /* Release */ = {
+		0CBA32EC1C1F4F240000D621 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				BUNDLE_LOADER = "$(TEST_HOST)";
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
-				INFOPLIST_FILE = "okui-tests-ios-bundle/Info.plist";
-				IPHONEOS_DEPLOYMENT_TARGET = 9.1;
-				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
-				PRODUCT_BUNDLE_IDENTIFIER = "tv.watchonair.okui-tests-ios-bundle";
+				COMPRESS_PNG_FILES = NO;
+				ENABLE_BITCODE = NO;
+				INFOPLIST_FILE = "$(PROJECT_DIR)/../third-party/gtest-xcode/src/ios-host/Info.plist";
+				IPHONEOS_DEPLOYMENT_TARGET = 9.2;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
+				OTHER_LDFLAGS = (
+					"$(inherited)",
+					"-framework",
+					UIKit,
+					"-framework",
+					OpenGLES,
+					"-framework",
+					GameController,
+					"-framework",
+					AudioToolbox,
+					"-framework",
+					CoreAudio,
+					"-framework",
+					CoreMedia,
+					"-framework",
+					CoreMotion,
+					"-framework",
+					GameController,
+					"-framework",
+					IOKit,
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = "tv.watchonair.okui-test-iphoneos-host";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = iphoneos;
-				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/okui-tests-ios-host.app/okui-tests-ios-host";
+				TARGETED_DEVICE_FAMILY = "1,2";
 				VALIDATE_PRODUCT = YES;
 			};
 			name = Release;
 		};
-		0C5CA52A1BED4E1600F7800E /* Debug */ = {
+		0CBA33061C1F4F300000D621 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				BUNDLE_LOADER = "$(TEST_HOST)";
-				ENABLE_TESTABILITY = YES;
-				INFOPLIST_FILE = "okui-tests-tvos-bundle/Info.plist";
-				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
-				PRODUCT_BUNDLE_IDENTIFIER = "tv.watchonair.okui-tests-tvos-bundle";
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				COMPRESS_PNG_FILES = NO;
+				ENABLE_BITCODE = NO;
+				INFOPLIST_FILE = "$(PROJECT_DIR)/../third-party/gtest-xcode/src/ios-host/Info.plist";
+				IPHONEOS_DEPLOYMENT_TARGET = 9.2;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
+				OTHER_LDFLAGS = (
+					"$(inherited)",
+					"-framework",
+					UIKit,
+					"-framework",
+					OpenGLES,
+					"-framework",
+					GameController,
+					"-framework",
+					AudioToolbox,
+					"-framework",
+					CoreAudio,
+					"-framework",
+					CoreMedia,
+					"-framework",
+					CoreMotion,
+					"-framework",
+					GameController,
+					"-framework",
+					IOKit,
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = "tv.watchonair.okui-test-iphonesimulator-host";
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				SDKROOT = appletvos;
-				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/okui-tests-tvos-host.app/okui-tests-tvos-host";
-				TVOS_DEPLOYMENT_TARGET = 9.0;
+				SDKROOT = iphoneos;
+				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Debug;
 		};
-		0C5CA52B1BED4E1600F7800E /* Release */ = {
+		0CBA33071C1F4F300000D621 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				COMPRESS_PNG_FILES = NO;
+				ENABLE_BITCODE = NO;
+				INFOPLIST_FILE = "$(PROJECT_DIR)/../third-party/gtest-xcode/src/ios-host/Info.plist";
+				IPHONEOS_DEPLOYMENT_TARGET = 9.2;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
+				OTHER_LDFLAGS = (
+					"$(inherited)",
+					"-framework",
+					UIKit,
+					"-framework",
+					OpenGLES,
+					"-framework",
+					GameController,
+					"-framework",
+					AudioToolbox,
+					"-framework",
+					CoreAudio,
+					"-framework",
+					CoreMedia,
+					"-framework",
+					CoreMotion,
+					"-framework",
+					GameController,
+					"-framework",
+					IOKit,
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = "tv.watchonair.okui-test-iphonesimulator-host";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
+		};
+		0CBA331E1C1F4F3E0000D621 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = "App Icon & Top Shelf Image";
+				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
+				COMPRESS_PNG_FILES = NO;
+				INFOPLIST_FILE = "$(PROJECT_DIR)/../third-party/gtest-xcode/src/tvos-host/Info.plist";
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
+				OTHER_LDFLAGS = (
+					"$(inherited)",
+					"-framework",
+					UIKit,
+					"-framework",
+					OpenGLES,
+					"-framework",
+					GameController,
+					"-framework",
+					AudioToolbox,
+					"-framework",
+					CoreAudio,
+					"-framework",
+					CoreMedia,
+					"-framework",
+					GameController,
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = "tv.watchonair.okui-test-appletvos-host";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = appletvos;
+				TARGETED_DEVICE_FAMILY = 3;
+				TVOS_DEPLOYMENT_TARGET = 9.1;
+			};
+			name = Debug;
+		};
+		0CBA331F1C1F4F3E0000D621 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = "App Icon & Top Shelf Image";
+				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
+				COMPRESS_PNG_FILES = NO;
+				INFOPLIST_FILE = "$(PROJECT_DIR)/../third-party/gtest-xcode/src/tvos-host/Info.plist";
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
+				OTHER_LDFLAGS = (
+					"$(inherited)",
+					"-framework",
+					UIKit,
+					"-framework",
+					OpenGLES,
+					"-framework",
+					GameController,
+					"-framework",
+					AudioToolbox,
+					"-framework",
+					CoreAudio,
+					"-framework",
+					CoreMedia,
+					"-framework",
+					GameController,
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = "tv.watchonair.okui-test-appletvos-host";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = appletvos;
+				TARGETED_DEVICE_FAMILY = 3;
+				TVOS_DEPLOYMENT_TARGET = 9.1;
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
+		};
+		0CBA33361C1F4F480000D621 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = "App Icon & Top Shelf Image";
+				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
+				COMPRESS_PNG_FILES = NO;
+				INFOPLIST_FILE = "$(PROJECT_DIR)/../third-party/gtest-xcode/src/tvos-host/Info.plist";
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
+				OTHER_LDFLAGS = (
+					"$(inherited)",
+					"-framework",
+					UIKit,
+					"-framework",
+					OpenGLES,
+					"-framework",
+					GameController,
+					"-framework",
+					AudioToolbox,
+					"-framework",
+					CoreAudio,
+					"-framework",
+					CoreMedia,
+					"-framework",
+					GameController,
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = "tv.watchonair.okui-test-appletvsimulator-host";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = appletvos;
+				TARGETED_DEVICE_FAMILY = 3;
+				TVOS_DEPLOYMENT_TARGET = 9.1;
+			};
+			name = Debug;
+		};
+		0CBA33371C1F4F480000D621 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = "App Icon & Top Shelf Image";
+				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
+				COMPRESS_PNG_FILES = NO;
+				INFOPLIST_FILE = "$(PROJECT_DIR)/../third-party/gtest-xcode/src/tvos-host/Info.plist";
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
+				OTHER_LDFLAGS = (
+					"$(inherited)",
+					"-framework",
+					UIKit,
+					"-framework",
+					OpenGLES,
+					"-framework",
+					GameController,
+					"-framework",
+					AudioToolbox,
+					"-framework",
+					CoreAudio,
+					"-framework",
+					CoreMedia,
+					"-framework",
+					GameController,
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = "tv.watchonair.okui-test-appletvsimulator-host";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = appletvos;
+				TARGETED_DEVICE_FAMILY = 3;
+				TVOS_DEPLOYMENT_TARGET = 9.1;
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
+		};
+		0CBA33441C1F4F610000D621 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				BUNDLE_LOADER = "$(TEST_HOST)";
-				INFOPLIST_FILE = "okui-tests-tvos-bundle/Info.plist";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				COMPRESS_PNG_FILES = NO;
+				INFOPLIST_FILE = "$(PROJECT_DIR)/../third-party/gtest-xcode/src/ios-bundle/Info.plist";
+				IPHONEOS_DEPLOYMENT_TARGET = 9.2;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
-				PRODUCT_BUNDLE_IDENTIFIER = "tv.watchonair.okui-tests-tvos-bundle";
+				OTHER_LDFLAGS = (
+					"$(inherited)",
+					"-framework",
+					UIKit,
+					"-framework",
+					OpenGLES,
+					"-framework",
+					GameController,
+					"-framework",
+					AudioToolbox,
+					"-framework",
+					CoreAudio,
+					"-framework",
+					CoreMedia,
+					"-framework",
+					CoreMotion,
+					"-framework",
+					GameController,
+					"-framework",
+					IOKit,
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = "tv.watchonair.okui-tests-iphoneos-bundle";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/okui-tests-iphoneos-host.app/okui-tests-iphoneos-host";
+			};
+			name = Debug;
+		};
+		0CBA33451C1F4F610000D621 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				COMPRESS_PNG_FILES = NO;
+				INFOPLIST_FILE = "$(PROJECT_DIR)/../third-party/gtest-xcode/src/ios-bundle/Info.plist";
+				IPHONEOS_DEPLOYMENT_TARGET = 9.2;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				OTHER_LDFLAGS = (
+					"$(inherited)",
+					"-framework",
+					UIKit,
+					"-framework",
+					OpenGLES,
+					"-framework",
+					GameController,
+					"-framework",
+					AudioToolbox,
+					"-framework",
+					CoreAudio,
+					"-framework",
+					CoreMedia,
+					"-framework",
+					CoreMotion,
+					"-framework",
+					GameController,
+					"-framework",
+					IOKit,
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = "tv.watchonair.okui-tests-iphoneos-bundle";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/okui-tests-iphoneos-host.app/okui-tests-iphoneos-host";
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
+		};
+		0CBA33521C1F4F6C0000D621 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				COMPRESS_PNG_FILES = NO;
+				INFOPLIST_FILE = "$(PROJECT_DIR)/../third-party/gtest-xcode/src/ios-bundle/Info.plist";
+				IPHONEOS_DEPLOYMENT_TARGET = 9.2;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				OTHER_LDFLAGS = (
+					"$(inherited)",
+					"-framework",
+					UIKit,
+					"-framework",
+					OpenGLES,
+					"-framework",
+					GameController,
+					"-framework",
+					AudioToolbox,
+					"-framework",
+					CoreAudio,
+					"-framework",
+					CoreMedia,
+					"-framework",
+					CoreMotion,
+					"-framework",
+					GameController,
+					"-framework",
+					IOKit,
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = "tv.watchonair.okui-tests-iphonesimulator-bundle";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/okui-tests-iphonesimulator-host.app/okui-tests-iphonesimulator-host";
+			};
+			name = Debug;
+		};
+		0CBA33531C1F4F6C0000D621 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				COMPRESS_PNG_FILES = NO;
+				INFOPLIST_FILE = "$(PROJECT_DIR)/../third-party/gtest-xcode/src/ios-bundle/Info.plist";
+				IPHONEOS_DEPLOYMENT_TARGET = 9.2;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				OTHER_LDFLAGS = (
+					"$(inherited)",
+					"-framework",
+					UIKit,
+					"-framework",
+					OpenGLES,
+					"-framework",
+					GameController,
+					"-framework",
+					AudioToolbox,
+					"-framework",
+					CoreAudio,
+					"-framework",
+					CoreMedia,
+					"-framework",
+					CoreMotion,
+					"-framework",
+					GameController,
+					"-framework",
+					IOKit,
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = "tv.watchonair.okui-tests-iphonesimulator-bundle";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/okui-tests-iphonesimulator-host.app/okui-tests-iphonesimulator-host";
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
+		};
+		0CBA33601C1F4F790000D621 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				COMPRESS_PNG_FILES = NO;
+				INFOPLIST_FILE = "$(PROJECT_DIR)/../third-party/gtest-xcode/src/tvos-bundle/Info.plist";
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				OTHER_LDFLAGS = (
+					"$(inherited)",
+					"-framework",
+					UIKit,
+					"-framework",
+					OpenGLES,
+					"-framework",
+					GameController,
+					"-framework",
+					AudioToolbox,
+					"-framework",
+					CoreAudio,
+					"-framework",
+					CoreMedia,
+					"-framework",
+					GameController,
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = "tv.watchonair.okui-tests-appletvos-bundle";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = appletvos;
-				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/okui-tests-tvos-host.app/okui-tests-tvos-host";
-				TVOS_DEPLOYMENT_TARGET = 9.0;
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/okui-tests-appletvos-host.app/okui-tests-appletvos-host";
+				TVOS_DEPLOYMENT_TARGET = 9.1;
+			};
+			name = Debug;
+		};
+		0CBA33611C1F4F790000D621 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				COMPRESS_PNG_FILES = NO;
+				INFOPLIST_FILE = "$(PROJECT_DIR)/../third-party/gtest-xcode/src/tvos-bundle/Info.plist";
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				OTHER_LDFLAGS = (
+					"$(inherited)",
+					"-framework",
+					UIKit,
+					"-framework",
+					OpenGLES,
+					"-framework",
+					GameController,
+					"-framework",
+					AudioToolbox,
+					"-framework",
+					CoreAudio,
+					"-framework",
+					CoreMedia,
+					"-framework",
+					GameController,
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = "tv.watchonair.okui-tests-appletvos-bundle";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = appletvos;
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/okui-tests-appletvos-host.app/okui-tests-appletvos-host";
+				TVOS_DEPLOYMENT_TARGET = 9.1;
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
+		};
+		0CBA336E1C1F4F830000D621 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				COMPRESS_PNG_FILES = NO;
+				INFOPLIST_FILE = "$(PROJECT_DIR)/../third-party/gtest-xcode/src/tvos-bundle/Info.plist";
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				OTHER_LDFLAGS = (
+					"$(inherited)",
+					"-framework",
+					UIKit,
+					"-framework",
+					OpenGLES,
+					"-framework",
+					GameController,
+					"-framework",
+					AudioToolbox,
+					"-framework",
+					CoreAudio,
+					"-framework",
+					CoreMedia,
+					"-framework",
+					GameController,
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = "tv.watchonair.okui-tests-appletvsimulator-bundle";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = appletvos;
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/okui-tests-appletvsimulator-host.app/okui-tests-appletvsimulator-host";
+				TVOS_DEPLOYMENT_TARGET = 9.1;
+			};
+			name = Debug;
+		};
+		0CBA336F1C1F4F830000D621 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				COMPRESS_PNG_FILES = NO;
+				INFOPLIST_FILE = "$(PROJECT_DIR)/../third-party/gtest-xcode/src/tvos-bundle/Info.plist";
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				OTHER_LDFLAGS = (
+					"$(inherited)",
+					"-framework",
+					UIKit,
+					"-framework",
+					OpenGLES,
+					"-framework",
+					GameController,
+					"-framework",
+					AudioToolbox,
+					"-framework",
+					CoreAudio,
+					"-framework",
+					CoreMedia,
+					"-framework",
+					GameController,
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = "tv.watchonair.okui-tests-appletvsimulator-bundle";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = appletvos;
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/okui-tests-appletvsimulator-host.app/okui-tests-appletvsimulator-host";
+				TVOS_DEPLOYMENT_TARGET = 9.1;
 				VALIDATE_PRODUCT = YES;
 			};
 			name = Release;
@@ -1162,6 +1685,7 @@
 				0C5CA4B21BED4BB500F7800E /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		0C5CA4B41BED4BC000F7800E /* Build configuration list for PBXLegacyTarget "okui-tests-iphoneos" */ = {
 			isa = XCConfigurationList;
@@ -1170,6 +1694,7 @@
 				0C5CA4B61BED4BC000F7800E /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		0C5CA4B81BED4BCA00F7800E /* Build configuration list for PBXLegacyTarget "okui-tests-iphonesimulator" */ = {
 			isa = XCConfigurationList;
@@ -1178,6 +1703,7 @@
 				0C5CA4BA1BED4BCA00F7800E /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		0C5CA4BC1BED4BD300F7800E /* Build configuration list for PBXLegacyTarget "okui-tests-appletvos" */ = {
 			isa = XCConfigurationList;
@@ -1186,6 +1712,7 @@
 				0C5CA4BE1BED4BD300F7800E /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		0C5CA4C01BED4BDB00F7800E /* Build configuration list for PBXLegacyTarget "okui-tests-appletvsimulator" */ = {
 			isa = XCConfigurationList;
@@ -1194,22 +1721,7 @@
 				0C5CA4C21BED4BDB00F7800E /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
-		};
-		0C5CA4DC1BED4C3E00F7800E /* Build configuration list for PBXNativeTarget "okui-tests-ios-host" */ = {
-			isa = XCConfigurationList;
-			buildConfigurations = (
-				0C5CA4DD1BED4C3E00F7800E /* Debug */,
-				0C5CA4DE1BED4C3E00F7800E /* Release */,
-			);
-			defaultConfigurationIsVisible = 0;
-		};
-		0C5CA4F41BED4C5A00F7800E /* Build configuration list for PBXNativeTarget "okui-tests-tvos-host" */ = {
-			isa = XCConfigurationList;
-			buildConfigurations = (
-				0C5CA4F51BED4C5A00F7800E /* Debug */,
-				0C5CA4F61BED4C5A00F7800E /* Release */,
-			);
-			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		0C5CA5081BED4D3B00F7800E /* Build configuration list for PBXNativeTarget "okui-tests-osx-bundle" */ = {
 			isa = XCConfigurationList;
@@ -1218,22 +1730,79 @@
 				0C5CA50A1BED4D3B00F7800E /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
-		0C5CA51A1BED4D8600F7800E /* Build configuration list for PBXNativeTarget "okui-tests-ios-bundle" */ = {
+		0CBA32EA1C1F4F240000D621 /* Build configuration list for PBXNativeTarget "okui-tests-iphoneos-host" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				0C5CA51B1BED4D8600F7800E /* Debug */,
-				0C5CA51C1BED4D8600F7800E /* Release */,
+				0CBA32EB1C1F4F240000D621 /* Debug */,
+				0CBA32EC1C1F4F240000D621 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
-		0C5CA5291BED4E1600F7800E /* Build configuration list for PBXNativeTarget "okui-tests-tvos-bundle" */ = {
+		0CBA33051C1F4F300000D621 /* Build configuration list for PBXNativeTarget "okui-tests-iphonesimulator-host" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				0C5CA52A1BED4E1600F7800E /* Debug */,
-				0C5CA52B1BED4E1600F7800E /* Release */,
+				0CBA33061C1F4F300000D621 /* Debug */,
+				0CBA33071C1F4F300000D621 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		0CBA331D1C1F4F3E0000D621 /* Build configuration list for PBXNativeTarget "okui-tests-appletvos-host" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				0CBA331E1C1F4F3E0000D621 /* Debug */,
+				0CBA331F1C1F4F3E0000D621 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		0CBA33351C1F4F480000D621 /* Build configuration list for PBXNativeTarget "okui-tests-appletvsimulator-host" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				0CBA33361C1F4F480000D621 /* Debug */,
+				0CBA33371C1F4F480000D621 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		0CBA33431C1F4F610000D621 /* Build configuration list for PBXNativeTarget "okui-tests-iphoneos-bundle" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				0CBA33441C1F4F610000D621 /* Debug */,
+				0CBA33451C1F4F610000D621 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		0CBA33511C1F4F6C0000D621 /* Build configuration list for PBXNativeTarget "okui-tests-iphonesimulator-bundle" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				0CBA33521C1F4F6C0000D621 /* Debug */,
+				0CBA33531C1F4F6C0000D621 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		0CBA335F1C1F4F790000D621 /* Build configuration list for PBXNativeTarget "okui-tests-appletvos-bundle" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				0CBA33601C1F4F790000D621 /* Debug */,
+				0CBA33611C1F4F790000D621 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		0CBA336D1C1F4F830000D621 /* Build configuration list for PBXNativeTarget "okui-tests-appletvsimulator-bundle" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				0CBA336E1C1F4F830000D621 /* Debug */,
+				0CBA336F1C1F4F830000D621 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		52B8EF511B557FC800A0F1D5 /* Build configuration list for PBXProject "okui" */ = {
 			isa = XCConfigurationList;

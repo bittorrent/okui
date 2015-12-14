@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Scheme
-   LastUpgradeVersion = "0710"
+   LastUpgradeVersion = "0720"
    version = "1.3">
    <BuildAction
       parallelizeBuildables = "YES"
@@ -14,9 +14,9 @@
             buildForAnalyzing = "NO">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "0C5CA4E21BED4C5900F7800E"
-               BuildableName = "okui-tests-tvos-host.app"
-               BlueprintName = "okui-tests-tvos-host"
+               BlueprintIdentifier = "0CBA32F01C1F4F300000D621"
+               BuildableName = "okui-tests-iphonesimulator-host.app"
+               BlueprintName = "okui-tests-iphonesimulator-host"
                ReferencedContainer = "container:okui.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
@@ -32,9 +32,9 @@
             skipped = "NO">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "0C5CA5211BED4E1600F7800E"
-               BuildableName = "okui-tests-tvos-bundle.xctest"
-               BlueprintName = "okui-tests-tvos-bundle"
+               BlueprintIdentifier = "0CBA33491C1F4F6C0000D621"
+               BuildableName = "okui-tests-iphonesimulator-bundle.xctest"
+               BlueprintName = "okui-tests-iphonesimulator-bundle"
                ReferencedContainer = "container:okui.xcodeproj">
             </BuildableReference>
          </TestableReference>
@@ -42,9 +42,9 @@
       <MacroExpansion>
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "0C5CA4E21BED4C5900F7800E"
-            BuildableName = "okui-tests-tvos-host.app"
-            BlueprintName = "okui-tests-tvos-host"
+            BlueprintIdentifier = "0CBA32F01C1F4F300000D621"
+            BuildableName = "okui-tests-iphonesimulator-host.app"
+            BlueprintName = "okui-tests-iphonesimulator-host"
             ReferencedContainer = "container:okui.xcodeproj">
          </BuildableReference>
       </MacroExpansion>
