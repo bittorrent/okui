@@ -3,7 +3,7 @@
 #include "../RenderOnce.h"
 #include "../TestFramebuffer.h"
 
-#if ONAIR_OKUI_HAS_NATIVE_APPLICATION
+#if ONAIR_OKUI_HAS_NATIVE_APPLICATION && !OPENGL_ES // TODO: fix for OpenGL ES
 
 using namespace onair;
 using namespace onair::okui;
