@@ -227,6 +227,8 @@ public:
 
     virtual void setCursorType(CursorType type) {}
 
+    virtual bool hasStatusBar() const { return false; }
+
     virtual void showStatusBar() {}
     virtual void hideStatusBar() {}
 
