@@ -44,11 +44,10 @@ TEST(DistanceFieldShader, edgeZero) {
         EXPECT_EQ(pixel, Color(1, 1, 1, 1));
 
         // bottom right
-        pixel = framebuffer.getPixel(70, 90);
+        pixel = framebuffer.getPixel(69, 89);
         EXPECT_EQ(pixel, Color(1, 1, 1, 1));
-        pixel = framebuffer.getPixel(71, 91);
-        EXPECT_GT(pixel.r, 0.5);
-        EXPECT_LT(pixel.r, 0.6);
+        pixel = framebuffer.getPixel(70, 90);
+        EXPECT_GT(pixel.r, 0);
         pixel = framebuffer.getPixel(72, 92);
         EXPECT_EQ(pixel, Color(0, 0, 0, 1));
     });
