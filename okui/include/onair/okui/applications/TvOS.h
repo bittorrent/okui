@@ -19,6 +19,8 @@ class TvOS : public IOS {
 public:
     using IOS::IOS;
 
+    virtual std::string userStoragePath() const override;
+
     virtual void openDialog(Window* window,
                             const char* title,
                             const char* message,

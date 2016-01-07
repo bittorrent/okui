@@ -49,7 +49,9 @@ public:
 
     virtual Window* activeWindow() override { return _activeWindow; }
 
+#if !ONAIR_APPLE // TODO: fix Application heirarchy
     virtual std::string userStoragePath() const override;
+#endif
 
     virtual void setClipboardText(const char* text) override;
     virtual std::string getClipboardText() override;
@@ -313,12 +315,14 @@ inline void SDL::setWindowTitle(Window* window, const char* title) {
     }
 }
 
+#if !ONAIR_APPLE // TODO: fix Application heirarchy
 inline std::string SDL::userStoragePath() const {
     auto path = SDL_GetPrefPath(organization().c_str(), name().c_str());
     std::string ret(path);
     SDL_free(path);
     return ret;
 }
+#endif
 
 inline void SDL::setClipboardText(const char* text) {
      SDL_SetClipboardText(text);
