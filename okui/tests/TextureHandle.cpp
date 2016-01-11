@@ -8,11 +8,11 @@ using namespace onair::okui;
 
 TEST(TextureHandle, callback) {
     TextureHandle handle;
-        
+
     bool one = false;
     handle.onLoad([&] { one = true; });
-        
-    handle.invokeLoadCallbacks();    
+
+    handle.invokeLoadCallbacks();
     EXPECT_TRUE(one);
 }
 
@@ -26,16 +26,16 @@ TEST(TextureHandle, multipleHandles) {
     auto second = handle.newHandle();
     bool two = false;
     second.onLoad([&] { two = true; });
-        
-    handle.invokeLoadCallbacks();    
+
+    handle.invokeLoadCallbacks();
     EXPECT_TRUE(one);
     EXPECT_TRUE(two);
-    
+
     EXPECT_EQ(handle.texture(), second.texture());
 }
 
 TEST(TextureHandle, expiredHandle) {
-    std::unique_ptr<TextureHandle> handle{new TextureHandle()};
+    auto handle = std::make_unique<TextureHandle>();
 
     bool one = false;
     handle->onLoad([&] { one = true; });
@@ -43,10 +43,10 @@ TEST(TextureHandle, expiredHandle) {
     auto second = handle->newHandle();
     bool two = false;
     second.onLoad([&] { two = true; });
-        
+
     handle.reset();
-        
-    second.invokeLoadCallbacks();    
+
+    second.invokeLoadCallbacks();
     EXPECT_FALSE(one);
     EXPECT_TRUE(two);
 }

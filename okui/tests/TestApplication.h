@@ -14,7 +14,7 @@ public:
         static std::string ResourceManagerPath();
     };
 
-    TestApplication() : TestApplication(std::unique_ptr<Essentials>(new Essentials())){}
+    TestApplication() : TestApplication(std::make_unique<Essentials>()) {}
 
 private:
     TestApplication(std::unique_ptr<Essentials>&& essentials)

@@ -32,7 +32,7 @@ void Android::initialize() {
 
         auto c = _jniEnv->GetObjectClass(_activity);
         auto m = _jniEnv->GetMethodID(c, "getAssets", "()Landroid/content/res/AssetManager;");
-        _resourceManager.reset(new AssetResourceManager(_jniEnv, _jniEnv->CallObjectMethod(_activity, m)));
+        _resourceManager = std::unique_ptr<AssetResourceManager>(_jniEnv, _jniEnv->CallObjectMethod(_activity, m));
         setResourceManager(_resourceManager.get());
 
         _jniEnv->PopLocalFrame(nullptr);
@@ -52,7 +52,7 @@ void Android::initialize() {
             gJNIContext = _jniContext;
         }
 
-        _javaHelper.reset(new JavaHelper(android::app::Activity{_jniEnv, _activity}));
+        _javaHelper = std::make_unique<JavaHelper>(android::app::Activity{_jniEnv, _activity});
     }
 
     Application::initialize();

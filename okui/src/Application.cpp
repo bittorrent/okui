@@ -61,7 +61,7 @@ std::future<std::shared_ptr<const std::string>> Application::download(const std:
     ++download->inProgress;
 
     for (auto it = _backgroundTasks.begin(); it != _backgroundTasks.end();) {
-        if (!it->valid() || it->wait_for(0_ms) == std::future_status::ready) {
+        if (!it->valid() || it->wait_for(0ms) == std::future_status::ready) {
             it = _backgroundTasks.erase(it);
         } else {
             ++it;

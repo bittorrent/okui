@@ -221,7 +221,7 @@ public:
     T* shader(const char* identifier) {
         auto s = shaderCache()->get(std::string(identifier));
         if (!s) {
-            s = shaderCache()->add(std::unique_ptr<Shader>(new T()), std::string(identifier), ShaderCache::Policy::kKeepForever);
+            s = shaderCache()->add(std::make_unique<T>(), std::string(identifier), ShaderCache::Policy::kKeepForever);
         }
         auto ret = dynamic_cast<T*>(s->get());
         ret->setTransformation(renderTransformation());

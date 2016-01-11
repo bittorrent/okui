@@ -395,7 +395,7 @@ void View::renderAndRenderSubviews(const RenderTarget* target, const Rectangle<i
 
     if (!_renderCacheColorAttachment || _renderCacheColorAttachment->width() != area.width || _renderCacheColorAttachment->height() != area.height) {
         // update the framebuffer
-        _renderCache.reset(new opengl::Framebuffer());
+        _renderCache = std::make_unique<opengl::Framebuffer>();
         _renderCacheColorAttachment = _renderCache->addColorAttachment(area.width, area.height);
         // TODO: stencil attachment
         ONAIR_ASSERT(_renderCache->isComplete());

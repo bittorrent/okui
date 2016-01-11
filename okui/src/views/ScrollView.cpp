@@ -82,11 +82,11 @@ void ScrollView::mouseUp(MouseButton button, double startX, double startY, doubl
         distanceY /= count;
 
         if (std::abs(distanceX) > kDistanceThreshold) {
-            _animX.target(_contentView.bounds().x + distanceX, 1300_ms, interpolation::Cubic::EaseOut);
+            _animX.target(_contentView.bounds().x + distanceX, 1300ms, interpolation::Cubic::EaseOut);
         }
 
         if (std::abs(distanceY) > kDistanceThreshold) {
-            _animY.target(_contentView.bounds().y + distanceY, 1300_ms, interpolation::Cubic::EaseOut);
+            _animY.target(_contentView.bounds().y + distanceY, 1300ms, interpolation::Cubic::EaseOut);
         }
     }
 }

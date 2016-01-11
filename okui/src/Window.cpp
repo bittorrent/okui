@@ -8,7 +8,7 @@ Window::Window(Application* application)
     : _application{application}
     , _deviceRenderScale{application->renderScale()}
 {
-    _contentView.reset(new View());
+    _contentView = std::make_unique<View>();
     _contentView->_window = this;
 }
 
@@ -216,7 +216,7 @@ void Window::ensureTextures() {
             continue;
         }
         if (!download.isComplete) {
-            auto status = download.download.wait_for(0_ms);
+            auto status = download.download.wait_for(0ms);
             if (status == std::future_status::ready) {
                 if (auto data = download.download.get()) {
                     texture->setData(data);

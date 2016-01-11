@@ -161,7 +161,7 @@ inline SDL::~SDL() {
 inline void SDL::initialize() {
     if (!resourceManager()) {
         if (auto path = SDL_GetBasePath()) {
-            _resourceManager.reset(new FileResourceManager(path));
+            _resourceManager = std::make_unique<FileResourceManager>(path);
             ONAIR_LOGF_DEBUG("using resources in %s", path);
             setResourceManager(_resourceManager.get());
             SDL_free(path);
@@ -177,7 +177,7 @@ inline void SDL::run() {
     SDL_Event e;
     bool shouldQuit = false;
 
-    static constexpr auto minFrameInterval = 1000_ms/60;
+    static constexpr auto minFrameInterval = 1000ms/60;
     onair::SteadyTimer timer;
     timer.start();
 
@@ -208,8 +208,8 @@ inline void SDL::run() {
                     case SDL_MULTIGESTURE:            { _handleMultiGestureEvent(e.mgesture); break; }
                     default:                          { break; }
                 }
-            } else if ((minFrameInterval - timer.elapsed()) > 2_ms) {
-                std::this_thread::sleep_for(1_ms);
+            } else if ((minFrameInterval - timer.elapsed()) > 2ms) {
+                std::this_thread::sleep_for(1ms);
             } else {
                 break;
             }
