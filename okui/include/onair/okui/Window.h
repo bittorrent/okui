@@ -68,7 +68,7 @@ public:
     void setMenu(const Menu& menu);
     const Menu& menu() const { return _menu; }
 
-    View* contentView() { return _contentView.get(); }
+    View* contentView() const { return _contentView.get(); }
     double renderScale() const { return _renderScale; }
     void setRenderScale(double scale) { _renderScale = scale; _updateContentLayout(); }
 
@@ -104,6 +104,11 @@ public:
     template <typename T>
     void provide(T* provision, size_t key = 0) {
         contentView()->provide<T>(provision, key);
+    }
+    
+    template <typename T>
+    T* get(size_t key = 0) const {
+        return contentView()->get<T>(key);
     }
 
     void beginDragging(View* view);
