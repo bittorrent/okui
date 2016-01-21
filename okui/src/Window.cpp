@@ -141,6 +141,7 @@ Point<double> Window::windowToView(View* view, double x, double y) {
 }
 
 void Window::beginDragging(View* view) {
+    ONAIR_ASSERT(view != nullptr);
     _draggedViews.insert(view);
 }
 
@@ -170,6 +171,7 @@ void Window::dispatchMouseMovement(double x, double y) {
     y *= scale;
     _contentView->dispatchMouseMovement(x, y);
     for (auto& observer : _draggedViews) {
+        ONAIR_ASSERT(observer != nullptr);
         auto startPoint = windowToView(observer, _lastMouseDown.x, _lastMouseDown.y);
         auto point = windowToView(observer, x, y);
         observer->mouseDrag(startPoint.x, startPoint.y, point.x, point.y);

@@ -362,8 +362,6 @@ bool View::hasRelation(View::Relation relation, const View* view) const {
         case Relation::kSibling:
             return superview() && superview() == view->superview();
     }
-    assert(false);
-    return false;
 }
 
 void View::updateAndUpdateSubviews() {
