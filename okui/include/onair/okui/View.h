@@ -70,12 +70,14 @@ public:
     template <typename... Args>
     void setBounds(Args&&... args) { _setBounds(Rectangle<double>(std::forward<Args>(args)...)); }
 
+    Rectangle<double> windowBounds() const;
+
     /**
     * Sets bounds as a percent of superview bounds (0-1)
     */
     void setBoundsRelative(double x, double y, double width, double height);
 
-    void setInterceptsMouseEvents(bool intercepts, bool childrenIntercept);
+    void setInterceptsInteractions(bool intercepts, bool childrenIntercept);
 
     ShaderCache* shaderCache();
 
@@ -137,12 +139,27 @@ public:
     void bringToFront();
 
     /**
-    * Override this if the view can become focused.
+    * Override this if the view can become focused. By default, the view can only become focus
+    * if a preferred focus is set.
     */
-    virtual bool canBecomeFocus() { return false; }
+    virtual bool canBecomeFocus() { return _preferredFocus; }
 
+    /**
+    * Makes the view the current focus. If the view has a preferred focus, the preferred focus will
+    * become the focus instead.
+    */
     void focus();
+    
+    /**
+    * If the view or any of its children are focused, unfocuses them.
+    */
     void unfocus();
+
+    /**
+    * If this view would receive focus and has a preferred focus, the preferred focus will become focus instead.
+    */
+    View* preferredFocus() const { return _preferredFocus; }
+    void setPreferredFocus(View* view) { _preferredFocus = view; }
 
     /**
     * If the view receives an unhandled tab key down, focus will change to the given
@@ -160,6 +177,9 @@ public:
     */
     View* previousAvailableFocus();
 
+    /**
+    * Returns true if the view or any of its children has focus.
+    */
     bool isFocus() const;
 
     bool isDescendantOf(const View* view) const;
@@ -233,14 +253,20 @@ public:
     /**
     * Converts a point from local coordinates to superview coordinates.
     */
-    Point<double> localToSuperview(double x, double y);
-    Point<double> localToSuperview(const Point<double>& p);
+    Point<double> localToSuperview(double x, double y) const;
+    Point<double> localToSuperview(const Point<double>& p) const;
 
     /**
     * Converts a point from super coordinates to local coordinates.
     */
-    Point<double> superviewToLocal(double x, double y);
-    Point<double> superviewToLocal(const Point<double>& p);
+    Point<double> superviewToLocal(double x, double y) const;
+    Point<double> superviewToLocal(const Point<double>& p) const;
+
+    /**
+    * Converts a point from local coordinates to window coordinates.
+    */
+    Point<double> localToWindow(double x, double y) const;
+    Point<double> localToWindow(const Point<double>& p) const;
 
     enum class Relation {
         kApplication,
@@ -383,8 +409,20 @@ public:
     virtual void mouseEnter() {}
     virtual void mouseExit() {}
 
+    /**
+    * Called whenever the view or one of its subviews gains focus.
+    */
     virtual void focusGained() {}
+
+    /**
+    * Called whenever the view and its subviews lose focus.
+    */
     virtual void focusLost() {}
+
+    /**
+    * Called whenever the view or any subview gains or loses focus.
+    */
+    virtual void focusChanged() {}
 
     /**
     * Called before the view and all of its ancestors become visible in the window.
@@ -444,8 +482,8 @@ private:
     bool              _clipsToBounds = true;
 
     Rectangle<double> _bounds;
-    bool              _interceptsMouseEvents = true;
-    bool              _childrenInterceptMouseEvents = true;
+    bool              _interceptsInteractions = true;
+    bool              _childrenInterceptInteractions = true;
 
     View*             _superview = nullptr;
     std::list<View*>  _subviews; // ordered back to front
@@ -455,6 +493,7 @@ private:
 
     View*             _nextFocus = nullptr;
     View*             _previousFocus = nullptr;
+    View*             _preferredFocus = nullptr;
 
     Point<double>     _scale{1.0, 1.0};
 
@@ -485,6 +524,8 @@ private:
     void _dispatchVisibilityChange(bool visible);
     void _dispatchWindowChange(Window* window);
     void _mouseExit();
+
+    void _updateFocusableRegions(std::vector<std::tuple<View*, Rectangle<double>>>& regions);
 
     bool _requiresTextureRendering();
     void _renderAndRenderSubviews(const RenderTarget* target, const Rectangle<int>& area, boost::optional<Rectangle<int>> clipBounds = boost::none);

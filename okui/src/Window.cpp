@@ -122,14 +122,100 @@ std::shared_ptr<BitmapFont> Window::loadBitmapFontResource(const char* textureNa
 }
 
 void Window::setFocus(View* focus) {
+    if (focus && focus->preferredFocus()) {
+        return focus->preferredFocus()->focus();
+    }
     if (_focus == focus || (focus && !focus->canBecomeFocus())) { return; }
-    if (_focus) {
-        _focus->focusLost();
-    }
+    auto previousFocus = _focus;
     _focus = focus;
-    if (_focus) {
-        _focus->focusGained();
+    if (previousFocus) {
+        auto view = previousFocus;
+        while (view) {
+            if (!view->isDescendantOf(focus)) {
+                view->focusLost();
+            }
+            view->focusChanged();
+            view = view->superview();
+        }
     }
+    if (_focus) {
+        auto view = _focus;
+        while (view) {
+            if (!previousFocus || !previousFocus->isDescendantOf(view)) {
+                view->focusGained();
+                view->focusChanged();
+            }
+            view = view->superview();
+        }
+    }
+}
+
+bool Window::moveFocus(Direction direction) {
+    if (!focus()) {
+        if (initialFocus() && initialFocus()->isVisible() && initialFocus()->canBecomeFocus()) {
+            initialFocus()->focus();
+            return true;
+        }
+        return false;
+    }
+    
+    std::vector<std::tuple<View*, Rectangle<double>>> focusableRegions;
+    contentView()->_updateFocusableRegions(focusableRegions);
+    auto previousFocus = focus();
+    auto previousFocusWindowBounds = previousFocus->windowBounds();
+    View* next = nullptr;
+    double nextDistance = 0.0;
+    double nextOverlap = 0.0;
+    for (auto& region : focusableRegions) {
+        auto r = std::get<Rectangle<double>>(region);
+        auto xOverlap = std::max<double>(previousFocusWindowBounds.width - std::max<double>(previousFocusWindowBounds.maxX() - r.maxX(), 0) - std::max<double>(r.minX() - previousFocusWindowBounds.minX(), 0), 0);
+        auto yOverlap = std::max<double>(previousFocusWindowBounds.height - std::max<double>(previousFocusWindowBounds.maxY() - r.maxY(), 0) - std::max<double>(r.minY() - previousFocusWindowBounds.minY(), 0), 0);
+        double overlap = 0.0;
+        switch (direction) {
+            case Direction::kRight:
+                overlap = yOverlap;
+                if (!overlap || r.maxX() <= previousFocusWindowBounds.maxX()) { continue; }
+                break;
+            case Direction::kLeft:
+                overlap = yOverlap;
+                if (!overlap || r.x >= previousFocusWindowBounds.x) { continue; }
+                break;
+            case Direction::kUp:
+                overlap = xOverlap;
+                if (!overlap || r.y >= previousFocusWindowBounds.y) { continue; }
+                break;
+            case Direction::kDown:
+                overlap = xOverlap;
+                if (!overlap || r.maxY() <= previousFocusWindowBounds.maxY()) { continue; }
+                break;
+            case Direction::kUpLeft:
+                if (r.x >= previousFocusWindowBounds.x || r.y >= previousFocusWindowBounds.y) { continue; }
+                break;
+            case Direction::kUpRight:
+                if (r.maxX() <= previousFocusWindowBounds.maxX() || r.y >= previousFocusWindowBounds.y) { continue; }
+                break;
+            case Direction::kDownLeft:
+                if (r.x >= previousFocusWindowBounds.x || r.maxY() <= previousFocusWindowBounds.maxY()) { continue; }
+                break;
+            case Direction::kDownRight:
+                if (r.maxX() <= previousFocusWindowBounds.maxX() || r.maxY() <= previousFocusWindowBounds.maxY()) { continue; }
+                break;
+            default:
+                continue;
+        }
+        auto distance = r.distance(previousFocusWindowBounds);
+        if (!next || distance < nextDistance || (distance == nextDistance && overlap > nextOverlap)) {
+            next = std::get<View*>(region);
+            nextDistance = distance;
+            nextOverlap = overlap;
+        }
+    }
+    if (next) {
+        next->focus();
+        return true;
+    }
+    
+    return false;
 }
 
 Point<double> Window::windowToView(View* view, double x, double y) {
@@ -190,20 +276,29 @@ Responder* Window::nextResponder() {
 }
 
 void Window::keyDown(KeyCode key, KeyModifiers mod, bool repeat) {
-    if (key == KeyCode::kTab && _initialFocus && !_focus) {
+    if (key == KeyCode::kTab && initialFocus() && !focus()) {
         if (mod & KeyModifier::kShift) {
-            if (auto view = _initialFocus->previousAvailableFocus()) {
+            if (auto view = initialFocus()->previousAvailableFocus()) {
                 view->focus();
                 return;
             }
         }
-        if (_initialFocus->isVisible() && _initialFocus->canBecomeFocus()) {
-            _initialFocus->focus();
+        if (initialFocus()->isVisible() && initialFocus()->canBecomeFocus()) {
+            initialFocus()->focus();
             return;
-        } else if (auto view = _initialFocus->nextAvailableFocus()) {
+        } else if (auto view = initialFocus()->nextAvailableFocus()) {
             view->focus();
             return;
         }
+    }
+    
+    if (false
+        || (key == KeyCode::kRight && moveFocus(Direction::kRight))
+        || (key == KeyCode::kLeft && moveFocus(Direction::kLeft))
+        || (key == KeyCode::kUp && moveFocus(Direction::kUp))
+        || (key == KeyCode::kDown && moveFocus(Direction::kDown))
+    ) {
+        return;
     }
 
     Responder::keyDown(key, mod, repeat);

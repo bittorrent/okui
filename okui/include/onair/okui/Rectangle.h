@@ -45,8 +45,17 @@ struct Rectangle {
     */
     double distance(T x, T y) const;
 
+    /**
+    * Returns the distance between the two rectangles.
+    *
+    * The returned distance is zero if the rectangles intersect.
+    */
+    double distance(const Rectangle& other) const;
+
     bool intersects(const Rectangle& other) const;
     Rectangle intersection(const Rectangle& other) const;
+
+    std::vector<Rectangle> operator-(const Rectangle& other) const;
 
     /**
     * Returns the area that another rectangle of the given aspect ratio (width / height) would
@@ -122,8 +131,23 @@ double Rectangle<T>::distance(T x, T y) const {
 }
 
 template <typename T>
+double Rectangle<T>::distance(const Rectangle& other) const {
+    if (intersects(other)) { return 0.0; }
+
+    auto minXDistance = other.minX() < minX() ? (minX() - other.minX()) : other.minX() >= maxX() ? (other.minX() - maxX()) : 0;
+    auto maxXDistance = other.maxX() < minX() ? (minX() - other.maxX()) : other.maxX() >= maxX() ? (other.maxX() - maxX()) : 0;
+    auto xDistance = std::min(minXDistance, maxXDistance);
+
+    auto minYDistance = other.minY() < minY() ? (minY() - other.minY()) : other.minY() >= maxY() ? (other.minY() - maxY()) : 0;
+    auto maxYDistance = other.maxY() < minY() ? (minY() - other.maxY()) : other.maxY() >= maxY() ? (other.maxY() - maxY()) : 0;
+    auto yDistance = std::min(minYDistance, maxYDistance);
+
+    return sqrt(xDistance * xDistance + yDistance * yDistance);
+}
+
+template <typename T>
 bool Rectangle<T>::intersects(const Rectangle& other) const {
-    return minX() < other.maxX() && maxX() > other.minX() && minY() < maxY() && maxY() > other.minY();
+    return minX() < other.maxX() && maxX() > other.minX() && minY() < other.maxY() && maxY() > other.minY();
 }
 
 template <typename T>
@@ -134,6 +158,34 @@ Rectangle<T> Rectangle<T>::intersection(const Rectangle& other) const {
     if (max.x <= min.x || max.y <= min.y) { return Rectangle<T>(); }
 
     return Rectangle<T>{min.x, min.y, max.x - min.x, max.y - min.y};
+}
+
+template <typename T>
+std::vector<Rectangle<T>> Rectangle<T>::operator-(const Rectangle& other) const {
+    std::vector<Rectangle<T>> ret;
+
+    if (!intersects(other)) {
+        ret.emplace_back(*this);
+        return ret;
+    }
+    
+    if (other.minX() > minX() && other.minX() < maxX()) {
+        ret.emplace_back(minX(), y, other.minX() - minX(), height);
+    }
+
+    if (other.maxX() > minX() && other.maxX() < maxX()) {
+        ret.emplace_back(other.maxX(), y, maxX() - other.maxX(), height);
+    }
+
+    if (other.minY() > minY() && other.minY() < maxY()) {
+        ret.emplace_back(x, minY(), width, other.minY() - minY());
+    }
+
+    if (other.maxY() > minY() && other.maxY() < maxY()) {
+        ret.emplace_back(x, other.maxY(), width, maxY() - other.maxY());
+    }
+    
+    return ret;
 }
 
 template <typename T>

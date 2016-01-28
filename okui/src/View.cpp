@@ -127,9 +127,9 @@ bool View::isVisibleInOpenWindow() const {
     return isVisible() && ancestorsAreVisible() && window() && window()->isOpen();
 }
 
-void View::setInterceptsMouseEvents(bool intercepts, bool childrenIntercept) {
-    _interceptsMouseEvents = intercepts;
-    _childrenInterceptMouseEvents = childrenIntercept;
+void View::setInterceptsInteractions(bool intercepts, bool childrenIntercept) {
+    _interceptsInteractions = intercepts;
+    _childrenInterceptInteractions = childrenIntercept;
 }
 
 ShaderCache* View::shaderCache() {
@@ -171,7 +171,7 @@ void View::focus() {
 }
 
 void View::unfocus() {
-    if (window() && isFocus()) {
+    if (isFocus()) {
         window()->setFocus(nullptr);
     }
 }
@@ -216,7 +216,7 @@ View* View::previousAvailableFocus() {
 }
 
 bool View::isFocus() const {
-    return window() && window()->focus() == this;
+    return window() && window()->focus() && (window()->focus() == this || window()->focus()->isDescendantOf(this));
 }
 
 bool View::isDescendantOf(const View* view) const {
@@ -276,6 +276,12 @@ Application* View::application() const {
     return window() ? window()->application() : nullptr;
 }
 
+Rectangle<double> View::windowBounds() const {
+    auto min = localToWindow(0, 0);
+    auto max = localToWindow(bounds().width, bounds().height);
+    return Rectangle<double>(min, max - min);
+}
+
 void View::setBoundsRelative(double x, double y, double width, double height) {
     if (_superview) {
         auto& superBounds = _superview->bounds();
@@ -283,20 +289,34 @@ void View::setBoundsRelative(double x, double y, double width, double height) {
     }
 }
 
-Point<double> View::localToSuperview(double x, double y) {
+Point<double> View::localToSuperview(double x, double y) const {
     return Point<double>(bounds().x + x, bounds().y + y);
 }
 
-Point<double> View::localToSuperview(const Point<double>& p) {
+Point<double> View::localToSuperview(const Point<double>& p) const {
     return localToSuperview(p.x, p.y);
 }
 
-Point<double> View::superviewToLocal(double x, double y) {
+Point<double> View::superviewToLocal(double x, double y) const {
     return Point<double>(x - bounds().x, y - bounds().y);
 }
 
-Point<double> View::superviewToLocal(const Point<double>& p) {
+Point<double> View::superviewToLocal(const Point<double>& p) const {
     return superviewToLocal(p.x, p.y);
+}
+
+Point<double> View::localToWindow(double x, double y) const {
+    Point<double> ret(x, y);
+    auto view = this;
+    while (view) {
+        ret = view->localToSuperview(ret);
+        view = view->superview();
+    }
+    return ret;
+}
+
+Point<double> View::localToWindow(const Point<double>& p) const {
+    return localToWindow(p.x, p.y);
 }
 
 bool View::hitTest(double x, double y) {
@@ -305,7 +325,7 @@ bool View::hitTest(double x, double y) {
 }
 
 void View::mouseDown(MouseButton button, double x, double y) {
-    if (superview() && superview()->_interceptsMouseEvents) {
+    if (superview() && superview()->_interceptsInteractions) {
         auto point = localToSuperview(x, y);
         superview()->mouseDown(button, point.x, point.y);
         window()->beginDragging(superview());
@@ -313,7 +333,7 @@ void View::mouseDown(MouseButton button, double x, double y) {
 }
 
 void View::mouseUp(MouseButton button, double startX, double startY, double x, double y) {
-    if (superview() && superview()->_interceptsMouseEvents) {
+    if (superview() && superview()->_interceptsInteractions) {
         auto startPoint = localToSuperview(startX, startY);
         auto point = localToSuperview(x, y);
         superview()->mouseUp(button, startPoint.x, startPoint.y, point.x, point.y);
@@ -321,7 +341,7 @@ void View::mouseUp(MouseButton button, double startX, double startY, double x, d
 }
 
 void View::mouseWheel(double xPos, double yPos, int xWheel, int yWheel) {
-    if (superview() && superview()->_interceptsMouseEvents) {
+    if (superview() && superview()->_interceptsInteractions) {
         auto point = localToSuperview(xPos, yPos);
         superview()->mouseWheel(point.x, point.y, xWheel, yWheel);
     }
@@ -441,7 +461,7 @@ void View::postRender(std::shared_ptr<Texture> texture, const AffineTransformati
 bool View::dispatchMouseDown(MouseButton button, double x, double y) {
     if (!isVisible()) { return false; }
 
-    if (_childrenInterceptMouseEvents) {
+    if (_childrenInterceptInteractions) {
         for (auto it = _subviews.rbegin(); it != _subviews.rend(); ++it) {
             auto point = (*it)->superviewToLocal(x, y);
             if ((!(*it)->clipsToBounds() || (*it)->hitTest(point.x, point.y)) && (*it)->dispatchMouseDown(button, point.x, point.y)) {
@@ -449,7 +469,7 @@ bool View::dispatchMouseDown(MouseButton button, double x, double y) {
             }
         }
     }
-    if (_interceptsMouseEvents && hitTest(x, y)) {
+    if (_interceptsInteractions && hitTest(x, y)) {
         if (!isDescendantOf(window()->focus())) {
             window()->setFocus(nullptr);
         }
@@ -463,7 +483,7 @@ bool View::dispatchMouseDown(MouseButton button, double x, double y) {
 bool View::dispatchMouseUp(MouseButton button, double startX, double startY, double x, double y) {
     if (!isVisible()) { return false; }
 
-    if (_childrenInterceptMouseEvents) {
+    if (_childrenInterceptInteractions) {
         for (auto it = _subviews.rbegin(); it != _subviews.rend(); ++it) {
             auto startPoint = (*it)->superviewToLocal(startX, startY);
             auto point = (*it)->superviewToLocal(x, y);
@@ -472,7 +492,7 @@ bool View::dispatchMouseUp(MouseButton button, double startX, double startY, dou
             }
         }
     }
-    if (_interceptsMouseEvents && hitTest(x, y)) {
+    if (_interceptsInteractions && hitTest(x, y)) {
         mouseUp(button, startX, startY, x, y);
         return true;
     }
@@ -484,7 +504,7 @@ void View::dispatchMouseMovement(double x, double y) {
 
     View* subview = nullptr;
 
-    if (_childrenInterceptMouseEvents) {
+    if (_childrenInterceptInteractions) {
         for (auto it = _subviews.rbegin(); it != _subviews.rend(); ++it) {
             auto point = (*it)->superviewToLocal(x, y);
             if ((*it)->hitTest(point.x, point.y)) {
@@ -508,7 +528,7 @@ void View::dispatchMouseMovement(double x, double y) {
         }
     }
 
-    if (_interceptsMouseEvents && hitTest(x, y)) {
+    if (_interceptsInteractions && hitTest(x, y)) {
         mouseMovement(x, y);
     }
 }
@@ -516,7 +536,7 @@ void View::dispatchMouseMovement(double x, double y) {
 bool View::dispatchMouseWheel(double xPos, double yPos, int xWheel, int yWheel) {
     if (!isVisible()) { return false; }
 
-    if (_childrenInterceptMouseEvents) {
+    if (_childrenInterceptInteractions) {
         for (auto it = _subviews.rbegin(); it != _subviews.rend(); ++it) {
             auto point = (*it)->superviewToLocal(xPos, yPos);
             if ((!(*it)->clipsToBounds() || (*it)->hitTest(point.x, point.y)) &&
@@ -526,7 +546,7 @@ bool View::dispatchMouseWheel(double xPos, double yPos, int xWheel, int yWheel) 
         }
     }
 
-    if (_interceptsMouseEvents && hitTest(xPos, yPos)) {
+    if (_interceptsInteractions && hitTest(xPos, yPos)) {
         mouseWheel(xPos, yPos, xWheel, yWheel);
         return true;
     }
@@ -608,6 +628,35 @@ void View::_mouseExit() {
         _subviewWithMouse = nullptr;
     }
     mouseExit();
+}
+
+void View::_updateFocusableRegions(std::vector<std::tuple<View*, Rectangle<double>>>& regions) {
+    if (!isVisible() || !window()) { return; }
+
+    if (_interceptsInteractions) {
+        auto windowBounds = this->windowBounds();
+        std::vector<std::tuple<View*, Rectangle<double>>> prev;
+        prev.swap(regions);
+        for (auto& region : prev) {
+            auto diff = std::get<Rectangle<double>>(region) - windowBounds;
+            for (auto& r : diff) {
+                regions.emplace_back(std::get<View*>(region), r);
+            }
+        }
+        auto focus = window()->focus();
+        if (canBecomeFocus() && (!focus || (focus != this && !isDescendantOf(focus) && !focus->isDescendantOf(this)))) {
+            regions.emplace_back(this, windowBounds);
+            if (clipsToBounds()) {
+                return;
+            }
+        }
+    }
+
+    if (_childrenInterceptInteractions) {
+        for (auto subview : _subviews) {
+            subview->_updateFocusableRegions(regions);
+        }
+    }
 }
 
 bool View::_requiresTextureRendering() {

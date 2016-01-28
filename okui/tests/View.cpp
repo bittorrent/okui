@@ -7,6 +7,33 @@
 using namespace onair;
 using namespace onair::okui;
 
+TEST(View, localToSuperview) {
+    View a, b;
+    b.setBounds(10, 20, 10, 10);
+    a.addSubview(&b);
+    auto p = b.localToSuperview(0, 0);
+    EXPECT_EQ(p.x, 10);
+    EXPECT_EQ(p.y, 20);
+}
+
+#if ONAIR_OKUI_HAS_NATIVE_APPLICATION
+TEST(View, localToWindow) {
+    TestApplication application;
+    Window window(&application);
+
+    View a, b, c;
+    b.setBounds(10, 20, 10, 10);
+    a.addSubview(&b);
+    c.setBounds(15, 27, 10, 10);
+    b.addSubview(&c);
+    window.contentView()->addSubview(&a);
+
+    auto p = c.localToWindow(10, 10);
+    EXPECT_EQ(p.x, 35);
+    EXPECT_EQ(p.y, 57);
+}
+#endif
+
 TEST(View, ancestorsAreVisible) {
     View a;
     EXPECT_TRUE(a.ancestorsAreVisible());
@@ -79,6 +106,7 @@ TEST(View, focus) {
     b.focus();
     EXPECT_FALSE(a.isFocus());
     EXPECT_TRUE(b.isFocus());
+    EXPECT_TRUE(window.contentView()->isFocus());
 
     a.focus();
     EXPECT_FALSE(a.isFocus());
@@ -90,7 +118,7 @@ TEST(View, focus) {
 
     b.unfocus();
     EXPECT_FALSE(a.isFocus());
-    EXPECT_FALSE(b.isFocus());
+    EXPECT_FALSE(b.isFocus());    
 }
 #endif // ONAIR_OKUI_HAS_NATIVE_APPLICATION
 

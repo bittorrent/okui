@@ -1,5 +1,7 @@
 #pragma once
 #include "onair/okui/config.h"
+
+#include "onair/okui/Direction.h"
 #include "onair/okui/Menu.h"
 #include "onair/okui/Point.h"
 #include "onair/okui/Responder.h"
@@ -83,12 +85,15 @@ public:
 
     View* focus() const { return _focus; }
     void setFocus(View* focus);
+    
+    bool moveFocus(Direction direction);
 
     Responder* firstResponder() { return _focus ? dynamic_cast<Responder*>(_focus) : dynamic_cast<Responder*>(this); }
 
     /**
-    * If tab is hit when there's no focus, the specified view will be focused.
+    * If there's no focus and tab or a direction input is received, the initial focus will be focused.
     */
+    View* initialFocus() const { return _initialFocus; }
     void setInitialFocus(View* focus) { _initialFocus = focus; }
 
     /**

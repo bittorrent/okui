@@ -45,7 +45,7 @@ TEST(Rectangle, contains) {
     EXPECT_FALSE(r.contains(2, 6));
 }
 
-TEST(Rectangle, distance) {
+TEST(Rectangle, pointDistance) {
     Rectangle<int> r(1, 2, 3, 4);
 
     EXPECT_NEAR(r.distance(0, 0), sqrt(5.0), 0.01);
@@ -54,6 +54,24 @@ TEST(Rectangle, distance) {
     EXPECT_NEAR(r.distance(2, 2), 0.0, 0.01);
 
     EXPECT_NEAR(r.distance(2, 4), -1.0, 0.01);
+}
+
+TEST(Rectangle, rectangleDistance) {
+    EXPECT_EQ(Rectangle<int>(10, 10, 100, 200).distance(Rectangle<int>(10, 10 + 275, 100, 100)), 75);
+    EXPECT_EQ(Rectangle<int>(10, 10, 100, 200).distance(Rectangle<int>(10 + 300, 10, 100, 100)), 200);
+    EXPECT_EQ(Rectangle<int>(10, 10, 100, 200).distance(Rectangle<int>(10 + 300, 10 + 275, 100, 100)), sqrt(75*75 + 200*200));
+}
+
+TEST(Rectangle, difference) {
+    auto a = Rectangle<int>(10, 10, 100, 200);
+    auto b = Rectangle<int>(0, 40, 100, 100);
+    auto diff = a - b;
+    bool contained = false;
+    for (auto& r : diff) {
+        EXPECT_FALSE(r.contains(10, 50));
+        contained |= r.contains(10, 30);
+    }
+    EXPECT_TRUE(contained);
 }
 
 TEST(Rectangle, intersection) {
