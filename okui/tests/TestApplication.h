@@ -2,11 +2,10 @@
 
 #include "onair/okui/Application.h"
 #include "onair/okui/FileResourceManager.h"
-#include "onair/okui/applications/SDL.h"
 
 #if ONAIR_OKUI_HAS_NATIVE_APPLICATION
 
-class TestApplication : public onair::okui::applications::SDL {
+class TestApplication : public onair::okui::Application {
 public:
     struct Essentials {
         onair::okui::FileResourceManager resourceManager{ResourceManagerPath().c_str()};
@@ -18,7 +17,7 @@ public:
 
 private:
     TestApplication(std::unique_ptr<Essentials>&& essentials)
-        : SDL("Test Application", "BitTorrent Inc.", &essentials->resourceManager)
+        : Application("Test Application", "BitTorrent Inc.", &essentials->resourceManager)
         , _essentials(std::move(essentials))
     {}
 

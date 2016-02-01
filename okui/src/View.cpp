@@ -54,6 +54,7 @@ void View::addSubview(View* view) {
     if (_window != view->window()) {
         if (view->window()) {
             view->window()->endDragging(view);
+            view->window()->unsubscribeFromUpdates(view);
         }
         view->_dispatchWindowChange(_window);
     }
@@ -91,6 +92,7 @@ void View::removeSubview(View* view) {
 
     if (view->window() != nullptr) {
         view->window()->endDragging(view);
+        view->window()->unsubscribeFromUpdates(view);
         view->_dispatchWindowChange(nullptr);
     }
 
@@ -134,6 +136,12 @@ void View::setInterceptsInteractions(bool intercepts, bool childrenIntercept) {
 
 ShaderCache* View::shaderCache() {
     return window()->shaderCache();
+}
+
+void View::setScale(double scaleX, double scaleY) {
+    _scale.x = scaleX;
+    _scale.y = scaleY;
+    invalidateRenderCache();
 }
 
 void View::sendToBack() {
@@ -366,6 +374,15 @@ void View::keyDown(KeyCode key, KeyModifiers mod, bool repeat) {
         }
     }
 
+    if (window() && (false
+        || (key == KeyCode::kRight && window()->moveFocus(Direction::kRight))
+        || (key == KeyCode::kLeft && window()->moveFocus(Direction::kLeft))
+        || (key == KeyCode::kUp && window()->moveFocus(Direction::kUp))
+        || (key == KeyCode::kDown && window()->moveFocus(Direction::kDown))
+    )) {
+        return;
+    }
+
     Responder::keyDown(key, mod, repeat);
 }
 
@@ -384,16 +401,20 @@ bool View::hasRelation(View::Relation relation, const View* view) const {
     }
 }
 
-void View::updateAndUpdateSubviews() {
-    if (!isVisible()) {
+void View::dispatchUpdate(std::chrono::high_resolution_clock::duration elapsed) {
+    if (!_shouldSubscribeToUpdates()) {
+        window()->unsubscribeFromUpdates(this);
         return;
     }
 
-    update();
-
-    for (auto& subview : _subviews) {
-        subview->updateAndUpdateSubviews();
+    if (platform::kIsTVOS && canBecomeFocus()) {
+        View* newFocus = nullptr;
+        _touchpadFocus.update(elapsed, this, &newFocus);
+        if (newFocus) {
+            newFocus->_checkUpdateSubscription();
+        }
     }
+    update();
 }
 
 void View::renderAndRenderSubviews(const RenderTarget* target, const Rectangle<int>& area, boost::optional<Rectangle<int>> clipBounds) {
@@ -448,6 +469,11 @@ void View::renderAndRenderSubviews(const RenderTarget* target, const Rectangle<i
     postRender(_renderCacheTexture, transformation);
 
     glDisable(GL_SCISSOR_TEST);
+}
+
+void View::setNeedsUpdates(bool needsUpdates) {
+    _needsUpdates = needsUpdates;
+    _checkUpdateSubscription();
 }
 
 void View::postRender(std::shared_ptr<Texture> texture, const AffineTransformation& transformation) {
@@ -554,6 +580,24 @@ bool View::dispatchMouseWheel(double xPos, double yPos, int xWheel, int yWheel) 
     return false;
 }
 
+void View::touchUp(size_t finger, Point<double> position, double pressure) {
+    if (!platform::kIsTVOS) { return; }
+    _touchpadFocus.touchUp(position);
+    _checkUpdateSubscription();
+}
+
+void View::touchDown(size_t finger, Point<double> position, double pressure) {
+    if (!platform::kIsTVOS) { return; }
+    _touchpadFocus.touchDown(position);
+    _checkUpdateSubscription();
+}
+
+void View::touchMovement(size_t finger, Point<double> position, Point<double> distance, double pressure) {
+    if (!platform::kIsTVOS) { return; }
+    _touchpadFocus.touchMovement(position, distance);
+    _checkUpdateSubscription();
+}
+
 void View::_setBounds(const Rectangle<double>& bounds) {
     auto willMove = (_bounds.x != bounds.x || _bounds.y != bounds.y);
     auto willResize = (_bounds.width != bounds.width || _bounds.height != bounds.height);
@@ -600,6 +644,8 @@ void View::_dispatchVisibilityChange(bool visible) {
             subview->_dispatchVisibilityChange(visible);
         }
     }
+    
+    _checkUpdateSubscription();
 }
 
 void View::_dispatchWindowChange(Window* window) {
@@ -620,6 +666,8 @@ void View::_dispatchWindowChange(Window* window) {
     for (auto& subview : _subviews) {
         subview->_dispatchWindowChange(window);
     }
+
+    _checkUpdateSubscription();
 }
 
 void View::_mouseExit() {
@@ -730,6 +778,19 @@ void* View::_get(size_t hash) const {
 
 AbstractTaskScheduler* View::_taskScheduler() const {
     return application()->taskScheduler();
+}
+
+void View::_checkUpdateSubscription() {
+    if (!window()) { return; }
+    if (_shouldSubscribeToUpdates()) {
+        window()->subscribeToUpdates(this);
+    } else {
+        window()->unsubscribeFromUpdates(this);
+    }
+}
+
+bool View::_shouldSubscribeToUpdates() {
+    return (_needsUpdates || _touchpadFocus.needsUpdates()) && isVisibleInOpenWindow();
 }
 
 }}

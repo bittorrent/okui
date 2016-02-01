@@ -2,8 +2,10 @@
 
 #include "onair/okui/config.h"
 #include "onair/okui/Command.h"
+#include "onair/okui/Controller.h"
 #include "onair/okui/KeyCode.h"
 #include "onair/okui/MouseButton.h"
+#include "onair/okui/Point.h"
 
 namespace onair {
 namespace okui {
@@ -31,6 +33,18 @@ public:
     */
     virtual Responder* nextResponder() { return nullptr; }
 
+    virtual void analogInput(const Controller& controller, size_t axis, double value) {
+        if (auto next = nextResponder()) { next->analogInput(controller, axis, value); }
+    }
+
+    virtual void buttonDown(const Controller& controller, size_t button) {
+        if (auto next = nextResponder()) { next->buttonDown(controller, button); }
+    }
+
+    virtual void buttonUp(const Controller& controller, size_t button) {
+        if (auto next = nextResponder()) { next->buttonUp(controller, button); }
+    }
+
     virtual void keyDown(KeyCode key, KeyModifiers modifiers, bool repeat) {
         if (auto next = nextResponder()) { next->keyDown(key, modifiers, repeat); }
     }
@@ -38,7 +52,19 @@ public:
     virtual void keyUp(KeyCode key, KeyModifiers modifiers, bool repeat) {
         if (auto next = nextResponder()) { next->keyUp(key, modifiers, repeat); }
     }
-    
+
+    virtual void touchDown(size_t finger, Point<double> position, double pressure) {
+        if (auto next = nextResponder()) { next->touchDown(finger, position, pressure); }
+    }
+
+    virtual void touchUp(size_t finger, Point<double> position, double pressure) {
+        if (auto next = nextResponder()) { next->touchUp(finger, position, pressure); }
+    }
+
+    virtual void touchMovement(size_t finger, Point<double> position, Point<double> distance, double pressure) {
+        if (auto next = nextResponder()) { next->touchMovement(finger, position, distance, pressure); }
+    }
+
     virtual void textInput(const std::string& text) {
         if (auto next = nextResponder()) { next->textInput(text); }
     }

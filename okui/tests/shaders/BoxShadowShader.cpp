@@ -66,7 +66,6 @@ TEST(BoxShadowShader, inverted) {
             } else if (rect.distance(x,y) >= -1) {
                 // ignore
             } else if (rect.distance(x,y) >= -4) {
-                std::cout << rect.distance(x,y) << '\n';
                 EXPECT_NE(pixel, Color(1, 1, 1, 1));
                 EXPECT_NE(pixel, Color(0, 0, 0, 1));
             } else if (rect.distance(x,y) <= -6) {

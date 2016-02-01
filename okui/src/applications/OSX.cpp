@@ -12,14 +12,14 @@
 #import <AppKit/NSOpenPanel.h>
 
 @interface MenuTarget : NSObject {
-    onair::okui::Application* _application;
+    onair::okui::ApplicationBase* _application;
     std::vector<const onair::okui::MenuItem*> _menuItems;
 }
 @end
 
 @implementation MenuTarget
 
-- (id)initWithApplication:(onair::okui::Application*)application {
+- (id)initWithApplication:(onair::okui::ApplicationBase*)application {
     if (self = [super init]) {
         _application = application;
     }

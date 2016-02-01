@@ -12,15 +12,9 @@ namespace onair {
 namespace okui {
 namespace applications {
 
-void Apple::initialize() {
-    if (!resourceManager()) {
-        	NSString* path = [[NSBundle mainBundle] resourcePath];
-        _resourceManager.reset(new FileResourceManager([path UTF8String]));
-        ONAIR_LOGF_DEBUG("using resources in %s", [path UTF8String]);
-        setResourceManager(_resourceManager.get());
-    }
-
-    Application::initialize();
+std::unique_ptr<ResourceManager> Apple::defaultResourceManager() const {
+    	NSString* path = [[NSBundle mainBundle] resourcePath];
+    return std::make_unique<FileResourceManager>([path UTF8String]);
 }
 
 std::string Apple::userStoragePath() const {

@@ -166,26 +166,32 @@ bool Window::moveFocus(Direction direction) {
     View* next = nullptr;
     double nextDistance = 0.0;
     double nextOverlap = 0.0;
+    double nextPerpendicular = 0.0;
     for (auto& region : focusableRegions) {
         auto r = std::get<Rectangle<double>>(region);
         auto xOverlap = std::max<double>(previousFocusWindowBounds.width - std::max<double>(previousFocusWindowBounds.maxX() - r.maxX(), 0) - std::max<double>(r.minX() - previousFocusWindowBounds.minX(), 0), 0);
         auto yOverlap = std::max<double>(previousFocusWindowBounds.height - std::max<double>(previousFocusWindowBounds.maxY() - r.maxY(), 0) - std::max<double>(r.minY() - previousFocusWindowBounds.minY(), 0), 0);
         double overlap = 0.0;
+        double perpendicular = 0.0;
         switch (direction) {
             case Direction::kRight:
                 overlap = yOverlap;
+                perpendicular = r.minY();
                 if (!overlap || r.maxX() <= previousFocusWindowBounds.maxX()) { continue; }
                 break;
             case Direction::kLeft:
                 overlap = yOverlap;
+                perpendicular = r.minY();
                 if (!overlap || r.x >= previousFocusWindowBounds.x) { continue; }
                 break;
             case Direction::kUp:
                 overlap = xOverlap;
+                perpendicular = r.minX();
                 if (!overlap || r.y >= previousFocusWindowBounds.y) { continue; }
                 break;
             case Direction::kDown:
                 overlap = xOverlap;
+                perpendicular = r.minX();
                 if (!overlap || r.maxY() <= previousFocusWindowBounds.maxY()) { continue; }
                 break;
             case Direction::kUpLeft:
@@ -204,10 +210,11 @@ bool Window::moveFocus(Direction direction) {
                 continue;
         }
         auto distance = r.distance(previousFocusWindowBounds);
-        if (!next || distance < nextDistance || (distance == nextDistance && overlap > nextOverlap)) {
+        if (!next || distance < nextDistance || (distance == nextDistance && (overlap > nextOverlap || (overlap == nextOverlap && perpendicular < nextPerpendicular)))) {
             next = std::get<View*>(region);
             nextDistance = distance;
             nextOverlap = overlap;
+            nextPerpendicular = perpendicular;
         }
     }
     if (next) {
@@ -233,6 +240,18 @@ void Window::beginDragging(View* view) {
 
 void Window::endDragging(View* view) {
     _draggedViews.erase(view);
+}
+
+void Window::subscribeToUpdates(View* view) {
+    ONAIR_ASSERT(view != nullptr);
+    _viewsToSubscribeToUpdates.insert(view);
+    _viewsToUnsubscribeFromUpdates.erase(view);
+}
+
+void Window::unsubscribeFromUpdates(View* view) {
+    ONAIR_ASSERT(view != nullptr);
+    _viewsToSubscribeToUpdates.erase(view);
+    _viewsToUnsubscribeFromUpdates.insert(view);
 }
 
 void Window::dispatchMouseDown(MouseButton button, double x, double y) {
@@ -291,15 +310,6 @@ void Window::keyDown(KeyCode key, KeyModifiers mod, bool repeat) {
             return;
         }
     }
-    
-    if (false
-        || (key == KeyCode::kRight && moveFocus(Direction::kRight))
-        || (key == KeyCode::kLeft && moveFocus(Direction::kLeft))
-        || (key == KeyCode::kUp && moveFocus(Direction::kUp))
-        || (key == KeyCode::kDown && moveFocus(Direction::kDown))
-    ) {
-        return;
-    }
 
     Responder::keyDown(key, mod, repeat);
 }
@@ -333,8 +343,23 @@ void Window::ensureTextures() {
 }
 
 void Window::_update() {
+    auto now = std::chrono::high_resolution_clock::now();
     update();
-    _contentView->updateAndUpdateSubviews();
+    auto elapsed = now - _lastUpdateTime;
+    for (auto view : _viewsToSubscribeToUpdates) {
+        _updatingViews.insert(view);
+    }
+    _viewsToSubscribeToUpdates.clear();
+    for (auto view : _viewsToUnsubscribeFromUpdates) {
+        _updatingViews.erase(view);
+    }
+    _viewsToUnsubscribeFromUpdates.clear();
+    for (auto view : _updatingViews) {
+        if (!_viewsToUnsubscribeFromUpdates.count(view)) {
+            view->dispatchUpdate(elapsed);
+        }
+    }
+    _lastUpdateTime = now;
 }
 
 void Window::_render() {

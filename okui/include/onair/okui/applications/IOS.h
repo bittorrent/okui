@@ -13,12 +13,10 @@ namespace applications {
 /**
 * Provides some native Platform overrides for iOS.
 *
-* This isn't intended to be a full implementation, but can be used as a base for other implementations.
+* This isn't intended to be a full implementation, but can be used to add native support to other implementations.
 */
 class IOS : public Apple {
 public:
-    using Apple::Apple;
-
     virtual bool canOpenURL(const char* url) const override;
     virtual bool openURL(const char* url) override;
 

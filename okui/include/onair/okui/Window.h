@@ -20,6 +20,7 @@ namespace onair {
 namespace okui {
 
 class Application;
+class ApplicationBase;
 
 struct WindowPosition {
     enum class Mode {
@@ -119,6 +120,9 @@ public:
     void beginDragging(View* view);
     void endDragging(View* view);
 
+    void subscribeToUpdates(View* view);
+    void unsubscribeFromUpdates(View* view);
+
     /**
     * Override this to perform updates for each frame. This is invoked exactly once per frame, before any views
     * begin rendering.
@@ -151,7 +155,7 @@ private:
     void _didResize(int width, int height);
     void _updateContentLayout();
 
-    friend class Application;
+    friend class ApplicationBase;
 
     Application* _application;
 
@@ -190,8 +194,12 @@ private:
     Point<double> _lastMouseDown{0.0, 0.0};
     std::unordered_set<View*> _draggedViews;
 
+    std::unordered_set<View*> _updatingViews;
+    std::unordered_set<View*> _viewsToSubscribeToUpdates, _viewsToUnsubscribeFromUpdates;
+
     double _framesPerSecond = 0.0;
     std::chrono::high_resolution_clock::time_point _lastRenderTime = std::chrono::high_resolution_clock::now();
+    std::chrono::high_resolution_clock::time_point _lastUpdateTime = std::chrono::high_resolution_clock::now();
 };
 
 }}

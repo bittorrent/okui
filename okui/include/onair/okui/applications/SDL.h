@@ -1,9 +1,10 @@
 #pragma once
 
 #include "onair/okui/config.h"
+#include "onair/okui/Controller.h"
 #include "onair/okui/FileResourceManager.h"
 
-#include "onair/okui/applications/Native.h"
+#include "onair/okui/ApplicationBase.h"
 #include "onair/okui/applications/SDLKeycode.h"
 
 #include "onair/Timer.h"
@@ -19,7 +20,7 @@
 #pragma clang diagnostic pop
 
 @interface OKUISDLApplication : NSApplication
-@property onair::okui::Application* app;
+@property onair::okui::ApplicationBase* application;
 @end
 #endif // ONAIR_MAC_OS_X
 
@@ -27,12 +28,10 @@ namespace onair {
 namespace okui {
 namespace applications {
 
-class SDL : public Native {
+class SDL : public ApplicationBase {
 public:
-    SDL(std::string name, std::string organization, ResourceManager* resourceManager = nullptr, bool shouldInitialize = true);
+    SDL();
     ~SDL();
-
-    virtual void initialize() override;
 
     virtual void run() override;
     virtual void quit() override;
@@ -49,9 +48,7 @@ public:
 
     virtual Window* activeWindow() override { return _activeWindow; }
 
-#if !ONAIR_APPLE // TODO: fix Application heirarchy
     virtual std::string userStoragePath() const override;
-#endif
 
     virtual void setClipboardText(const char* text) override;
     virtual std::string getClipboardText() override;
@@ -65,8 +62,18 @@ public:
     virtual void setCursorType(CursorType type) override;
 
 #if ONAIR_MAC_OS_X
-    NSWindow* nativeWindow(Window* window) const override;
+    virtual NSWindow* nativeWindow(Window* window) const override;
 #endif
+
+#if ONAIR_ANDROID
+    /**
+    * @return a new local reference to the activity
+    */
+    virtual jobject nativeActivity(JNIEnv** envOut = nullptr) const override;
+#endif
+
+protected:    
+    virtual std::unique_ptr<ResourceManager> defaultResourceManager() const override;
 
 private:
     struct WindowInfo {
@@ -92,6 +99,21 @@ private:
             SDL_FreeCursor(p);
         }
     };
+    
+    struct Controller : onair::okui::Controller {
+        explicit Controller(SDL_Joystick* joystick) : joystick{joystick} {}
+        ~Controller();
+        
+        virtual std::string name() const override;
+        virtual std::string guid() const override;
+    
+        virtual size_t buttons() const override { return SDL_JoystickNumButtons(joystick); }
+    
+        virtual size_t axes() const override { return SDL_JoystickNumAxes(joystick); }
+        virtual Controller::AxisType axisType(size_t axis) const override;
+
+        SDL_Joystick* joystick;
+    };
 
     Window* _window(uint32_t id) const;
     SDL_Window* _sdlWindow(Window* window) const;
@@ -99,28 +121,32 @@ private:
     void _handleMouseMotionEvent (const SDL_MouseMotionEvent& e);
     void _handleMouseButtonEvent (const SDL_MouseButtonEvent& e);
     void _handleMouseWheelEvent  (const SDL_MouseWheelEvent& e);
+    void _handleFingerEvent      (const SDL_TouchFingerEvent& e);
     void _handleWindowEvent      (const SDL_WindowEvent& e);
     void _handleKeyboardEvent    (const SDL_KeyboardEvent& e);
     void _handleTextInputEvent   (const SDL_TextInputEvent& e);
-    void _handleMultiGestureEvent(const SDL_MultiGestureEvent& e);
+
+    void _addJoystick(int index);
+    void _removeJoystick(SDL_JoystickID id);
+    void _handleJoystickAxisEvent(const SDL_JoyAxisEvent& event);
+    void _handleJoystickButtonEvent(const SDL_JoyButtonEvent& event);
 
     std::unordered_map<Window*, uint32_t> _windowIds;
     std::unordered_map<uint32_t, WindowInfo> _windows;
     Window* _activeWindow = nullptr;
     std::unique_ptr<SDL_Cursor, CursorDeleter> _cursor;
     bool _backgrounded = false;
+    std::unordered_map<SDL_JoystickID, std::unique_ptr<Controller>> _controllers;
 
     std::unique_ptr<ResourceManager> _resourceManager;
 
     static MouseButton sMouseButton(uint8_t id);
 };
 
-inline SDL::SDL(std::string name, std::string organization, ResourceManager* resourceManager, bool shouldInitialize)
-    : Native(std::move(name), std::move(organization), resourceManager, false)
-{
+inline SDL::SDL() {
 #if ONAIR_MAC_OS_X
     // make sure we use our application class instead of sdl's
-    ((OKUISDLApplication*)[OKUISDLApplication sharedApplication]).app = this;
+    ((OKUISDLApplication*)[OKUISDLApplication sharedApplication]).application = this;
     [NSApp finishLaunching];
 #endif
 
@@ -137,38 +163,20 @@ inline SDL::SDL(std::string name, std::string organization, ResourceManager* res
     SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 1);
     SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_CORE);
 #endif
-
-#if ONAIR_ANDROID
-    auto env = reinterpret_cast<JNIEnv*>(SDL_AndroidGetJNIEnv());
-    auto activity = reinterpret_cast<jobject>(SDL_AndroidGetActivity());
-    if (activity) {
-        setActivity(env, activity);
-        env->DeleteLocalRef(activity);
-    } else {
-        ONAIR_LOGF_ERROR("unable to get android activity");
-    }
-#endif
-
-    if (shouldInitialize) {
-        initialize();
-    }
 }
 
 inline SDL::~SDL() {
+    _controllers.clear();
     SDL_Quit();
 }
 
-inline void SDL::initialize() {
-    if (!resourceManager()) {
-        if (auto path = SDL_GetBasePath()) {
-            _resourceManager = std::make_unique<FileResourceManager>(path);
-            ONAIR_LOGF_DEBUG("using resources in %s", path);
-            setResourceManager(_resourceManager.get());
-            SDL_free(path);
-        }
+inline std::unique_ptr<ResourceManager> SDL::defaultResourceManager() const {
+    if (auto path = SDL_GetBasePath()) {
+        auto resourceManager = std::make_unique<FileResourceManager>(path);
+        SDL_free(path);
+        return std::move(resourceManager);
     }
-
-    Native::initialize();
+    return nullptr;
 }
 
 inline void SDL::run() {
@@ -194,10 +202,12 @@ inline void SDL::run() {
                     case SDL_MOUSEBUTTONUP:
                     case SDL_MOUSEBUTTONDOWN:         { _handleMouseButtonEvent(e.button); break; }
                     case SDL_MOUSEWHEEL:              { _handleMouseWheelEvent(e.wheel); break; }
+                    case SDL_FINGERUP:
+                    case SDL_FINGERDOWN:
+                    case SDL_FINGERMOTION:            { _handleFingerEvent(e.tfinger); break; }
                     case SDL_WINDOWEVENT:             { _handleWindowEvent(e.window); break; }
                     case SDL_KEYUP:
                     case SDL_KEYDOWN:                 { _handleKeyboardEvent(e.key); break; }
-                    case SDL_TEXTEDITING:             { break; /* TODO for better localization support */ }
                     case SDL_TEXTINPUT:               { _handleTextInputEvent(e.text); break; }
                     case SDL_APP_TERMINATING:         { terminating(); break; }
                     case SDL_APP_LOWMEMORY:           { lowMemory(); break; }
@@ -205,7 +215,11 @@ inline void SDL::run() {
                     case SDL_APP_DIDENTERBACKGROUND:  { enteredBackground(); _backgrounded = true; break; }
                     case SDL_APP_WILLENTERFOREGROUND: { enteringForeground(); break; }
                     case SDL_APP_DIDENTERFOREGROUND:  { enteredForeground(); _backgrounded = false; break; }
-                    case SDL_MULTIGESTURE:            { _handleMultiGestureEvent(e.mgesture); break; }
+                    case SDL_JOYDEVICEADDED:          { _addJoystick(e.jdevice.which); break; }
+                    case SDL_JOYDEVICEREMOVED:        { _removeJoystick(e.jdevice.which); break; }
+                    case SDL_JOYAXISMOTION:           { _handleJoystickAxisEvent(e.jaxis); break; }
+                    case SDL_JOYBUTTONUP:
+                    case SDL_JOYBUTTONDOWN:           { _handleJoystickButtonEvent(e.jbutton); break; }
                     default:                          { break; }
                 }
             } else if ((minFrameInterval - timer.elapsed()) > 2ms) {
@@ -260,6 +274,10 @@ inline void SDL::openWindow(Window* window, const char* title, const WindowPosit
     _windowIds[window] = id;
     _windows[id] = WindowInfo(window, sdlWindow, context);
 
+    if (!_activeWindow) {
+        _activeWindow = window;
+    }
+
     //  If the OS wasn't able to use the size we passed, assign the actual size that was created in that window
     _assignWindowSize(window);
 }
@@ -278,6 +296,10 @@ inline void SDL::closeWindow(Window* window) {
 
     _windows.erase(id);
     _windowIds.erase(window);
+
+    if (_activeWindow == window) {
+        _activeWindow = nullptr;
+    }
 }
 
 inline void SDL::getWindowRenderSize(Window* window, int* width, int* height) {
@@ -315,14 +337,12 @@ inline void SDL::setWindowTitle(Window* window, const char* title) {
     }
 }
 
-#if !ONAIR_APPLE // TODO: fix Application heirarchy
 inline std::string SDL::userStoragePath() const {
     auto path = SDL_GetPrefPath(organization().c_str(), name().c_str());
     std::string ret(path);
     SDL_free(path);
     return ret;
 }
-#endif
 
 inline void SDL::setClipboardText(const char* text) {
      SDL_SetClipboardText(text);
@@ -344,8 +364,7 @@ inline void SDL::stopTextInput() {
 }
 
 inline std::string SDL::operatingSystem() const {
-    auto native = Native::operatingSystem();
-    return native.empty() ? SDL_GetPlatform() : native;
+    return SDL_GetPlatform();
 }
 
 #if ONAIR_MAC_OS_X
@@ -373,6 +392,47 @@ inline NSWindow* SDL::nativeWindow(Window* window) const {
 }
 #endif
 
+#if ONAIR_ANDROID
+inline jobject SDL::nativeActivity(JNIEnv** envOut) const {
+    auto env = reinterpret_cast<JNIEnv*>(SDL_AndroidGetJNIEnv());
+    auto activity = reinterpret_cast<jobject>(SDL_AndroidGetActivity());
+    if (activity) {
+        if (envOut) {
+            *envOut = env;
+        }
+        return activity;
+    }
+    ONAIR_LOGF_ERROR("unable to get android activity");
+    return nullptr;
+}
+#endif
+
+inline SDL::Controller::~Controller() {
+    if (SDL_JoystickGetAttached(joystick)) {
+        SDL_JoystickClose(joystick);
+    }
+}
+        
+inline std::string SDL::Controller::name() const {
+    auto name = SDL_JoystickName(joystick);
+    return name ? name : "";
+}
+
+inline std::string SDL::Controller::guid() const {
+    char ret[40] = {};
+    SDL_JoystickGetGUIDString(SDL_JoystickGetGUID(joystick), ret, sizeof(ret));
+    return ret;
+}
+    
+inline Controller::AxisType SDL::Controller::axisType(size_t axis) const {
+    if (axis == 0) {
+        return AxisType::kJoystickX;
+    } else if (axis == 1) {
+        return AxisType::kJoystickY;
+    }
+    return AxisType::kUnknown;
+}
+
 inline Window* SDL::_window(uint32_t id) const {
     auto it = _windows.find(id);
     return it == _windows.end() ? nullptr : it->second.window;
@@ -387,6 +447,8 @@ inline SDL_Window* SDL::_sdlWindow(Window* window) const {
 }
 
 inline void SDL::_handleMouseMotionEvent(const SDL_MouseMotionEvent& event) {
+    if (platform::kIsTVOS) { return; }
+
     auto window = _window(event.windowID);
     if (!window) { return; }
 
@@ -400,6 +462,8 @@ inline void SDL::_handleMouseMotionEvent(const SDL_MouseMotionEvent& event) {
 }
 
 inline void SDL::_handleMouseButtonEvent(const SDL_MouseButtonEvent& event) {
+    if (platform::kIsTVOS) { return; }
+    
     auto window = _window(event.windowID);
     if (!window) { return; }
 
@@ -416,6 +480,8 @@ inline void SDL::_handleMouseButtonEvent(const SDL_MouseButtonEvent& event) {
 }
 
 inline void SDL::_handleMouseWheelEvent(const SDL_MouseWheelEvent& event) {
+    if (platform::kIsTVOS) { return; }
+
     auto window = _window(event.windowID);
     if (!window) { return; }
 
@@ -427,6 +493,19 @@ inline void SDL::_handleMouseWheelEvent(const SDL_MouseWheelEvent& event) {
             window->dispatchMouseWheel(xPos, yPos, -event.x, event.y);
             break;
         }
+        default:
+            break;
+    }
+}
+
+inline void SDL::_handleFingerEvent(const SDL_TouchFingerEvent& event) {
+    switch (event.type) {
+        case SDL_FINGERUP:
+            return firstResponder()->touchUp(event.fingerId, {event.x, event.y}, event.pressure);
+        case SDL_FINGERDOWN:
+            return firstResponder()->touchDown(event.fingerId, {event.x, event.y}, event.pressure);
+        case SDL_FINGERMOTION:
+            return firstResponder()->touchMovement(event.fingerId, {event.x, event.y}, {event.dx, event.dy}, event.pressure);
         default:
             break;
     }
@@ -485,8 +564,34 @@ inline void SDL::_handleTextInputEvent(const SDL_TextInputEvent& event) {
     }
 }
 
-inline void SDL::_handleMultiGestureEvent(const SDL_MultiGestureEvent& e) {
-    // TODO: handle gestures with mulitple fingers (this does not trigger for 1 finger)
+inline void SDL::_addJoystick(int index) {
+    if (auto joystick = SDL_JoystickOpen(index)) {
+        _controllers[SDL_JoystickInstanceID(joystick)] = std::make_unique<Controller>(joystick);
+    }
+}
+
+inline void SDL::_removeJoystick(SDL_JoystickID id) {
+    _controllers.erase(id);
+}
+
+inline void SDL::_handleJoystickAxisEvent(const SDL_JoyAxisEvent& event) {
+    auto it = _controllers.find(event.which);
+    if (it == _controllers.end()) {
+        return;
+    }
+    firstResponder()->analogInput(*it->second, event.axis, (event.value + 32768.0) / 65535.0 * 2.0 - 1.0);
+}
+
+inline void SDL::_handleJoystickButtonEvent(const SDL_JoyButtonEvent& event) {
+    auto it = _controllers.find(event.which);
+    if (it == _controllers.end()) {
+        return;
+    }
+    if (event.type == SDL_JOYBUTTONDOWN) {
+        firstResponder()->buttonDown(*it->second, event.button);
+    } else {
+        firstResponder()->buttonUp(*it->second, event.button);
+    }
 }
 
 inline SDL::SDLWindowPosition::SDLWindowPosition(const WindowPosition& pos) {

@@ -7,7 +7,6 @@
 #include "onair/okui/applications/Apple.h"
 
 #import <AppKit/NSMenu.h>
-#import <AppKit/NSWindow.h>
 
 namespace onair {
 namespace okui {
@@ -20,10 +19,7 @@ namespace applications {
 */
 class OSX : public Apple {
 public:
-    using Apple::Apple;
     virtual ~OSX();
-
-    virtual NSWindow* nativeWindow(Window* window) const = 0;
 
     virtual bool canSelectFiles() const override { return true; }
     virtual void selectFiles(bool allowFiles, bool allowDirectories, bool allowMultiple, std::function<void(std::vector<std::string>)> action) override;

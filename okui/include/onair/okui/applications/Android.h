@@ -4,7 +4,7 @@
 
 #if ONAIR_ANDROID
 
-#include "onair/okui/Application.h"
+#include "onair/okui/applications/SDL.h"
 
 #include "onair/jni/JavaClass.h"
 #include "onair/jni/NativeClass.h"
@@ -19,17 +19,12 @@ namespace applications {
 /**
 * Provides some native Platform overrides for Android.
 *
-* This isn't intended to be a full implementation, but can be used as a base for
-* other implementations.
+* This isn't intended to be a full implementation, but can be used to add native support to other implementations.
 */
-class Android : public Application {
+class Android : public SDL {
 public:
-    using Application::Application;
+    Android();
     virtual ~Android();
-
-    void setActivity(JNIEnv* env, jobject activity);
-
-    virtual void initialize() override;
 
     virtual void openDialog(Window* window,
                             const char* title,
@@ -67,11 +62,12 @@ public:
         AAssetManager* _assetManager;
     };
 
+protected:    
+    virtual std::unique_ptr<ResourceManager> defaultResourceManager() const override;
+
 private:
     JNIEnv* _jniEnv = nullptr;
     jobject _activity = nullptr;
-
-    std::unique_ptr<ResourceManager> _resourceManager;
 
     ONAIR_JNI_JAVA_CLASS_BEGIN(JavaHelper);
         ONAIR_JNI_JAVA_CLASS_CONSTRUCTOR(JavaHelper, android::app::Activity);

@@ -10,6 +10,29 @@ namespace {
 std::weak_ptr<jni::JNIContext> gJNIContext;
 }
 
+Android::Android() {
+    auto activity = SDL::getActivity(&_jniEnv);
+    _activity = _jniEnv->NewGlobalRef(activity);
+    _jniEnv->DeleteLocalRef(activity);
+
+    JavaVM* jvm = nullptr;
+    _jniEnv->GetJavaVM(&jvm);
+
+    auto existingContext = gJNIContext.lock();
+    assert(!existingContext || existingContext->jvm == jvm);
+
+    if (existingContext) {
+        _jniContext = existingContext;
+    } else {
+        _jniContext = std::make_shared<jni::JNIContext>(jvm, _jniEnv->GetVersion());
+        JavaHelper::Traits::Register(_jniContext.get(), "tv/watchonair/okui/Helper");
+        JavaHelper::JavaOpenDialogCallback::Traits::Register(_jniContext.get(), "tv/watchonair/okui/Helper$OpenDialogCallback");
+        gJNIContext = _jniContext;
+    }
+
+    _javaHelper = std::make_unique<JavaHelper>(android::app::Activity{_jniEnv, _activity});
+}
+
 Android::~Android() {
     if (_javaHelper) {
         _javaHelper.reset();
@@ -19,43 +42,16 @@ Android::~Android() {
     }
 }
 
-void Android::setActivity(JNIEnv* env, jobject activity) {
-    _jniEnv = env;
-    _activity = env->NewGlobalRef(activity);
-}
+std::unique_ptr<ResourceManager> Android::defaultResourceManager() const {
+    _jniEnv->PushLocalFrame(10);
 
-void Android::initialize() {
-    if (!resourceManager() && _activity) {
-        ONAIR_LOGF_DEBUG("using resources from asset manager");
+    auto c = _jniEnv->GetObjectClass(_activity);
+    auto m = _jniEnv->GetMethodID(c, "getAssets", "()Landroid/content/res/AssetManager;");
+    auto resourceManager = std::make_unique<AssetResourceManager>(_jniEnv, _jniEnv->CallObjectMethod(_activity, m));
 
-        _jniEnv->PushLocalFrame(10);
+    _jniEnv->PopLocalFrame(nullptr);
 
-        auto c = _jniEnv->GetObjectClass(_activity);
-        auto m = _jniEnv->GetMethodID(c, "getAssets", "()Landroid/content/res/AssetManager;");
-        _resourceManager = std::make_unique<AssetResourceManager>(_jniEnv, _jniEnv->CallObjectMethod(_activity, m));
-        setResourceManager(_resourceManager.get());
-
-        _jniEnv->PopLocalFrame(nullptr);
-
-        JavaVM* jvm = nullptr;
-        _jniEnv->GetJavaVM(&jvm);
-
-        auto existingContext = gJNIContext.lock();
-        assert(!existingContext || existingContext->jvm == jvm);
-
-        if (existingContext) {
-            _jniContext = existingContext;
-        } else {
-            _jniContext = std::make_shared<jni::JNIContext>(jvm, _jniEnv->GetVersion());
-            JavaHelper::Traits::Register(_jniContext.get(), "tv/watchonair/okui/Helper");
-            JavaHelper::JavaOpenDialogCallback::Traits::Register(_jniContext.get(), "tv/watchonair/okui/Helper$OpenDialogCallback");
-            gJNIContext = _jniContext;
-        }
-
-        _javaHelper = std::make_unique<JavaHelper>(android::app::Activity{_jniEnv, _activity});
-    }
-
-    Application::initialize();
+    return std::move(resourceManager);
 }
 
 void Android::openDialog(Window* window,

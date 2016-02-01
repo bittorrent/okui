@@ -5,23 +5,11 @@
 namespace onair {
 namespace okui {
 
-Application::Application(std::string name, std::string organization, ResourceManager* resourceManager, bool shouldInitialize)
+Application::Application(std::string name, std::string organization, ResourceManager* resourceManager)
     : _name{std::move(name)}
     , _organization{std::move(organization)}
     , _resourceManager{resourceManager}
 {
-    if (shouldInitialize) {
-        initialize();
-    }
-}
-
-Application::~Application() {
-    for (auto& task : _backgroundTasks) {
-        task.wait();
-    }
-}
-
-void Application::initialize() {
     setMenu(Menu({
         MenuItem("Edit", Menu({
             MenuItem("Copy", kCommandCopy, KeyCode::kC, defaultShortcutModifier()),
@@ -30,13 +18,19 @@ void Application::initialize() {
             MenuItem("Select All", kCommandSelectAll, KeyCode::kA, defaultShortcutModifier()),
         })),
     }));
+    
+    if (!_resourceManager) {
+        _ownedResourceManager = defaultResourceManager();
+        if (_ownedResourceManager) {
+            _resourceManager = _ownedResourceManager.get();
+        }
+    }
 }
 
-Responder* Application::firstResponder() {
-    if (auto window = activeWindow()) {
-        return window->firstResponder();
+Application::~Application() {
+    for (auto& task : _backgroundTasks) {
+        task.wait();
     }
-    return this;
 }
 
 std::future<std::shared_ptr<const std::string>> Application::download(const std::string& url, bool useCache) {
@@ -97,14 +91,14 @@ std::future<std::shared_ptr<const std::string>> Application::download(const std:
 }
 
 bool Application::canHandleCommand(Command command) {
-    return command == kCommandQuit;
+    return command == kCommandQuit || applications::Native::canHandleCommand(command);
 }
 
 void Application::handleCommand(Command command, CommandContext context) {
     if (command == kCommandQuit) {
         quit();
     } else {
-        Responder::handleCommand(command, context);
+        applications::Native::handleCommand(command, context);
     }
 }
 

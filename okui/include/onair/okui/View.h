@@ -11,6 +11,7 @@
 #include "onair/okui/Responder.h"
 #include "onair/okui/ShaderCache.h"
 #include "onair/okui/TextureHandle.h"
+#include "onair/okui/TouchpadFocus.h"
 #include "onair/okui/WeakTexture.h"
 #include "onair/okui/opengl/Framebuffer.h"
 #include "onair/okui/shaders/BoxShadowShader.h"
@@ -91,7 +92,7 @@ public:
     * Allows scaling of the view by a particular factor.
     */
     void setScale(double scale) { setScale(scale, scale); }
-    void setScale(double scaleX, double scaleY) { _scale.x = scaleX; _scale.y = scaleY; }
+    void setScale(double scaleX, double scaleY);
 
     /**
     * Sets the view's background color.
@@ -181,6 +182,8 @@ public:
     * Returns true if the view or any of its children has focus.
     */
     bool isFocus() const;
+
+    TouchpadFocus& touchpadFocus() { return _touchpadFocus; }
 
     bool isDescendantOf(const View* view) const;
 
@@ -364,9 +367,14 @@ public:
 
     /**
     * Override this to perform updates for each frame. This is invoked exactly once per frame, before any views
-    * begin rendering.
+    * begin rendering. You must call setNeedsUpdates with `true` for this to be called.
     */
     virtual void update() {}
+        
+    /**
+    * If the view needs constant updates, update() will be called before rendering each frame.
+    */
+    void setNeedsUpdates(bool needsUpdates = true);
 
     /**
     * Override this to do drawing.
@@ -445,12 +453,6 @@ public:
     virtual void disappeared() {}
 
     /**
-    * Calls update on this view and its subviews. This is normally done by the window each
-    * frame before rendering is done.
-    */
-    void updateAndUpdateSubviews();
-
-    /**
     * Renders the view and its subviews.
     *
     * @param area the area within the target to render to. the view will fill this area
@@ -462,10 +464,14 @@ public:
     bool dispatchMouseUp(MouseButton button, double startX, double startY, double x, double y);
     void dispatchMouseMovement(double x, double y);
     bool dispatchMouseWheel(double xPos, double yPos, int xWheel, int yWheel);
+    void dispatchUpdate(std::chrono::high_resolution_clock::duration elapsed);
 
     // Responder overrides
     virtual Responder* nextResponder() override;
     virtual void keyDown(KeyCode key, KeyModifiers mod, bool repeat) override;
+    virtual void touchUp(size_t finger, Point<double> position, double pressure) override;
+    virtual void touchDown(size_t finger, Point<double> position, double pressure) override;
+    virtual void touchMovement(size_t finger, Point<double> position, Point<double> distance, double pressure) override;
 
 private:
     View(const View& other) = delete;
@@ -517,6 +523,10 @@ private:
     std::unordered_map<size_t, void*> _provisions;
 
     AbstractTaskScheduler::TaskScope _taskScope;
+    
+    TouchpadFocus _touchpadFocus;
+    
+    bool _needsUpdates = false;
 
     void _setBounds(const Rectangle<double>& bounds);
 
@@ -535,6 +545,10 @@ private:
     void* _get(size_t hash) const;
 
     AbstractTaskScheduler* _taskScheduler() const;
+    void _updateTouchFocus(std::chrono::high_resolution_clock::duration elapsed);
+
+    void _checkUpdateSubscription();
+    bool _shouldSubscribeToUpdates();
 };
 
 }}

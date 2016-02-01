@@ -4,7 +4,7 @@
 
 #if __APPLE__
 
-#include "onair/okui/Application.h"
+#include "onair/okui/applications/SDL.h"
 
 namespace onair {
 namespace okui {
@@ -13,13 +13,11 @@ namespace applications {
 /**
 * Provides some native Application overrides for iOS and OS X.
 *
-* This isn't intended to be a full implementation, but can be used as a base for other implementations.
+* This isn't intended to be a full implementation, but can be used to add native support to other implementations.
 */
-class Apple : public Application {
+class Apple : public SDL {
 public:
-    using Application::Application;
-
-    virtual void initialize() override;
+    virtual ~Apple() {}
 
     virtual std::string userStoragePath() const override;
 
@@ -27,8 +25,8 @@ public:
 
     virtual std::string deviceModel() const override;
 
-private:
-    std::unique_ptr<ResourceManager> _resourceManager;
+protected:    
+    virtual std::unique_ptr<ResourceManager> defaultResourceManager() const override;
 };
 
 }}}

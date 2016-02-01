@@ -21,6 +21,7 @@ lib okui :
 	[ glob-tree *.cpp : tests tools ]
 	../foundation//foundation
 	../third-party/libpng//png
+	../third-party/sdl//SDL2
 	../jni//jni
 :
 	<include>./include
