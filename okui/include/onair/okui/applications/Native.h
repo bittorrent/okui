@@ -12,7 +12,7 @@
 #elif ONAIR_ANDROID
 #include "onair/okui/applications/Android.h"
 #else
-#include "onair/okui/ApplicationBase.h"
+#include "onair/okui/Application.h"
 #endif
 
 namespace onair {

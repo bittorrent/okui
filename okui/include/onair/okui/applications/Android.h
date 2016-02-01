@@ -82,9 +82,6 @@ public:
         AAssetManager* _assetManager;
     };
 
-protected:    
-    virtual std::unique_ptr<ResourceManager> defaultResourceManager() const override;
-
 private:
     JNIEnv* _jniEnv = nullptr;
     jobject _activity = nullptr;
@@ -92,6 +89,8 @@ private:
     std::shared_ptr<jni::JNIContext> _jniContext;
     std::unique_ptr<AndroidJavaHelper> _javaHelper;
     
+    std::unique_ptr<ResourceManager> _resourceManager;
+
     static std::weak_ptr<jni::JNIContext> _sJNIContext;
 };
 
@@ -120,6 +119,15 @@ inline Android<Base>::Android() {
     }
 
     _javaHelper = std::make_unique<AndroidJavaHelper>(android::app::Activity{_jniEnv, _activity});
+        
+    _jniEnv->PushLocalFrame(10);
+
+    auto c = _jniEnv->GetObjectClass(_activity);
+    auto m = _jniEnv->GetMethodID(c, "getAssets", "()Landroid/content/res/AssetManager;");
+    _resourceManager = std::make_unique<AssetResourceManager>(_jniEnv, _jniEnv->CallObjectMethod(_activity, m));
+    Base::setResourceManager(_resourceManager.get());
+
+    _jniEnv->PopLocalFrame(nullptr);
 }
 
 template <typename Base>
@@ -130,19 +138,6 @@ inline Android<Base>::~Android() {
     if (_activity) {
         _jniEnv->DeleteGlobalRef(_activity);
     }
-}
-
-template <typename Base>
-inline std::unique_ptr<ResourceManager> Android<Base>::defaultResourceManager() const {
-    _jniEnv->PushLocalFrame(10);
-
-    auto c = _jniEnv->GetObjectClass(_activity);
-    auto m = _jniEnv->GetMethodID(c, "getAssets", "()Landroid/content/res/AssetManager;");
-    auto resourceManager = std::make_unique<AssetResourceManager>(_jniEnv, _jniEnv->CallObjectMethod(_activity, m));
-
-    _jniEnv->PopLocalFrame(nullptr);
-
-    return std::move(resourceManager);
 }
 
 template <typename Base>

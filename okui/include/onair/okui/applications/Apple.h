@@ -23,6 +23,7 @@ namespace applications {
 template <typename Base>
 class Apple : public Base {
 public:
+    Apple();
     virtual ~Apple() {}
 
     virtual std::string userStoragePath() const override;
@@ -31,14 +32,15 @@ public:
 
     virtual std::string deviceModel() const override;
 
-protected:    
-    virtual std::unique_ptr<ResourceManager> defaultResourceManager() const override;
+private:
+    std::unique_ptr<ResourceManager> _resourceManager;
 };
 
 template <typename Base>
-inline std::unique_ptr<ResourceManager> Apple<Base>::defaultResourceManager() const {
+inline Apple<Base>::Apple() {
     	NSString* path = [[NSBundle mainBundle] resourcePath];
-    return std::make_unique<FileResourceManager>([path UTF8String]);
+    _resourceManager = std::make_unique<FileResourceManager>([path UTF8String]);
+    Base::setResourceManager(_resourceManager.get());
 }
 
 template <typename Base>

@@ -5,7 +5,7 @@
 #if ONAIR_MAC_OS_X
 
 #include "onair/okui/applications/Apple.h"
-#include "onair/okui/ApplicationBase.h"
+#include "onair/okui/Application.h"
 
 #include <IOKit/IOKitLib.h>
 #include <CoreFoundation/CFString.h>
@@ -16,10 +16,10 @@
 #import <AppKit/NSOpenPanel.h>
 
 @interface MenuTarget : NSObject {    
-    onair::okui::ApplicationBase* _application;
+    onair::okui::Application* _application;
     std::vector<const onair::okui::MenuItem*> _menuItems;
 }
-- (id)initWithApplication:(onair::okui::ApplicationBase*)application;
+- (id)initWithApplication:(onair::okui::Application*)application;
 - (NSInteger)addMenuItem:(const onair::okui::MenuItem*)item;
 - (void)menuItemAction:(id)sender;
 - (BOOL)validateUserInterfaceItem:(id<NSValidatedUserInterfaceItem>)item;
@@ -37,6 +37,7 @@ namespace applications {
 template <typename Base>
 class OSX : public Apple<Base> {
 public:
+    OSX();
     virtual ~OSX();
 
     virtual bool canSelectFiles() const override { return true; }
@@ -63,6 +64,18 @@ private:
     id _applicationMenuTarget = nil;
     Menu _applicationMenu;
 };
+
+template <typename Base>
+inline OSX<Base>::OSX() {
+    Base::setMenu(Menu({
+        MenuItem("Edit", Menu({
+            MenuItem("Copy", kCommandCopy, KeyCode::kC, this->defaultShortcutModifier()),
+            MenuItem("Cut", kCommandCut, KeyCode::kX, this->defaultShortcutModifier()),
+            MenuItem("Paste", kCommandPaste, KeyCode::kV, this->defaultShortcutModifier()),
+            MenuItem("Select All", kCommandSelectAll, KeyCode::kA, this->defaultShortcutModifier()),
+        })),
+    }));
+}
 
 template <typename Base>
 inline OSX<Base>::~OSX() {

@@ -19,7 +19,7 @@
 namespace onair {
 namespace okui {
 
-class ApplicationBase;
+class Application;
 
 struct WindowPosition {
     enum class Mode {
@@ -39,7 +39,7 @@ struct WindowPosition {
 
 class Window : public Responder {
 public:
-    Window(ApplicationBase* application);
+    Window(Application* application);
     virtual ~Window();
 
     void open();
@@ -47,7 +47,7 @@ public:
 
     bool isOpen() const { return _isOpen; }
 
-    ApplicationBase* application() { return _application; }
+    Application* application() { return _application; }
 
     const WindowPosition& position() const { return _position; }
 
@@ -154,9 +154,9 @@ private:
     void _didResize(int width, int height);
     void _updateContentLayout();
 
-    friend class ApplicationBase;
+    friend class Application;
 
-    ApplicationBase* _application;
+    Application* _application;
 
     bool _isOpen = false;
 

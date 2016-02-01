@@ -4,7 +4,7 @@
 namespace onair {
 namespace okui {
 
-Window::Window(ApplicationBase* application)
+Window::Window(Application* application)
     : _application{application}
     , _deviceRenderScale{application->renderScale()}
 {

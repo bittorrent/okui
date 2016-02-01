@@ -4,7 +4,7 @@
 #include "onair/okui/Controller.h"
 #include "onair/okui/FileResourceManager.h"
 
-#include "onair/okui/ApplicationBase.h"
+#include "onair/okui/Application.h"
 #include "onair/okui/applications/SDLKeycode.h"
 
 #include "onair/Timer.h"
@@ -20,7 +20,7 @@
 #pragma clang diagnostic pop
 
 @interface OKUISDLApplication : NSApplication
-@property onair::okui::ApplicationBase* application;
+@property onair::okui::Application* application;
 @end
 #endif // ONAIR_MAC_OS_X
 
@@ -28,7 +28,7 @@ namespace onair {
 namespace okui {
 namespace applications {
 
-class SDL : public ApplicationBase {
+class SDL : public Application {
 public:
     SDL();
     ~SDL();
@@ -71,9 +71,6 @@ public:
     */
     virtual jobject nativeActivity(JNIEnv** envOut = nullptr) const override;
 #endif
-
-protected:    
-    virtual std::unique_ptr<ResourceManager> defaultResourceManager() const override;
 
 private:
     struct WindowInfo {
@@ -163,20 +160,17 @@ inline SDL::SDL() {
     SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 1);
     SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_CORE);
 #endif
+
+    if (auto path = SDL_GetBasePath()) {
+        _resourceManager = std::make_unique<FileResourceManager>(path);
+        SDL_free(path);
+        setResourceManager(_resourceManager.get());
+    }
 }
 
 inline SDL::~SDL() {
     _controllers.clear();
     SDL_Quit();
-}
-
-inline std::unique_ptr<ResourceManager> SDL::defaultResourceManager() const {
-    if (auto path = SDL_GetBasePath()) {
-        auto resourceManager = std::make_unique<FileResourceManager>(path);
-        SDL_free(path);
-        return std::move(resourceManager);
-    }
-    return nullptr;
 }
 
 inline void SDL::run() {

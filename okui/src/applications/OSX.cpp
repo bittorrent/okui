@@ -4,7 +4,7 @@
 
 @implementation MenuTarget
 
-- (id)initWithApplication:(onair::okui::ApplicationBase*)application {
+- (id)initWithApplication:(onair::okui::Application*)application {
     if (self = [super init]) {
         _application = application;
     }

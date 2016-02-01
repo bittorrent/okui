@@ -12,7 +12,7 @@
 
 using testing::internal::FilePath;
 
-std::string TestApplication::Essentials::ResourceManagerPath() {
+std::string TestApplication::ResourceManagerPath() {
 #if (ONAIR_IOS || ONAIR_TVOS) && !ONAIR_SIMULATOR
     FilePath path{FilePath::ConcatPaths(FilePath(boost::filesystem::temp_directory_path().string()),
                                         FilePath("okui-tests-" ONAIR_APPLE_SDK "-bundle.xctest"))};
