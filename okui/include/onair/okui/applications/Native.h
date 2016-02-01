@@ -29,7 +29,7 @@ using Native = TvOS;
 using Native = Android;
 #else
 #undef ONAIR_OKUI_HAS_NATIVE_APPLICATION
-using Native = Application;
+using Native = ApplicationBase;
 #endif
 
 } // namespace applications
