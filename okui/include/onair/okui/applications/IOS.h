@@ -30,7 +30,8 @@ namespace applications {
 *
 * This isn't intended to be a full implementation, but can be used to add native support to other implementations.
 */
-class IOS : public Apple {
+template <typename Base>
+class IOS : public Apple<Base> {
 public:
     virtual bool canOpenURL(const char* url) const override;
     virtual bool openURL(const char* url) override;
