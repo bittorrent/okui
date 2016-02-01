@@ -5,6 +5,7 @@
 #if ONAIR_IOS || ONAIR_TVOS
 
 #include "onair/okui/applications/Apple.h"
+#include "onair/okui/Window.h"
 
 #import <UIKit/UIAlertView.h>
 #import <UIKit/UIApplication.h>
