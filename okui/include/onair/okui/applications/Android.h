@@ -147,7 +147,7 @@ inline void Android<Base>::openDialog(Window* window,
                          const std::vector<std::string>& buttons,
                          std::function<void(int)> action) {
     _javaHelper->openDialog(title, message, buttons, new AndroidJavaHelper::OpenDialogCallback([=] (int button) {
-        taskScheduler()->async([=] {
+        this->taskScheduler()->async([=] {
             action(button);
         });
     }));
