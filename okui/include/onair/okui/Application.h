@@ -5,6 +5,7 @@
 #include "onair/okui/ApplicationBase.h"
 #include "onair/okui/Responder.h"
 
+#include "onair/HTTPRequest.h"
 #include "onair/thread.h"
 
 #include <unordered_map>

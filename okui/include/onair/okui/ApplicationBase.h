@@ -8,7 +8,6 @@
 #include "onair/okui/Window.h"
 #include "onair/okui/CursorTypes.h"
 
-#include "onair/HTTPRequest.h"
 #include "onair/TaskQueue.h"
 
 #if ONAIR_MAC_OS_X

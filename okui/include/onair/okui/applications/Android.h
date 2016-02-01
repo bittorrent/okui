@@ -14,6 +14,27 @@ namespace onair {
 namespace okui {
 namespace applications {
 
+ONAIR_JNI_JAVA_CLASS_BEGIN(AndroidJavaHelper);
+    ONAIR_JNI_JAVA_CLASS_CONSTRUCTOR(AndroidJavaHelper, android::app::Activity);
+
+    struct OpenDialogCallback {
+        OpenDialogCallback(std::function<void(int)> f) : f{std::move(f)} {}
+        void invoke(int button) { f(button); delete this; }
+        std::function<void(int)> f;
+    };
+
+    ONAIR_JNI_NATIVE_CLASS_BEGIN(JavaOpenDialogCallback, OpenDialogCallback);
+        ONAIR_JNI_NATIVE_CLASS_METHOD(void, invoke, int);
+    ONAIR_JNI_NATIVE_CLASS_END();
+
+    ONAIR_JNI_JAVA_CLASS_METHOD(void, openDialog, const char*, const char*, const std::vector<std::string>&, OpenDialogCallback*);
+    ONAIR_JNI_JAVA_CLASS_METHOD(std::string, distinctId);
+    ONAIR_JNI_JAVA_CLASS_METHOD(std::string, operatingSystem);
+    ONAIR_JNI_JAVA_CLASS_METHOD(std::string, deviceModel);
+    ONAIR_JNI_JAVA_CLASS_METHOD(float, renderScale);
+    ONAIR_JNI_JAVA_CLASS_METHOD(bool, wifiConnection);
+ONAIR_JNI_JAVA_CLASS_END();
+
 /**
 * Provides some native Platform overrides for Android.
 *
@@ -68,29 +89,8 @@ private:
     JNIEnv* _jniEnv = nullptr;
     jobject _activity = nullptr;
 
-    ONAIR_JNI_JAVA_CLASS_BEGIN(JavaHelper);
-        ONAIR_JNI_JAVA_CLASS_CONSTRUCTOR(JavaHelper, android::app::Activity);
-
-        struct OpenDialogCallback {
-            OpenDialogCallback(std::function<void(int)> f) : f{std::move(f)} {}
-            void invoke(int button) { f(button); delete this; }
-            std::function<void(int)> f;
-        };
-
-        ONAIR_JNI_NATIVE_CLASS_BEGIN(JavaOpenDialogCallback, OpenDialogCallback);
-            ONAIR_JNI_NATIVE_CLASS_METHOD(void, invoke, int);
-        ONAIR_JNI_NATIVE_CLASS_END();
-
-        ONAIR_JNI_JAVA_CLASS_METHOD(void, openDialog, const char*, const char*, const std::vector<std::string>&, OpenDialogCallback*);
-        ONAIR_JNI_JAVA_CLASS_METHOD(std::string, distinctId);
-        ONAIR_JNI_JAVA_CLASS_METHOD(std::string, operatingSystem);
-        ONAIR_JNI_JAVA_CLASS_METHOD(std::string, deviceModel);
-        ONAIR_JNI_JAVA_CLASS_METHOD(float, renderScale);
-        ONAIR_JNI_JAVA_CLASS_METHOD(bool, wifiConnection);
-    ONAIR_JNI_JAVA_CLASS_END();
-
     std::shared_ptr<jni::JNIContext> _jniContext;
-    std::unique_ptr<JavaHelper> _javaHelper;
+    std::unique_ptr<AndroidJavaHelper> _javaHelper;
     
     static std::weak_ptr<jni::JNIContext> _sJNIContext;
 };
@@ -114,12 +114,12 @@ inline Android<Base>::Android() {
         _jniContext = existingContext;
     } else {
         _jniContext = std::make_shared<jni::JNIContext>(jvm, _jniEnv->GetVersion());
-        JavaHelper::Traits::Register(_jniContext.get(), "tv/watchonair/okui/Helper");
-        JavaHelper::JavaOpenDialogCallback::Traits::Register(_jniContext.get(), "tv/watchonair/okui/Helper$OpenDialogCallback");
+        AndroidJavaHelper::Traits::Register(_jniContext.get(), "tv/watchonair/okui/Helper");
+        AndroidJavaHelper::JavaOpenDialogCallback::Traits::Register(_jniContext.get(), "tv/watchonair/okui/Helper$OpenDialogCallback");
         _sJNIContext = _jniContext;
     }
 
-    _javaHelper = std::make_unique<JavaHelper>(android::app::Activity{_jniEnv, _activity});
+    _javaHelper = std::make_unique<AndroidJavaHelper>(android::app::Activity{_jniEnv, _activity});
 }
 
 template <typename Base>
@@ -151,7 +151,7 @@ inline void Android<Base>::openDialog(Window* window,
                          const char* message,
                          const std::vector<std::string>& buttons,
                          std::function<void(int)> action) {
-    _javaHelper->openDialog(title, message, buttons, new JavaHelper::OpenDialogCallback([=] (int button) {
+    _javaHelper->openDialog(title, message, buttons, new AndroidJavaHelper::OpenDialogCallback([=] (int button) {
         taskScheduler()->async([=] {
             action(button);
         });
