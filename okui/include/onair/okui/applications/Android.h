@@ -4,8 +4,6 @@
 
 #if ONAIR_ANDROID
 
-#include "onair/okui/applications/SDL.h"
-
 #include "onair/jni/JavaClass.h"
 #include "onair/jni/NativeClass.h"
 #include "onair/jni/JNIContext.h"
@@ -21,7 +19,8 @@ namespace applications {
 *
 * This isn't intended to be a full implementation, but can be used to add native support to other implementations.
 */
-class Android : public SDL {
+template <typename Base>
+class Android : public Base {
 public:
     Android();
     virtual ~Android();
@@ -92,7 +91,111 @@ private:
 
     std::shared_ptr<jni::JNIContext> _jniContext;
     std::unique_ptr<JavaHelper> _javaHelper;
+    
+    static std::weak_ptr<jni::JNIContext> _sJNIContext;
 };
+
+template <typename Base>
+std::weak_ptr<jni::JNIContext> Android<Base>::_sJNIContext;
+
+template <typename Base>
+inline Android<Base>::Android() {
+    auto activity = Base::nativeActivity(&_jniEnv);
+    _activity = _jniEnv->NewGlobalRef(activity);
+    _jniEnv->DeleteLocalRef(activity);
+
+    JavaVM* jvm = nullptr;
+    _jniEnv->GetJavaVM(&jvm);
+
+    auto existingContext = _sJNIContext.lock();
+    assert(!existingContext || existingContext->jvm == jvm);
+
+    if (existingContext) {
+        _jniContext = existingContext;
+    } else {
+        _jniContext = std::make_shared<jni::JNIContext>(jvm, _jniEnv->GetVersion());
+        JavaHelper::Traits::Register(_jniContext.get(), "tv/watchonair/okui/Helper");
+        JavaHelper::JavaOpenDialogCallback::Traits::Register(_jniContext.get(), "tv/watchonair/okui/Helper$OpenDialogCallback");
+        _sJNIContext = _jniContext;
+    }
+
+    _javaHelper = std::make_unique<JavaHelper>(android::app::Activity{_jniEnv, _activity});
+}
+
+template <typename Base>
+inline Android<Base>::~Android() {
+    if (_javaHelper) {
+        _javaHelper.reset();
+    }
+    if (_activity) {
+        _jniEnv->DeleteGlobalRef(_activity);
+    }
+}
+
+template <typename Base>
+inline std::unique_ptr<ResourceManager> Android<Base>::defaultResourceManager() const {
+    _jniEnv->PushLocalFrame(10);
+
+    auto c = _jniEnv->GetObjectClass(_activity);
+    auto m = _jniEnv->GetMethodID(c, "getAssets", "()Landroid/content/res/AssetManager;");
+    auto resourceManager = std::make_unique<AssetResourceManager>(_jniEnv, _jniEnv->CallObjectMethod(_activity, m));
+
+    _jniEnv->PopLocalFrame(nullptr);
+
+    return std::move(resourceManager);
+}
+
+template <typename Base>
+inline void Android<Base>::openDialog(Window* window,
+                         const char* title,
+                         const char* message,
+                         const std::vector<std::string>& buttons,
+                         std::function<void(int)> action) {
+    _javaHelper->openDialog(title, message, buttons, new JavaHelper::OpenDialogCallback([=] (int button) {
+        taskScheduler()->async([=] {
+            action(button);
+        });
+    }));
+}
+
+template <typename Base>
+inline double Android<Base>::renderScale() const {
+    return _javaHelper->renderScale();
+}
+
+template <typename Base>
+inline std::string Android<Base>::distinctId() const {
+    return _javaHelper->distinctId();
+}
+
+template <typename Base>
+inline std::string Android<Base>::operatingSystem() const {
+    return _javaHelper->operatingSystem();
+}
+
+template <typename Base>
+inline std::string Android<Base>::deviceModel() const {
+    return _javaHelper->deviceModel();
+}
+
+template <typename Base>
+inline bool Android<Base>::wifiConnection() const {
+    return _javaHelper->wifiConnection();
+}
+
+template <typename Base>
+inline std::shared_ptr<std::string> Android<Base>::AssetResourceManager::load(const char* name) {
+    auto ret = std::make_shared<std::string>();
+    auto a = AAssetManager_open(_assetManager, name, AASSET_MODE_BUFFER);
+    if (!a) {
+        return ret;
+    }
+    auto size = AAsset_getLength64(a);
+    ret->resize(size);
+    AAsset_read(a, &ret->front(), size);
+    AAsset_close(a);
+    return ret;
+}
 
 } // namespace applications
 } // namespace okui

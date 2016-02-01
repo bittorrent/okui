@@ -8,6 +8,7 @@
 #include "onair/okui/Window.h"
 #include "onair/okui/CursorTypes.h"
 
+#include "onair/HTTPRequest.h"
 #include "onair/TaskQueue.h"
 
 #if ONAIR_MAC_OS_X
@@ -81,6 +82,8 @@ public:
     virtual void setWindowMenu(Window* window, const Menu& menu) {}
 
     virtual Window* activeWindow() = 0;
+
+    virtual ResourceManager* resourceManager() = 0;
 
     /**
     * Should return a path suitable for storing preferences or other persistent user data.
@@ -194,6 +197,26 @@ public:
     */
     void command(Command command, CommandContext context) { firstResponder()->handleCommand(command, context); }
 
+    std::shared_ptr<std::string> loadResource(const char* name) { return resourceManager()->load(name); }
+
+    /**
+    * Asynchronously downloads from the given URL.
+    *
+    * @param useCache if true, the results of a previously successful download may be provided
+    */
+    virtual std::future<std::shared_ptr<const std::string>> download(const std::string& url, bool useCache = true) = 0;
+
+    /**
+    * Used by views to post messages to listeners.
+    */
+    void post(View* sender, std::type_index index, const void* message, View::Relation relation);
+
+    /**
+    * Used by views to listed for posted messages.
+    */
+    void addListener(View* view, std::type_index index, std::function<void(const void*, View*)>* action, View::Relation relation);
+    void removeListeners(View* view);
+
 #if ONAIR_MAC_OS_X
     virtual NSWindow* nativeWindow(Window* window) const = 0;
 #endif
@@ -213,6 +236,17 @@ protected:
 private:
     std::string _clipboard;
     TaskQueue _taskQueue;
+
+    struct Listener {
+        Listener(View* view, std::function<void(const void*, View*)>* action, View::Relation relation)
+            : view{view}, action{action}, relation{relation} {}
+
+        View* view;
+        std::function<void(const void*, View*)>* action;
+        View::Relation relation;
+    };
+
+    std::multimap<std::type_index, Listener> _listeners;
 };
 
 } // namespace okui

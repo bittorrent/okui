@@ -280,7 +280,7 @@ View* View::superview() const {
     return _superview;
 }
 
-Application* View::application() const {
+ApplicationBase* View::application() const {
     return window() ? window()->application() : nullptr;
 }
 

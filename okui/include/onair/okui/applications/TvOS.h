@@ -15,9 +15,13 @@ namespace applications {
 *
 * This isn't intended to be a full implementation, but can be used as a base for other implementations.
 */
-class TvOS : public IOS {
+template <typename Base>
+class TvOS : public IOS<Base> {
 public:
-    virtual std::string userStoragePath() const override;
+    virtual std::string userStoragePath() const override {
+        NSArray* paths = NSSearchPathForDirectoriesInDomains(NSCachesDirectory, NSUserDomainMask, YES);
+        return std::string{[[paths firstObject] UTF8String]};
+    }
 
     virtual void openDialog(Window* window,
                             const char* title,

@@ -28,7 +28,7 @@
 namespace onair {
 namespace okui {
 
-class Application;
+class ApplicationBase;
 class BitmapFont;
 class Window;
 
@@ -64,7 +64,7 @@ public:
 
     View* superview() const;
     Window* window() const { return _window; }
-    Application* application() const;
+    ApplicationBase* application() const;
 
     const Rectangle<double>& bounds() const { return _bounds; }
 

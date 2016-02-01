@@ -2,10 +2,12 @@
 
 #include "onair/okui/Application.h"
 #include "onair/okui/FileResourceManager.h"
+#include "onair/okui/applications/Native.h"
+#include "onair/okui/applications/SDL.h"
 
 #if ONAIR_OKUI_HAS_NATIVE_APPLICATION
 
-class TestApplication : public onair::okui::Application {
+class TestApplication : public onair::okui::Application<onair::okui::applications::Native<onair::okui::applications::SDL>> {
 public:
     struct Essentials {
         onair::okui::FileResourceManager resourceManager{ResourceManagerPath().c_str()};

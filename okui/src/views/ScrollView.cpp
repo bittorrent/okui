@@ -89,6 +89,8 @@ void ScrollView::mouseUp(MouseButton button, double startX, double startY, doubl
             _animY.target(_contentView.bounds().y + distanceY, 1300ms, interpolation::Cubic::EaseOut);
         }
     }
+
+    setNeedsUpdates(true);
 }
 
 void ScrollView::mouseDrag(double startX, double startY, double x, double y) {
@@ -108,12 +110,14 @@ void ScrollView::mouseDrag(double startX, double startY, double x, double y) {
 }
 
 void ScrollView::update() {
-    if (!_mouseDown) {
-        auto contentViewBounds = _contentView.bounds();
-        contentViewBounds.x = _animX.current();
-        contentViewBounds.y = _animY.current();
-        _scroll(contentViewBounds);
+    if (_mouseDown || (_animX.current() == _animX.target() && _animY.current() == _animY.target())) {
+        setNeedsUpdates(false);
+        return;
     }
+    auto contentViewBounds = _contentView.bounds();
+    contentViewBounds.x = _animX.current();
+    contentViewBounds.y = _animY.current();
+    _scroll(contentViewBounds);
 }
 
 void ScrollView::_scroll(okui::Rectangle<double> newBounds) {

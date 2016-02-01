@@ -37,7 +37,7 @@ inline void RenderOnce(std::function<void(onair::okui::View* view)> init, std::f
     };
 
     struct RenderWindow : onair::okui::Window {
-        RenderWindow(onair::okui::Application* application, bool* didRender, std::function<void(onair::okui::View* view)> init, std::function<void(onair::okui::View* view)> render)
+        RenderWindow(onair::okui::ApplicationBase* application, bool* didRender, std::function<void(onair::okui::View* view)> init, std::function<void(onair::okui::View* view)> render)
             : Window(application), view(didRender, init, render)
         {}
 

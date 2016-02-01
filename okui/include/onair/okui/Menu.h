@@ -9,7 +9,6 @@
 namespace onair {
 namespace okui {
 
-class Application;
 class MenuItem;
 
 class Menu {
