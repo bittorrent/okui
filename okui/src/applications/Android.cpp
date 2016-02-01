@@ -11,7 +11,7 @@ std::weak_ptr<jni::JNIContext> gJNIContext;
 }
 
 Android::Android() {
-    auto activity = SDL::getActivity(&_jniEnv);
+    auto activity = SDL::nativeActivity(&_jniEnv);
     _activity = _jniEnv->NewGlobalRef(activity);
     _jniEnv->DeleteLocalRef(activity);
 
