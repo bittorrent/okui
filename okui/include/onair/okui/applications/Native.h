@@ -11,6 +11,8 @@
 #include "onair/okui/applications/TvOS.h"
 #elif ONAIR_ANDROID
 #include "onair/okui/applications/Android.h"
+#else
+#include "onair/okui/ApplicationBase.h"
 #endif
 
 namespace onair {
