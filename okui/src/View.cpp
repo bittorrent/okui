@@ -422,7 +422,7 @@ void View::renderAndRenderSubviews(const RenderTarget* target, const Rectangle<i
 
     if (!_requiresTextureRendering() && !_cachesRender) {
         // render directly
-        _renderAndRenderSubviews(target, area, clipBounds);
+        _renderAndRenderSubviews(target, area, false, clipBounds);
         _renderCacheTexture->set();
         return;
     }
@@ -445,11 +445,9 @@ void View::renderAndRenderSubviews(const RenderTarget* target, const Rectangle<i
     if (!_cachesRender || !_hasCachedRender) {
         // render to _renderCache
         _renderCache->bind();
-        glClearColor(0.0, 0.0, 0.0, 0.0);
-        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
         Rectangle<int> cacheArea(0, 0, area.width, area.height);
         RenderTarget cacheTarget(area.width, area.height);
-        _renderAndRenderSubviews(&cacheTarget, cacheArea);
+        _renderAndRenderSubviews(&cacheTarget, cacheArea, true);
         _hasCachedRender = true;
     }
 
@@ -711,7 +709,7 @@ bool View::_requiresTextureRendering() {
     return _rendersToTexture || _tintColor.r < 1.0 || _tintColor.g < 1.0 || _tintColor.b < 1.0 || _tintColor.a < 1.0;
 }
 
-void View::_renderAndRenderSubviews(const RenderTarget* target, const Rectangle<int>& area, boost::optional<Rectangle<int>> clipBounds) {
+void View::_renderAndRenderSubviews(const RenderTarget* target, const Rectangle<int>& area, bool shouldClear, boost::optional<Rectangle<int>> clipBounds) {
     glViewport(area.x, target->height() - area.maxY(), area.width, area.height);
     glEnable(GL_BLEND);
     glBlendFuncSeparate(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA, GL_ONE, GL_ONE);
@@ -720,13 +718,19 @@ void View::_renderAndRenderSubviews(const RenderTarget* target, const Rectangle<
         clipBounds = clipBounds ? clipBounds->intersection(area) : area;
     }
 
+    if (shouldClear) {
+        glDisable(GL_SCISSOR_TEST);
+        glClearColor(0.0, 0.0, 0.0, 0.0);
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
+    }
+
     if (clipBounds) {
         glEnable(GL_SCISSOR_TEST);
         glScissor(clipBounds->x, target->height() - clipBounds->maxY(), clipBounds->width, clipBounds->height);
     } else {
         glDisable(GL_SCISSOR_TEST);
     }
-
+    
     if (_backgroundColor.a) {
         auto backgroundShader = colorShader();
         backgroundShader->setColor(_backgroundColor.r, _backgroundColor.g, _backgroundColor.b, _backgroundColor.a);

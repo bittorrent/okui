@@ -538,7 +538,7 @@ private:
     void _updateFocusableRegions(std::vector<std::tuple<View*, Rectangle<double>>>& regions);
 
     bool _requiresTextureRendering();
-    void _renderAndRenderSubviews(const RenderTarget* target, const Rectangle<int>& area, boost::optional<Rectangle<int>> clipBounds = boost::none);
+    void _renderAndRenderSubviews(const RenderTarget* target, const Rectangle<int>& area, bool shouldClear = false, boost::optional<Rectangle<int>> clipBounds = boost::none);
 
     void _post(std::type_index index, const void* ptr, Relation relation);
     void _listen(std::type_index index, std::function<void(const void*, View*)> action, Relation relation);
