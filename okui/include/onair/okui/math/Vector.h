@@ -11,9 +11,6 @@ namespace onair {
 namespace okui {
 namespace math {
 
-// consecutive members of the same type are virtually always packed, but let's just be extra safe
-#pragma pack(push, 1)
-
 template <typename T, size_t N>
 struct VectorComponents {
     union {
@@ -37,11 +34,13 @@ struct VectorComponents<T, 3> {
     };
 };
 
-#pragma pack(pop)
-
 template <typename T, size_t N>
 struct Vector : VectorComponents<T, N> {
-    using VectorComponents<T, N>::components;
+    using ComponentsType = VectorComponents<T, N>;
+    using ComponentsType::components;
+
+    static_assert(offsetof(ComponentsType, y) - offsetof(ComponentsType, x) == sizeof(T), "bad packing");
+    static_assert(sizeof(components) == sizeof(T) * N, "bad packing");
 
     Vector() {}
 
