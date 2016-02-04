@@ -36,11 +36,8 @@ struct VectorComponents<T, 3> {
 
 template <typename T, size_t N>
 struct Vector : VectorComponents<T, N> {
-    using ComponentsType = VectorComponents<T, N>;
-    using ComponentsType::components;
-
-    static_assert(offsetof(ComponentsType, y) - offsetof(ComponentsType, x) == sizeof(T), "bad packing");
-    static_assert(sizeof(components) == sizeof(T) * N, "bad packing");
+    using VectorComponents<T, N>::components;
+    static_assert(sizeof(VectorComponents<T, N>) == sizeof(T) * N, "bad packing");
 
     Vector() {}
 
