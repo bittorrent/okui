@@ -272,6 +272,7 @@ TEST(View, hasRelation) {
     EXPECT_FALSE(c.hasRelation(View::Relation::kSibling, &a));
     EXPECT_TRUE(c.hasRelation(View::Relation::kSibling, &b));
     EXPECT_TRUE(b.hasRelation(View::Relation::kSibling, &c));
+    EXPECT_FALSE(b.hasRelation(View::Relation::kSibling, &b));
 
     TestApplication application;
     Window window(&application);

@@ -397,7 +397,7 @@ bool View::hasRelation(View::Relation relation, const View* view) const {
         case Relation::kAncestor:
             return view->isDescendantOf(this);
         case Relation::kSibling:
-            return superview() && superview() == view->superview();
+            return view != this && superview() && superview() == view->superview();
     }
 }
 
