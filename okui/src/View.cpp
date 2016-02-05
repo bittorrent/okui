@@ -31,6 +31,11 @@ View::~View() {
     }
 }
 
+void View::addHiddenSubview(View* view) {
+    view->setIsVisible(false);
+    addSubview(view);
+}
+
 void View::addSubview(View* view) {
     if (view->superview() == this) {
         return;
@@ -417,7 +422,7 @@ void View::dispatchUpdate(std::chrono::high_resolution_clock::duration elapsed) 
     update();
 }
 
-void View::renderAndRenderSubviews(const RenderTarget* target, const Rectangle<int>& area, boost::optional<Rectangle<int>> clipBounds) {
+void View::renderAndRenderSubviews(const RenderTarget* target, const Rectangle<int>& area, optional<Rectangle<int>> clipBounds) {
     if (!isVisible() || !area.width || !area.height) { return; }
 
     if (!_requiresTextureRendering() && !_cachesRender) {
@@ -642,7 +647,7 @@ void View::_dispatchVisibilityChange(bool visible) {
             subview->_dispatchVisibilityChange(visible);
         }
     }
-    
+
     _checkUpdateSubscription();
 }
 
@@ -709,7 +714,7 @@ bool View::_requiresTextureRendering() {
     return _rendersToTexture || _tintColor.r < 1.0 || _tintColor.g < 1.0 || _tintColor.b < 1.0 || _tintColor.a < 1.0;
 }
 
-void View::_renderAndRenderSubviews(const RenderTarget* target, const Rectangle<int>& area, bool shouldClear, boost::optional<Rectangle<int>> clipBounds) {
+void View::_renderAndRenderSubviews(const RenderTarget* target, const Rectangle<int>& area, bool shouldClear, optional<Rectangle<int>> clipBounds) {
     glViewport(area.x, target->height() - area.maxY(), area.width, area.height);
     glEnable(GL_BLEND);
     glBlendFuncSeparate(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA, GL_ONE, GL_ONE);
@@ -781,6 +786,7 @@ void* View::_get(size_t hash) const {
 }
 
 AbstractTaskScheduler* View::_taskScheduler() const {
+    ONAIR_ASSERT(application());
     return application()->taskScheduler();
 }
 

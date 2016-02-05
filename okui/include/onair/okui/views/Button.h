@@ -3,6 +3,8 @@
 #include "onair/okui/Color.h"
 #include "onair/okui/View.h"
 
+#include "onair/optional.h"
+
 #include <unordered_map>
 
 namespace onair {
@@ -42,8 +44,8 @@ private:
     struct Texture {
         TextureHandle handle;
         std::string resource;
-        boost::optional<Color> color;
-        boost::optional<double> distanceFieldEdge;
+        optional<Color> color;
+        optional<double> distanceFieldEdge;
     };
 
     std::unordered_map<State, Texture> _textures;

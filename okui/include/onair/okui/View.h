@@ -19,7 +19,7 @@
 #include "onair/okui/shaders/DistanceFieldShader.h"
 #include "onair/okui/shaders/TextureShader.h"
 
-#include <boost/optional.hpp>
+#include "onair/optional.h"
 
 #include <list>
 #include <typeindex>
@@ -46,6 +46,7 @@ public:
     void setName(std::string name) { _name = std::move(name); }
 
     void addSubview(View* view);
+    void addHiddenSubview(View* view);
     void removeSubview(View* view);
 
     void addSubviews() {}
@@ -150,7 +151,7 @@ public:
     * become the focus instead.
     */
     void focus();
-    
+
     /**
     * If the view or any of its children are focused, unfocuses them.
     */
@@ -370,7 +371,7 @@ public:
     * begin rendering. You must call setNeedsUpdates with `true` for this to be called.
     */
     virtual void update() {}
-        
+
     /**
     * If the view needs constant updates, update() will be called before rendering each frame.
     */
@@ -458,7 +459,7 @@ public:
     * @param area the area within the target to render to. the view will fill this area
     * @param clipBounds the bounds within the target to clip rendering of the view and its children to
     */
-    void renderAndRenderSubviews(const RenderTarget* target, const Rectangle<int>& area, boost::optional<Rectangle<int>> clipBounds = boost::none);
+    void renderAndRenderSubviews(const RenderTarget* target, const Rectangle<int>& area, optional<Rectangle<int>> clipBounds = nullopt);
 
     bool dispatchMouseDown(MouseButton button, double x, double y);
     bool dispatchMouseUp(MouseButton button, double startX, double startY, double x, double y);
@@ -523,9 +524,9 @@ private:
     std::unordered_map<size_t, void*> _provisions;
 
     AbstractTaskScheduler::TaskScope _taskScope;
-    
+
     TouchpadFocus _touchpadFocus;
-    
+
     bool _needsUpdates = false;
 
     void _setBounds(const Rectangle<double>& bounds);
@@ -538,7 +539,7 @@ private:
     void _updateFocusableRegions(std::vector<std::tuple<View*, Rectangle<double>>>& regions);
 
     bool _requiresTextureRendering();
-    void _renderAndRenderSubviews(const RenderTarget* target, const Rectangle<int>& area, bool shouldClear = false, boost::optional<Rectangle<int>> clipBounds = boost::none);
+    void _renderAndRenderSubviews(const RenderTarget* target, const Rectangle<int>& area, bool shouldClear = false, optional<Rectangle<int>> clipBounds = nullopt);
 
     void _post(std::type_index index, const void* ptr, Relation relation);
     void _listen(std::type_index index, std::function<void(const void*, View*)> action, Relation relation);
