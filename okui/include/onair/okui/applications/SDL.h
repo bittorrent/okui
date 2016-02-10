@@ -128,6 +128,10 @@ inline SDL::SDL(std::string name, std::string organization, ResourceManager* res
         ONAIR_LOGF_ERROR("error initializing sdl: %s", SDL_GetError());
     }
 
+#if ONAIR_TVOS
+    SDL_SetHint(SDL_HINT_APPLE_TV_CONTROLLER_UI_EVENTS, "1");
+#endif
+
 #if OPENGL_ES
     SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 2);
     SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 0);
