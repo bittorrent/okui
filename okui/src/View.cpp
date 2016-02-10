@@ -37,7 +37,7 @@ View::~View() {
     }
 }
 
-const std::string& View::name() const {
+std::string View::name() const {
     if (_name.empty()) {
 #if __clang__ || __GNUC__
         struct FreeDeleter { void operator()(char* p) const { std::free(p); } };

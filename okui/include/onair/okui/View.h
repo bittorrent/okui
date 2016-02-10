@@ -42,7 +42,7 @@ public:
     View(std::string name) : _name{std::move(name)} {}
     virtual ~View();
 
-    const std::string& name() const;
+    std::string name() const;
     void setName(std::string name) { _name = std::move(name); }
 
     void addSubview(View* view);
