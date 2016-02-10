@@ -39,10 +39,10 @@ class Window;
 class View : public Responder {
 public:
     View() {}
-    View(std::string name) : _name(std::move(name)) {}
+    View(std::string name) : _name{std::move(name)} {}
     virtual ~View();
 
-    const std::string& name() const { return _name; }
+    const std::string& name() const;
     void setName(std::string name) { _name = std::move(name); }
 
     void addSubview(View* view);

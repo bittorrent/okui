@@ -6,6 +6,12 @@
 #include "onair/okui/shapes/Rectangle.h"
 #include "onair/okui/Window.h"
 
+#include <typeinfo>
+
+#if __clang__ || __GNUC__
+#include <cxxabi.h>
+#endif
+
 namespace onair {
 namespace okui {
 
@@ -31,6 +37,22 @@ View::~View() {
     }
 }
 
+const std::string& View::name() const {
+    if (_name.empty()) {
+#if __clang__ || __GNUC__
+        struct FreeDeleter { void operator()(char* p) const { std::free(p); } };
+        int status = 0;
+        auto name = std::unique_ptr<char, FreeDeleter>{abi::__cxa_demangle(typeid(*this).name(), nullptr, nullptr, &status)};
+        if (status == 0) {
+            return name.get();
+        }
+#endif
+        return typeid(*this).name();
+    }
+
+    return _name;
+}
+
 void View::addHiddenSubview(View* view) {
     view->setIsVisible(false);
     addSubview(view);
@@ -39,6 +61,10 @@ void View::addHiddenSubview(View* view) {
 void View::addSubview(View* view) {
     if (view->superview() == this) {
         return;
+    }
+
+    if (view->_name.empty()) {
+        view->setName(view->name()); // name() returns typeid if _name is empty
     }
 
     bool isViewAppearance = !view->isVisibleInOpenWindow() && view->isVisible() && isVisibleInOpenWindow();
@@ -735,7 +761,7 @@ void View::_renderAndRenderSubviews(const RenderTarget* target, const Rectangle<
     } else {
         glDisable(GL_SCISSOR_TEST);
     }
-    
+
     if (_backgroundColor.a) {
         auto backgroundShader = colorShader();
         backgroundShader->setColor(_backgroundColor.r, _backgroundColor.g, _backgroundColor.b, _backgroundColor.a);
