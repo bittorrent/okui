@@ -216,9 +216,14 @@ public:
     virtual std::string deviceModel() const  { return ""; }
 
     /**
-    * Returns whether there is currently a wifi connection.
+    * Returns whether there is currently a network connection.
     */
-    virtual bool wifiConnection() const { return false; }
+    virtual bool hasNetworkConnection() const { return true; }
+
+    /**
+    * Returns whether the active network connection is a mobile connection.
+    */
+    virtual bool isMobileConnection() const { return false; }
 
     /**
     * Enables or disables the screen saver.

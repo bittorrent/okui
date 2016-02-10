@@ -84,9 +84,15 @@ public class Helper {
         return metrics.density;
     }
 
-    public boolean wifiConnection() {
-         ConnectivityManager connectivityManager = (ConnectivityManager) _activity.getSystemService(Context.CONNECTIVITY_SERVICE);
-         NetworkInfo mWifi = connectivityManager.getNetworkInfo(ConnectivityManager.TYPE_WIFI);
-         return mWifi.isConnected();
+    public boolean hasNetworkConnection() {
+         ConnectivityManager connectivityManager = (ConnectivityManager)_activity.getSystemService(Context.CONNECTIVITY_SERVICE);
+         NetworkInfo networkInfo = connectivityManager.getActiveNetworkInfo();
+         return networkInfo != null && networkInfo.isConnected();
+    }
+
+    public boolean isMobileConnection() {
+         ConnectivityManager connectivityManager = (ConnectivityManager)_activity.getSystemService(Context.CONNECTIVITY_SERVICE);
+         NetworkInfo networkInfo = connectivityManager.getActiveNetworkInfo();
+         return networkInfo != null && networkInfo.isConnected() && networkInfo.getType() == ConnectivityManager.TYPE_MOBILE;
     }
 }

@@ -86,8 +86,12 @@ std::string Android::deviceModel() const {
     return _javaHelper->deviceModel();
 }
 
-bool Android::wifiConnection() const {
-    return _javaHelper->wifiConnection();
+bool Android::hasNetworkConnection() const {
+    return _javaHelper->hasNetworkConnection();
+}
+
+bool Android::isMobileConnection() const {
+    return _javaHelper->isMobileConnection();
 }
 
 std::shared_ptr<std::string> Android::AssetResourceManager::load(const char* name) {
