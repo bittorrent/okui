@@ -31,3 +31,10 @@ TEST(Color, comparison) {
     EXPECT_FALSE(Color(1.0, 2.0, 0.0, 4.0) == Color(1.0, 2.0, 3.0, 4.0));
     EXPECT_FALSE(Color(1.0, 2.0, 3.0, 0.0) == Color(1.0, 2.0, 3.0, 4.0));
 }
+
+TEST(Color, literals) {
+    EXPECT_EQ(Color(1.0, 127.0 / 255.0, 1.0, 0.0), 0xFF7FFF00_rgba);
+    EXPECT_EQ(Color(1.0, 127.0 / 255.0, 0.0, 1.0), 0xFF7F00_rgb);
+    EXPECT_EQ(Color(0.0), 0x000000FF_rgba);
+    EXPECT_EQ(Color(0.0), 0x000000_rgb);
+}
