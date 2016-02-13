@@ -35,79 +35,49 @@ struct Color {
 
 namespace detail {
 
-template <typename Condition, char Head, char... Tail>
-struct AllOf {
-    static constexpr bool value = Condition::template Evaluate<Head>::value && AllOf<Condition, Tail...>::value;
-};
-
-template <typename Condition, char Head>
-struct AllOf<Condition, Head> {
-    static constexpr bool value = Condition::template Evaluate<Head>::value;
-};
-
-constexpr char ToUpper(const char c) {
-    if (c >= 'a' && c <= 'z') {
-        return c - 'a' + 'A';
-    }
-    return c;
-}
-
-struct IsHexDigit {
-    template <char Char>
-    struct Evaluate {
-        static constexpr bool value = (Char >= '0' && Char <= '9') || (ToUpper(Char) >= 'A' && ToUpper(Char) <= 'F');
-    };
-};
-
-constexpr int HexToDec(char c) {
+template <typename CharT>
+constexpr int8_t HexToDec(CharT c) {
     if (c >= '0' && c <= '9') {
         return c - '0';
     }
-    return ToUpper(c) - 'A' + 10;
+    if (c >= 'A' && c <= 'F') {
+        return c - 'A' + 10;
+    }
+    if (c >= 'a' && c <= 'f') {
+        return c - 'a' + 10;
+    }
+    return -1;
 }
 
-template <char Pref1, char Pref2, char... Chars>
-struct ParseHex {
-private:
-    static_assert(Pref1 == '0' && (Pref2 == 'x' || Pref2 == 'X'), "0x is a required prefix");
-    static_assert(sizeof(uintmax_t) * 2 >= sizeof...(Chars), "ParseHex overflow");
-    static_assert(AllOf<IsHexDigit, Chars...>::value, "Chars must be hex digits.");
+template <char Char>
+struct HexConversion {
+    static_assert((Char >= '0' && Char <= '9') || (Char >= 'a' && Char <= 'f') || (Char >= 'A' && Char <= 'F'), "non-hex character");
+    static constexpr uint8_t value = HexToDec(Char);
+};
 
-    static constexpr uintmax_t Parse() {
-        uintmax_t ret = 0;
-
-        for (auto&& c : {Chars...}) {
-            ret = (ret << 4) + HexToDec(c);
-        }
-
-        return ret;
+template <char Zero, char X, char RHi, char RLo, char GHi, char GLo, char BHi, char BLo, char AHi, char ALo>
+struct ColorFactory {
+    static_assert(Zero == '0' && X == 'x', "color literal must be prefixed with 0x");
+    constexpr Color operator()() {
+        return Color(
+            (HexConversion<RHi>::value << 4 | HexConversion<RLo>::value) / 255.0,
+            (HexConversion<GHi>::value << 4 | HexConversion<GLo>::value) / 255.0,
+            (HexConversion<BHi>::value << 4 | HexConversion<BLo>::value) / 255.0,
+            (HexConversion<AHi>::value << 4 | HexConversion<ALo>::value) / 255.0
+        );
     }
-public:
-    static constexpr uintmax_t value = Parse();
 };
 
 } // namespace detail
 
 template <char... Chars>
-constexpr Color operator""_rgba() {
-    constexpr auto val = detail::ParseHex<Chars...>::value;
-
-    static_assert(sizeof...(Chars) == 10, "_rgb length out of bounds");
-    static_assert(val < 0xFFFFFFFF, "color out of bounds");
-
-    const auto r = ((val & 0xFF000000) >> 24) / 255.0;
-    const auto g = ((val & 0x00FF0000) >> 16) / 255.0;
-    const auto b = ((val & 0x0000FF00) >> 8 ) / 255.0;
-    const auto a = ((val & 0x000000FF)      ) / 255.0;
-
-    return Color{r, g, b, a};
+constexpr Color operator""_rgb() {
+    return detail::ColorFactory<Chars..., 'f', 'f'>()();
 }
 
 template <char... Chars>
-constexpr Color operator""_rgb() {
-    static_assert(sizeof...(Chars) == 8, "_rgb length out of bounds");
-
-    return operator""_rgba<Chars..., 'F', 'F'>();
+constexpr Color operator""_rgba() {
+    return detail::ColorFactory<Chars...>()();
 }
 
 }} // namespace onair::okui
