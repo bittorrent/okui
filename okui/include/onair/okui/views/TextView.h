@@ -2,6 +2,7 @@
 
 #include "onair/okui/config.h"
 
+#include "onair/okui/Color.h"
 #include "onair/okui/BitmapFont.h"
 #include "onair/okui/View.h"
 
@@ -35,6 +36,7 @@ public:
     void setText(const char* text);
     void setText(const std::string& text) { setText(text.c_str()); }
     void setTextColor(double r, double g, double b, double a = 1.0);
+    void setTextColor(const Color& color) { setTextColor(color.r, color.g, color.b, color.a); }
 
     /**
     * @param texture the name of the texture resource to use
