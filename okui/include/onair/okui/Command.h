@@ -12,8 +12,6 @@ namespace okui {
 using Command = uint64_t;
 using CommandContext = int;
 
-namespace {
-
 inline namespace literals {
     constexpr Command operator "" _cmd(const char* str, size_t length) {
         return FNV1A64(str, length);
@@ -27,7 +25,5 @@ constexpr Command kCommandCut        = "cut"_cmd;
 constexpr Command kCommandPaste      = "paste"_cmd;
 constexpr Command kCommandQuit       = "quit"_cmd;
 constexpr Command kCommandSelectAll  = "select all"_cmd;
-
-} // namespace
 
 }} // namespace onair::okui

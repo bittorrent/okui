@@ -70,6 +70,8 @@ struct ColorFactory {
 
 } // namespace detail
 
+inline namespace literals {
+
 template <char... Chars>
 constexpr Color operator""_rgb() {
     return detail::ColorFactory<Chars..., 'f', 'f'>()();
@@ -79,5 +81,7 @@ template <char... Chars>
 constexpr Color operator""_rgba() {
     return detail::ColorFactory<Chars...>()();
 }
+
+} // namespace literals
 
 }} // namespace onair::okui

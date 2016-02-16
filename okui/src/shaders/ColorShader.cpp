@@ -79,6 +79,10 @@ void ColorShader::setColor(double r, double g, double b, double a) {
     _gradient = false;
 }
 
+void ColorShader::setColor(const Color& color) {
+    setColor(color.r, color.g, color.b, color.a);
+}
+
 void ColorShader::setColorA(double x, double y, double r, double g, double b, double a) {
     _transformation.transform(x, y, &_gradientPointA.x, &_gradientPointA.y);
     _gradientPointA.r = r; _gradientPointA.g = g; _gradientPointA.b = b; _gradientPointA.a = a;
