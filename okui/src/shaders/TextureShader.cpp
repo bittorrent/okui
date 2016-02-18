@@ -83,11 +83,11 @@ TextureShader::TextureShader(const char* fragmentShader) {
     ONAIR_OKUI_GL_ERROR_CHECK();
 }
 
-void TextureShader::setColor(double r, double g, double b, double a) {
-    _triangle.a.r = _triangle.b.r = _triangle.c.r = r;
-    _triangle.a.g = _triangle.b.g = _triangle.c.g = g;
-    _triangle.a.b = _triangle.b.b = _triangle.c.b = b;
-    _triangle.a.a = _triangle.b.a = _triangle.c.a = a;
+void TextureShader::setColor(const Color& color) {
+    _triangle.a.r = _triangle.b.r = _triangle.c.r = color.r;
+    _triangle.a.g = _triangle.b.g = _triangle.c.g = color.g;
+    _triangle.a.b = _triangle.b.b = _triangle.c.b = color.b;
+    _triangle.a.a = _triangle.b.a = _triangle.c.a = color.a;
 }
 
 void TextureShader::setTexture(GLuint id, double x, double y, double w, double h, const AffineTransformation& texCoordTransform) {

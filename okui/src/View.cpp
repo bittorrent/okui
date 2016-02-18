@@ -2,6 +2,7 @@
 
 #include "onair/okui/Application.h"
 #include "onair/okui/BitmapFont.h"
+#include "onair/okui/blending.h"
 #include "onair/okui/opengl/OpenGL.h"
 #include "onair/okui/shapes/Rectangle.h"
 #include "onair/okui/Window.h"
@@ -487,8 +488,8 @@ void View::renderAndRenderSubviews(const RenderTarget* target, const Rectangle<i
     // do the actual rendering
 
     glViewport(area.x, target->height() - area.maxY(), area.width, area.height);
-    glEnable(GL_BLEND);
-    glBlendFuncSeparate(GL_ONE, GL_ONE_MINUS_SRC_ALPHA, GL_ONE, GL_ONE);
+    EnableBlending();
+    SetDefaultBlendFunction();
 
     clipBounds = clipBounds ? clipBounds->intersection(area) : area;
     glEnable(GL_SCISSOR_TEST);
@@ -742,8 +743,8 @@ bool View::_requiresTextureRendering() {
 
 void View::_renderAndRenderSubviews(const RenderTarget* target, const Rectangle<int>& area, bool shouldClear, optional<Rectangle<int>> clipBounds) {
     glViewport(area.x, target->height() - area.maxY(), area.width, area.height);
-    glEnable(GL_BLEND);
-    glBlendFuncSeparate(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA, GL_ONE, GL_ONE);
+    EnableBlending();
+    SetDefaultBlendFunction();
 
     if (_clipsToBounds) {
         clipBounds = clipBounds ? clipBounds->intersection(area) : area;

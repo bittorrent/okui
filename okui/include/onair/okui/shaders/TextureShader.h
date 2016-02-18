@@ -2,6 +2,7 @@
 
 #include "onair/okui/config.h"
 
+#include "onair/okui/Color.h"
 #include "onair/okui/Rectangle.h"
 #include "onair/okui/Shader.h"
 
@@ -24,7 +25,12 @@ public:
     TextureShader(const char* fragmentShader = nullptr);
     virtual ~TextureShader() {}
 
-    void setColor(double r, double g, double b, double a);
+    void setColor(const Color& color);
+
+    template <typename ColorArg, typename... RemColorArgs>
+    auto setColor(ColorArg&& colorArg, RemColorArgs&&... remColorArgs) -> typename std::enable_if<!std::is_convertible<ColorArg, const Color&>::value>::type {
+        setColor(Color(std::forward<ColorArg>(colorArg), std::forward<RemColorArgs>(remColorArgs)...));
+    }
 
     void setTexture(GLuint id, Rectangle<double> bounds, const AffineTransformation& texCoordTransform = AffineTransformation{}) { setTexture(id, bounds.x, bounds.y, bounds.width, bounds.height, texCoordTransform); }
     void setTexture(GLuint id, double x, double y, double w, double h, const AffineTransformation& texCoordTransform = AffineTransformation{});

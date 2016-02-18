@@ -71,27 +71,23 @@ ColorShader::ColorShader() {
     ONAIR_OKUI_GL_ERROR_CHECK();
 }
 
-void ColorShader::setColor(double r, double g, double b, double a) {
-    _triangle.a.r = _triangle.b.r = _triangle.c.r = r;
-    _triangle.a.g = _triangle.b.g = _triangle.c.g = g;
-    _triangle.a.b = _triangle.b.b = _triangle.c.b = b;
-    _triangle.a.a = _triangle.b.a = _triangle.c.a = a;
+void ColorShader::setColor(const Color& color) {
+    _triangle.a.r = _triangle.b.r = _triangle.c.r = color.r;
+    _triangle.a.g = _triangle.b.g = _triangle.c.g = color.g;
+    _triangle.a.b = _triangle.b.b = _triangle.c.b = color.b;
+    _triangle.a.a = _triangle.b.a = _triangle.c.a = color.a;
     _gradient = false;
 }
 
-void ColorShader::setColor(const Color& color) {
-    setColor(color.r, color.g, color.b, color.a);
-}
-
-void ColorShader::setColorA(double x, double y, double r, double g, double b, double a) {
+void ColorShader::setColorA(double x, double y, const Color& color) {
     _transformation.transform(x, y, &_gradientPointA.x, &_gradientPointA.y);
-    _gradientPointA.r = r; _gradientPointA.g = g; _gradientPointA.b = b; _gradientPointA.a = a;
+    _gradientPointA.r = color.r; _gradientPointA.g = color.g; _gradientPointA.b = color.b; _gradientPointA.a = color.a;
     _gradient = true;
 }
 
-void ColorShader::setColorB(double x, double y, double r, double g, double b, double a) {
+void ColorShader::setColorB(double x, double y, const Color& color) {
     _transformation.transform(x, y, &_gradientPointB.x, &_gradientPointB.y);
-    _gradientPointB.r = r; _gradientPointB.g = g; _gradientPointB.b = b; _gradientPointB.a = a;
+    _gradientPointB.r = color.r; _gradientPointB.g = color.g; _gradientPointB.b = color.b; _gradientPointB.a = color.a;
     _gradient = true;
 }
 

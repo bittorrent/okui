@@ -2,6 +2,7 @@
 
 #include "onair/okui/config.h"
 
+#include "onair/okui/Color.h"
 #include "onair/okui/Shader.h"
 
 namespace onair {
@@ -19,7 +20,12 @@ class BoxShadowShader : public ShaderBase<BoxShadowVertex> {
 public:
 	BoxShadowShader();
 
-	void setColor(double r, double g, double b, double a);
+    void setColor(const Color& color);
+
+    template <typename ColorArg, typename... RemColorArgs>
+    auto setColor(ColorArg&& colorArg, RemColorArgs&&... remColorArgs) -> typename std::enable_if<!std::is_convertible<ColorArg, const Color&>::value>::type {
+        setColor(Color(std::forward<ColorArg>(colorArg), std::forward<RemColorArgs>(remColorArgs)...));
+    }
 
 	void setBox(double x, double y, double w, double h);
 	void setSpread(double spread);

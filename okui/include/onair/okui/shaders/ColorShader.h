@@ -2,9 +2,8 @@
 
 #include "onair/okui/config.h"
 
-#include "onair/okui/Shader.h"
-
 #include "onair/okui/Color.h"
+#include "onair/okui/Shader.h"
 
 namespace onair {
 namespace okui {
@@ -23,14 +22,28 @@ public:
     /**
     * Sets a flat color.
     */
-    void setColor(double r, double g, double b, double a);
     void setColor(const Color& color);
+
+    template <typename ColorArg, typename... RemColorArgs>
+    auto setColor(ColorArg&& colorArg, RemColorArgs&&... remColorArgs) -> typename std::enable_if<!std::is_convertible<ColorArg, const Color&>::value>::type {
+        setColor(Color(std::forward<ColorArg>(colorArg), std::forward<RemColorArgs>(remColorArgs)...));
+    }
 
     /**
     * Sets colors for a gradient.
     */
-    void setColorA(double x, double y, double r, double g, double b, double a);
-    void setColorB(double x, double y, double r, double g, double b, double a);
+    void setColorA(double x, double y, const Color& color);
+    void setColorB(double x, double y, const Color& color);
+
+    template <typename ColorArg, typename... RemColorArgs>
+    auto setColorA(double x, double y, ColorArg&& colorArg, RemColorArgs&&... remColorArgs) -> typename std::enable_if<!std::is_convertible<ColorArg, const Color&>::value>::type {
+        setColorA(x, y, Color(std::forward<ColorArg>(colorArg), std::forward<RemColorArgs>(remColorArgs)...));
+    }
+
+    template <typename ColorArg, typename... RemColorArgs>
+    auto setColorB(double x, double y, ColorArg&& colorArg, RemColorArgs&&... remColorArgs) -> typename std::enable_if<!std::is_convertible<ColorArg, const Color&>::value>::type {
+        setColorB(x, y, Color(std::forward<ColorArg>(colorArg), std::forward<RemColorArgs>(remColorArgs)...));
+    }
 
 private:
     struct GradientPoint {
