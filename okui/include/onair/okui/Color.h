@@ -2,6 +2,8 @@
 
 #include "onair/okui/config.h"
 
+#include "onair/utility.h"
+
 namespace onair {
 namespace okui {
 
@@ -34,20 +36,6 @@ struct Color {
 };
 
 namespace detail {
-
-template <typename CharT>
-constexpr int8_t HexToDec(CharT c) {
-    if (c >= '0' && c <= '9') {
-        return c - '0';
-    }
-    if (c >= 'A' && c <= 'F') {
-        return c - 'A' + 10;
-    }
-    if (c >= 'a' && c <= 'f') {
-        return c - 'a' + 10;
-    }
-    return -1;
-}
 
 template <char Char>
 struct HexConversion {
