@@ -38,6 +38,9 @@ public:
     void setTextColor(double r, double g, double b, double a = 1.0);
     void setTextColor(const Color& color) { setTextColor(color.r, color.g, color.b, color.a); }
 
+    void setLetterSpacing(double spacing) { _letterSpacing = spacing; }
+    double letterSpacing() const { return _letterSpacing; }
+
     /**
     * @param texture the name of the texture resource to use
     * @param metadata the name of the metadata resource to use
@@ -71,6 +74,7 @@ private:
     std::string _bitmapFontTexture;
     std::string _bitmapFontMetadata;
     double _bitmapFontSize = 0.0;
+    double _letterSpacing = 0.0;
 
     HorizontalAlignment _horizontalAlignment = HorizontalAlignment::kLeft;
     VerticalAlignment _verticalAlignment = VerticalAlignment::kCenter;
