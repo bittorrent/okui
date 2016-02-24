@@ -177,12 +177,12 @@ inline std::string Android<Base>::deviceModel() const {
 }
 
 template <typename Base>
-inline bool Android::hasNetworkConnection() const {
+inline bool Android<Base>::hasNetworkConnection() const {
     return _javaHelper->hasNetworkConnection();
 }
 
 template <typename Base>
-inline bool Android::isMobileConnection() const {
+inline bool Android<Base>::isMobileConnection() const {
     return _javaHelper->isMobileConnection();
 }
 
