@@ -14,8 +14,8 @@ namespace onair {
 namespace okui {
 namespace applications {
 
-ONAIR_JNI_JAVA_CLASS_BEGIN(JavaHelper);
-    ONAIR_JNI_JAVA_CLASS_CONSTRUCTOR(JavaHelper, android::app::Activity);
+ONAIR_JNI_JAVA_CLASS_BEGIN(AndroidJavaHelper);
+    ONAIR_JNI_JAVA_CLASS_CONSTRUCTOR(AndroidJavaHelper, android::app::Activity);
 
     struct OpenDialogCallback {
         OpenDialogCallback(std::function<void(int)> f) : f{std::move(f)} {}
