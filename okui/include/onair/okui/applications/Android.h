@@ -14,8 +14,8 @@ namespace onair {
 namespace okui {
 namespace applications {
 
-ONAIR_JNI_JAVA_CLASS_BEGIN(AndroidJavaHelper);
-    ONAIR_JNI_JAVA_CLASS_CONSTRUCTOR(AndroidJavaHelper, android::app::Activity);
+ONAIR_JNI_JAVA_CLASS_BEGIN(JavaHelper);
+    ONAIR_JNI_JAVA_CLASS_CONSTRUCTOR(JavaHelper, android::app::Activity);
 
     struct OpenDialogCallback {
         OpenDialogCallback(std::function<void(int)> f) : f{std::move(f)} {}
@@ -32,7 +32,8 @@ ONAIR_JNI_JAVA_CLASS_BEGIN(AndroidJavaHelper);
     ONAIR_JNI_JAVA_CLASS_METHOD(std::string, operatingSystem);
     ONAIR_JNI_JAVA_CLASS_METHOD(std::string, deviceModel);
     ONAIR_JNI_JAVA_CLASS_METHOD(float, renderScale);
-    ONAIR_JNI_JAVA_CLASS_METHOD(bool, wifiConnection);
+    ONAIR_JNI_JAVA_CLASS_METHOD(bool, hasNetworkConnection);
+    ONAIR_JNI_JAVA_CLASS_METHOD(bool, isMobileConnection);
 ONAIR_JNI_JAVA_CLASS_END();
 
 /**
@@ -60,7 +61,9 @@ public:
 
     virtual std::string deviceModel() const override;
 
-    virtual bool wifiConnection() const override;
+    virtual bool hasNetworkConnection() const override;
+
+    virtual bool isMobileConnection() const override;
 
     class AssetResourceManager : public ResourceManager {
     public:
@@ -174,8 +177,13 @@ inline std::string Android<Base>::deviceModel() const {
 }
 
 template <typename Base>
-inline bool Android<Base>::wifiConnection() const {
-    return _javaHelper->wifiConnection();
+inline bool Android::hasNetworkConnection() const {
+    return _javaHelper->hasNetworkConnection();
+}
+
+template <typename Base>
+inline bool Android::isMobileConnection() const {
+    return _javaHelper->isMobileConnection();
 }
 
 template <typename Base>
