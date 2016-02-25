@@ -446,7 +446,13 @@ void View::dispatchUpdate(std::chrono::high_resolution_clock::duration elapsed) 
             newFocus->_checkUpdateSubscription();
         }
     }
-    update();
+
+    auto hooks = _updateHooks;
+    for (auto& hook : hooks) {
+        if (_updateHooks.count(hook.first)) {
+            hook.second();
+        }
+    }
 }
 
 void View::renderAndRenderSubviews(const RenderTarget* target, const Rectangle<int>& area, optional<Rectangle<int>> clipBounds) {
@@ -501,8 +507,13 @@ void View::renderAndRenderSubviews(const RenderTarget* target, const Rectangle<i
     glDisable(GL_SCISSOR_TEST);
 }
 
-void View::setNeedsUpdates(bool needsUpdates) {
-    _needsUpdates = needsUpdates;
+void View::addUpdateHook(const std::string& handle, std::function<void()> hook) {
+    _updateHooks[std::hash<std::string>()(handle)] = std::move(hook);
+    _checkUpdateSubscription();
+}
+
+void View::removeUpdateHook(const std::string& handle) {
+    _updateHooks.erase(std::hash<std::string>()(handle));
     _checkUpdateSubscription();
 }
 
@@ -827,7 +838,7 @@ void View::_checkUpdateSubscription() {
 }
 
 bool View::_shouldSubscribeToUpdates() {
-    return (_needsUpdates || _touchpadFocus.needsUpdates()) && isVisibleInOpenWindow();
+    return (!_updateHooks.empty() || _touchpadFocus.needsUpdates()) && isVisibleInOpenWindow();
 }
 
 }}

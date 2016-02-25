@@ -45,8 +45,6 @@ public:
     virtual void mouseDrag(double startX, double startY, double x, double y) override;
     virtual void mouseWheel(double xPos, double yPos, int xWheel, int yWheel) override;
 
-    virtual void update() override;
-
 private:
     void _scroll(okui::Rectangle<double> newBounds);
 

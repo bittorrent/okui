@@ -6,16 +6,12 @@ namespace views {
 
 void PopoutFocus::focusGained() {
     _popoutAnimation.target(1.0, 70ms, interpolation::Exponential::EaseOut);
-    setNeedsUpdates(true);
+    _startUpdates();
 }
 
 void PopoutFocus::focusLost() {
     _popoutAnimation.target(0.0, 400ms, interpolation::Exponential::EaseOut);
-    setNeedsUpdates(true);
-}
-
-void PopoutFocus::update() {
-    _updateBounds();
+    _startUpdates();
 }
 
 void PopoutFocus::setScaling(Point<double> scaling) {
@@ -34,10 +30,16 @@ void PopoutFocus::setSize(Point<double> size) {
     _updateBounds();
 }
 
+void PopoutFocus::_startUpdates() {
+    addUpdateHook("PopoutFocus", [this] {
+        _updateBounds();
+    });
+}
+
 void PopoutFocus::_updateBounds() {
     auto popout = _popoutAnimation.current();
     if (popout <= 0.0) {
-        setNeedsUpdates(false);
+        removeUpdateHook("PopoutFocus");
     }
     auto width = _size.x * (1.0 + popout * _scaling.x);
     auto height = _size.y * (1.0 + popout * _scaling.y);

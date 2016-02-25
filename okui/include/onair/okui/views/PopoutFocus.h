@@ -15,7 +15,6 @@ public:
     virtual bool canBecomeFocus() override { return true; }
     virtual void focusGained() override;
     virtual void focusLost() override;
-    virtual void update() override;
 
     void setScaling(double scaling) { setScaling({scaling, scaling}); }
     void setScaling(double x, double y) { setScaling({x, y}); }
@@ -34,6 +33,7 @@ private:
     Point<double> _selfAnchorPercentage;
     Point<double> _size;
 
+    void _startUpdates();
     void _updateBounds();
 };
 

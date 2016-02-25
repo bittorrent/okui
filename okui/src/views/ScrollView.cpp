@@ -90,7 +90,16 @@ void ScrollView::mouseUp(MouseButton button, double startX, double startY, doubl
         }
     }
 
-    setNeedsUpdates(true);
+    addUpdateHook("ScrollView", [this] {
+        if (_mouseDown || (_animX.current() == _animX.target() && _animY.current() == _animY.target())) {
+            removeUpdateHook("ScrollView");
+            return;
+        }
+        auto contentViewBounds = _contentView.bounds();
+        contentViewBounds.x = _animX.current();
+        contentViewBounds.y = _animY.current();
+        _scroll(contentViewBounds);
+    });
 }
 
 void ScrollView::mouseDrag(double startX, double startY, double x, double y) {
@@ -107,17 +116,6 @@ void ScrollView::mouseDrag(double startX, double startY, double x, double y) {
     auto elapsed = std::chrono::duration<double>(_velocityTimer.elapsed()).count();
     _velocityTimer.restart();
     _velocities.push_back({elapsed, dX, dY});
-}
-
-void ScrollView::update() {
-    if (_mouseDown || (_animX.current() == _animX.target() && _animY.current() == _animY.target())) {
-        setNeedsUpdates(false);
-        return;
-    }
-    auto contentViewBounds = _contentView.bounds();
-    contentViewBounds.x = _animX.current();
-    contentViewBounds.y = _animY.current();
-    _scroll(contentViewBounds);
 }
 
 void ScrollView::_scroll(okui::Rectangle<double> newBounds) {

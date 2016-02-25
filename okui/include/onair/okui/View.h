@@ -367,15 +367,14 @@ public:
     }
 
     /**
-    * Override this to perform updates for each frame. This is invoked exactly once per frame, before any views
-    * begin rendering. You must call setNeedsUpdates with `true` for this to be called.
+    * The hook provided here will be called before rendering each frame.
     */
-    virtual void update() {}
+    void addUpdateHook(const std::string& handle, std::function<void()> hook);
 
     /**
-    * If the view needs constant updates, update() will be called before rendering each frame.
+    * The hook provided here will no longer be called.
     */
-    void setNeedsUpdates(bool needsUpdates = true);
+    void removeUpdateHook(const std::string& handle);
 
     /**
     * Override this to do drawing.
@@ -527,7 +526,7 @@ private:
 
     TouchpadFocus _touchpadFocus;
 
-    bool _needsUpdates = false;
+    std::unordered_map<size_t, std::function<void()>> _updateHooks;
 
     void _setBounds(const Rectangle<double>& bounds);
 
