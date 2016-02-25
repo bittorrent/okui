@@ -72,19 +72,23 @@ void TextView::setFont(std::shared_ptr<BitmapFont> font, double size) {
 }
 
 void TextView::setText(const char* text) {
-    _text.clear();
-    while (*text) {
-        _text += *text;
-        ++text;
+    _glyphs.clear();
+
+    uint32_t codePoint;
+    uint32_t state = 0;
+
+    for (auto ptr = text; *ptr; ++ptr) {
+        if (UTF8Decode(&state, &codePoint, static_cast<unsigned char>(*ptr))) {
+            continue;
+        }
+        _glyphs += *ptr;
     }
+
     _computeLines();
 }
 
-void TextView::setTextColor(double r, double g, double b, double a) {
-    _textColorR = r;
-    _textColorG = g;
-    _textColorB = b;
-    _textColorA = a;
+void TextView::setTextColor(const Color& color) {
+    _textColor = color;
     invalidateRenderCache();
 }
 
@@ -102,11 +106,7 @@ void TextView::render(const RenderTarget* renderTarget, const Rectangle<int>& ar
     if (!_font) { return; }
 
     auto distanceFieldShader = this->distanceFieldShader();
-
-    if (_weight == Weight::kHeavy) {
-        distanceFieldShader->setEdge(0.45);
-    }
-
+    
     auto glyphId = BitmapFont::GlyphId{0x4f}; // 'O'
 
     double fontScale   = _fontSize / _font->size(),
@@ -115,20 +115,14 @@ void TextView::render(const RenderTarget* renderTarget, const Rectangle<int>& ar
            clipWidth   = 0,
            clipHeight  = 0;
     renderTransformation().transform(glyphWidth, glyphHeight, &clipWidth, &clipHeight);
-    auto pixelWidth = (clipWidth / 2 + 0.5) * area.width,
-         pixelHeight = (1 - (clipHeight / 2 + 0.5)) * area.height;
 
-    if ((pixelWidth * pixelHeight) < 150) {
-        // If this text is very small, in number of pixels on screen, enable supersampling
-        distanceFieldShader->enableSupersampling(true);
-    }
+    distanceFieldShader->enableSupersampling(true);
+    distanceFieldShader->setEdge(_weight == Weight::kHeavy ? 0.45 : 0.5);
 
-    distanceFieldShader->setColor(_textColorR, _textColorG, _textColorB, _textColorA);
+    distanceFieldShader->setColor(_textColor);
     _renderBitmapText(distanceFieldShader);
 
     distanceFieldShader->flush();
-    distanceFieldShader->setEdge(0.5);
-    distanceFieldShader->enableSupersampling(false);
 }
 
 void TextView::layout() {
@@ -198,20 +192,11 @@ void TextView::_computeLines() {
     auto width = bounds().width;
     std::basic_string<BitmapFont::GlyphId> line;
 
-    uint32_t codePoint;
-    uint32_t state = 0;
-
     static constexpr std::array<BitmapFont::GlyphId, 3> ellipses{{ 0x2e, 0x2e, 0x2e }};
     auto ellipsesWidth = _font->width(ellipses.data(), ellipses.size()) * fontScale;
     bool skipUntilNewLine = false;
 
-    for (auto& c : _text) {
-        if (UTF8Decode(&state, &codePoint, static_cast<unsigned char>(c))) {
-            continue;
-        }
-
-        BitmapFont::GlyphId glyph = codePoint;
-
+    for (auto& glyph : _glyphs) {
         if (glyph == '\n') {
             _lines.emplace_back(std::move(line));
             line.clear();

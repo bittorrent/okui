@@ -26,10 +26,6 @@ DistanceFieldShader::DistanceFieldShader() : TextureShader(
             "float aa = 0.03;"
 #endif
     R"(
-            if (sample.r < edge + aa) {
-                discard;
-            }
-
             float alpha = smoothstep(edge - aa, edge + aa, sample.a);
 
             if (supersample) {

@@ -10,7 +10,7 @@ namespace okui {
 
 class FileResourceManager : public ResourceManager {
 public:
-    FileResourceManager(const char* directory) : _directory(directory) {}
+    explicit FileResourceManager(const char* directory) : _directory(directory) {}
 
     virtual std::shared_ptr<std::string> load(const char* name) override;
 

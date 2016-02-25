@@ -35,8 +35,12 @@ public:
     void setFont(std::shared_ptr<BitmapFont> font, double size);
     void setText(const char* text);
     void setText(const std::string& text) { setText(text.c_str()); }
-    void setTextColor(double r, double g, double b, double a = 1.0);
-    void setTextColor(const Color& color) { setTextColor(color.r, color.g, color.b, color.a); }
+    void setTextColor(const Color& color);
+
+    template <typename ColorArg, typename... RemColorArgs>
+    auto setTextColor(ColorArg&& colorArg, RemColorArgs&&... remColorArgs) -> typename std::enable_if<!std::is_convertible<ColorArg, const Color&>::value>::type {
+        setTextColor(Color(std::forward<ColorArg>(colorArg), std::forward<RemColorArgs>(remColorArgs)...));
+    }
 
     void setLetterSpacing(double spacing) { _letterSpacing = spacing; }
     double letterSpacing() const { return _letterSpacing; }
@@ -79,10 +83,10 @@ private:
     HorizontalAlignment _horizontalAlignment = HorizontalAlignment::kLeft;
     VerticalAlignment _verticalAlignment = VerticalAlignment::kCenter;
     Weight _weight = Weight::kRegular;
-    std::basic_string<BitmapFont::GlyphId> _text;
+    std::basic_string<BitmapFont::GlyphId> _glyphs;
     std::vector<std::basic_string<BitmapFont::GlyphId>> _lines;
     double _textWidth;
-    double _textColorR{0.0}, _textColorG{0.0}, _textColorB{0.0}, _textColorA{1.0};
+    Color _textColor{0.0};
     OverflowBehavior _overflowBehavior = OverflowBehavior::kEllipses;
 
     void _computeLines();
