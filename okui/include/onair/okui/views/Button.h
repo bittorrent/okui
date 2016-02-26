@@ -23,6 +23,7 @@ public:
     void setAction(std::function<void()> action) { _action = action; }
 
     void setTextureResource(std::string resource, State state = State::kNormal);
+    void setTextureFromURL(std::string url, State state = State::kNormal);
     void setTextureColor(Color color, State state = State::kNormal);
     void setTextureDistanceField(double edge = 0.5, State state = State::kNormal);
 
@@ -38,12 +39,15 @@ public:
     virtual void windowChanged() override;
 
 private:
+    void _setTexture(std::string texture, State state, bool fromURL);
+
     State _state = State::kNormal;
     std::function<void()> _action;
 
     struct Texture {
         TextureHandle handle;
         std::string resource;
+        bool fromURL = false;
         optional<Color> color;
         optional<double> distanceFieldEdge;
     };

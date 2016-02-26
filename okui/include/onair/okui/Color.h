@@ -12,25 +12,19 @@ struct Color {
     constexpr explicit Color(double brightness, double alpha = 1.0) : r{brightness}, g{brightness}, b{brightness}, a{alpha} {}
     constexpr Color(double red, double green, double blue, double alpha = 1.0) : r{red}, g{green}, b{blue}, a{alpha} {}
 
-    constexpr Color operator*(double multiplier) const {
-        return Color(r * multiplier, g * multiplier, b * multiplier, a * multiplier);
-    }
+    constexpr Color& operator+=(const Color& c)                { return *this = *this + c; }
+    constexpr Color& operator-=(const Color& c)                { return *this = *this - c; }
+    constexpr Color& operator*=(double s)                      { return *this = *this * s; }
+    constexpr Color& operator/=(double s)                      { return *this = *this / s; }
 
-    constexpr Color operator+(const Color& other) const {
-        return Color(r + other.r, g + other.g, b + other.b, a + other.a);
-    }
+    constexpr Color operator+(const Color& c) const            { return {r + c.r, g + c.g, b + c.b, a + c.a}; }
+    constexpr Color operator-(const Color& c) const            { return {r - c.r, g - c.g, b - c.b, a - c.a}; }
+    constexpr Color operator*(double s) const                  { return {r * s, g * s, b * s, a * s}; }
+    constexpr friend Color operator*(double s, const Color& c) { return c * s; }
+    constexpr Color operator/(double s) const                  { return {r / s, g / s, b / s, a / s}; }
 
-    constexpr Color interpolate(const Color& other, double factor) const {
-        return *this * (1.0 - factor) + other * factor;
-    }
-
-    constexpr bool operator==(const Color& other) const {
-        return r == other.r && g == other.g && b == other.b && a == other.a;
-    }
-
-    constexpr bool operator!=(const Color& other) const {
-        return !(*this == other);
-    }
+    constexpr bool operator==(const Color& c) const            { return r == c.r && g == c.g && b == c.b && a == c.a; }
+    constexpr bool operator!=(const Color& c) const            { return !(*this == c); }
 
     double r{1.0}, g{1.0}, b{1.0}, a{1.0};
 };

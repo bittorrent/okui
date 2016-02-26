@@ -12,12 +12,20 @@ static_assert(Color(2.0, 3.0, 4.0) == Color(2.0, 3.0, 4.0, 1.0), "test failed");
 
 // multiplication
 static_assert(Color(1.0, 2.0, 3.0, 4.0) * 2.0 == Color(2.0, 4.0, 6.0, 8.0), "test failed");
+static_assert(2.0 * Color(1.0, 2.0, 3.0, 4.0) == Color(2.0, 4.0, 6.0, 8.0), "test failed");
+static_assert((Color(1.0, 2.0, 3.0, 4.0) *= 2.0) == Color(2.0, 4.0, 6.0, 8.0), "test failed");
+
+// division
+static_assert(Color(1.0, 2.0, 3.0, 4.0) / 2.0 == Color(0.5, 1.0, 1.5, 2.0), "test failed");
+static_assert((Color(1.0, 2.0, 3.0, 4.0) /= 2.0) == Color(0.5, 1.0, 1.5, 2.0), "test failed");
 
 // addition
 static_assert(Color(1.0, 2.0, 3.0, 4.0) + Color(2.0, 3.0, 4.0, 5.0) == Color(3.0, 5.0, 7.0, 9.0), "test failed");
+static_assert((Color(1.0, 2.0, 3.0, 4.0) += Color(2.0, 3.0, 4.0, 5.0)) == Color(3.0, 5.0, 7.0, 9.0), "test failed");
 
-// interpolation
-static_assert(Color(1.0, 1.0, 1.0, 1.0).interpolate(Color(2.0, 3.0, 4.0, 5.0), 0.25) == Color(1.25, 1.5, 1.75, 2.0), "test failed");
+// subtraction
+static_assert(Color(1.0, 2.0, 3.0, 4.0) - Color(2.0, 3.0, 4.0, 5.0) == Color(-1.0, -1.0, -1.0, -1.0), "test failed");
+static_assert((Color(1.0, 2.0, 3.0, 4.0) -= Color(2.0, 3.0, 4.0, 5.0)) == Color(-1.0, -1.0, -1.0, -1.0), "test failed");
 
 // comparison
 static_assert(Color(1.0, 2.0, 3.0, 4.0) != Color(2.0, 3.0, 4.0, 5.0), "test failed");

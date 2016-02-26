@@ -208,7 +208,8 @@ void TextView::_computeLines() {
 
         line.push_back(glyph);
 
-        auto lineWidth = _font->width(line.data(), line.size()) * fontScale;
+        auto letterSpacing = line.empty() ? 0 : (line.size()-1) * _letterSpacing;
+        auto lineWidth = (_font->width(line.data(), line.size()) + letterSpacing) * fontScale;
         if (lineWidth > width) {
             if (_overflowBehavior == OverflowBehavior::kEllipses) {
                 // rewind, insert the ellipses, and skip until a new line

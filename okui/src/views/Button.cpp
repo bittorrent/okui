@@ -7,10 +7,11 @@ namespace views {
 using namespace onair;
 
 void Button::setTextureResource(std::string resource, State state) {
-    auto& texture = _textures[state];
-    texture.handle = window() ? loadTextureResource(resource) : nullptr;
-    texture.resource = std::move(resource);
-    invalidateRenderCache();
+    _setTexture(resource, state, false);
+}
+
+void Button::setTextureFromURL(std::string url, State state) {
+    _setTexture(url, state, true);
 }
 
 void Button::setTextureColor(Color color, State state) {
@@ -95,10 +96,21 @@ void Button::windowChanged() {
     if (window()) {
         for (auto& kv : _textures) {
             if (!kv.second.handle) {
-                kv.second.handle = loadTextureResource(kv.second.resource);
+                kv.second.handle = kv.second.fromURL ? loadTextureFromURL(kv.second.resource) : loadTextureResource(kv.second.resource);
             }
         }
     }
+}
+
+void Button::_setTexture(std::string resource, State state, bool fromURL) {
+    auto& texture = _textures[state];
+    texture.handle = nullptr;
+    if (window()) {
+        texture.handle = fromURL ? loadTextureFromURL(resource) : loadTextureResource(resource);
+    }
+    texture.resource = std::move(resource);
+    texture.fromURL = fromURL;
+    invalidateRenderCache();
 }
 
 }}}
