@@ -7,11 +7,11 @@ namespace views {
 using namespace onair;
 
 void Button::setTextureResource(std::string resource, State state) {
-    _setTexture(resource, state, false);
+    _setTexture(std::move(resource), state, false);
 }
 
 void Button::setTextureFromURL(std::string url, State state) {
-    _setTexture(url, state, true);
+    _setTexture(std::move(url), state, true);
 }
 
 void Button::setTextureColor(Color color, State state) {
