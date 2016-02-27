@@ -161,7 +161,7 @@ std::pair<size_t, size_t> TextView::lineColumnAtPosition(int mouseX, int mouseY)
 
     for (size_t i = 0; i < line.size(); ++i) {
         if (i > 0) {
-            x += _font->kerning(line[i - 1], line[i]) + _letterSpacing;
+            x += _font->kerning(line[i - 1], line[i]) * fontScale + _letterSpacing;
         }
         auto glyph = _font->glyph(line[i]);
         if (glyph) {
@@ -245,8 +245,8 @@ void TextView::_computeLines() {
     }
 
     for (auto& line : _lines) {
-        auto letterSpacing = line.empty() ? 0 : (line.size()-1) * _letterSpacing;
-        _textWidth = std::max(_textWidth, (_font->width(line.data(), line.size()) + letterSpacing) * fontScale);
+        auto letterSpacing = line.empty() ? 0 : ((line.size() - 1) * _letterSpacing);
+        _textWidth = std::max(_textWidth, _font->width(line.data(), line.size()) * fontScale + letterSpacing);
     }
 
     invalidateRenderCache();
@@ -267,7 +267,7 @@ void TextView::_renderBitmapText(shaders::DistanceFieldShader* shader) {
 
         for (size_t i = 0; i < line.size(); ++i) {
             if (i > 0) {
-                x += _font->kerning(line[i - 1], line[i]) + _letterSpacing;
+                x += _font->kerning(line[i - 1], line[i]) * fontScale + _letterSpacing;
             }
             auto glyph = _font->glyph(line[i]);
             if (glyph) {
