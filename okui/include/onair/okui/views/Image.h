@@ -16,7 +16,7 @@ public:
     void setTextureColor(Color color);
     void setTextureDistanceField(double edge = 0.5);
 
-    const TextureHandle& texture() const { return _textureHandle; }
+    TextureHandle texture() { return _textureHandle.newHandle(); }
 
     virtual void render() override;
     virtual void windowChanged() override;

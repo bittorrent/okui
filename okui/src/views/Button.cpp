@@ -26,10 +26,10 @@ void Button::setTextureDistanceField(double edge, State state) {
     invalidateRenderCache();
 }
 
-const TextureHandle& Button::texture(State state) const {
+TextureHandle Button::texture(State state) {
     auto i = _textures.find(state);
     if (i != _textures.end()) {
-        return i->second.handle;
+        return i->second.handle.newHandle();
     }
 
     return nullptr;
