@@ -13,7 +13,7 @@ public:
     TextureHandle() {}
     TextureHandle(std::nullptr_t null) {}
     explicit TextureHandle(std::shared_ptr<Texture> texture) : _texture(texture) {}
-    
+
     /**
     * Creates a handle for the given texture and ties it to another handle.
     */
@@ -28,7 +28,9 @@ public:
     operator bool() const { return _texture.get(); }
     operator std::shared_ptr<Texture>() { return _texture; }
     std::shared_ptr<Texture> operator->() { return _texture; }
+    std::shared_ptr<const Texture> operator->() const { return _texture; }
     Texture& operator*() { return *_texture; }
+    const Texture& operator*() const { return *_texture; }
 
     std::shared_ptr<Texture> texture() { return _texture; }
 
@@ -41,7 +43,7 @@ public:
     * Use this to register a callback that should be invoked once loaded.
     */
     void onLoad(std::function<void()> callback);
-    
+
     /**
     * Use this to invoke registered callbacks on all handles tied to this one.
     */

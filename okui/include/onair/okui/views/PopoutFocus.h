@@ -16,6 +16,7 @@ public:
     virtual bool canBecomeFocus() override { return true; }
     virtual void focusGained() override;
     virtual void focusLost() override;
+    virtual void disappeared() override;
 
     void setScaling(double scaling) { setScaling({scaling, scaling}); }
     void setScaling(double x, double y) { setScaling({x, y}); }
@@ -46,6 +47,12 @@ template <typename View>
 void PopoutFocus<View>::focusLost() {
     _popoutAnimation.target(0.0, 400ms, interpolation::Exponential::EaseOut);
     this->addUpdateHook("PopoutFocus", [&] { _updateBounds(); });
+}
+
+template <typename View>
+void PopoutFocus<View>::disappeared() {
+    _popoutAnimation.reset(0.0);
+    _updateBounds();
 }
 
 template <typename View>

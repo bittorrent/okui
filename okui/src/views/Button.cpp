@@ -26,6 +26,15 @@ void Button::setTextureDistanceField(double edge, State state) {
     invalidateRenderCache();
 }
 
+const TextureHandle& Button::texture(State state) const {
+    auto i = _textures.find(state);
+    if (i != _textures.end()) {
+        return i->second.handle;
+    }
+
+    return nullptr;
+}
+
 void Button::press() {
     _action();
 }
@@ -65,17 +74,20 @@ void Button::render() {
     shader->flush();
 }
 
+void Button::buttonDown(const okui::Controller& controller, size_t button) {
+    _press();
+}
+
+void Button::buttonUp(const okui::Controller& controller, size_t button) {
+    _unpress();
+}
+
 void Button::mouseDown(MouseButton button, double x, double y) {
-    _state = State::kDepressed;
-    invalidateRenderCache();
+    _press();
 }
 
 void Button::mouseUp(MouseButton button, double startX, double startY, double x, double y) {
-    if (_state == State::kDepressed) {
-        _action();
-    }
-    _state = State::kNormal;
-    invalidateRenderCache();
+    _unpress();
 }
 
 void Button::mouseExit() {
@@ -110,6 +122,19 @@ void Button::_setTexture(std::string resource, State state, bool fromURL) {
     }
     texture.resource = std::move(resource);
     texture.fromURL = fromURL;
+    invalidateRenderCache();
+}
+
+void Button::_press() {
+    _state = State::kDepressed;
+    invalidateRenderCache();
+}
+
+void Button::_unpress() {
+    if (_state == State::kDepressed) {
+        _action();
+    }
+    _state = State::kNormal;
     invalidateRenderCache();
 }
 

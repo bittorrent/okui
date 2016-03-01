@@ -27,11 +27,15 @@ public:
     void setTextureColor(Color color, State state = State::kNormal);
     void setTextureDistanceField(double edge = 0.5, State state = State::kNormal);
 
+    const TextureHandle& texture(State state = State::kNormal) const;
+
     void press();
 
     virtual void render() override;
 
     virtual bool canBecomeFocus() override { return true; }
+    virtual void buttonDown(const okui::Controller& controller, size_t button) override;
+    virtual void buttonUp(const okui::Controller& controller, size_t button) override;
     virtual void mouseDown(MouseButton button, double x, double y) override;
     virtual void mouseUp(MouseButton button, double startX, double startY, double x, double y) override;
     virtual void mouseExit() override;
@@ -39,6 +43,8 @@ public:
     virtual void windowChanged() override;
 
 private:
+    void _press();
+    void _unpress();
     void _setTexture(std::string texture, State state, bool fromURL);
 
     State _state = State::kNormal;
