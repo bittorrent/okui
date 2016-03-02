@@ -16,16 +16,16 @@ public:
     void setTextureColor(Color color);
     void setTextureDistanceField(double edge = 0.5);
 
-    TextureHandle texture() { return _textureHandle.newHandle(); }
+    TextureHandle texture() { return _texture.newHandle(); }
 
     virtual void render() override;
     virtual void windowChanged() override;
 
 private:
-    TextureHandle    _textureHandle;
+    TextureHandle    _texture;
     std::string      _resource;
     bool             _fromURL = false;
-    optional<Color>  _color;
+    Color            _color = {1, 1, 1, 1};
     optional<double> _distanceFieldEdge;
 };
 

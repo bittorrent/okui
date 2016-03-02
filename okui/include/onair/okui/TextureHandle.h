@@ -25,7 +25,7 @@ public:
     TextureHandle(const TextureHandle& other) = delete;
     TextureHandle& operator=(const TextureHandle& other) = delete;
 
-    operator bool() const { return _texture.get(); }
+    explicit operator bool() const { return _texture.get(); }
     operator std::shared_ptr<Texture>() { return _texture; }
     std::shared_ptr<Texture> operator->() { return _texture; }
     std::shared_ptr<const Texture> operator->() const { return _texture; }
@@ -33,6 +33,8 @@ public:
     const Texture& operator*() const { return *_texture; }
 
     std::shared_ptr<Texture> texture() { return _texture; }
+
+    bool isLoaded() const { return _texture && _texture->isLoaded(); }
 
     /**
     * Used to create a new handle to the same texture, but with no registered callbacks.

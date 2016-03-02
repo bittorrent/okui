@@ -4,28 +4,16 @@ namespace onair {
 namespace okui {
 namespace views {
 
-using namespace onair;
-
 void Image::setTextureResource(std::string resource) {
-    _fromURL = false;
-
-    if (window()) {
-        _textureHandle = loadTextureResource(resource);
-    }
-
+    _texture = loadTextureResource(resource);
     _resource = std::move(resource);
-    invalidateRenderCache();
+    _fromURL = false;
 }
 
 void Image::setTextureFromURL(std::string url) {
-    _fromURL = true;
-
-    if (window()) {
-        _textureHandle = loadTextureResource(url);
-    }
-
+    _texture = loadTextureResource(url);
     _resource = std::move(url);
-    invalidateRenderCache();
+    _fromURL = true;
 }
 
 void Image::setTextureColor(Color color) {
@@ -39,7 +27,7 @@ void Image::setTextureDistanceField(double edge) {
 }
 
 void Image::render() {
-    if (_textureHandle && _textureHandle->isLoaded()) {
+    if (_texture.isLoaded()) {
         auto shader = textureShader();
 
         if (_distanceFieldEdge) {
@@ -48,15 +36,15 @@ void Image::render() {
             shader = dfShader;
         }
 
-        shader->setColor(_color ? *_color : Color{1, 1, 1, 1});
-        shader->drawScaledFit(*_textureHandle, 0, 0, bounds().width, bounds().height);
+        shader->setColor(_color);
+        shader->drawScaledFit(*_texture, 0, 0, bounds().width, bounds().height);
         shader->flush();
     }
 }
 
 void Image::windowChanged() {
-    if (window() && !_resource.empty()) {
-        _textureHandle = _fromURL ? loadTextureFromURL(_resource) : loadTextureResource(_resource);
+    if (!_resource.empty()) {
+        _texture = _fromURL ? loadTextureFromURL(_resource) : loadTextureResource(_resource);
     }
 }
 

@@ -4,8 +4,6 @@ namespace onair {
 namespace okui {
 namespace views {
 
-using namespace onair;
-
 void Button::setTextureResource(std::string resource, State state) {
     _setTexture(std::move(resource), state, false);
 }
