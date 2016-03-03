@@ -114,8 +114,9 @@ void TextureShader::drawScaledFill(const Texture& texture, Rectangle<double> are
 }
 
 void TextureShader::drawScaledFit(const Texture& texture, Rectangle<double> area, double r) {
-    setTexture(texture.id(), area.scaledFit(texture.aspectRatio()), AffineTransformation{0.5, 0.5, -0.5, -0.5, 1.0, 1.0, -r});
-    okui::shapes::Rectangle(area).rotate(r).draw(this);
+    auto fit = area.scaledFit(texture.aspectRatio());
+    setTexture(texture.id(), fit, AffineTransformation{0.5, 0.5, -0.5, -0.5, 1.0, 1.0, -r});
+    okui::shapes::Rectangle(fit).rotate(r).draw(this);
 }
 
 void TextureShader::_processTriangle(const std::array<Point<double>, 3>& p, const std::array<Point<double>, 3>& pT, Shader::Curve curve) {
