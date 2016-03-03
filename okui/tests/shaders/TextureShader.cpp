@@ -115,12 +115,10 @@ TEST(TextureShader, scaledFit) {
 
         framebuffer.finish();
 
-        EXPECT_EQ(framebuffer.getPixel(19, 19), Color(0, 0, 0, 1));
-        EXPECT_EQ(framebuffer.getPixel(20, 20), Color(1, 1, 0, 1));
-        EXPECT_EQ(framebuffer.getPixel(119, 20), Color(0, 1, 0, 1));
-        EXPECT_EQ(framebuffer.getPixel(20, 149), Color(1, 0, 0, 1));
-        EXPECT_EQ(framebuffer.getPixel(119, 149), Color(0, 0, 1, 1));
-        EXPECT_EQ(framebuffer.getPixel(50, 150), Color(0, 0, 0, 1));
+        EXPECT_EQ(framebuffer.getPixel(30, 34), Color(0, 0, 0, 1));
+        EXPECT_EQ(framebuffer.getPixel(30, 137), Color(0, 0, 0, 1));
+        EXPECT_NE(framebuffer.getPixel(30, 40), Color(0, 0, 0, 1));
+        EXPECT_NE(framebuffer.getPixel(30, 125), Color(0, 0, 0, 1));
     });
 }
 
@@ -150,28 +148,25 @@ TEST(TextureShader, color) {
         auto pixel = framebuffer.getPixel(19, 20);
         EXPECT_EQ(pixel, Color(0, 0, 0, 1));
 
-        pixel = framebuffer.getPixel(20, 20);
-        EXPECT_NEAR(pixel.r, 0.5, 0.01);
-        EXPECT_NEAR(pixel.g, 0.25, 0.01);
-        EXPECT_EQ(pixel.b, 0);
+        pixel = framebuffer.getPixel(22, 40);
+        EXPECT_NEAR(pixel.r, 0.5, 0.1);
+        EXPECT_NEAR(pixel.g, 0.25, 0.1);
+        EXPECT_NEAR(pixel.b, 0, 0.1);
         EXPECT_EQ(pixel.a, 1);
 
-        pixel = framebuffer.getPixel(119, 20);
-        EXPECT_EQ(pixel.r, 0);
-        EXPECT_NEAR(pixel.g, 0.25, 0.01);
-        EXPECT_EQ(pixel.b, 0);
+        pixel = framebuffer.getPixel(117, 40);
+        EXPECT_NEAR(pixel.r, 0, 0.1);
+        EXPECT_NEAR(pixel.g, 0.25, 0.1);
+        EXPECT_NEAR(pixel.b, 0, 0.1);
         EXPECT_EQ(pixel.a, 1);
 
-        pixel = framebuffer.getPixel(20, 149);
-        EXPECT_NEAR(pixel.r, 0.5, 0.01);
-        EXPECT_EQ(pixel.g, 0);
-        EXPECT_EQ(pixel.b, 0);
+        pixel = framebuffer.getPixel(22, 132);
+        EXPECT_NEAR(pixel.r, 0.5, 0.1);
+        EXPECT_NEAR(pixel.g, 0, 0.1);
+        EXPECT_NEAR(pixel.b, 0, 0.1);
         EXPECT_EQ(pixel.a, 1);
 
-        pixel = framebuffer.getPixel(119, 149);
-        EXPECT_EQ(pixel, Color(0, 0, 0, 1));
-
-        pixel = framebuffer.getPixel(50, 150);
+        pixel = framebuffer.getPixel(50, 137);
         EXPECT_EQ(pixel, Color(0, 0, 0, 1));
     });
 }
