@@ -1,5 +1,7 @@
 #pragma once
 
+#include "onair/okui/config.h"
+
 #include "onair/okui/TextureHandle.h"
 
 #include <string>
@@ -32,7 +34,7 @@ public:
 
     const Glyph* glyph(GlyphId id) const;
     double kerning(GlyphId first, GlyphId second) const;
-    
+
     double width(const GlyphId* glyphs, size_t count) const;
 
 private:
@@ -51,7 +53,7 @@ private:
 
     void _parseMetadata(const char* metadata);
     void _parseMetadataLine(const char* line);
-    
+
     static double sLineParameter(const char* name, const char* line);
 };
 

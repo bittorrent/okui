@@ -1,5 +1,7 @@
 #pragma once
 
+#include "onair/okui/config.h"
+
 #include "onair/okui/Animation.h"
 #include "onair/okui/Point.h"
 

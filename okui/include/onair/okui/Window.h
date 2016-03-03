@@ -1,12 +1,13 @@
 #pragma once
+
 #include "onair/okui/config.h"
 
+#include "onair/okui/opengl/TextureCache.h"
 #include "onair/okui/Direction.h"
 #include "onair/okui/Menu.h"
 #include "onair/okui/Point.h"
 #include "onair/okui/Responder.h"
 #include "onair/okui/ShaderCache.h"
-#include "onair/okui/opengl/TextureCache.h"
 #include "onair/okui/BitmapFont.h"
 #include "onair/okui/PNGTexture.h"
 #include "onair/okui/View.h"
@@ -85,7 +86,7 @@ public:
 
     View* focus() const { return _focus; }
     void setFocus(View* focus);
-    
+
     bool moveFocus(Direction direction);
 
     Responder* firstResponder() { return _focus ? dynamic_cast<Responder*>(_focus) : dynamic_cast<Responder*>(this); }
@@ -110,7 +111,7 @@ public:
     void provide(T* provision, size_t key = 0) {
         contentView()->provide<T>(provision, key);
     }
-    
+
     template <typename T>
     T* get(size_t key = 0) const {
         return contentView()->get<T>(key);

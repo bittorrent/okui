@@ -1,5 +1,7 @@
 #pragma once
 
+#include "onair/okui/config.h"
+
 #include "onair/okui/interpolation.h"
 
 #include <chrono>

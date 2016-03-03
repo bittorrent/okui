@@ -38,7 +38,7 @@ public:
     /**
     * Adds the given entry to the cache and returns it.
     *
-    * The returned entry may be different than the one given if it already 
+    * The returned entry may be different than the one given if it already
     * exists in the cache, so always use the returned entry.
     */
     template <typename T>

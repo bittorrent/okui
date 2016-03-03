@@ -1,6 +1,7 @@
 #pragma once
 
 #include "onair/okui/config.h"
+
 #include "onair/okui/Command.h"
 #include "onair/okui/Controller.h"
 #include "onair/okui/KeyCode.h"
@@ -19,9 +20,9 @@ namespace okui {
 * the application.
 *
 * When implementing responder methods, you should always invoke the superclass's
-* implementation if you're not handling the event yourself. For example, if you 
-* handle ascii key presses, but not special key presses like "page down", you 
-* should invoke the superclass's keyDown implementation when you receive the 
+* implementation if you're not handling the event yourself. For example, if you
+* handle ascii key presses, but not special key presses like "page down", you
+* should invoke the superclass's keyDown implementation when you receive the
 * key presses that you don't handle.
 */
 class Responder {
@@ -74,7 +75,7 @@ public:
     virtual void handleCommand(Command command, CommandContext context) {
         if (auto next = nextResponder()) { next->handleCommand(command, context); }
     }
-    
+
     bool chainCanHandleCommand(Command command) {
         return canHandleCommand(command) || (nextResponder() && nextResponder()->chainCanHandleCommand(command));
     }

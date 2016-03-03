@@ -17,7 +17,7 @@
 namespace onair {
 namespace okui {
 namespace interpolation {
-    
+
 template <class T>
 constexpr T Linear(double t, const T& b, const T& c, double d) {
     return c * t/d + b;

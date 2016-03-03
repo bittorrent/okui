@@ -1,5 +1,7 @@
 #pragma once
 
+#include "onair/okui/config.h"
+
 #include "onair/okui/Point.h"
 
 #include <cmath>
@@ -168,7 +170,7 @@ std::vector<Rectangle<T>> Rectangle<T>::operator-(const Rectangle& other) const 
         ret.emplace_back(*this);
         return ret;
     }
-    
+
     if (other.minX() > minX() && other.minX() < maxX()) {
         ret.emplace_back(minX(), y, other.minX() - minX(), height);
     }
@@ -184,7 +186,7 @@ std::vector<Rectangle<T>> Rectangle<T>::operator-(const Rectangle& other) const 
     if (other.maxY() > minY() && other.maxY() < maxY()) {
         ret.emplace_back(x, other.maxY(), width, maxY() - other.maxY());
     }
-    
+
     return ret;
 }
 

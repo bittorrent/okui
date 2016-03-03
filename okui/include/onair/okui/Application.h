@@ -209,7 +209,7 @@ public:
     virtual bool canHandleCommand(Command command) override {
         return command == kCommandQuit;
     }
-    
+
     virtual void handleCommand(Command command, CommandContext context) override {
         if (command == kCommandQuit) {
             quit();

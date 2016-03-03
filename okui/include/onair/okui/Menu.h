@@ -1,5 +1,7 @@
 #pragma once
 
+#include "onair/okui/config.h"
+
 #include "onair/okui/Command.h"
 #include "onair/okui/KeyCode.h"
 

@@ -1,5 +1,7 @@
 #pragma once
 
+#include "onair/okui/config.h"
+
 namespace onair {
 namespace okui {
 

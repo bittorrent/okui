@@ -1,9 +1,11 @@
 #pragma once
 
 #include "onair/okui/config.h"
+
 #include "onair/okui/View.h"
-#include "onair/Timer.h"
 #include "onair/okui/Animation.h"
+
+#include "onair/Timer.h"
 
 namespace onair {
 namespace okui {

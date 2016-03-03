@@ -1,4 +1,7 @@
 #pragma once
+
+#include "onair/okui/config.h"
+
 #include <cstdint>
 
 namespace onair {

@@ -2,8 +2,11 @@
 
 #include "onair/okui/config.h"
 
-#include "onair/AbstractTaskScheduler.h"
-
+#include "onair/okui/opengl/Framebuffer.h"
+#include "onair/okui/shaders/BoxShadowShader.h"
+#include "onair/okui/shaders/ColorShader.h"
+#include "onair/okui/shaders/DistanceFieldShader.h"
+#include "onair/okui/shaders/TextureShader.h"
 #include "onair/okui/Color.h"
 #include "onair/okui/Point.h"
 #include "onair/okui/Rectangle.h"
@@ -13,13 +16,9 @@
 #include "onair/okui/TextureHandle.h"
 #include "onair/okui/TouchpadFocus.h"
 #include "onair/okui/WeakTexture.h"
-#include "onair/okui/opengl/Framebuffer.h"
-#include "onair/okui/shaders/BoxShadowShader.h"
-#include "onair/okui/shaders/ColorShader.h"
-#include "onair/okui/shaders/DistanceFieldShader.h"
-#include "onair/okui/shaders/TextureShader.h"
 
 #include "onair/optional.h"
+#include "onair/AbstractTaskScheduler.h"
 
 #include <list>
 #include <typeindex>

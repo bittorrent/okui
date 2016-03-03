@@ -16,26 +16,26 @@ namespace okui {
 */
 class Shader {
 public:
-	virtual ~Shader() {}
-	
-	enum Curve {
-		kCurveNone    = 0,
-		kCurveBezierConcave  = 1,
-		kCurveBezierConvex   = -1,
-		kCurveCircularConvex = 2,
-	};
+    virtual ~Shader() {}
 
-	/**
-	* Draws a triangle. The shader may not actually render the triangle immediately. If you need
-	* to render something on top of the triangle with another shader, make a call to flush() to
-	* ensure that it's been rendered.
-	*/
-	virtual void drawTriangle(double x1, double y1, double x2, double y2, double x3, double y3, Curve curve = kCurveNone) = 0;
+    enum Curve {
+        kCurveNone    = 0,
+        kCurveBezierConcave  = 1,
+        kCurveBezierConvex   = -1,
+        kCurveCircularConvex = 2,
+    };
 
-	/**
-	* Ensures that all triangles have been rendered.
-	*/
-	virtual void flush() {}
+    /**
+    * Draws a triangle. The shader may not actually render the triangle immediately. If you need
+    * to render something on top of the triangle with another shader, make a call to flush() to
+    * ensure that it's been rendered.
+    */
+    virtual void drawTriangle(double x1, double y1, double x2, double y2, double x3, double y3, Curve curve = kCurveNone) = 0;
+
+    /**
+    * Ensures that all triangles have been rendered.
+    */
+    virtual void flush() {}
 };
 
 /**
@@ -45,9 +45,9 @@ template <typename VertexType>
 class ShaderBase : public Shader {
 public:
     virtual ~ShaderBase() {}
-    
+
     using Vertex = VertexType;
-    
+
     void setTransformation(const AffineTransformation& transformation) { _transformation = transformation; }
 
     virtual void drawTriangle(double x1, double y1, double x2, double y2, double x3, double y3, Curve curve) override {
@@ -57,11 +57,11 @@ public:
         _transformation.transform(p[0].x, p[0].y, &pT[0].x, &pT[0].y);
         _transformation.transform(p[1].x, p[1].y, &pT[1].x, &pT[1].y);
         _transformation.transform(p[2].x, p[2].y, &pT[2].x, &pT[2].y);
-    
+
         _triangle.a.x  = pT[0].x;
         _triangle.a.y  = pT[0].y;
         _triangle.b.x  = pT[1].x;
-        _triangle.b.y  = pT[1].y;    
+        _triangle.b.y  = pT[1].y;
         _triangle.c.x  = pT[2].x;
         _triangle.c.y  = pT[2].y;
 
@@ -74,14 +74,14 @@ public:
 
     virtual void flush() override {
         if (_vertices.empty()) { return; }
-    
+
         _program.use();
 
         _vertexArrayBuffer.bind();
         _vertexArrayBuffer.stream(_vertices.data(), _vertices.size());
         glDrawArrays(GL_TRIANGLES, 0, static_cast<GLsizei>(_vertices.size()));
         _vertexArrayBuffer.unbind();
-    
+
         _vertices.clear();
     }
 
@@ -103,27 +103,27 @@ protected:
                     auto dx = (p[0].x - p[1].x);
                     auto dy = (p[0].y - p[1].y);
                     auto scale = 1.0 / sqrt(dx * dx + dy * dy);
-                    
+
                     triangle.a.cu = dx * scale;
                     triangle.b.cu = 0.0;
                     triangle.c.cu = (p[2].x - p[1].x) * scale;
-            
+
                     triangle.a.cv = dy * scale;
                     triangle.b.cv = 0.0;
                     triangle.c.cv = (p[2].y - p[1].y) * scale;
-                    
+
                     triangle.a.caa = triangle.b.caa = triangle.c.caa = scale;
                 } else if (curve == kCurveBezierConcave || curve == kCurveBezierConvex) {
                     triangle.a.cu = triangle.a.cv = 0.0;
                     triangle.b.cu = 0.5;
                     triangle.b.cv = 0.0;
                     triangle.c.cu = triangle.c.cv = 1.0;
-        
+
                     auto aa = 4.0 / (p[0].x * (p[1].y - p[2].y) + p[1].x * (p[2].y - p[0].y) + p[2].x * (p[0].y - p[1].y));
                     triangle.a.caa = triangle.b.caa = triangle.c.caa = aa;
                 }
             }
-        
+
             triangle.a.cm = curve;
             triangle.b.cm = curve;
             triangle.c.cm = curve;
