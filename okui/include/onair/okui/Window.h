@@ -9,7 +9,7 @@
 #include "onair/okui/Responder.h"
 #include "onair/okui/ShaderCache.h"
 #include "onair/okui/BitmapFont.h"
-#include "onair/okui/PNGTexture.h"
+#include "onair/okui/FileTexture.h"
 #include "onair/okui/View.h"
 
 #include <future>
@@ -184,7 +184,7 @@ private:
 
     struct TextureDownload {
         bool isComplete = false;
-        std::weak_ptr<PNGTexture> texture;
+        std::weak_ptr<FileTexture> texture;
         TextureHandle handle;
         std::future<std::shared_ptr<const std::string>> download;
     };

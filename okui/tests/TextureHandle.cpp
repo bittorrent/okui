@@ -1,6 +1,6 @@
 #include "gtest/gtest.h"
 
-#include "onair/okui/PNGTexture.h"
+#include "onair/okui/FileTexture.h"
 #include "onair/okui/TextureHandle.h"
 
 using namespace onair;
@@ -17,8 +17,8 @@ TEST(TextureHandle, callback) {
 }
 
 TEST(TextureHandle, multipleHandles) {
-    auto texture = std::make_shared<PNGTexture>();
-    TextureHandle handle;
+    auto texture = std::make_shared<FileTexture>();
+    TextureHandle handle{texture};
 
     bool one = false;
     handle.onLoad([&] { one = true; });

@@ -6,7 +6,6 @@ rule okui-frameworks ( properties * ) {
 	}
 }
 
-
 cpp-pch pch :
 	../foundation//project_defaults
 	../foundation//foundation_headers
@@ -16,20 +15,25 @@ cpp-pch pch :
 	<include>./include
 ;
 
+lib libturbojpeg : ../third-party/needs//libjpeg-turbo : <name>turbojpeg ;
+lib libm        : : <name>m ;
+lib libGLESv2   : : <name>GLESv2 <link>shared ;
+
 lib okui :
 	pch
 	[ glob-tree *.cpp : tests tools ]
 	../foundation//foundation
 	../third-party/libpng//png
+	libturbojpeg
 	../jni//jni
 :
 	<include>./include
 	<link>static
+	<target-os>linux:<source>libm
+	<target-os>android:<source>libGLESv2
 : :
 	<include>./include
 	<conditional>@okui-frameworks
-	<target-os>linux:<linkflags>-lm
-	<target-os>android:<linkflags>"-lGLESv2"
 ;
 
 jar okui_jar : [ glob-tree *.java ] :
