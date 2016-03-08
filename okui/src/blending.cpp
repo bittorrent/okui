@@ -3,8 +3,8 @@
 namespace onair {
 namespace okui {
 
-BlendFunction BlendFunction::kAlphaLock{BlendFactor::kSourceAlpha, BlendFactor::kOneMinusSourceAlpha, BlendFactor::kZero, BlendFactor::kOne};
-BlendFunction BlendFunction::kErasure{BlendFactor::kZero, BlendFactor::kOne, BlendFactor::kZero, BlendFactor::kOneMinusSourceAlpha};
+BlendFunction BlendFunction::kAlphaLock{BlendFactor::kDestinationAlpha, BlendFactor::kZero, BlendFactor::kZero, BlendFactor::kOne};
+BlendFunction BlendFunction::kErasure{BlendFactor::kZero, BlendFactor::kOneMinusSourceAlpha, BlendFactor::kZero, BlendFactor::kOneMinusSourceAlpha};
 BlendFunction BlendFunction::kPremultipliedAlpha{BlendFactor::kOne, BlendFactor::kOneMinusSourceAlpha, BlendFactor::kOne, BlendFactor::kOneMinusSourceAlpha};
 
 namespace {
