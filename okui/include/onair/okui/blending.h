@@ -24,9 +24,12 @@ void SetBlendFunction(const BlendFunction& function, BlendFunction* previous = n
 
 class Blending {
 public:
-    template <typename... Args>
-    Blending(Args&&... args) {
-        SetBlendFunction(BlendFunction{std::forward<Args>(args)...}, &_previous);
+    Blending(const BlendFunction& function) {
+        SetBlendFunction(function, &_previous);
+    }
+
+    Blending(BlendFactor sourceRGB, BlendFactor destinationRGB, BlendFactor sourceAlpha, BlendFactor destinationAlpha) {
+        SetBlendFunction(BlendFunction{sourceRGB, destinationRGB, sourceAlpha, destinationAlpha}, &_previous);
     }
 
     ~Blending() {
