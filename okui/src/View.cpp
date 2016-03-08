@@ -494,8 +494,7 @@ void View::renderAndRenderSubviews(const RenderTarget* target, const Rectangle<i
     // do the actual rendering
 
     glViewport(area.x, target->height() - area.maxY(), area.width, area.height);
-    EnableBlending();
-    SetDefaultBlendFunction();
+    Blending blending{BlendFunction::kPremultipliedAlpha};
 
     clipBounds = clipBounds ? clipBounds->intersection(area) : area;
     glEnable(GL_SCISSOR_TEST);
@@ -520,7 +519,7 @@ void View::removeUpdateHook(const std::string& handle) {
 void View::postRender(std::shared_ptr<Texture> texture, const AffineTransformation& transformation) {
     auto shader = textureShader();
     shader->setTransformation(transformation);
-    shader->setColor(_tintColor.r, _tintColor.g, _tintColor.b, _tintColor.a);
+    shader->setColor(_tintColor.r * _tintColor.a, _tintColor.g * _tintColor.a, _tintColor.b * _tintColor.a, _tintColor.a);
     shader->drawScaledFill(*texture, Rectangle<double>(0.0, 0.0, bounds().width, bounds().height));
     shader->flush();
 }
@@ -754,8 +753,7 @@ bool View::_requiresTextureRendering() {
 
 void View::_renderAndRenderSubviews(const RenderTarget* target, const Rectangle<int>& area, bool shouldClear, optional<Rectangle<int>> clipBounds) {
     glViewport(area.x, target->height() - area.maxY(), area.width, area.height);
-    EnableBlending();
-    SetDefaultBlendFunction();
+    Blending blending{BlendFactor::kSourceAlpha, BlendFactor::kOneMinusSourceAlpha, BlendFactor::kOne, BlendFactor::kOne};
 
     if (_clipsToBounds) {
         clipBounds = clipBounds ? clipBounds->intersection(area) : area;

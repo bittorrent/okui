@@ -387,6 +387,8 @@ public:
     * set to render to texture. The default implementation provides the built-in effects such as tint and
     * opacity. If this is overridden, you will need to provide those effects in your implementation in
     * order to use them.
+    *
+    * @param texture the view, rendered to a texture with premultiplied alpha
     */
     virtual void postRender(std::shared_ptr<Texture> texture, const AffineTransformation& transformation);
 

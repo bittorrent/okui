@@ -8,19 +8,33 @@ namespace onair {
 namespace okui {
 
 using opengl::BlendFactor;
-using opengl::EnableBlending;
-using opengl::SetBlendFunction;
 
-inline void SetDefaultBlendFunction() {
-    SetBlendFunction(BlendFactor::kSourceAlpha, BlendFactor::kOneMinusSourceAlpha, BlendFactor::kOne, BlendFactor::kOne);
-}
+struct BlendFunction {
+    BlendFactor sourceRGB = BlendFactor::kOne;
+    BlendFactor destinationRGB = BlendFactor::kZero;
+    BlendFactor sourceAlpha = BlendFactor::kOne;
+    BlendFactor destinationAlpha = BlendFactor::kZero;
 
-inline void SetAlphaLockBlendFunction() {
-    SetBlendFunction(BlendFactor::kSourceAlpha, BlendFactor::kOneMinusSourceAlpha, BlendFactor::kZero, BlendFactor::kOne);
-}
+    static BlendFunction kAlphaLock;
+    static BlendFunction kErasure;
+    static BlendFunction kPremultipliedAlpha;
+};
 
-inline void SetErasureBlendFunction() {
-    SetBlendFunction(BlendFactor::kZero, BlendFactor::kOne, BlendFactor::kZero, BlendFactor::kOneMinusSourceAlpha);
-}
+void SetBlendFunction(const BlendFunction& function, BlendFunction* previous = nullptr);
+
+class Blending {
+public:
+    template <typename... Args>
+    Blending(Args&&... args) {
+        SetBlendFunction(BlendFunction{std::forward<Args>(args)...}, &_previous);
+    }
+
+    ~Blending() {
+        SetBlendFunction(_previous);
+    }
+
+private:
+    BlendFunction _previous;
+};
 
 }} // namespace onair::okui
