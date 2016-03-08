@@ -2,11 +2,9 @@
 
 #include "onair/okui/config.h"
 
-#include "onair/okui/Color.h"
-#include "onair/okui/View.h"
+#include "onair/okui/views/Image.h"
 
-#include "onair/optional.h"
-
+#include <functional>
 #include <unordered_map>
 
 namespace onair {
@@ -17,50 +15,39 @@ class Button : public View {
 public:
     enum class State {
         kNormal,
-        kDepressed,
+        kDepressed
     };
 
     State state() const { return _state; }
+    TextureHandle texture(State state = State::kNormal) { return _images[state].texture(); }
 
-    void setAction(std::function<void()> action) { _action = action; }
+    void setAction(std::function<void()> action);
+    void setAction(Command command, CommandContext context);
 
     void setTextureResource(std::string resource, State state = State::kNormal);
     void setTextureFromURL(std::string url, State state = State::kNormal);
     void setTextureColor(Color color, State state = State::kNormal);
     void setTextureDistanceField(double edge = 0.5, State state = State::kNormal);
 
-    TextureHandle texture(State state = State::kNormal);
-
     void press();
-
-    virtual void render() override;
 
     virtual bool canBecomeFocus() override { return true; }
     virtual void buttonDown(const okui::Controller& controller, size_t button) override;
-    virtual void buttonUp(const okui::Controller& controller, size_t button) override;
     virtual void mouseDown(MouseButton button, double x, double y) override;
     virtual void mouseUp(MouseButton button, double startX, double startY, double x, double y) override;
     virtual void mouseExit() override;
     virtual void keyDown(KeyCode key, KeyModifiers mod, bool repeat) override;
-    virtual void windowChanged() override;
+    virtual void layout() override;
 
 private:
-    void _press();
-    void _unpress();
-    void _setTexture(std::string texture, State state, bool fromURL);
+    Image& _stateImage(State state);
+    void _changeState(State state);
 
-    State _state = State::kNormal;
-    std::function<void()> _action;
-
-    struct Texture {
-        TextureHandle handle;
-        std::string resource;
-        bool fromURL = false;
-        optional<Color> color;
-        optional<double> distanceFieldEdge;
-    };
-
-    std::unordered_map<State, Texture> _textures;
+    State                            _state = State::kNormal;
+    std::unordered_map<State, Image> _images;
+    Color                            _normalColor = {1, 1, 1, 1};
+    std::function<void()>            _action;
+    bool                             _mouseDown = false;
 };
 
 }}}

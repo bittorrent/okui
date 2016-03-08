@@ -11,7 +11,7 @@ void Image::setTextureResource(std::string resource) {
 }
 
 void Image::setTextureFromURL(std::string url) {
-    _texture = loadTextureResource(url);
+    _texture = loadTextureFromURL(url);
     _resource = std::move(url);
     _fromURL = true;
 }

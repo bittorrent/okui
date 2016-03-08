@@ -1,139 +1,128 @@
 #include "onair/okui/views/Button.h"
 
+#include "onair/okui/Application.h"
+
 namespace onair {
 namespace okui {
 namespace views {
 
+namespace {
+
+constexpr auto kDepressedBrightness = 0.8;
+
+constexpr auto DepressedColor(Color c) {
+    auto color = c * kDepressedBrightness;
+    color.a = c.a;
+    return color;
+}
+
+}
+
+void Button::setAction(std::function<void()> action) {
+    _action = std::move(action);
+}
+
+void Button::setAction(Command command, CommandContext context) {
+    _action = [=] { application()->command(command, context); };
+}
+
 void Button::setTextureResource(std::string resource, State state) {
-    _setTexture(std::move(resource), state, false);
+    _stateImage(state).setTextureResource(std::move(resource));
 }
 
 void Button::setTextureFromURL(std::string url, State state) {
-    _setTexture(std::move(url), state, true);
+    _stateImage(state).setTextureFromURL(std::move(url));
 }
 
 void Button::setTextureColor(Color color, State state) {
-    auto& texture = _textures[state];
-    texture.color = std::move(color);
-    invalidateRenderCache();
+    _stateImage(state).setTextureColor(color);
+    if (state == State::kNormal) { _normalColor = color; }
 }
 
 void Button::setTextureDistanceField(double edge, State state) {
-    auto& texture = _textures[state];
-    texture.distanceFieldEdge = edge;
-    invalidateRenderCache();
-}
-
-TextureHandle Button::texture(State state) {
-    auto i = _textures.find(state);
-    if (i != _textures.end()) {
-        return i->second.handle.newHandle();
-    }
-
-    return nullptr;
+    _stateImage(state).setTextureDistanceField(edge);
 }
 
 void Button::press() {
-    _action();
-}
-
-void Button::render() {
-    auto current = _textures.find(_state);
-    auto normal = _textures.find(State::kNormal);
-
-    auto shader = textureShader();
-
-    if (current != _textures.end() && current->second.distanceFieldEdge) {
-        auto dfShader = distanceFieldShader();
-        dfShader->setEdge(*current->second.distanceFieldEdge);
-        shader = dfShader;
-    } else if (normal != _textures.end() && normal->second.distanceFieldEdge) {
-        auto dfShader = distanceFieldShader();
-        dfShader->setEdge(*normal->second.distanceFieldEdge);
-        shader = dfShader;
-    }
-
-    auto defaultBrightness = _state == State::kDepressed ? 0.8 : 1.0;
-
-    if (current != _textures.end() && current->second.color) {
-        shader->setColor(current->second.color->r, current->second.color->g, current->second.color->b, current->second.color->a);
-    } else if (normal != _textures.end() && normal->second.color) {
-        shader->setColor(defaultBrightness * normal->second.color->r, defaultBrightness * normal->second.color->g, defaultBrightness * normal->second.color->b, normal->second.color->a);
-    } else {
-        shader->setColor(defaultBrightness, defaultBrightness, defaultBrightness, 1.0);
-    }
-
-    if (current != _textures.end() && current->second.handle) {
-        shader->drawScaledFit(*current->second.handle, 0, 0, bounds().width, bounds().height);
-    } else if (normal != _textures.end() && normal->second.handle) {
-        shader->drawScaledFit(*normal->second.handle, 0, 0, bounds().width, bounds().height);
-    }
-
-    shader->flush();
+    if (_action) { _action(); }
 }
 
 void Button::buttonDown(const okui::Controller& controller, size_t button) {
-    _press();
-}
-
-void Button::buttonUp(const okui::Controller& controller, size_t button) {
-    _unpress();
+    if (_action) { _action(); }
 }
 
 void Button::mouseDown(MouseButton button, double x, double y) {
-    _press();
+    _changeState(State::kDepressed);
+    _mouseDown = true;
 }
 
 void Button::mouseUp(MouseButton button, double startX, double startY, double x, double y) {
-    _unpress();
+    if (_mouseDown) {
+        _mouseDown = false;
+        _changeState(State::kNormal);
+        if (_action) { _action(); }
+    }
 }
 
 void Button::mouseExit() {
-    _state = State::kNormal;
-    invalidateRenderCache();
+    _changeState(State::kNormal);
+    _mouseDown = false;
 }
 
 void Button::keyDown(KeyCode key, KeyModifiers mod, bool repeat) {
     if (key == KeyCode::kSpace || key == KeyCode::kReturn) {
-        _action();
+        if (_action) { _action(); }
         return;
     }
 
     onair::okui::View::keyDown(key, mod, repeat);
 }
 
-void Button::windowChanged() {
-    if (window()) {
-        for (auto& kv : _textures) {
-            if (!kv.second.handle) {
-                kv.second.handle = kv.second.fromURL ? loadTextureFromURL(kv.second.resource) : loadTextureResource(kv.second.resource);
-            }
+void Button::layout() {
+    for (auto& i : _images) {
+        i.second.setBoundsRelative(0, 0, 1, 1);
+    }
+}
+
+Image& Button::_stateImage(State state) {
+    auto imageIt = _images.find(state);
+
+    if (imageIt == _images.end()){
+        auto& image = _images[state];
+        addHiddenSubview(&image);
+        image.setBoundsRelative(0, 0, 1, 1);
+        if (_state == state) {
+            _changeState(state);
         }
+
+        return image;
     }
+
+    return imageIt->second;
 }
 
-void Button::_setTexture(std::string resource, State state, bool fromURL) {
-    auto& texture = _textures[state];
-    texture.handle = nullptr;
-    if (window()) {
-        texture.handle = fromURL ? loadTextureFromURL(resource) : loadTextureResource(resource);
+void Button::_changeState(State state) {
+    for (auto& i : _images) {
+        i.second.setIsVisible(i.first == state);
     }
-    texture.resource = std::move(resource);
-    texture.fromURL = fromURL;
-    invalidateRenderCache();
-}
 
-void Button::_press() {
-    _state = State::kDepressed;
-    invalidateRenderCache();
-}
+    auto normalImage = _images.find(State::kNormal);
 
-void Button::_unpress() {
-    if (_state == State::kDepressed) {
-        _action();
+    switch (state) {
+        case State::kNormal:
+            if (normalImage != _images.end()) {
+                normalImage->second.setTextureColor(_normalColor);
+            }
+            break;
+        case State::kDepressed:
+            if (!_images.count(State::kDepressed) && normalImage != _images.end()) {
+                normalImage->second.setIsVisible(true);
+                normalImage->second.setTextureColor(DepressedColor(_normalColor));
+            }
+            break;
+        default:
+            break;
     }
-    _state = State::kNormal;
-    invalidateRenderCache();
 }
 
 }}}

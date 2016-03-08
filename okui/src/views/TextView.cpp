@@ -23,10 +23,10 @@ namespace {
     OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
     */
 
-    const uint32_t kUTF8Accept = 0;
+    constexpr uint32_t kUTF8Accept = 0;
     // const uint32_t kUTF8Reject = 12;
 
-    const uint8_t utf8d[] = {
+    constexpr uint8_t utf8d[] = {
          0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,  0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
          0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,  0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
          0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,  0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
@@ -43,7 +43,7 @@ namespace {
         12,36,12,12,12,12,12,12,12,12,12,12,
     };
 
-    uint32_t inline UTF8Decode(uint32_t* state, uint32_t* codep, uint32_t byte) {
+    constexpr uint32_t UTF8Decode(uint32_t* state, uint32_t* codep, uint32_t byte) {
         uint32_t type = utf8d[byte];
         *codep = (*state != kUTF8Accept) ? (byte & 0x3fu) | (*codep << 6) : (0xff >> type) & (byte);
         *state = utf8d[256 + *state + type];
@@ -57,18 +57,49 @@ namespace onair {
 namespace okui {
 namespace views {
 
-void TextView::setAlignment(HorizontalAlignment horizontal, VerticalAlignment vertical) {
-    _horizontalAlignment = horizontal;
-    _verticalAlignment = vertical;
-    invalidateRenderCache();
+double TextView::lineHeight() const {
+    return _font ? _font->lineSpacing() * _fontScale() : 0;
 }
 
-void TextView::setFont(std::shared_ptr<BitmapFont> font, double size) {
-    _font = font;
-    _fontSize = size;
-    _bitmapFontTexture.clear();
-    _bitmapFontMetadata.clear();
-    _computeLines();
+Point<int> TextView::lineColumnPosition(size_t lineNum, size_t col) const {
+    if (!_font) { return{0, 0}; }
+
+    auto fontScale = _fontScale();
+    auto lineSpacing = _font->lineSpacing() * fontScale;
+
+    auto& line = _lines[lineNum];
+    col = std::min(col, line.size());
+
+    return {static_cast<int>(round(_calcXOffset(line) + _lineWidth(line, fontScale))),
+            static_cast<int>(round(_calcYOffset() + (lineNum * lineSpacing)))};
+}
+
+std::pair<size_t, size_t> TextView::lineColumnAtPosition(int mouseX, int mouseY) const {
+    if (!_font || _lines.empty()) { return{0, 0}; }
+
+    auto fontScale   = _fontScale();
+    auto lineSpacing = _font->lineSpacing() * fontScale;
+
+    auto lineNum = std::min<size_t>(_lines.size()-1, std::max(0, static_cast<int>((mouseY-_calcYOffset()) / lineSpacing)));
+    auto& line = _lines[lineNum];
+
+    double x = _calcXOffset(line);
+
+    for (size_t i = 0; i < line.size(); ++i) {
+        if (i > 0) {
+            x += _font->kerning(line[i - 1], line[i]) * fontScale + _style.letterSpacing();
+        }
+        auto glyph = _font->glyph(line[i]);
+        if (glyph) {
+            x += glyph->xAdvance * fontScale;
+        }
+
+        if (mouseX < x) {
+            return {lineNum, i};
+        }
+    }
+
+    return {lineNum, line.size()};
 }
 
 void TextView::setText(const char* text) {
@@ -87,29 +118,75 @@ void TextView::setText(const char* text) {
     _computeLines();
 }
 
-void TextView::setTextColor(const Color& color) {
-    _textColor = color;
+void TextView::setStyle(Style style) {
+    _style = std::move(style);
+    _computeLines();
+}
+
+void TextView::setFont(std::string texture, std::string metadata) {
+    _style.font(std::move(texture), std::move(metadata));
+    _font = nullptr;
+    _textWidth = 0;
+
+    if (window()) {
+        _font = window()->loadBitmapFontResource(_style.fontTexture().c_str(), _style.fontMetadata().c_str());
+        _computeLines();
+    }
+}
+
+void TextView::setTextSize(double size) {
+    _style.textSize(size);
+    _computeLines();
+}
+
+void TextView::setLetterSpacing(double letterSpacing) {
+    _style.letterSpacing(letterSpacing);
+    _computeLines();
+}
+
+void TextView::setLetterSpacingFromTracking(double tracking) {
+    _style.letterSpacingFromTracking(tracking);
+    _computeLines();
+}
+
+void TextView::setAlignment(Style::HorizontalAlignment alignment) {
+    _style.alignment(alignment);
     invalidateRenderCache();
 }
 
-void TextView::setBitmapFont(const char* texture, const char* metadata, double size) {
-    _bitmapFontTexture = texture;
-    _bitmapFontMetadata = metadata;
-    _bitmapFontSize = size;
-    _font = nullptr;
-    if (window()) {
-        setFont(window()->loadBitmapFontResource(_bitmapFontTexture.c_str(), _bitmapFontMetadata.c_str()), _bitmapFontSize);
-    }
+void TextView::setAlignment(Style::VerticalAlignment alignment) {
+    _style.alignment(alignment);
+    invalidateRenderCache();
+}
+
+void TextView::setAlignment(Style::HorizontalAlignment horizontal, Style::VerticalAlignment vertical) {
+    _style.alignment(horizontal, vertical);
+    invalidateRenderCache();
+}
+
+void TextView::setOverflowBehavior(Style::OverflowBehavior overflowBehavior) {
+    _style.overflowBehavior(overflowBehavior);
+    _computeLines();
+}
+
+void TextView::setWeight(Style::Weight weight) {
+    _style.weight(weight);
+    invalidateRenderCache();
+}
+
+void TextView::setTextColor(const Color& color) {
+    _style.textColor(color);
+    invalidateRenderCache();
 }
 
 void TextView::render(const RenderTarget* renderTarget, const Rectangle<int>& area) {
     if (!_font) { return; }
 
     auto distanceFieldShader = this->distanceFieldShader();
-    
+
     auto glyphId = BitmapFont::GlyphId{0x4f}; // 'O'
 
-    double fontScale   = _fontSize / _font->size(),
+    double fontScale   = _style.textSize() / _font->size(),
            glyphWidth  = _font->width(&glyphId, 1) * fontScale,
            glyphHeight = _font->capHeight() * fontScale,
            clipWidth   = 0,
@@ -117,9 +194,9 @@ void TextView::render(const RenderTarget* renderTarget, const Rectangle<int>& ar
     renderTransformation().transform(glyphWidth, glyphHeight, &clipWidth, &clipHeight);
 
     distanceFieldShader->enableSupersampling(true);
-    distanceFieldShader->setEdge(_weight == Weight::kHeavy ? 0.45 : 0.5);
+    distanceFieldShader->setEdge(_style.weight() == Style::Weight::kHeavy ? 0.45 : 0.5);
 
-    distanceFieldShader->setColor(_textColor);
+    distanceFieldShader->setColor(_style.textColor());
     _renderBitmapText(distanceFieldShader);
 
     distanceFieldShader->flush();
@@ -130,55 +207,10 @@ void TextView::layout() {
 }
 
 void TextView::windowChanged() {
-    if (!_font && !_bitmapFontTexture.empty() && window()) {
-        setFont(window()->loadBitmapFontResource(_bitmapFontTexture.c_str(), _bitmapFontMetadata.c_str()), _bitmapFontSize);
+    if (window() && !_style.fontTexture().empty() && !_style.fontMetadata().empty()) {
+        _font = window()->loadBitmapFontResource(_style.fontTexture().c_str(), _style.fontMetadata().c_str());
+        _computeLines();
     }
-}
-
-Point<int> TextView::lineColumnPosition(size_t lineNum, size_t col) const {
-    if (!_font) { return{0, 0}; }
-
-    auto fontScale = _fontScale();
-    auto lineSpacing = _font->lineSpacing() * fontScale;
-
-    auto& line = _lines[lineNum];
-    col = std::min(col, line.size());
-
-    return {static_cast<int>(round(_calcXOffset(line) + (_font->width(line.data(), col) * fontScale))),
-            static_cast<int>(round(_calcYOffset() + (lineNum * lineSpacing)))};
-}
-
-std::pair<size_t, size_t> TextView::lineColumnAtPosition(int mouseX, int mouseY) const {
-    if (!_font || _lines.empty()) { return{0, 0}; }
-
-    auto fontScale   = _fontScale();
-    auto lineSpacing = _font->lineSpacing() * fontScale;
-
-    auto lineNum = std::min<size_t>(_lines.size()-1, std::max(0, static_cast<int>((mouseY-_calcYOffset()) / lineSpacing)));
-    auto& line = _lines[lineNum];
-
-    double x = _calcXOffset(line);
-
-    for (size_t i = 0; i < line.size(); ++i) {
-        if (i > 0) {
-            x += _font->kerning(line[i - 1], line[i]) * fontScale + _letterSpacing;
-        }
-        auto glyph = _font->glyph(line[i]);
-        if (glyph) {
-            x += glyph->xAdvance * fontScale;
-        }
-
-        if (mouseX < x) {
-            return {lineNum, i};
-        }
-    }
-
-    return {lineNum, line.size()};
-}
-
-double TextView::lineHeight() const {
-    if (!_font) { return 0; }
-    return _font->lineSpacing() * _fontScale();
 }
 
 void TextView::_computeLines() {
@@ -187,7 +219,7 @@ void TextView::_computeLines() {
 
     if (!_font) { return; }
 
-    auto fontScale = _fontSize / _font->size();
+    auto fontScale = _style.textSize() / _font->size();
 
     auto width = bounds().width;
     std::basic_string<BitmapFont::GlyphId> line;
@@ -208,17 +240,15 @@ void TextView::_computeLines() {
 
         line.push_back(glyph);
 
-        auto letterSpacing = line.empty() ? 0 : (line.size()-1) * _letterSpacing;
-        auto lineWidth = (_font->width(line.data(), line.size()) + letterSpacing) * fontScale;
-        if (lineWidth > width) {
-            if (_overflowBehavior == OverflowBehavior::kEllipses) {
+        if (_lineWidth(line, fontScale) > width) {
+            if (_style.overflowBehavior() == Style::OverflowBehavior::kEllipses) {
                 // rewind, insert the ellipses, and skip until a new line
                 do {
                     line.pop_back();
                 } while (!line.empty() && _font->width(line.data(), line.size()) * fontScale + ellipsesWidth > width);
                 line.insert(line.end(), ellipses.begin(), ellipses.end());
                 skipUntilNewLine = true;
-            } else if (_overflowBehavior == OverflowBehavior::kWrap) {
+            } else if (_style.overflowBehavior() == Style::OverflowBehavior::kWrap) {
                 // try to break
                 for (size_t i = line.size(); i > 0; --i) {
                     auto& candidate = line[i - 1];
@@ -245,7 +275,7 @@ void TextView::_computeLines() {
     }
 
     for (auto& line : _lines) {
-        auto letterSpacing = line.empty() ? 0 : ((line.size() - 1) * _letterSpacing);
+        auto letterSpacing = line.empty() ? 0 : ((line.size() - 1) * _style.letterSpacing());
         _textWidth = std::max(_textWidth, _font->width(line.data(), line.size()) * fontScale + letterSpacing);
     }
 
@@ -267,7 +297,7 @@ void TextView::_renderBitmapText(shaders::DistanceFieldShader* shader) {
 
         for (size_t i = 0; i < line.size(); ++i) {
             if (i > 0) {
-                x += _font->kerning(line[i - 1], line[i]) * fontScale + _letterSpacing;
+                x += _font->kerning(line[i - 1], line[i]) * fontScale + _style.letterSpacing();
             }
             auto glyph = _font->glyph(line[i]);
             if (glyph) {
@@ -286,12 +316,12 @@ void TextView::_renderBitmapText(shaders::DistanceFieldShader* shader) {
 double TextView::_calcXOffset(const std::basic_string<BitmapFont::GlyphId>& line) const {
     if (!_font) { return 0; }
 
-    auto textWidth = _font->width(line.data(), line.size()) * _fontScale();
+    auto textWidth = _lineWidth(line, _fontScale());
 
     double x = 0.0;
-    if (_horizontalAlignment == HorizontalAlignment::kCenter) {
+    if (_style.horizontalAlignment() == Style::HorizontalAlignment::kCenter) {
         x = (bounds().width - textWidth) * 0.5;
-    } else if (_horizontalAlignment == HorizontalAlignment::kRight) {
+    } else if (_style.horizontalAlignment() == Style::HorizontalAlignment::kRight) {
         x = bounds().width - textWidth;
     }
 
@@ -305,9 +335,9 @@ double TextView::_calcYOffset() const {
     auto textHeight  = lineSpacing * std::min<size_t>(_lines.size(), 1);
 
     auto y = 0.0;
-    if (_verticalAlignment == VerticalAlignment::kCenter) {
+    if (_style.verticalAlignment() == Style::VerticalAlignment::kCenter) {
         y = (bounds().height - textHeight) * 0.5;
-    } else if (_verticalAlignment == VerticalAlignment::kBottom) {
+    } else if (_style.verticalAlignment() == Style::VerticalAlignment::kBottom) {
         y = bounds().height - textHeight;
     }
 
@@ -315,10 +345,15 @@ double TextView::_calcYOffset() const {
 }
 
 double TextView::_fontScale() const {
-    if (_overflowBehavior == OverflowBehavior::kShrink && _textWidth > bounds().width) {
-        return _fontSize / _font->size() * bounds().width / _textWidth;
+    if (_style.overflowBehavior() == Style::OverflowBehavior::kShrink && _textWidth > bounds().width) {
+        return _style.textSize() / _font->size() * bounds().width / _textWidth;
     }
-    return _fontSize / _font->size();
+    return _style.textSize() / _font->size();
+}
+
+double TextView::_lineWidth(const std::basic_string<BitmapFont::GlyphId>& line, double fontScale) const {
+    auto letterSpacing = line.empty() ? 0 : (line.size()-1) * _style.letterSpacing();
+    return _font->width(line.data(), line.size()) * fontScale + letterSpacing;
 }
 
 }}}
