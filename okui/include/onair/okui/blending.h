@@ -20,24 +20,19 @@ struct BlendFunction {
     static BlendFunction kPremultipliedAlpha;
 };
 
-void SetBlendFunction(const BlendFunction& function, BlendFunction* previous = nullptr);
-
 class Blending {
 public:
-    Blending(const BlendFunction& function) {
-        SetBlendFunction(function, &_previous);
-    }
-
-    Blending(BlendFactor sourceRGB, BlendFactor destinationRGB, BlendFactor sourceAlpha, BlendFactor destinationAlpha) {
-        SetBlendFunction(BlendFunction{sourceRGB, destinationRGB, sourceAlpha, destinationAlpha}, &_previous);
-    }
-
-    ~Blending() {
-        SetBlendFunction(_previous);
-    }
+    Blending(const BlendFunction& function);
+    Blending(BlendFactor sourceRGB, BlendFactor destinationRGB, BlendFactor sourceAlpha, BlendFactor destinationAlpha);
+    ~Blending();
 
 private:
     BlendFunction _previous;
+
+    static BlendFunction _sBlendFunction;
+    static int _sBlendingDepth;
+
+    static void SetBlendFunction(const BlendFunction& function, BlendFunction* previous = nullptr);
 };
 
 }} // namespace onair::okui

@@ -30,6 +30,10 @@ inline void EnableBlending() {
     glEnable(GL_BLEND);
 }
 
+inline void DisableBlending() {
+    glDisable(GL_BLEND);
+}
+
 inline void SetBlendFunction(BlendFactor sourceRGB, BlendFactor destinationRGB, BlendFactor sourceAlpha, BlendFactor destinationAlpha) {
     glBlendFuncSeparate(static_cast<GLenum>(sourceRGB), static_cast<GLenum>(destinationRGB), static_cast<GLenum>(sourceAlpha), static_cast<GLenum>(destinationAlpha));
 }

@@ -7,21 +7,35 @@ BlendFunction BlendFunction::kAlphaLock{BlendFactor::kDestinationAlpha, BlendFac
 BlendFunction BlendFunction::kErasure{BlendFactor::kZero, BlendFactor::kOneMinusSourceAlpha, BlendFactor::kZero, BlendFactor::kOneMinusSourceAlpha};
 BlendFunction BlendFunction::kPremultipliedAlpha{BlendFactor::kOne, BlendFactor::kOneMinusSourceAlpha, BlendFactor::kOne, BlendFactor::kOneMinusSourceAlpha};
 
-namespace {
+BlendFunction Blending::_sBlendFunction;
+int Blending::_sBlendingDepth = 0;
 
-bool gBlendingEnabled = false;
-BlendFunction gBlendFunction;
-
+Blending::Blending(const BlendFunction& function) {
+    if (++_sBlendingDepth == 1) {
+        opengl::EnableBlending();
+    }
+    SetBlendFunction(function, &_previous);
 }
 
-void SetBlendFunction(const BlendFunction& function, BlendFunction* previous) {
-    if (previous) {
-        *previous = gBlendFunction;
-    }
-    if (!gBlendingEnabled) {
+Blending::Blending(BlendFactor sourceRGB, BlendFactor destinationRGB, BlendFactor sourceAlpha, BlendFactor destinationAlpha) {
+    if (++_sBlendingDepth == 1) {
         opengl::EnableBlending();
-        gBlendingEnabled = true;
     }
+    SetBlendFunction(BlendFunction{sourceRGB, destinationRGB, sourceAlpha, destinationAlpha}, &_previous);
+}
+
+Blending::~Blending() {
+    SetBlendFunction(_previous);
+    if (--_sBlendingDepth == 0) {
+        opengl::DisableBlending();
+    }
+}
+
+void Blending::SetBlendFunction(const BlendFunction& function, BlendFunction* previous) {
+    if (previous) {
+        *previous = _sBlendFunction;
+    }
+    _sBlendFunction = function;
     opengl::SetBlendFunction(function.sourceRGB, function.destinationRGB, function.sourceAlpha, function.destinationAlpha);
 }
 
