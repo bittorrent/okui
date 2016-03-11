@@ -26,7 +26,7 @@ TextureShader::TextureShader(const char* fragmentShader) {
         }
     )", opengl::Shader::kVertexShader);
 
-    opengl::Shader fsh(fragmentShader ? fragmentShader : ONAIR_OKUI_FRAGMENT_SHADER_HEADER R"(
+    opengl::Shader fsh(fragmentShader ? fragmentShader : ONAIR_OKUI_SHADER_FRAGMENT_SHADER_HEADER R"(
         VARYING_IN vec4 color;
         VARYING_IN vec4 curve;
         VARYING_IN vec2 textureCoord;
@@ -59,7 +59,9 @@ TextureShader::TextureShader(const char* fragmentShader) {
                     }
                 }
             }
-            COLOR_OUT = SAMPLE(textureSampler, textureCoord) * vec4(color.rgb, color.a * alphaMultiplier);
+
+            vec4 sample = unmultipliedInput(SAMPLE(textureSampler, textureCoord));
+            COLOR_OUT = multipliedOutput(vec4(sample.rgb * color.rgb, sample.a * color.a * alphaMultiplier));
         }
     )", opengl::Shader::kFragmentShader);
 
@@ -68,6 +70,7 @@ TextureShader::TextureShader(const char* fragmentShader) {
     _program.use();
 
     _program.uniform("texture") = 0;
+    _blendingFlagsUniform = _program.uniform("blendingFlags");
 
     if (!_program.error().empty()) {
         ONAIR_LOGF_ERROR("error creating shader: %s", _program.error().c_str());
@@ -90,32 +93,33 @@ void TextureShader::setColor(const Color& color) {
     _triangle.a.a = _triangle.b.a = _triangle.c.a = color.a;
 }
 
-void TextureShader::setTexture(GLuint id, double x, double y, double w, double h, const AffineTransformation& texCoordTransform) {
-    if (_texture != id) {
+void TextureShader::setTexture(const Texture& texture, double x, double y, double w, double h, const AffineTransformation& texCoordTransform) {
+    if (_texture != texture.id()) {
         flush();
     }
 
-    _texture = id;
+    _texture = texture.id();
+    _textureHasPremultipliedAlpha = texture.hasPremultipliedAlpha();
 
     _transformation.transform(x, y, &_textureX1, &_textureY1);
 
     double x2, y2;
     _transformation.transform(x + w, y + h, &x2, &y2);
 
-    _textureWidth  = x2 - _textureX1;
-    _textureHeight = y2 - _textureY1;
+    _textureWidth  = (x2 - _textureX1) * static_cast<double>(texture.allocatedWidth()) / texture.width();
+    _textureHeight = (y2 - _textureY1) * static_cast<double>(texture.allocatedHeight()) / texture.height();
 
     _texCoordTransform = texCoordTransform;
 }
 
 void TextureShader::drawScaledFill(const Texture& texture, Rectangle<double> area, double r) {
-    setTexture(texture.id(), area.scaledFill(texture.aspectRatio()), AffineTransformation{0.5, 0.5, -0.5, -0.5, 1.0, 1.0, -r});
+    setTexture(texture, area.scaledFill(texture.aspectRatio()), AffineTransformation{0.5, 0.5, -0.5, -0.5, 1.0, 1.0, -r});
     okui::shapes::Rectangle(area).rotate(r).draw(this);
 }
 
 void TextureShader::drawScaledFit(const Texture& texture, Rectangle<double> area, double r) {
     auto fit = area.scaledFit(texture.aspectRatio());
-    setTexture(texture.id(), fit, AffineTransformation{0.5, 0.5, -0.5, -0.5, 1.0, 1.0, -r});
+    setTexture(texture, fit, AffineTransformation{0.5, 0.5, -0.5, -0.5, 1.0, 1.0, -r});
     okui::shapes::Rectangle(fit).rotate(r).draw(this);
 }
 
@@ -135,9 +139,10 @@ void TextureShader::_processTriangle(const std::array<Point<double>, 3>& p, cons
 }
 
 void TextureShader::flush() {
+    _program.use();
     glActiveTexture(GL_TEXTURE0);
     glBindTexture(GL_TEXTURE_2D, _texture);
-    ShaderBase<Vertex>::flush();
+    ShaderBase<Vertex>::_flush(_textureHasPremultipliedAlpha);
 }
 
 }}}

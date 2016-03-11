@@ -45,6 +45,8 @@ public:
         setColorB(x, y, Color(std::forward<ColorArg>(colorArg), std::forward<RemColorArgs>(remColorArgs)...));
     }
 
+    virtual void flush() override;
+
 private:
     struct GradientPoint {
         double x, y;

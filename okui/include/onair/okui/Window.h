@@ -102,6 +102,13 @@ public:
     */
     Point<double> windowToView(View* view, double x, double y);
 
+    void openDialog(
+        const char* title,
+        const char* message,
+        const std::vector<std::string>& buttons,
+        std::function<void(int)> action = std::function<void(int)>()
+    );
+
     /**
     * Makes the given object available to all views via get().
     *

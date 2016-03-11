@@ -27,20 +27,20 @@ void Button::setAction(Command command, CommandContext context) {
 }
 
 void Button::setTextureResource(std::string resource, State state) {
-    _stateImage(state).setTextureResource(std::move(resource));
+    _stateImageView(state).setTextureResource(std::move(resource));
 }
 
 void Button::setTextureFromURL(std::string url, State state) {
-    _stateImage(state).setTextureFromURL(std::move(url));
+    _stateImageView(state).setTextureFromURL(std::move(url));
 }
 
 void Button::setTextureColor(Color color, State state) {
-    _stateImage(state).setTextureColor(color);
+    _stateImageView(state).setTextureColor(color);
     if (state == State::kNormal) { _normalColor = color; }
 }
 
 void Button::setTextureDistanceField(double edge, State state) {
-    _stateImage(state).setTextureDistanceField(edge);
+    _stateImageView(state).setTextureDistanceField(edge);
 }
 
 void Button::press() {
@@ -79,16 +79,16 @@ void Button::keyDown(KeyCode key, KeyModifiers mod, bool repeat) {
 }
 
 void Button::layout() {
-    for (auto& i : _images) {
+    for (auto& i : _imageViews) {
         i.second.setBoundsRelative(0, 0, 1, 1);
     }
 }
 
-Image& Button::_stateImage(State state) {
-    auto imageIt = _images.find(state);
+ImageView& Button::_stateImageView(State state) {
+    auto imageIt = _imageViews.find(state);
 
-    if (imageIt == _images.end()){
-        auto& image = _images[state];
+    if (imageIt == _imageViews.end()){
+        auto& image = _imageViews[state];
         addHiddenSubview(&image);
         image.setBoundsRelative(0, 0, 1, 1);
         if (_state == state) {
@@ -102,22 +102,22 @@ Image& Button::_stateImage(State state) {
 }
 
 void Button::_changeState(State state) {
-    for (auto& i : _images) {
+    for (auto& i : _imageViews) {
         i.second.setIsVisible(i.first == state);
     }
 
-    auto normalImage = _images.find(State::kNormal);
+    auto normalImageView = _imageViews.find(State::kNormal);
 
     switch (state) {
         case State::kNormal:
-            if (normalImage != _images.end()) {
-                normalImage->second.setTextureColor(_normalColor);
+            if (normalImageView != _imageViews.end()) {
+                normalImageView->second.setTextureColor(_normalColor);
             }
             break;
         case State::kDepressed:
-            if (!_images.count(State::kDepressed) && normalImage != _images.end()) {
-                normalImage->second.setIsVisible(true);
-                normalImage->second.setTextureColor(DepressedColor(_normalColor));
+            if (!_imageViews.count(State::kDepressed) && normalImageView != _imageViews.end()) {
+                normalImageView->second.setIsVisible(true);
+                normalImageView->second.setTextureColor(DepressedColor(_normalColor));
             }
             break;
         default:

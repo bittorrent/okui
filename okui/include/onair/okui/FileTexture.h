@@ -28,10 +28,14 @@ public:
 
     virtual GLuint id() const override { return _cacheEntry ? _cacheEntry->id : 0; }
 
+    virtual int allocatedWidth() const override { return _allocatedWidth; }
+    virtual int allocatedHeight() const override { return _allocatedHeight; }
+
 private:
     std::shared_ptr<const std::string> _data;
     Type _type = Type::kUnknown;
     int _width{0}, _height{0};
+    int _allocatedWidth{0}, _allocatedHeight{0};
     opengl::TextureCache::EntryReference _cacheEntry;
     
     bool _readPNGMetadata();
@@ -39,6 +43,8 @@ private:
 
     bool _readJPEGMetadata();
     GLuint _loadJPEG(opengl::TextureCache* textureCache);
+    
+    GLuint _generateTexture(GLint internalformat, GLenum format, GLenum type, const GLvoid * data);
 };
 
 }}

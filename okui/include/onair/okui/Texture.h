@@ -38,6 +38,11 @@ public:
 
     virtual bool isLoaded() const { return id(); }
 
+    virtual bool hasPremultipliedAlpha() const { return false; }
+
+    virtual int allocatedWidth() const { return width(); }
+    virtual int allocatedHeight() const { return height(); }
+
     /**
     * If loaded, returns the id of the GPU texture. Otherwise, returns 0.
     */

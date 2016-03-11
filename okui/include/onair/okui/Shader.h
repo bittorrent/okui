@@ -2,6 +2,7 @@
 
 #include "onair/okui/config.h"
 
+#include "onair/okui/blending.h"
 #include "onair/okui/Point.h"
 
 #include "onair/okui/opengl/ShaderProgram.h"
@@ -35,7 +36,7 @@ public:
     /**
     * Ensures that all triangles have been rendered.
     */
-    virtual void flush() {}
+    virtual void flush() = 0;
 };
 
 /**
@@ -47,6 +48,11 @@ public:
     virtual ~ShaderBase() {}
 
     using Vertex = VertexType;
+
+    enum BlendingFlags : GLint {
+        kBlendingFlagPremultipliedInput  = 1,
+        kBlendingFlagPremultipliedOutput = 2,
+    };
 
     void setTransformation(const AffineTransformation& transformation) { _transformation = transformation; }
 
@@ -72,24 +78,12 @@ public:
         _vertices.push_back(_triangle.c);
     }
 
-    virtual void flush() override {
-        if (_vertices.empty()) { return; }
-
-        _program.use();
-
-        _vertexArrayBuffer.bind();
-        _vertexArrayBuffer.stream(_vertices.data(), _vertices.size());
-        glDrawArrays(GL_TRIANGLES, 0, static_cast<GLsizei>(_vertices.size()));
-        _vertexArrayBuffer.unbind();
-
-        _vertices.clear();
-    }
-
 protected:
     opengl::ShaderProgram _program;
     std::vector<Vertex> _vertices;
     opengl::VertexArrayBuffer _vertexArrayBuffer;
     AffineTransformation _transformation;
+    opengl::ShaderProgram::Uniform _blendingFlagsUniform;
 
     struct Triangle {
         Vertex a, b, c;
@@ -134,6 +128,28 @@ protected:
     * Override this to finalize the triangle before drawing.
     */
     virtual void _processTriangle(const std::array<Point<double>, 3>& p, const std::array<Point<double>, 3>& pT, Shader::Curve curve) {}
+
+    void _flush(bool inputHasPremultipliedAlpha = false) {
+        if (_vertices.empty()) { return; }
+
+        _program.use();
+
+        _blendingFlagsUniform = (GLint)
+            (Blending::Current().premultipliedSourceAlpha ? kBlendingFlagPremultipliedOutput : 0)
+            | (inputHasPremultipliedAlpha ? kBlendingFlagPremultipliedInput : 0);
+
+        _vertexArrayBuffer.bind();
+        _vertexArrayBuffer.stream(_vertices.data(), _vertices.size());
+        glDrawArrays(GL_TRIANGLES, 0, static_cast<GLsizei>(_vertices.size()));
+        _vertexArrayBuffer.unbind();
+
+        _vertices.clear();
+    }
 };
 
 }}
+
+#define ONAIR_OKUI_SHADER_FRAGMENT_SHADER_HEADER ONAIR_OKUI_FRAGMENT_SHADER_HEADER \
+    "uniform int blendingFlags;\n" \
+    "vec4 unmultipliedInput(vec4 c) { return vec4((blendingFlags == 1 || blendingFlags == 3) ? (c.a > 0.0 ? c.rgb / c.a : vec3(0.0)) : c.rgb, c.a); }" \
+    "vec4 multipliedOutput(vec4 c) { return vec4(c.rgb * (blendingFlags >= 2 ? c.a : 1.0), c.a); }" \

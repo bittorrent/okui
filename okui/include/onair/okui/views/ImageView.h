@@ -11,7 +11,7 @@ namespace onair {
 namespace okui {
 namespace views {
 
-class Image : public View {
+class ImageView : public View {
 public:
     void setTextureResource(std::string resource);
     void setTextureFromURL(std::string url);

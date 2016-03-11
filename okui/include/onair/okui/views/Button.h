@@ -2,7 +2,7 @@
 
 #include "onair/okui/config.h"
 
-#include "onair/okui/views/Image.h"
+#include "onair/okui/views/ImageView.h"
 
 #include <functional>
 #include <unordered_map>
@@ -19,7 +19,7 @@ public:
     };
 
     State state() const { return _state; }
-    TextureHandle texture(State state = State::kNormal) { return _images[state].texture(); }
+    TextureHandle texture(State state = State::kNormal) { return _imageViews[state].texture(); }
 
     void setAction(std::function<void()> action);
     void setAction(Command command, CommandContext context);
@@ -40,14 +40,14 @@ public:
     virtual void layout() override;
 
 private:
-    Image& _stateImage(State state);
+    ImageView& _stateImageView(State state);
     void _changeState(State state);
 
-    State                            _state = State::kNormal;
-    std::unordered_map<State, Image> _images;
-    Color                            _normalColor = {1, 1, 1, 1};
-    std::function<void()>            _action;
-    bool                             _mouseDown = false;
+    State                                _state = State::kNormal;
+    std::unordered_map<State, ImageView> _imageViews;
+    Color                                _normalColor = {1, 1, 1, 1};
+    std::function<void()>                _action;
+    bool                                 _mouseDown = false;
 };
 
 }}}

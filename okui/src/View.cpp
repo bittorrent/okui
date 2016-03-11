@@ -476,7 +476,7 @@ void View::renderAndRenderSubviews(const RenderTarget* target, const Rectangle<i
         _renderCacheColorAttachment = _renderCache->addColorAttachment(area.width, area.height);
         // TODO: stencil attachment
         ONAIR_ASSERT(_renderCache->isComplete());
-        _renderCacheTexture->set(_renderCacheColorAttachment->texture(), area.width, area.height);
+        _renderCacheTexture->set(_renderCacheColorAttachment->texture(), area.width, area.height, true);
         _hasCachedRender = false;
     }
 
@@ -494,7 +494,7 @@ void View::renderAndRenderSubviews(const RenderTarget* target, const Rectangle<i
     // do the actual rendering
 
     glViewport(area.x, target->height() - area.maxY(), area.width, area.height);
-    Blending blending{BlendFunction::kPremultipliedAlpha};
+    Blending blending{BlendFunction::kDefault};
 
     clipBounds = clipBounds ? clipBounds->intersection(area) : area;
     glEnable(GL_SCISSOR_TEST);
@@ -753,7 +753,7 @@ bool View::_requiresTextureRendering() {
 
 void View::_renderAndRenderSubviews(const RenderTarget* target, const Rectangle<int>& area, bool shouldClear, optional<Rectangle<int>> clipBounds) {
     glViewport(area.x, target->height() - area.maxY(), area.width, area.height);
-    Blending blending{BlendFactor::kSourceAlpha, BlendFactor::kOneMinusSourceAlpha, BlendFactor::kOne, BlendFactor::kOne};
+    Blending blending{BlendFunction::kDefault};
 
     if (_clipsToBounds) {
         clipBounds = clipBounds ? clipBounds->intersection(area) : area;

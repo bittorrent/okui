@@ -20,7 +20,7 @@ ColorShader::ColorShader() {
         }
     )", opengl::Shader::kVertexShader);
 
-    opengl::Shader fsh(ONAIR_OKUI_FRAGMENT_SHADER_HEADER R"(
+    opengl::Shader fsh(ONAIR_OKUI_SHADER_FRAGMENT_SHADER_HEADER R"(
         VARYING_IN vec4 color;
         VARYING_IN vec4 curve;
 
@@ -51,12 +51,16 @@ ColorShader::ColorShader() {
                     }
                 }
             }
-            COLOR_OUT = vec4(c.rgb, color.a * alphaMultiplier);
+
+            COLOR_OUT = multipliedOutput(vec4(c.rgb, color.a * alphaMultiplier));
         }
     )", opengl::Shader::kFragmentShader);
 
     _program.attachShaders(vsh, fsh);
     _program.link();
+    _program.use();
+
+    _blendingFlagsUniform = _program.uniform("blendingFlags");
 
     if (!_program.error().empty()) {
         ONAIR_LOGF_ERROR("error creating shader: %s", _program.error().c_str());
@@ -129,6 +133,11 @@ double ColorShader::_calculateGradientPosition(double x, double y) {
     auto positionX = (_gradientPointA.y - y - gradientSlope * _gradientPointA.x + perpendicularSlope * x) / (perpendicularSlope - gradientSlope);
 
     return (positionX - _gradientPointA.x) / (_gradientPointB.x - _gradientPointA.x);
+}
+
+void ColorShader::flush() {
+    _program.use();
+    ShaderBase<Vertex>::_flush(false);
 }
 
 }}}

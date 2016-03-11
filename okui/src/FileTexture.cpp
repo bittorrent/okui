@@ -7,6 +7,23 @@
 namespace onair {
 namespace okui {
 
+inline constexpr bool IsPowerOfTwo(int x) {
+    return (x != 0) && !(x & (x - 1));
+}
+
+inline constexpr int NextPowerOfTwo(int x) {
+    if (x < 0) {
+        return 0;
+    }
+    --x;
+    x |= x >> 1;
+    x |= x >> 2;
+    x |= x >> 4;
+    x |= x >> 8;
+    x |= x >> 16;
+    return x + 1;
+}
+
 struct PNGInput {
     PNGInput(const void* data, size_t length) : data(data), length(length) {}
 
@@ -146,7 +163,6 @@ GLuint FileTexture::_loadPNG(opengl::TextureCache* textureCache) {
         // opengl es doesn't do 16-bit textures
         bitDepth = 8;
         png_set_strip_16(png);
-        bytesPerRow = components * (bitDepth >> 3) * _width;
     }
 #endif
 
@@ -163,16 +179,27 @@ GLuint FileTexture::_loadPNG(opengl::TextureCache* textureCache) {
         }
     }
 
+#if OPENGL_ES
+    // make powers of 2 so we can use mipmaps
+    _allocatedWidth = NextPowerOfTwo(_width);
+    _allocatedHeight = NextPowerOfTwo(_height);
+#else
+    _allocatedWidth = _width;
+    _allocatedHeight = _height;
+#endif
+
+    bytesPerRow = components * (bitDepth >> 3) * _allocatedWidth;
+
     // align rows to 4-byte boundaries
     if (bytesPerRow % 4) {
         bytesPerRow += 4 - (bytesPerRow % 4);
     }
 
     std::vector<png_byte> image;
-    image.resize(bytesPerRow * _height);
+    image.resize(bytesPerRow * _allocatedHeight);
 
     std::vector<png_byte*> rowPointers;
-    for (int i = 0; i < _height; ++i) {
+    for (int i = 0; i < _allocatedHeight; ++i) {
         rowPointers.emplace_back(image.data() + i * bytesPerRow);
     }
 
@@ -180,18 +207,7 @@ GLuint FileTexture::_loadPNG(opengl::TextureCache* textureCache) {
 
     // image now contains our raw bytes. send it to the gpu
 
-    GLuint texture;
-    glGenTextures(1, &texture);
-    glBindTexture(GL_TEXTURE_2D, texture);
-
-    glPixelStorei(GL_UNPACK_ALIGNMENT, 4);
-
-    glTexImage2D(GL_TEXTURE_2D, 0, glFormat, _width, _height, 0, glFormat, bitDepth == 8 ? GL_UNSIGNED_BYTE : GL_UNSIGNED_SHORT, image.data());
-
-    glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-    glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+    auto texture = _generateTexture(glFormat, glFormat, bitDepth == 8 ? GL_UNSIGNED_BYTE : GL_UNSIGNED_SHORT, image.data());
 
 #if GL_RED && GL_RG
     if (colorType == PNG_COLOR_TYPE_GRAY || colorType == PNG_COLOR_TYPE_GRAY_ALPHA) {
@@ -221,11 +237,20 @@ GLuint FileTexture::_loadJPEG(opengl::TextureCache* textureCache) {
         return 0;
     }
 
+#if OPENGL_ES
+    // make powers of 2 so we can use mipmaps
+    _allocatedWidth = NextPowerOfTwo(width);
+    _allocatedHeight = NextPowerOfTwo(height);
+#else
+    _allocatedWidth = _width;
+    _allocatedHeight = _height;
+#endif
+
     auto pixelFormat = jpegColorspace == TJCS_GRAY ? TJPF_GRAY : TJPF_RGB;
-    auto bytesPerRow = TJPAD(width * tjPixelSize[pixelFormat]);
+    auto bytesPerRow = TJPAD(_allocatedWidth * tjPixelSize[pixelFormat]);
 
     std::vector<uint8_t> image;
-    image.resize(bytesPerRow * height);
+    image.resize(bytesPerRow * _allocatedHeight);
 
     if (tjDecompress2(decompressor, reinterpret_cast<const unsigned char*>(_data->data()), _data->size(), image.data(), width, bytesPerRow, height, pixelFormat, 0)) {
         ONAIR_LOG_ERROR("error decompressing jpeg: {}", tjGetErrorStr());
@@ -234,24 +259,13 @@ GLuint FileTexture::_loadJPEG(opengl::TextureCache* textureCache) {
 
     // image now contains our raw bytes. send it to the gpu
 
-    GLuint texture;
-    glGenTextures(1, &texture);
-    glBindTexture(GL_TEXTURE_2D, texture);
-
-    glPixelStorei(GL_UNPACK_ALIGNMENT, 4);
-
 #if GL_RED && GL_RG
     auto glFormat = jpegColorspace == TJCS_GRAY ? GL_RED : GL_RGB;
 #else
     auto glFormat = jpegColorspace == TJCS_GRAY ? GL_LUMINANCE : GL_RGB;
 #endif
 
-    glTexImage2D(GL_TEXTURE_2D, 0, glFormat, width, height, 0, glFormat, GL_UNSIGNED_BYTE, image.data());
-
-    glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-    glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+    auto texture = _generateTexture(glFormat, glFormat, GL_UNSIGNED_BYTE, image.data());
 
 #if GL_RED && GL_RG
     if (jpegColorspace == TJCS_GRAY) {
@@ -265,6 +279,34 @@ GLuint FileTexture::_loadJPEG(opengl::TextureCache* textureCache) {
     _cacheEntry = textureCache->add(texture, texture);
 
     return _cacheEntry->id;
+}
+
+GLuint FileTexture::_generateTexture(GLint internalformat, GLenum format, GLenum type, const GLvoid* data) {
+    GLuint texture;
+    glGenTextures(1, &texture);
+    glBindTexture(GL_TEXTURE_2D, texture);
+
+    glPixelStorei(GL_UNPACK_ALIGNMENT, 4);
+
+    glTexImage2D(GL_TEXTURE_2D, 0, internalformat, _allocatedWidth, _allocatedHeight, 0, format, type, data);
+
+#if OPENGL_ES
+    bool useMipmaps = IsPowerOfTwo(_allocatedWidth) && IsPowerOfTwo(_allocatedHeight);
+#else
+    constexpr bool useMipmaps = true;
+#endif
+
+    if (useMipmaps) {
+        glGenerateMipmap(GL_TEXTURE_2D);
+        glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+    } else {
+        glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+    }
+    glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+
+    return texture;
 }
 
 }}

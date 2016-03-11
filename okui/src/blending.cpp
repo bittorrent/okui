@@ -3,25 +3,23 @@
 namespace onair {
 namespace okui {
 
-BlendFunction BlendFunction::kAlphaLock{BlendFactor::kDestinationAlpha, BlendFactor::kZero, BlendFactor::kZero, BlendFactor::kOne};
-BlendFunction BlendFunction::kErasure{BlendFactor::kZero, BlendFactor::kOneMinusSourceAlpha, BlendFactor::kZero, BlendFactor::kOneMinusSourceAlpha};
-BlendFunction BlendFunction::kPremultipliedAlpha{BlendFactor::kOne, BlendFactor::kOneMinusSourceAlpha, BlendFactor::kOne, BlendFactor::kOneMinusSourceAlpha};
+BlendFunction BlendFunction::kDefault{BlendFactor::kOne, BlendFactor::kOneMinusSourceAlpha, BlendFactor::kOne, BlendFactor::kOneMinusSourceAlpha, true};
+BlendFunction BlendFunction::kAlphaLock{BlendFactor::kDestinationAlpha, BlendFactor::kOneMinusSourceAlpha, BlendFactor::kZero, BlendFactor::kOne, true};
+BlendFunction BlendFunction::kErasure{BlendFactor::kZero, BlendFactor::kOneMinusSourceColor, BlendFactor::kZero, BlendFactor::kOneMinusSourceAlpha, false};
 
 BlendFunction Blending::_sBlendFunction;
 int Blending::_sBlendingDepth = 0;
 
 Blending::Blending(const BlendFunction& function) {
-    if (++_sBlendingDepth == 1) {
-        opengl::EnableBlending();
-    }
+    ++_sBlendingDepth;
+    opengl::EnableBlending();
     SetBlendFunction(function, &_previous);
 }
 
-Blending::Blending(BlendFactor sourceRGB, BlendFactor destinationRGB, BlendFactor sourceAlpha, BlendFactor destinationAlpha) {
-    if (++_sBlendingDepth == 1) {
-        opengl::EnableBlending();
-    }
-    SetBlendFunction(BlendFunction{sourceRGB, destinationRGB, sourceAlpha, destinationAlpha}, &_previous);
+Blending::Blending(BlendFactor sourceRGB, BlendFactor destinationRGB, BlendFactor sourceAlpha, BlendFactor destinationAlpha, bool premultipliedSourceAlpha) {
+    ++_sBlendingDepth;
+    opengl::EnableBlending();
+    SetBlendFunction(BlendFunction{sourceRGB, destinationRGB, sourceAlpha, destinationAlpha, premultipliedSourceAlpha}, &_previous);
 }
 
 Blending::~Blending() {

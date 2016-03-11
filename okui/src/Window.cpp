@@ -225,6 +225,10 @@ bool Window::moveFocus(Direction direction) {
     return false;
 }
 
+void Window::openDialog(const char* title, const char* message, const std::vector<std::string>& buttons, std::function<void(int)> action) {
+    return application()->openDialog(this, title, message, buttons, std::move(action));
+}
+
 Point<double> Window::windowToView(View* view, double x, double y) {
     if (!view) {
         return {x, y};
@@ -370,6 +374,10 @@ void Window::_render() {
     _lastRenderTime = now;
 
     ensureTextures();
+
+    glDisable(GL_SCISSOR_TEST);
+    glClearColor(0.0, 0.0, 0.0, 0.0);
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
 
     render();
 

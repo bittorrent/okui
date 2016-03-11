@@ -3,7 +3,6 @@
 #include "onair/okui/config.h"
 
 #include "onair/okui/opengl/Framebuffer.h"
-#include "onair/okui/shaders/BoxShadowShader.h"
 #include "onair/okui/shaders/ColorShader.h"
 #include "onair/okui/shaders/DistanceFieldShader.h"
 #include "onair/okui/shaders/TextureShader.h"
@@ -225,7 +224,6 @@ public:
 
     shaders::ColorShader* colorShader() { return shader<shaders::ColorShader>("color shader"); }
     shaders::TextureShader* textureShader() { return shader<shaders::TextureShader>("texture shader"); }
-    shaders::BoxShadowShader* boxShadowShader() { return shader<shaders::BoxShadowShader>("box shadow shader"); }
     shaders::DistanceFieldShader* distanceFieldShader() { return shader<shaders::DistanceFieldShader>("distance field shader"); }
 
     /**

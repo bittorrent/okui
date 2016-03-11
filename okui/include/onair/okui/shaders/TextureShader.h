@@ -32,8 +32,9 @@ public:
         setColor(Color(std::forward<ColorArg>(colorArg), std::forward<RemColorArgs>(remColorArgs)...));
     }
 
-    void setTexture(GLuint id, Rectangle<double> bounds, const AffineTransformation& texCoordTransform = AffineTransformation{}) { setTexture(id, bounds.x, bounds.y, bounds.width, bounds.height, texCoordTransform); }
-    void setTexture(GLuint id, double x, double y, double w, double h, const AffineTransformation& texCoordTransform = AffineTransformation{});
+    void setTexture(const Texture& texture, Rectangle<double> bounds, const AffineTransformation& texCoordTransform = AffineTransformation{})
+        { setTexture(texture, bounds.x, bounds.y, bounds.width, bounds.height, texCoordTransform); }
+    void setTexture(const Texture& texture, double x, double y, double w, double h, const AffineTransformation& texCoordTransform = AffineTransformation{});
 
     /**
     * Draws a texture, scaling it to fill the given area without stretching.
@@ -50,11 +51,11 @@ public:
     virtual void flush() override;
 
 private:
-    opengl::ShaderProgram::Uniform _curveModeUniform;
     AffineTransformation _texCoordTransform;
     
-    GLuint _texture = 0;
+    GLuint _texture{0};
     double _textureX1, _textureY1, _textureWidth, _textureHeight;
+    bool _textureHasPremultipliedAlpha{false};
 
     virtual void _processTriangle(const std::array<Point<double>, 3>& p, const std::array<Point<double>, 3>& pT, Shader::Curve curve) override;
 };

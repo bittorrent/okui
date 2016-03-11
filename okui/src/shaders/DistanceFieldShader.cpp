@@ -8,7 +8,7 @@ DistanceFieldShader::DistanceFieldShader() : TextureShader(
 #if OPENGL_ES && GL_OES_standard_derivatives
         "#extension GL_OES_standard_derivatives : enable\n"
 #endif
-    ONAIR_OKUI_FRAGMENT_SHADER_HEADER
+    ONAIR_OKUI_SHADER_FRAGMENT_SHADER_HEADER
     R"(
         VARYING_IN vec4 color;
         VARYING_IN vec2 textureCoord;
@@ -49,7 +49,7 @@ DistanceFieldShader::DistanceFieldShader() : TextureShader(
                 alpha = (alpha + 0.5 * sum) / 3.0;
             }
 
-            COLOR_OUT = vec4(color.rgb, color.a * alpha);
+            COLOR_OUT = multipliedOutput(vec4(color.rgb, color.a * alpha));
         }
     )"
 ) {

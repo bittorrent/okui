@@ -303,7 +303,7 @@ void TextView::_renderBitmapText(shaders::DistanceFieldShader* shader) {
             if (glyph) {
                 Rectangle<double> glyphBounds(x + glyph->xOffset * fontScale, y + glyph->yOffset * fontScale, glyph->width * fontScale, glyph->height * fontScale);
                 auto textureScale = glyphBounds.width / glyph->textureWidth;
-                shader->setTexture(texture->id(), glyphBounds.x - glyph->textureX * textureScale, glyphBounds.y - glyph->textureY * textureScale, texture->width() * textureScale, texture->height() * textureScale);
+                shader->setTexture(*texture, glyphBounds.x - glyph->textureX * textureScale, glyphBounds.y - glyph->textureY * textureScale, texture->width() * textureScale, texture->height() * textureScale);
                 shapes::Rectangle(glyphBounds.x, glyphBounds.y, glyphBounds.width, glyphBounds.height).draw(shader);
                 x += glyph->xAdvance * fontScale;
             }
