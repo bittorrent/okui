@@ -13,12 +13,14 @@ namespace views {
 
 class ImageView : public View {
 public:
+    void clearTexture();
+
     void setTextureResource(std::string resource);
     void setTextureFromURL(std::string url);
     void setTextureColor(Color color);
     void setTextureDistanceField(double edge = 0.5);
 
-    TextureHandle texture() { return _texture.newHandle(); }
+    TextureHandle& texture() { return _texture; }
     const Color& textureColor() const { return _color; }
 
     virtual void render() override;

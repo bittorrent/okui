@@ -4,6 +4,11 @@ namespace onair {
 namespace okui {
 namespace views {
 
+void ImageView::clearTexture() {
+    _texture = nullptr;
+    _resource.clear();
+}
+
 void ImageView::setTextureResource(std::string resource) {
     _texture = loadTextureResource(resource);
     _resource = std::move(resource);

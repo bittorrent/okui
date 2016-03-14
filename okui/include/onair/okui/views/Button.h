@@ -19,7 +19,7 @@ public:
     };
 
     State state() const { return _state; }
-    TextureHandle texture(State state = State::kNormal) { return _imageViews[state].texture(); }
+    TextureHandle& texture(State state = State::kNormal) { return _imageViews[state].texture(); }
 
     void setAction(std::function<void()> action);
     void setAction(Command command, CommandContext context);
