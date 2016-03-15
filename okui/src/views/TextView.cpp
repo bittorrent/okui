@@ -169,7 +169,7 @@ void TextView::setOverflowBehavior(Style::OverflowBehavior overflowBehavior) {
     _computeLines();
 }
 
-void TextView::setWeight(Style::Weight weight) {
+void TextView::setWeight(double weight) {
     _style.weight(weight);
     invalidateRenderCache();
 }
@@ -186,7 +186,7 @@ void TextView::render(const RenderTarget* renderTarget, const Rectangle<int>& ar
 
     auto glyphId = BitmapFont::GlyphId{0x4f}; // 'O'
 
-    double fontScale   = _style.textSize() / _font->size(),
+    double fontScale   = _fontScale(),
            glyphWidth  = _font->width(&glyphId, 1) * fontScale,
            glyphHeight = _font->capHeight() * fontScale,
            clipWidth   = 0,
@@ -194,7 +194,7 @@ void TextView::render(const RenderTarget* renderTarget, const Rectangle<int>& ar
     renderTransformation().transform(glyphWidth, glyphHeight, &clipWidth, &clipHeight);
 
     distanceFieldShader->enableSupersampling(true);
-    distanceFieldShader->setEdge(_style.weight() == Style::Weight::kHeavy ? 0.45 : 0.5);
+    distanceFieldShader->setEdge(std::min(std::max(1.0 - _style.weight() / 200.0, 0.0), 1.0));
 
     distanceFieldShader->setColor(_style.textColor());
     _renderBitmapText(distanceFieldShader);

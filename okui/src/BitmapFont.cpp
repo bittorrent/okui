@@ -6,7 +6,21 @@
 namespace onair {
 namespace okui {
 
-BitmapFont::BitmapFont(TextureHandle&& texture, const std::string& metadata) : _texture(std::move(texture)) {
+namespace {
+
+double LineParameter(const char* name, const char* line) {
+    auto parameter = strstr(line, name);
+    if (!parameter) { return 0.0; }
+    auto nameLength = strlen(name);
+    if (parameter[nameLength] != '=') { return 0.0; }
+    return std::strtod(parameter + nameLength + 1, nullptr);
+}
+
+}
+
+BitmapFont::BitmapFont(TextureHandle texture, const std::string& metadata)
+    : _texture{std::move(texture)}
+{
     _parseMetadata(metadata.c_str());
 }
 
@@ -37,57 +51,51 @@ double BitmapFont::width(const GlyphId* glyphs, size_t count) const {
 }
 
 void BitmapFont::_parseMetadata(const char* metadata) {
-	auto line = metadata;
-	while (true) {
-		auto newline = strchr(line, '\n');
-		_parseMetadataLine(line);
-		if (newline) {
-			line = newline + 1;
-		} else {
-			break;
-		}
-	}
+    auto line = metadata;
+    while (true) {
+        auto newline = strchr(line, '\n');
+        _parseMetadataLine(line);
+        if (newline) {
+            line = newline + 1;
+        } else {
+            break;
+        }
+    }
 }
 
 void BitmapFont::_parseMetadataLine(const char* line) {
     if (!strncmp(line, "info ", 5)) {
-        _size = sLineParameter("size", line);
-        _padding = sLineParameter("padding", line);
+        _size = LineParameter("size", line);
+        _padding = LineParameter("padding", line);
     } else if (!strncmp(line, "common ", 7)) {
-        _lineSpacing = sLineParameter("lineHeight", line);
-        _base        = _lineSpacing - sLineParameter("base", line);
-        _scaleW      = sLineParameter("scaleW", line);
-        _scaleH      = sLineParameter("scaleH", line);
+        _lineSpacing = LineParameter("lineHeight", line);
+        _base        = _lineSpacing - LineParameter("base", line);
+        _scaleW      = LineParameter("scaleW", line);
+        _scaleH      = LineParameter("scaleH", line);
     } else if (!strncmp(line, "char ", 5)) {
-        auto id = sLineParameter("id", line);
-        auto& glyph    = _glyphs[id];
+        auto id = LineParameter("id", line);
+        auto& glyph = _glyphs[id];
 
         auto textureScale = _texture->width() / _scaleW;
 
-        glyph.width         = sLineParameter("width", line);
-        glyph.height        = sLineParameter("height", line);
+        glyph.width         = LineParameter("width", line);
+        glyph.height        = LineParameter("height", line);
         glyph.textureWidth  = glyph.width * textureScale;
         glyph.textureHeight = glyph.height * textureScale;
-        glyph.textureX      = sLineParameter("x", line) * textureScale;
-        glyph.textureY      = sLineParameter("y", line) * textureScale;
-        glyph.xOffset       = sLineParameter("xoffset", line);
-        glyph.yOffset       = sLineParameter("yoffset", line);
-        glyph.xAdvance      = sLineParameter("xadvance", line);
+        glyph.textureX      = LineParameter("x", line) * textureScale;
+        glyph.textureY      = LineParameter("y", line) * textureScale;
+        glyph.xOffset       = LineParameter("xoffset", line);
+        glyph.yOffset       = LineParameter("yoffset", line);
+        glyph.xAdvance      = LineParameter("xadvance", line);
 
         if (strchr("ABCDEFGHIKLMNOPRSTUVWXYZ", id)) {
             _capHeight = std::max(glyph.height - _padding * 2, _capHeight);
         }
     } else if (!strncmp(line, "kerning ", 8)) {
-        _kernings[sLineParameter("first", line)][sLineParameter("second", line)] = sLineParameter("amount", line);
+        _kernings[LineParameter("first", line)][LineParameter("second", line)] = LineParameter("amount", line);
     }
 }
 
-double BitmapFont::sLineParameter(const char* name, const char* line) {
-    auto parameter = strstr(line, name);
-	if (!parameter) { return 0.0; }
-    auto nameLength = strlen(name);
-    if (parameter[nameLength] != '=') { return 0.0; }
-    return std::strtod(parameter + nameLength + 1, nullptr);
-}
+
 
 }}

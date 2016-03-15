@@ -33,11 +33,6 @@ public:
             kShrink,
         };
 
-        enum class Weight {
-            kRegular,
-            kHeavy,
-        };
-
         Style& font(std::string texture, std::string metadata) { _texture = std::move(texture); _metadata = std::move(metadata); return *this; }
         Style& textSize(double size)                           { _textSize = size; return *this; }
         Style& textColor(const Color& color)                   { _textColor = color; return *this; }
@@ -48,7 +43,7 @@ public:
         Style& alignment(HorizontalAlignment horizontal, VerticalAlignment vertical)
                                                                { _horizontalAlignment = horizontal; _verticalAlignment = vertical; return *this; }
         Style& overflowBehavior(OverflowBehavior overflow)     { _overflowBehavior = overflow; return *this; }
-        Style& weight(Weight w)                                { _weight = w; return *this; }
+        Style& weight(double weight)                           { _weight = weight; return *this; }
 
         const std::string& fontTexture() const                 { return _texture; }
         const std::string& fontMetadata() const                { return _metadata; }
@@ -58,7 +53,7 @@ public:
         HorizontalAlignment horizontalAlignment() const        { return _horizontalAlignment; }
         VerticalAlignment verticalAlignment() const            { return _verticalAlignment; }
         OverflowBehavior overflowBehavior() const              { return _overflowBehavior; }
-        Weight weight() const                                  { return _weight; }
+        double weight() const                                  { return _weight; }
 
     private:
         std::string         _texture;
@@ -69,7 +64,7 @@ public:
         HorizontalAlignment _horizontalAlignment = HorizontalAlignment::kLeft;
         VerticalAlignment   _verticalAlignment = VerticalAlignment::kCenter;
         OverflowBehavior    _overflowBehavior = OverflowBehavior::kEllipses;
-        Weight              _weight = Weight::kRegular;
+        double              _weight = 100.0;
     };
 
     const Style& style() const { return _style; }
@@ -90,7 +85,7 @@ public:
     void setAlignment(Style::VerticalAlignment alignment);
     void setAlignment(Style::HorizontalAlignment horizontal, Style::VerticalAlignment vertical);
     void setOverflowBehavior(Style::OverflowBehavior overflowBehavior);
-    void setWeight(Style::Weight weight);
+    void setWeight(double weight);
 
     template <typename ColorArg, typename... RemColorArgs>
     auto setTextColor(ColorArg&& colorArg, RemColorArgs&&... remColorArgs) -> typename std::enable_if<!std::is_convertible<ColorArg, const Color&>::value>::type {
