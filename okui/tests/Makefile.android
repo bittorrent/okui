@@ -1,0 +1,8 @@
+
+LIBNAME = okui
+APPID   = tv.watchonair.$(LIBNAME).tests
+
+MAKEFILE_ROOT := $(strip $(shell dirname $(realpath $(lastword $(MAKEFILE_LIST)))))
+APK_WRAPPER = $(MAKEFILE_ROOT)/../../apk-wrapper
+
+include $(APK_WRAPPER)/APKMakefile

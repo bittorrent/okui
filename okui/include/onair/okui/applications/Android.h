@@ -91,7 +91,7 @@ private:
 
     std::shared_ptr<jni::JNIContext> _jniContext;
     std::unique_ptr<AndroidJavaHelper> _javaHelper;
-    
+
     std::unique_ptr<ResourceManager> _resourceManager;
 
     static std::weak_ptr<jni::JNIContext> _sJNIContext;
@@ -122,7 +122,7 @@ inline Android<Base>::Android() {
     }
 
     _javaHelper = std::make_unique<AndroidJavaHelper>(android::app::Activity{_jniEnv, _activity});
-        
+
     _jniEnv->PushLocalFrame(10);
 
     auto c = _jniEnv->GetObjectClass(_activity);

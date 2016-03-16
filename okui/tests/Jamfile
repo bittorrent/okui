@@ -1,7 +1,7 @@
 path-constant OKUI_TEST_RESOURCES_PATH : ./resources ;
 
 alias okui-tests-common :
-    [ glob-tree *.cpp ]
+    [ glob-tree *.cpp : android.cpp ]
     ..//okui
     ../../third-party/gtest//gtest/<link>static
     ../../third-party/sdl//SDL2/<link>static
@@ -23,3 +23,15 @@ exe okui-tests :
     <target-os>darwin:<build>yes
     <target-os>darwin:<framework>CoreVideo
 ;
+
+lib okui-tests-android :
+    okui-tests-common/<link>static
+    android.cpp
+:
+    <include>../../apk-wrapper/include
+    <link>shared
+    <build>no
+    <target-os>android:<build>yes
+;
+
+install dist/android : okui-tests-android ;
