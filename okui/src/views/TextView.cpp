@@ -68,9 +68,9 @@ Point<int> TextView::lineColumnPosition(size_t lineNum, size_t col) const {
     auto lineSpacing = _font->lineSpacing() * fontScale;
 
     auto& line = _lines[lineNum];
-    col = std::min(col, line.size());
+    auto textWidth = _font->width(line.data(), std::min(col, line.size())) * fontScale + (_style.letterSpacing() * col);
 
-    return {static_cast<int>(round(_calcXOffset(line) + _lineWidth(line, fontScale))),
+    return {static_cast<int>(round(_calcXOffset(line) + textWidth)),
             static_cast<int>(round(_calcYOffset() + (lineNum * lineSpacing)))};
 }
 
