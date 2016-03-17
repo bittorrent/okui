@@ -21,7 +21,7 @@ lib libGLESv2   : : <name>GLESv2 <link>shared ;
 
 lib okui :
 	pch
-	[ glob-tree *.cpp : tests tools ]
+	[ glob-tree-ex src : *.cpp ]
 	../foundation//foundation
 	../third-party/libpng//png
 	libturbojpeg
@@ -35,11 +35,3 @@ lib okui :
 	<include>./include
 	<conditional>@okui-frameworks
 ;
-
-jar okui_jar : [ glob-tree *.java ] :
-	<build>no
-	<target-os>android:<build>yes
-	<classpath>java
-;
-
-explicit okui_jar ;

@@ -1,7 +1,7 @@
 path-constant OKUI_TEST_RESOURCES_PATH : ./resources ;
 
 alias okui-tests-common :
-    [ glob-tree *.cpp : android.cpp ]
+    [ glob-tree-ex src : *.cpp : android.cpp ]
     ..//okui
     ../../third-party/gtest//gtest/<link>static
     ../../third-party/sdl//SDL2/<link>static
@@ -26,7 +26,7 @@ exe okui-tests :
 
 lib okui-tests-android :
     okui-tests-common/<link>static
-    android.cpp
+    src/android.cpp
 :
     <include>../../apk-wrapper/include
     <link>shared

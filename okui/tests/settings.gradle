@@ -1,0 +1,5 @@
+include ':okui-tests'
+include ':okui'
+
+project(':okui-tests').setProjectDir(file('android'))
+project(':okui').setProjectDir(file('..'))

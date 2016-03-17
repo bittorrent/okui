@@ -158,7 +158,7 @@ bool Window::moveFocus(Direction direction) {
         }
         return false;
     }
-    
+
     std::vector<std::tuple<View*, Rectangle<double>>> focusableRegions;
     contentView()->_updateFocusableRegions(focusableRegions);
     auto previousFocus = focus();
@@ -221,7 +221,7 @@ bool Window::moveFocus(Direction direction) {
         next->focus();
         return true;
     }
-    
+
     return false;
 }
 

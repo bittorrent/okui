@@ -27,6 +27,7 @@ TEST(BitmapFont, parsing) {
         bmpFont = view->window()->loadBitmapFontResource("Montserrat-regular.png", "Montserrat-regular.fnt");
         view->window()->ensureTextures();
     }, [&](View* view) {
+        ASSERT_NE(bmpFont, nullptr);
         CheckGlyph(*bmpFont->glyph(199), 173,   0, 49, 63, -6,  4, 35);
         CheckGlyph(*bmpFont->glyph(193),   0,  66, 53, 61, -8, -5, 36);
         CheckGlyph(*bmpFont->glyph(202), 431,  66, 42, 60, -4, -4, 31);

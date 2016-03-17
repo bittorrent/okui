@@ -8,9 +8,14 @@ using namespace onair;
 using namespace onair::okui;
 
 TEST(FileResourceManager, loading) {
+#ifdef ONAIR_ANDROID
+    std::string path{"/sdcard/Download/FileResourceManager.loading"};
+#else
     std::string path = (boost::filesystem::temp_directory_path() / "FileResourceManager.loading").string();
+#endif
 
     FILE* f = fopen(path.c_str(), "w");
+    ASSERT_NE(f, nullptr);
     fprintf(f, "file contents");
     fclose(f);
 

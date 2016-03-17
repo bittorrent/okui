@@ -7,11 +7,11 @@ using namespace onair::okui;
 using namespace onair::okui::math;
 
 TEST(Vector, twoComponent) {
-    Vector<char, 2> v;
+    Vector<int8_t, 2> v;
 
     EXPECT_EQ(v.x, 0);
     EXPECT_EQ(v.y, 0);
-    
+
     v.x = 5;
     v.y = -1;
 

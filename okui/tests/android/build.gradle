@@ -1,0 +1,51 @@
+apply from: '../../../android-config-apk.gradle'
+
+buildscript {
+    repositories {
+        jcenter()
+    }
+
+    dependencies {
+        classpath 'com.android.tools.build:gradle-experimental:0.2.0'
+    }
+}
+
+model {
+    android {
+        defaultConfig.with {
+            archivesBaseName = 'okui-tests'
+            applicationId = 'tv.watchonair.okui.tests'
+        }
+    }
+
+    android.sources {
+        main {
+            java.source.srcDirs = ['src', '../../../third-party/sdl/src/android-project/src']
+        }
+    }
+}
+
+task copyLibs(type: Sync) {
+    from('../dist/android') {
+        include '*.so'
+    }
+    into 'src/main/libs/armeabi-v7a'
+}
+
+task copyAssets(type: Sync) {
+    from '../resources/PlayIcon.png'
+    from '../resources/Montserrat-regular.fnt'
+    from '../resources/Montserrat-regular.png'
+    into 'src/main/assets'
+}
+
+tasks.whenTaskAdded { task ->
+    if (task.name == 'preBuild') {
+        task.dependsOn copyLibs
+        task.dependsOn copyAssets
+    }
+}
+
+dependencies {
+    compile project(':okui')
+}
