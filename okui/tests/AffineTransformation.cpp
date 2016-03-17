@@ -43,7 +43,7 @@ TEST(AffineTransformation, combination) {
     AffineTransformation(0.0, 0.0, 3.0, 1.0, 2.0, 4.0, M_PI / 2).transform(1.0, 0.0, &x, &y);
     EXPECT_FLOAT_EQ(x, -4.0);
     EXPECT_FLOAT_EQ(y,  8.0);
-    
+
     // add another translation
     AffineTransformation(-1.0, 3.0, 3.0, 1.0, 2.0, 4.0, M_PI / 2).transform(1.0, 0.0, &x, &y);
     EXPECT_FLOAT_EQ(x, -5.0);

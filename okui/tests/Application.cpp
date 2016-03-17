@@ -21,7 +21,7 @@ struct TestHTTPConnection : HTTPConnection {
     }
 };
 
-struct TestServer : TCPAcceptor<TestHTTPConnection> {    
+struct TestServer : TCPAcceptor<TestHTTPConnection> {
     std::string response;
 };
 
@@ -33,7 +33,7 @@ TEST(Application, download) {
 
     gTestServerResponse = "expected";
     auto result = application.download("http://localhost:12654/").get();
-    
+
     ASSERT_TRUE(result != nullptr);
     EXPECT_EQ(*result, "expected");
 }
@@ -44,7 +44,7 @@ TEST(Application, downloadCaching) {
     server.start(Address(), 12654);
 
     gTestServerResponse = "response 1";
-    auto dl1 = application.download("http://localhost:12654/");    
+    auto dl1 = application.download("http://localhost:12654/");
     auto result1 = dl1.get();
     ASSERT_TRUE(result1 != nullptr);
 

@@ -69,7 +69,7 @@ TEST(View, isVisibleInOpenWindow) {
 
     window.open();
     EXPECT_TRUE(a.isVisibleInOpenWindow());
-    
+
     a.setIsVisible(false);
     EXPECT_FALSE(a.isVisibleInOpenWindow());
 }
@@ -80,7 +80,7 @@ TEST(View, focus) {
     struct FocusableView : View {
         virtual bool canBecomeFocus() override { return true; }
     };
-    
+
     View a;
     EXPECT_FALSE(a.isFocus());
 
@@ -98,7 +98,7 @@ TEST(View, focus) {
     window.contentView()->addSubviews(&a, &b);
     EXPECT_FALSE(a.isFocus());
     EXPECT_FALSE(b.isFocus());
-    
+
     a.focus();
     EXPECT_FALSE(a.isFocus());
     EXPECT_FALSE(b.isFocus());
@@ -118,7 +118,7 @@ TEST(View, focus) {
 
     b.unfocus();
     EXPECT_FALSE(a.isFocus());
-    EXPECT_FALSE(b.isFocus());    
+    EXPECT_FALSE(b.isFocus());
 }
 #endif // ONAIR_OKUI_HAS_NATIVE_APPLICATION
 
@@ -127,7 +127,7 @@ TEST(View, focusCycle) {
         virtual bool canBecomeFocus() override { return enabled; }
         bool enabled = false;
     };
-    
+
     FocusableView a;
     EXPECT_FALSE(a.nextAvailableFocus());
 
@@ -214,7 +214,7 @@ TEST(View, appearedDisappeared) {
             EXPECT_FALSE(isVisibleInOpenWindow());
             ++step;
         }
-        
+
         int step = 0;
     } b;
 
@@ -322,7 +322,7 @@ TEST(View, messagePosting) {
 
     int message = 7;
     a.post(message, View::Relation::kDescendant);
-        
+
     EXPECT_EQ(received, 2);
 }
 #endif // ONAIR_OKUI_HAS_NATIVE_APPLICATION
@@ -331,18 +331,18 @@ TEST(View, provisions) {
     View a, b, c;
 
     int n = 0;
-    
+
     a.provide(&n);
 
     a.addSubview(&b);
     b.addSubview(&c);
-    
+
     EXPECT_EQ(b.get<int>(), &n);
     EXPECT_EQ(c.get<int>(), &n);
 
     int x = 1;
     a.provide(&x, 1);
-    
+
     EXPECT_EQ(b.get<int>(1), &x);
     EXPECT_EQ(c.get<int>(1), &x);
 }
