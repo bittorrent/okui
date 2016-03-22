@@ -16,7 +16,8 @@
 #include "onair/okui/TouchpadFocus.h"
 #include "onair/okui/WeakTexture.h"
 
-#include "onair/optional.h"
+#include "onair/stdts/optional.h"
+
 #include "onair/AbstractTaskScheduler.h"
 
 #include <list>
@@ -457,7 +458,7 @@ public:
     * @param area the area within the target to render to. the view will fill this area
     * @param clipBounds the bounds within the target to clip rendering of the view and its children to
     */
-    void renderAndRenderSubviews(const RenderTarget* target, const Rectangle<int>& area, optional<Rectangle<int>> clipBounds = nullopt);
+    void renderAndRenderSubviews(const RenderTarget* target, const Rectangle<int>& area, stdts::optional<Rectangle<int>> clipBounds = stdts::nullopt);
 
     bool dispatchMouseDown(MouseButton button, double x, double y);
     bool dispatchMouseUp(MouseButton button, double startX, double startY, double x, double y);
@@ -537,7 +538,7 @@ private:
     void _updateFocusableRegions(std::vector<std::tuple<View*, Rectangle<double>>>& regions);
 
     bool _requiresTextureRendering();
-    void _renderAndRenderSubviews(const RenderTarget* target, const Rectangle<int>& area, bool shouldClear = false, optional<Rectangle<int>> clipBounds = nullopt);
+    void _renderAndRenderSubviews(const RenderTarget* target, const Rectangle<int>& area, bool shouldClear = false, stdts::optional<Rectangle<int>> clipBounds = stdts::nullopt);
 
     void _post(std::type_index index, const void* ptr, Relation relation);
     void _listen(std::type_index index, std::function<void(const void*, View*)> action, Relation relation);

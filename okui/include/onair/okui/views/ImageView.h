@@ -5,7 +5,7 @@
 #include "onair/okui/Color.h"
 #include "onair/okui/View.h"
 
-#include "onair/optional.h"
+#include "onair/stdts/optional.h"
 
 namespace onair {
 namespace okui {
@@ -27,11 +27,11 @@ public:
     virtual void windowChanged() override;
 
 private:
-    TextureHandle    _texture;
-    std::string      _resource;
-    bool             _fromURL = false;
-    Color            _color = {1, 1, 1, 1};
-    optional<double> _distanceFieldEdge;
+    TextureHandle           _texture;
+    std::string             _resource;
+    bool                    _fromURL = false;
+    Color                   _color = {1, 1, 1, 1};
+    stdts::optional<double> _distanceFieldEdge;
 };
 
 }}}

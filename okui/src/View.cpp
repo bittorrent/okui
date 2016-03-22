@@ -7,6 +7,8 @@
 #include "onair/okui/shapes/Rectangle.h"
 #include "onair/okui/Window.h"
 
+#include "onair/stdts/optional.h"
+
 #include <typeinfo>
 
 #if __clang__ || __GNUC__
@@ -455,7 +457,7 @@ void View::dispatchUpdate(std::chrono::high_resolution_clock::duration elapsed) 
     }
 }
 
-void View::renderAndRenderSubviews(const RenderTarget* target, const Rectangle<int>& area, optional<Rectangle<int>> clipBounds) {
+void View::renderAndRenderSubviews(const RenderTarget* target, const Rectangle<int>& area, stdts::optional<Rectangle<int>> clipBounds) {
     if (!isVisible() || !area.width || !area.height) { return; }
 
     if (!_requiresTextureRendering() && !_cachesRender) {
@@ -751,7 +753,7 @@ bool View::_requiresTextureRendering() {
     return _rendersToTexture || _tintColor.r < 1.0 || _tintColor.g < 1.0 || _tintColor.b < 1.0 || _tintColor.a < 1.0;
 }
 
-void View::_renderAndRenderSubviews(const RenderTarget* target, const Rectangle<int>& area, bool shouldClear, optional<Rectangle<int>> clipBounds) {
+void View::_renderAndRenderSubviews(const RenderTarget* target, const Rectangle<int>& area, bool shouldClear, stdts::optional<Rectangle<int>> clipBounds) {
     glViewport(area.x, target->height() - area.maxY(), area.width, area.height);
     Blending blending{BlendFunction::kDefault};
 
