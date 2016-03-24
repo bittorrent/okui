@@ -182,6 +182,8 @@ public:
     virtual void setScreenSaverEnabled(bool enabled = true) {}
 
     virtual void setCursorType(CursorType type) {}
+    virtual void showCursor(bool visible = true) {}
+    virtual bool isCursorVisible() const { return true; }
 
     virtual bool hasStatusBar() const { return false; }
 

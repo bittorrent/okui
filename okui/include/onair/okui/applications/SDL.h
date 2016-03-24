@@ -60,6 +60,8 @@ public:
     virtual void setScreenSaverEnabled(bool enabled = true) override { enabled ? SDL_EnableScreenSaver() : SDL_DisableScreenSaver(); }
 
     virtual void setCursorType(CursorType type) override;
+    virtual void showCursor(bool visible = true) override;
+    virtual bool isCursorVisible() const override;
 
 #if ONAIR_MAC_OS_X
     virtual NSWindow* nativeWindow(Window* window) const override;
@@ -96,16 +98,16 @@ private:
             SDL_FreeCursor(p);
         }
     };
-    
+
     struct Controller : onair::okui::Controller {
         explicit Controller(SDL_Joystick* joystick) : joystick{joystick} {}
         ~Controller();
-        
+
         virtual std::string name() const override;
         virtual std::string guid() const override;
-    
+
         virtual size_t buttons() const override { return SDL_JoystickNumButtons(joystick); }
-    
+
         virtual size_t axes() const override { return SDL_JoystickNumAxes(joystick); }
         virtual Controller::AxisType axisType(size_t axis) const override;
 
@@ -410,7 +412,7 @@ inline SDL::Controller::~Controller() {
         SDL_JoystickClose(joystick);
     }
 }
-        
+
 inline std::string SDL::Controller::name() const {
     auto name = SDL_JoystickName(joystick);
     return name ? name : "";
@@ -421,7 +423,7 @@ inline std::string SDL::Controller::guid() const {
     SDL_JoystickGetGUIDString(SDL_JoystickGetGUID(joystick), ret, sizeof(ret));
     return ret;
 }
-    
+
 inline Controller::AxisType SDL::Controller::axisType(size_t axis) const {
     if (axis == 0) {
         return AxisType::kJoystickX;
@@ -461,7 +463,7 @@ inline void SDL::_handleMouseMotionEvent(const SDL_MouseMotionEvent& event) {
 
 inline void SDL::_handleMouseButtonEvent(const SDL_MouseButtonEvent& event) {
     if (platform::kIsTVOS) { return; }
-    
+
     auto window = _window(event.windowID);
     if (!window) { return; }
 
@@ -642,6 +644,24 @@ inline void SDL::setCursorType(CursorType type) {
 
     _cursor.reset(SDL_CreateSystemCursor(id));
     SDL_SetCursor(_cursor.get());
+}
+
+inline void SDL::showCursor(bool visible) {
+    auto ret = SDL_ShowCursor(visible);
+
+    if (ret < 0) {
+        ONAIR_LOG_ERROR("showCursor error {}, {}", ret, SDL_GetError());
+    }
+}
+
+inline bool SDL::isCursorVisible() const {
+    auto ret = SDL_ShowCursor(-1);
+
+    if (ret < 0) {
+        ONAIR_LOG_ERROR("isCursorVisible error {}, {}", ret, SDL_GetError());
+    }
+
+    return ret;
 }
 
 }}}
