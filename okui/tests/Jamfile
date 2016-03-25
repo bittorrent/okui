@@ -34,4 +34,7 @@ lib okui-tests-android :
     <target-os>android:<build>yes
 ;
 
-install dist/android : okui-tests-android ;
+install dist/android : okui-tests-android :
+    <build>no
+    <target-os>android:<build>yes
+;
