@@ -1,10 +1,12 @@
 #pragma once
 
 #include "onair/okui/config.h"
+
 #include "onair/okui/Controller.h"
 #include "onair/okui/FileResourceManager.h"
-
 #include "onair/okui/Application.h"
+#include "onair/okui/Rectangle.h"
+#include "onair/okui/Point.h"
 #include "onair/okui/applications/SDLKeycode.h"
 
 #include "onair/Timer.h"
@@ -41,6 +43,7 @@ public:
 
     virtual void getWindowRenderSize(Window* window, int* width, int* height) override;
     virtual void getWindowSize(Window* window, int* width, int* height) override;
+    virtual void getWindowPosition(Window* window, int* x, int* y) override;
 
     virtual void setWindowPosition(Window* window, const WindowPosition& pos) override;
     virtual void setWindowSize(Window* window, int width, int height) override;
@@ -311,6 +314,12 @@ inline void SDL::getWindowRenderSize(Window* window, int* width, int* height) {
 inline void SDL::getWindowSize(Window* window, int* width, int* height) {
     if (auto w = _sdlWindow(window)) {
         SDL_GetWindowSize(w, width, height);
+    }
+}
+
+inline void SDL::getWindowPosition(Window* window, int* x, int* y) {
+    if (auto w = _sdlWindow(window)) {
+        SDL_GetWindowPosition(w, x, y);
     }
 }
 

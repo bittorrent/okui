@@ -186,6 +186,7 @@ public:
     TouchpadFocus& touchpadFocus() { return _touchpadFocus; }
 
     bool isDescendantOf(const View* view) const;
+    bool isAnscestorOf(const View* view) const { return view->isDescendantOf(this); }
 
     /**
     * @param rendersToTexture if true, the view is rendered to a texture, making it available via renderTexture
@@ -407,13 +408,18 @@ public:
     virtual bool hitTest(double x, double y);
 
     /**
+    * Return the most descendant visible view which intersects with (x, y)
+    */
+    View* hitTestView(double x, double y);
+
+    /**
     * Override these to handle mouse events. Call the base implementation to pass on the event.
     */
     virtual void mouseDown(MouseButton button, double x, double y);
     virtual void mouseUp(MouseButton button, double startX, double startY, double x, double y);
     virtual void mouseWheel(double xPos, double yPos, int xWheel, int yWheel);
     virtual void mouseDrag(double startX, double startY, double x, double y) {}
-    virtual void mouseMovement(double x, double y) {}
+    virtual void mouseMovement(double x, double y);
     virtual void mouseEnter() {}
     virtual void mouseExit() {}
 
@@ -462,7 +468,7 @@ public:
 
     bool dispatchMouseDown(MouseButton button, double x, double y);
     bool dispatchMouseUp(MouseButton button, double startX, double startY, double x, double y);
-    void dispatchMouseMovement(double x, double y);
+    bool dispatchMouseMovement(double x, double y);
     bool dispatchMouseWheel(double xPos, double yPos, int xWheel, int yWheel);
     void dispatchUpdate(std::chrono::high_resolution_clock::duration elapsed);
 

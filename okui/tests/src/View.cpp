@@ -346,3 +346,33 @@ TEST(View, provisions) {
     EXPECT_EQ(b.get<int>(1), &x);
     EXPECT_EQ(c.get<int>(1), &x);
 }
+
+TEST(View, mouseMovement) {
+    struct MouseMoveView : View {
+        virtual void mouseMovement(double x, double y) override { mouseMoveHandled = true; }
+        bool mouseMoveHandled = false;
+    };
+
+    MouseMoveView a, b, c;
+    a.addSubview(&b);
+    b.addSubview(&c);
+
+    a.setBounds(0, 0, 100, 100);
+    b.setBounds(20, 20, 20, 20);
+    b.setClipsToBounds(false);
+    c.setBounds(25, 25, 10, 10);
+
+    a.dispatchMouseMovement(10, 10);
+    EXPECT_TRUE(a.mouseMoveHandled);
+    a.mouseMoveHandled = false;
+
+    a.dispatchMouseMovement(20, 20);
+    EXPECT_FALSE(a.mouseMoveHandled);
+    EXPECT_TRUE(b.mouseMoveHandled);
+    b.mouseMoveHandled = false;
+
+    a.dispatchMouseMovement(45, 45);
+    EXPECT_FALSE(a.mouseMoveHandled);
+    EXPECT_FALSE(b.mouseMoveHandled);
+    EXPECT_TRUE(c.mouseMoveHandled);
+}

@@ -75,6 +75,7 @@ public:
 
     virtual void getWindowRenderSize(Window* window, int* width, int* height) = 0;
     virtual void getWindowSize(Window* window, int* width, int* height) = 0;
+    virtual void getWindowPosition(Window* window, int* x, int* y) = 0;
 
     virtual void setWindowPosition(Window* window, const WindowPosition& pos) = 0;
     virtual void setWindowSize(Window* window, int width, int height) = 0;

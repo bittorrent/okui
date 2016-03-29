@@ -83,7 +83,7 @@ void View::addSubview(View* view) {
         view->superview()->removeSubview(view);
     }
     view->_superview = this;
-    _subviews.push_back(view);
+    _subviews.push_front(view);
 
     if (_window != view->window()) {
         if (view->window()) {
@@ -183,7 +183,7 @@ void View::sendToBack() {
     for (auto it = siblings.begin(); it != siblings.end(); ++it) {
         if (*it == this) {
             siblings.erase(it);
-            siblings.push_front(this);
+            siblings.push_back(this);
             return;
         }
     }
@@ -197,7 +197,7 @@ void View::bringToFront() {
     for (auto it = siblings.begin(); it != siblings.end(); ++it) {
         if (*it == this) {
             siblings.erase(it);
-            siblings.push_back(this);
+            siblings.push_front(this);
             return;
         }
     }
@@ -366,6 +366,21 @@ bool View::hitTest(double x, double y) {
            y >= 0 && y < bounds().height;
 }
 
+View* View::hitTestView(double x, double y) {
+    auto hit = hitTest(x, y);
+    if (hit || !_clipsToBounds) {
+        for (auto& subview : _subviews) {
+            if (subview->isVisible()) {
+                auto point = subview->superviewToLocal(x, y);
+                auto view = subview->hitTestView(point.x, point.y);
+                if (view) { return view; }
+            }
+        }
+    }
+
+    return hit ? this : nullptr;
+}
+
 void View::mouseDown(MouseButton button, double x, double y) {
     if (superview() && superview()->_interceptsInteractions) {
         auto point = localToSuperview(x, y);
@@ -386,6 +401,13 @@ void View::mouseWheel(double xPos, double yPos, int xWheel, int yWheel) {
     if (superview() && superview()->_interceptsInteractions) {
         auto point = localToSuperview(xPos, yPos);
         superview()->mouseWheel(point.x, point.y, xWheel, yWheel);
+    }
+}
+
+void View::mouseMovement(double x, double y) {
+    if (superview() && superview()->_interceptsInteractions) {
+        auto point = localToSuperview(x, y);
+        superview()->mouseMovement(point.x, point.y);
     }
 }
 
@@ -530,9 +552,9 @@ bool View::dispatchMouseDown(MouseButton button, double x, double y) {
     if (!isVisible()) { return false; }
 
     if (_childrenInterceptInteractions) {
-        for (auto it = _subviews.rbegin(); it != _subviews.rend(); ++it) {
-            auto point = (*it)->superviewToLocal(x, y);
-            if ((!(*it)->clipsToBounds() || (*it)->hitTest(point.x, point.y)) && (*it)->dispatchMouseDown(button, point.x, point.y)) {
+        for (auto& subview : _subviews) {
+            auto point = subview->superviewToLocal(x, y);
+            if ((!subview->clipsToBounds() || subview->hitTest(point.x, point.y)) && subview->dispatchMouseDown(button, point.x, point.y)) {
                 return true;
             }
         }
@@ -545,6 +567,7 @@ bool View::dispatchMouseDown(MouseButton button, double x, double y) {
         window()->beginDragging(this);
         return true;
     }
+
     return false;
 }
 
@@ -552,10 +575,10 @@ bool View::dispatchMouseUp(MouseButton button, double startX, double startY, dou
     if (!isVisible()) { return false; }
 
     if (_childrenInterceptInteractions) {
-        for (auto it = _subviews.rbegin(); it != _subviews.rend(); ++it) {
-            auto startPoint = (*it)->superviewToLocal(startX, startY);
-            auto point = (*it)->superviewToLocal(x, y);
-            if ((!(*it)->clipsToBounds() || (*it)->hitTest(point.x, point.y)) && (*it)->dispatchMouseUp(button, startPoint.x, startPoint.y, point.x, point.y)) {
+        for (auto& subview : _subviews) {
+            auto startPoint = subview->superviewToLocal(startX, startY);
+            auto point = subview->superviewToLocal(x, y);
+            if ((!subview->clipsToBounds() || subview->hitTest(point.x, point.y)) && subview->dispatchMouseUp(button, startPoint.x, startPoint.y, point.x, point.y)) {
                 return true;
             }
         }
@@ -564,51 +587,55 @@ bool View::dispatchMouseUp(MouseButton button, double startX, double startY, dou
         mouseUp(button, startX, startY, x, y);
         return true;
     }
+
     return false;
 }
 
-void View::dispatchMouseMovement(double x, double y) {
-    if (!isVisible()) { return; }
+bool View::dispatchMouseMovement(double x, double y) {
+    if (!isVisible()) { return false; }
 
-    View* subview = nullptr;
+    View* subviewWithMouse = nullptr;
 
     if (_childrenInterceptInteractions) {
-        for (auto it = _subviews.rbegin(); it != _subviews.rend(); ++it) {
-            auto point = (*it)->superviewToLocal(x, y);
-            if ((*it)->hitTest(point.x, point.y)) {
-                if (!subview) {
-                    subview = *it;
-                }
-                (*it)->dispatchMouseMovement(point.x, point.y);
-            } else if (!(*it)->clipsToBounds()) {
-                (*it)->dispatchMouseMovement(point.x, point.y);
+        for (auto& subview : _subviews) {
+            auto point = subview->superviewToLocal(x, y);
+            if ((!subview->clipsToBounds() || subview->hitTest(point.x, point.y)) && subview->dispatchMouseMovement(point.x, point.y)) {
+                subviewWithMouse = subview;
+                break;
             }
         }
     }
 
-    if (subview != _subviewWithMouse) {
+    if (subviewWithMouse != _subviewWithMouse) {
         if (_subviewWithMouse) {
             _subviewWithMouse->_mouseExit();
         }
-        _subviewWithMouse = subview;
+        _subviewWithMouse = subviewWithMouse;
         if (_subviewWithMouse) {
             _subviewWithMouse->mouseEnter();
         }
     }
 
+    if (subviewWithMouse) {
+        return true;
+    }
+
     if (_interceptsInteractions && hitTest(x, y)) {
         mouseMovement(x, y);
+        return true;
     }
+
+    return false;
 }
 
 bool View::dispatchMouseWheel(double xPos, double yPos, int xWheel, int yWheel) {
     if (!isVisible()) { return false; }
 
     if (_childrenInterceptInteractions) {
-        for (auto it = _subviews.rbegin(); it != _subviews.rend(); ++it) {
-            auto point = (*it)->superviewToLocal(xPos, yPos);
-            if ((!(*it)->clipsToBounds() || (*it)->hitTest(point.x, point.y)) &&
-                (*it)->dispatchMouseWheel(point.x, point.y, xWheel, yWheel)) {
+        for (auto& subview : _subviews) {
+            auto point = subview->superviewToLocal(xPos, yPos);
+            if ((!subview->clipsToBounds() || subview->hitTest(point.x, point.y)) &&
+                subview->dispatchMouseWheel(point.x, point.y, xWheel, yWheel)) {
                 return true;
             }
         }
@@ -786,7 +813,8 @@ void View::_renderAndRenderSubviews(const RenderTarget* target, const Rectangle<
     auto xScale = (_bounds.width != 0.0 ? area.width / _bounds.width : 1.0);
     auto yScale = (_bounds.height != 0.0 ? area.height / _bounds.height : 1.0);
 
-    for (auto& subview : _subviews) {
+    for (auto it = _subviews.rbegin(); it != _subviews.rend(); ++it) {
+        auto subview = *it;
         Rectangle<int> subarea(std::round(area.x + xScale * subview->_bounds.x),
                                std::round(area.y + yScale * subview->_bounds.y),
                                std::round(xScale * subview->_scale.x * subview->_bounds.width),
