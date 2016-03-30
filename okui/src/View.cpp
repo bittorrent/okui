@@ -155,8 +155,13 @@ void View::setIsVisible(bool isVisible) {
     }
 }
 
+void View::setOpacity(double opacity) {
+    _tintColor.a = opacity;
+    _invalidateSuperviewRenderCache();
+}
+
 bool View::ancestorsAreVisible() const {
-    return superview() ? (superview()->isVisible() && superview()->ancestorsAreVisible()) : true;
+    return !superview() || (superview()->isVisible() && superview()->ancestorsAreVisible());
 }
 
 bool View::isVisibleInOpenWindow() const {
@@ -278,9 +283,7 @@ std::shared_ptr<Texture> View::renderTexture() const {
 
 void View::invalidateRenderCache() {
     _hasCachedRender = false;
-    if (isVisible() && superview()) {
-        superview()->invalidateRenderCache();
-    }
+    _invalidateSuperviewRenderCache();
 }
 
 TextureHandle View::loadTextureResource(const std::string& name) {
@@ -500,9 +503,9 @@ void View::renderAndRenderSubviews(const RenderTarget* target, const Rectangle<i
         _renderCacheColorAttachment = _renderCache->addColorAttachment(area.width, area.height);
         // TODO: stencil attachment
         ONAIR_ASSERT(_renderCache->isComplete());
-        _renderCacheTexture->set(_renderCacheColorAttachment->texture(), area.width, area.height, true);
         _hasCachedRender = false;
     }
+    _renderCacheTexture->set(_renderCacheColorAttachment->texture(), area.width, area.height, true);
 
     if (!_cachesRender || !_hasCachedRender) {
         // render to _renderCache
@@ -543,7 +546,7 @@ void View::removeUpdateHook(const std::string& handle) {
 void View::postRender(std::shared_ptr<Texture> texture, const AffineTransformation& transformation) {
     auto shader = textureShader();
     shader->setTransformation(transformation);
-    shader->setColor(_tintColor.r * _tintColor.a, _tintColor.g * _tintColor.a, _tintColor.b * _tintColor.a, _tintColor.a);
+    shader->setColor(_tintColor.r, _tintColor.g, _tintColor.b, _tintColor.a);
     shader->drawScaledFill(*texture, Rectangle<double>(0.0, 0.0, bounds().width, bounds().height));
     shader->flush();
 }
@@ -665,6 +668,12 @@ void View::touchMovement(size_t finger, Point<double> position, Point<double> di
     if (!platform::kIsTVOS) { return; }
     _touchpadFocus.touchMovement(position, distance);
     _checkUpdateSubscription();
+}
+
+void View::_invalidateSuperviewRenderCache() {
+    if (isVisible() && superview()) {
+        superview()->invalidateRenderCache();
+    }
 }
 
 void View::_setBounds(const Rectangle<double>& bounds) {

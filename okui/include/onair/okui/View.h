@@ -107,7 +107,10 @@ public:
     * clips the view's contents.
     */
     template <typename... Args>
-    void setTintColor(Args&&... args) { _tintColor = Color(std::forward<Args>(args)...); }
+    void setTintColor(Args&&... args) {
+        _tintColor = Color(std::forward<Args>(args)...);
+        _invalidateSuperviewRenderCache();
+    }
 
     const Color& tintColor() const { return _tintColor; }
 
@@ -117,7 +120,7 @@ public:
     *
     * This effectively sets the alpha component of the view's tint color.
     */
-    void setOpacity(double opacity) { _tintColor.a = opacity; }
+    void setOpacity(double opacity);
 
     /**
     * Returns true if the view's ancestors are visible or if the view has no ancestors.
@@ -534,6 +537,7 @@ private:
 
     std::unordered_map<size_t, std::function<void()>> _updateHooks;
 
+    void _invalidateSuperviewRenderCache();
     void _setBounds(const Rectangle<double>& bounds);
 
     void _dispatchFutureVisibilityChange(bool visible);
