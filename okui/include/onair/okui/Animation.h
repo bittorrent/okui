@@ -29,12 +29,13 @@ public:
         return _interpolator(t, _initial, _target-_initial, d);
     }
 
-    void target(const T& target, typename Clock::duration duration, Interpolator interpolator = interpolation::Linear<T>) {
+    Animation& target(const T& target, typename Clock::duration duration, Interpolator interpolator = interpolation::Linear<T>) {
         _initial = current();
         _target = target;
         _interpolator = interpolator;
         _start = Clock::now();
         _end = _start + duration;
+        return *this;
     }
 
     T target() const { return _target; }
@@ -73,17 +74,19 @@ public:
     }
 
     template <typename... Args>
-    void target(const T& target, typename Clock::duration duration, Args&&... args) {
+    AnimationChain& target(const T& target, typename Clock::duration duration, Args&&... args) {
         _chain.clear();
         _animation.target(target, duration);
         _appendTargets(std::forward<Args>(args)...);
+        return *this;
     }
 
     template <typename... Args>
-    void target(const T& target, typename Clock::duration duration, typename Animation<T, Clock>::Interpolator interpolator, Args&&... args) {
+    AnimationChain& target(const T& target, typename Clock::duration duration, typename Animation<T, Clock>::Interpolator interpolator, Args&&... args) {
         _chain.clear();
         _animation.target(target, duration, interpolator);
         _appendTargets(std::forward<Args>(args)...);
+        return *this;
     }
 
     void reset(const T& value) {
