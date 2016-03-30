@@ -563,9 +563,6 @@ bool View::dispatchMouseDown(MouseButton button, double x, double y) {
         }
     }
     if (_interceptsInteractions && hitTest(x, y)) {
-        if (!isDescendantOf(window()->focus())) {
-            window()->setFocus(nullptr);
-        }
         mouseDown(button, x, y);
         window()->beginDragging(this);
         return true;

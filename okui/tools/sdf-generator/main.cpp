@@ -2,6 +2,8 @@
 #include <functional>
 #include <set>
 #include <vector>
+#include <thread>
+#include <mutex>
 
 #define NANOSVG_IMPLEMENTATION
 #include "nanosvg.h"
@@ -17,21 +19,21 @@ void IterateCubicBeziers(NSVGshape* shape, const std::function<void(const float*
     }
 }
 
-double CubicBezier(double t, double p0, double p1, double p2, double p3) {
-    return (1.0 - t) * (1.0 - t) * (1.0 - t) * p0 + 3.0 * (1.0 - t) * (1.0 - t) * t * p1 + 3.0 * (1.0 - t) * t * t * p2 + t * t * t * p3;
-}
+// forcibly inlined for performance
+#define CUBIC_BEZIER(t, p0, p1, p2, p3) \
+    ((1.0 - t) * (1.0 - t) * (1.0 - t) * p0 + 3.0 * (1.0 - t) * (1.0 - t) * t * p1 + 3.0 * (1.0 - t) * t * t * p2 + t * t * t * p3)
 
 std::set<double> ActiveEdges(NSVGshape* shape, double y) {
     std::set<double> ret;
-    
+
     IterateCubicBeziers(shape, [&](const float* pts) {
-        constexpr auto step = 0.000005;
-        constexpr auto threshold = 0.002;
-        constexpr auto gapThreshold = 1.0;
+        constexpr auto step = 0.0000003;
+        constexpr auto threshold = 0.0003;
+        constexpr auto gapThreshold = 0.52;
         for (auto t = 0.0; t <= 1.0; t += step) {
-            auto by = CubicBezier(t, pts[1], pts[3], pts[5], pts[7]);
+            auto by = CUBIC_BEZIER(t, pts[1], pts[3], pts[5], pts[7]);
             if (std::fabs(y - by) < threshold) {
-                ret.insert(std::round(CubicBezier(t, pts[0], pts[2], pts[4], pts[6]) / gapThreshold) * gapThreshold);
+                ret.insert(std::round(CUBIC_BEZIER(t, pts[0], pts[2], pts[4], pts[6]) / gapThreshold) * gapThreshold);
             }
         }
     });
@@ -49,21 +51,21 @@ std::set<double> ActiveEdges(NSVGshape* shape, double y) {
     return ret;
 }
 
-double Distance(NSVGimage* svg, double x, double y) {
+inline double Distance(NSVGimage* svg, double x, double y) {
     double ret2 = svg->width * svg->width + svg->height * svg->height;
 
     for (auto shape = svg->shapes; shape; shape = shape->next) {
         IterateCubicBeziers(shape, [&](const float* pts) {
             constexpr auto step = 0.00005;
             for (auto t = 0.0; t <= 1.0; t += step) {
-                auto yd = std::fabs(y - CubicBezier(t, pts[1], pts[3], pts[5], pts[7]));
+                auto yd = std::fabs(y - CUBIC_BEZIER(t, pts[1], pts[3], pts[5], pts[7]));
                 auto yd2 = yd * yd;
                 if (yd2 > ret2) { continue; }
-    
-                auto xd = std::fabs(x - CubicBezier(t, pts[0], pts[2], pts[4], pts[6]));
+
+                auto xd = std::fabs(x - CUBIC_BEZIER(t, pts[0], pts[2], pts[4], pts[6]));
                 auto xd2 = xd * xd;
                 if (xd2 > ret2) { continue; }
-    
+
                 auto d2 = yd2 + xd2;
                 if (d2 < ret2) {
                     ret2 = d2;
@@ -75,7 +77,7 @@ double Distance(NSVGimage* svg, double x, double y) {
     return sqrt(ret2);
 }
 
-bool IsInsideActiveEdges(const std::set<double>& activeEdges, double x) {
+inline bool IsInsideActiveEdges(const std::set<double>& activeEdges, double x) {
     auto ret = false;
     for (auto& edge : activeEdges) {
         if (edge > x) {
@@ -96,13 +98,13 @@ void GetRowPixels(std::vector<Pixel>& pixels, NSVGimage* svg, double svgY, doubl
     for (auto shape = svg->shapes; shape; shape = shape->next) {
         activeEdges.emplace_back(ActiveEdges(shape, svgY));
     }
-    
+
     const auto scale = (double)pixels.size() / svg->width;
 
     for (size_t x = 0; x < pixels.size(); ++x) {
         double svgX = 0.5 + x / scale;
         auto d = -Distance(svg, svgX, svgY);
-        
+
         for (auto& ae : activeEdges) {
             if (IsInsideActiveEdges(ae, svgX)) {
                 d = -d;
@@ -115,8 +117,8 @@ void GetRowPixels(std::vector<Pixel>& pixels, NSVGimage* svg, double svgY, doubl
 }
 
 bool GeneratePNG(NSVGimage* svg, FILE* f, size_t outputWidth, size_t outputHeight, double range) {
-    std::vector<Pixel> pixels;
-    
+    std::vector<std::vector<Pixel>> pixels;
+
     auto pngWrite = png_create_write_struct(PNG_LIBPNG_VER_STRING, nullptr, nullptr, nullptr);
     if (!pngWrite) {
         fprintf(stderr, "unable to allocate png write struct\n");
@@ -141,16 +143,45 @@ bool GeneratePNG(NSVGimage* svg, FILE* f, size_t outputWidth, size_t outputHeigh
     png_set_IHDR(pngWrite, pngInfo, outputWidth, outputHeight, 16, PNG_COLOR_TYPE_GRAY_ALPHA, PNG_INTERLACE_NONE, PNG_COMPRESSION_TYPE_BASE, PNG_FILTER_TYPE_BASE);
     png_write_info(pngWrite, pngInfo);
 
-    pixels.resize(outputWidth);
+    pixels.resize(outputHeight);
 
-    for (size_t y = 0; y < outputHeight; ++y) {
-        double svgY = 0.5 + (double)y * svg->height / outputHeight;
-        GetRowPixels(pixels, svg, svgY, range);
-        png_write_row(pngWrite, reinterpret_cast<png_const_bytep>(pixels.data()));
-        printf("\b\b\b\b\b\b\b\b\b\b\b\b\b%zu / %zu", y, outputHeight);
-        fflush(stdout);
+    for (auto& v : pixels) {
+        v.resize(outputWidth);
     }
+
+    std::vector<std::thread> threads;
+
+    std::mutex stdoutMutex;
+
+    std::atomic_uintmax_t numComplete{0};
+
+    auto work = [&](auto y1, auto y2) {
+        for (size_t y = y1; y < y2; ++y) {
+            double svgY = 0.5 + (double)y * svg->height / outputHeight;
+            GetRowPixels(pixels[y], svg, svgY, range);
+
+            std::lock_guard<std::mutex> lock(stdoutMutex);
+            auto num = numComplete++;
+            printf("\b\b\b\b\b\b\b\b\b\b\b\b\b%zu / %zu", num, outputHeight);
+            fflush(stdout);
+        }
+    };
+
+    const auto numThreads = std::thread::hardware_concurrency();
+
+    for (int i = 0; i < numThreads; ++i) {
+        threads.push_back(std::thread([=]() { work(i * (outputWidth / numThreads), i == numThreads - 1 ? outputWidth : (i + 1) * (outputWidth / numThreads)); }));
+    }
+
+    for (auto& t : threads) {
+        t.join();
+    }
+
     printf("\b\b\b\b\b\b\b\b\b\b\b\b\b");
+
+    for (auto& r : pixels) {
+        png_write_row(pngWrite, reinterpret_cast<png_const_bytep>(r.data()));
+    }
 
     png_write_end(pngWrite, nullptr);
 
@@ -164,7 +195,7 @@ int main(int argc, const char* argv[]) {
         printf("usage: %s input output width height range\n", argv[0]);
         return 1;
     }
-    
+
     const auto input = argv[1];
     const auto output = argv[2];
     const auto outputWidth = atoi(argv[3]);
@@ -183,7 +214,7 @@ int main(int argc, const char* argv[]) {
         nsvgDelete(svg);
         return 1;
     }
-    
+
     auto success = GeneratePNG(svg, f, outputWidth, outputHeight, range);
 
     fclose(f);
