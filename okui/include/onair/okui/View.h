@@ -121,6 +121,8 @@ public:
     * This effectively sets the alpha component of the view's tint color.
     */
     void setOpacity(double opacity);
+    
+    double opacity() const { return _tintColor.a; }
 
     /**
     * Returns true if the view's ancestors are visible or if the view has no ancestors.
