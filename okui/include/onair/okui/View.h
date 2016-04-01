@@ -63,6 +63,8 @@ public:
     }
 
     View* superview() const;
+    const std::list<View*>& subviews() const { return _subviews; }
+
     Window* window() const { return _window; }
     Application* application() const;
 
@@ -121,7 +123,7 @@ public:
     * This effectively sets the alpha component of the view's tint color.
     */
     void setOpacity(double opacity);
-    
+
     double opacity() const { return _tintColor.a; }
 
     /**
@@ -277,11 +279,12 @@ public:
     Point<double> localToWindow(const Point<double>& p) const;
 
     enum class Relation {
-        kApplication,
-        kWindow,
+        kAny,
+        kHierarchy,
         kAncestor,
         kDescendant,
         kSibling,
+        kSelf,
     };
 
     /**
@@ -292,14 +295,19 @@ public:
     bool hasRelation(Relation relation, const View* view) const;
 
     /**
+    * Returns the first view that both views have in their hierarchy, if any.
+    */
+    const View* commonView(const View* other) const;
+
+    /**
     * Posts a message to listeners with the given relation. The view and its potential listeners must have an
     * associated application for the message to be delivered.
     *
     * For example, post(message, Relation::kAncestor) posts the message to listeners that are ancestors of this view.
     */
     template <typename T>
-    void post(T& message, Relation relation = Relation::kWindow) {
-        _post(std::type_index(typeid(typename std::decay<T>::type)), &message, relation);
+    void post(T& message, Relation relation = Relation::kHierarchy) {
+        _post(std::type_index(typeid(typename std::decay_t<T>)), &message, relation);
     }
 
     template <typename T>
@@ -321,33 +329,49 @@ public:
     * @param action an action that takes a constant reference to the message type to listen for and optionally a View pointer to the sender
     */
     template <typename Action>
-    auto listen(Action&& action, Relation relation = Relation::kWindow) -> typename std::enable_if<ListenerAction<Action>::ArgumentCount::value == 1, void>::type {
+    auto listen(Action&& action, Relation relation = Relation::kHierarchy) -> typename std::enable_if<ListenerAction<Action>::ArgumentCount::value == 1, void>::type {
         using MessageType = typename ListenerAction<Action>::MessageType;
         _listen(std::type_index(typeid(MessageType)), [action = std::forward<Action>(action)](const void* message, View* sender) { action(*reinterpret_cast<const MessageType*>(message)); }, relation);
     }
 
     template <typename Action>
-    auto listen(Action&& action, Relation relation = Relation::kWindow) -> typename std::enable_if<ListenerAction<Action>::ArgumentCount::value == 2, void>::type {
+    auto listen(Action&& action, Relation relation = Relation::kHierarchy) -> typename std::enable_if<ListenerAction<Action>::ArgumentCount::value == 2, void>::type {
         using MessageType = typename ListenerAction<Action>::MessageType;
         _listen(std::type_index(typeid(MessageType)), [action = std::forward<Action>(action)](const void* message, View* sender) { action(*reinterpret_cast<const MessageType*>(message), sender); }, relation);
     }
 
     /**
-    * Makes the given object available to all descendants via get().
+    * Makes the given object available via get(). This can be used to store arbitrary state with the view.
     *
-    * @param key to provide multiple objects of the same type, you can specify a hash to use as a key
+    * @param relation the object will only be available to views of the given relation
     */
     template <typename T>
-    void provide(T* provision, size_t key = 0) {
-        _provisions[std::type_index(typeid(T)).hash_code() ^ key] = provision;
+    auto set(T&& object, Relation relation = Relation::kHierarchy) {
+        _provisions.emplace_back(std::forward<T>(object), relation);
+        return stdts::any_cast<typename std::decay<T>::type>(&_provisions.back().object);
     }
 
     /**
-    * Gets an object provided by an ancestor.
+    * Gets an object provided via provide. It will return a pointer to the first object it finds of the
+    * specified type. If more than one objects of the given type has been provided, it is undefined
+    * which one will be returned.
+    *
+    * @param relation only objects from views of the given relation will be returned
     */
     template <typename T>
-    T* get(size_t key = 0) const {
-        return reinterpret_cast<T*>(_get(std::type_index(typeid(T)).hash_code() ^ key));
+    auto get(Relation relation = Relation::kSelf) {
+        T* ret = nullptr;
+        _traverseRelation(relation, [&](View* view, bool* shouldContinue) {
+            for (auto& provision : view->_provisions) {
+                if (!hasRelation(provision.relation, view)) { continue; }
+                if (auto object = stdts::any_cast<T>(&provision.object)) {
+                    ret = object;
+                    *shouldContinue = false;
+                    return;
+                }
+            }
+        });
+        return ret;
     }
 
     /**
@@ -531,7 +555,14 @@ private:
     };
     std::list<Listener> _listeners;
 
-    std::unordered_map<size_t, void*> _provisions;
+    struct Provision {
+        Provision(stdts::any object, Relation relation)
+            : object{std::move(object)}, relation{relation} {}
+
+        stdts::any object;
+        Relation relation;
+    };
+    std::list<Provision> _provisions;
 
     AbstractTaskScheduler::TaskScope _taskScope;
 
@@ -554,7 +585,66 @@ private:
 
     void _post(std::type_index index, const void* ptr, Relation relation);
     void _listen(std::type_index index, std::function<void(const void*, View*)> action, Relation relation);
-    void* _get(size_t hash) const;
+
+    template <typename F>
+    bool _traverseRelation(Relation relation, F&& function) {
+        bool shouldContinue = true;
+        switch (relation) {
+            case Relation::kSelf:
+                function(this, &shouldContinue);
+                break;
+            case Relation::kSibling:
+                if (!superview()) {
+                    break;
+                }
+                for (auto view : superview()->subviews()) {
+                    if (view == this) { continue; }
+                    function(view, &shouldContinue);
+                    if (!shouldContinue) {
+                        break;
+                    }
+                }
+                break;
+            case Relation::kDescendant: {
+                std::list<View*> parents({this});
+                while (shouldContinue && !parents.empty()) {
+                    auto parent = parents.front();
+                    parents.pop_front();
+                    for (auto view : parent->subviews()) {
+                        function(view, &shouldContinue);
+                        if (!shouldContinue) {
+                            break;
+                        }
+                        parents.push_back(view);
+                    }
+                }
+                break;
+            }
+            case Relation::kAncestor: {
+                auto view = superview();
+                while (view) {
+                    function(view, &shouldContinue);
+                    if (!shouldContinue) {
+                        break;
+                    }
+                    view = view->superview();
+                }
+                break;
+            }
+            case Relation::kHierarchy:
+            case Relation::kAny:
+                for (auto view : _topViewsForRelation(relation)) {
+                    shouldContinue = view->_traverseRelation(Relation::kSelf, function) && view->_traverseRelation(Relation::kDescendant, function);
+                    if (!shouldContinue) {
+                        break;
+                    }
+                }
+                break;
+        }
+        return shouldContinue;
+    }
+
+    std::vector<View*> _topViewsForRelation(Relation relation);
 
     AbstractTaskScheduler* _taskScheduler() const;
     void _updateTouchFocus(std::chrono::high_resolution_clock::duration elapsed);

@@ -447,17 +447,30 @@ void View::keyDown(KeyCode key, KeyModifiers mod, bool repeat) {
 
 bool View::hasRelation(View::Relation relation, const View* view) const {
     switch (relation) {
-        case Relation::kApplication:
-            return application() && application() == view->application();
-        case Relation::kWindow:
-            return window() && window() == view->window();
+        case Relation::kAny:
+            return application() ? application() == view->application() : commonView(view) != nullptr;
+        case Relation::kHierarchy:
+            return window() ? window() == view->window() : commonView(view) != nullptr;
         case Relation::kDescendant:
             return isDescendantOf(view);
         case Relation::kAncestor:
             return view->isDescendantOf(this);
         case Relation::kSibling:
             return view != this && superview() && superview() == view->superview();
+        case Relation::kSelf:
+            return view == this;
     }
+}
+
+const View* View::commonView(const View* other) const {
+    auto view = this;
+    while (view) {
+        if (view == other || view->isAnscestorOf(other)) {
+            return view;
+        }
+        view = view->superview();
+    }
+    return nullptr;
 }
 
 void View::dispatchUpdate(std::chrono::high_resolution_clock::duration elapsed) {
@@ -846,15 +859,19 @@ void View::_listen(std::type_index index, std::function<void(const void*, View*)
     }
 }
 
-void* View::_get(size_t hash) const {
-    auto it = _provisions.find(hash);
-    if (it != _provisions.end()) {
-        return it->second;
+std::vector<View*> View::_topViewsForRelation(View::Relation relation) {
+    std::vector<View*> ret;
+    auto view = this;
+    while (view->superview()) {
+        view = view->superview();
     }
-    if (superview()) {
-        return superview()->_get(hash);
+    ret.emplace_back(view);
+    if (relation == Relation::kAny && application()) {
+        for (auto window : application()->windows()) {
+            ret.emplace_back(window->contentView());
+        }
     }
-    return nullptr;
+    return ret;
 }
 
 AbstractTaskScheduler* View::_taskScheduler() const {

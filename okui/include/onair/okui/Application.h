@@ -18,6 +18,7 @@
 #include <jni.h>
 #endif
 
+#include <list>
 #include <unordered_map>
 
 namespace onair {
@@ -70,6 +71,12 @@ public:
     */
     virtual void quit() = 0;
 
+    /**
+    * The following window functions should generally be avoided in favor of the more object-oriented Window class methods.
+    */
+    void addWindow(Window* window) { _windows.emplace_back(window); }
+    void removeWindow(Window* window) { _windows.remove(window); }
+
     virtual void openWindow(Window* window, const char* title, const WindowPosition& pos, int width, int height) = 0;
     virtual void closeWindow(Window* window) = 0;
 
@@ -86,6 +93,7 @@ public:
     virtual void setWindowMenu(Window* window, const Menu& menu) {}
 
     virtual Window* activeWindow() = 0;
+    virtual const std::list<Window*>& windows() const { return _windows; }
 
     ResourceManager* resourceManager() { return _resourceManager; }
     void setResourceManager(ResourceManager* resourceManager) { _resourceManager = resourceManager; }
@@ -275,6 +283,7 @@ private:
     std::string _caBundlePath;
     std::unordered_map<std::string, std::shared_ptr<DownloadInfo>> _downloads;
     std::vector<std::future<void>> _backgroundTasks;
+    std::list<Window*> _windows;
 
     std::string _clipboard;
     TaskQueue _taskQueue;

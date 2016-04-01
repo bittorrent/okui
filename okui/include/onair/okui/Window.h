@@ -109,19 +109,14 @@ public:
         std::function<void(int)> action = std::function<void(int)>()
     );
 
-    /**
-    * Makes the given object available to all views via get().
-    *
-    * @param key to provide multiple objects of the same type, you can specify a hash to use as a key
-    */
     template <typename T>
-    void provide(T* provision, size_t key = 0) {
-        contentView()->provide<T>(provision, key);
+    auto set(T&& object) {
+        return contentView()->set(std::forward<T>(object), View::Relation::kHierarchy);
     }
 
     template <typename T>
-    T* get(size_t key = 0) const {
-        return contentView()->get<T>(key);
+    auto get() {
+        return contentView()->get<T>(View::Relation::kSelf);
     }
 
     void beginDragging(View* view);

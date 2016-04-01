@@ -8,12 +8,14 @@ Window::Window(Application* application)
     : _application{application}
     , _deviceRenderScale{application->renderScale()}
 {
+    _application->addWindow(this);
     _contentView = std::make_unique<View>();
     _contentView->_window = this;
 }
 
 Window::~Window() {
     close();
+    _application->removeWindow(this);
 
     // the content view should be destroyed before the window's other members
     _contentView.reset();
