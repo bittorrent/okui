@@ -15,8 +15,8 @@
 #include <cxxabi.h>
 #endif
 
-namespace onair {
-namespace okui {
+using namespace onair;
+using namespace onair::okui;
 
 View::~View() {
     if (application()) {
@@ -31,8 +31,8 @@ View::~View() {
         _previousFocus->_nextFocus = _nextFocus;
     }
 
-    while (!_subviews.empty()) {
-        removeSubview(*_subviews.begin());
+    while (!subviews().empty()) {
+        removeSubview(subviews().front());
     }
 
     if (superview()) {
@@ -56,34 +56,28 @@ std::string View::name() const {
     return _name;
 }
 
-void View::addHiddenSubview(View* view) {
+void View::addHiddenSubview(gsl::not_null<View*> view) {
     view->setIsVisible(false);
     addSubview(view);
 }
 
-void View::addSubview(View* view) {
-    if (view->superview() == this) {
-        return;
-    }
+void View::addSubview(gsl::not_null<View*> view) {
+    ONAIR_ASSERT(view != this);
 
     if (view->_name.empty()) {
         view->setName(view->name()); // name() returns typeid if _name is empty
     }
 
-    bool isViewAppearance = !view->isVisibleInOpenWindow() && view->isVisible() && isVisibleInOpenWindow();
+    bool viewIsAppearing = !view->isVisibleInOpenWindow() && view->isVisible() && isVisibleInOpenWindow();
 
-    if (isViewAppearance) {
+    if (viewIsAppearing) {
         view->_dispatchFutureVisibilityChange(true);
     }
 
     if (view->superview()) {
-        if (view->superview()->window() && view->superview()->ancestorsAreVisible()) {
-            isViewAppearance = false;
-        }
         view->superview()->removeSubview(view);
     }
-    view->_superview = this;
-    _subviews.push_front(view);
+    addChildToFront(view);
 
     if (_window != view->window()) {
         if (view->window()) {
@@ -93,23 +87,21 @@ void View::addSubview(View* view) {
         view->_dispatchWindowChange(_window);
     }
 
-    if (isViewAppearance) {
+    if (viewIsAppearing) {
         view->_dispatchVisibilityChange(true);
     }
 
     invalidateRenderCache();
 }
 
-void View::removeSubview(View* view) {
-    if (view->superview() != this) {
-        return;
-    }
+void View::removeSubview(gsl::not_null<View*> view) {
+    ONAIR_ASSERT(view != this);
 
     view->unfocus();
 
-    bool isViewDisappearance = view->isVisibleInOpenWindow();
+    bool viewIsDisappearing = view->isVisibleInOpenWindow();
 
-    if (isViewDisappearance) {
+    if (viewIsDisappearing) {
         view->_dispatchFutureVisibilityChange(false);
     }
 
@@ -117,12 +109,7 @@ void View::removeSubview(View* view) {
         _subviewWithMouse = nullptr;
     }
 
-    view->_superview = nullptr;
-
-    auto viewIt = std::find(_subviews.begin(), _subviews.end(), view);
-    if (viewIt != _subviews.end()) {
-        _subviews.erase(viewIt);
-    }
+    removeChild(view);
 
     if (view->window() != nullptr) {
         view->window()->endDragging(view);
@@ -130,7 +117,7 @@ void View::removeSubview(View* view) {
         view->_dispatchWindowChange(nullptr);
     }
 
-    if (isViewDisappearance) {
+    if (viewIsDisappearing) {
         view->_dispatchVisibilityChange(false);
     }
 
@@ -184,28 +171,14 @@ void View::setScale(double scaleX, double scaleY) {
 }
 
 void View::sendToBack() {
-    auto& siblings = superview()->_subviews;
-    for (auto it = siblings.begin(); it != siblings.end(); ++it) {
-        if (*it == this) {
-            siblings.erase(it);
-            siblings.push_back(this);
-            return;
-        }
-    }
+    TreeNode::sendToBack();
     if (isVisible()) {
         superview()->invalidateRenderCache();
     }
 }
 
 void View::bringToFront() {
-    auto& siblings = superview()->_subviews;
-    for (auto it = siblings.begin(); it != siblings.end(); ++it) {
-        if (*it == this) {
-            siblings.erase(it);
-            siblings.push_front(this);
-            return;
-        }
-    }
+    TreeNode::bringToFront();
     if (isVisible()) {
         superview()->invalidateRenderCache();
     }
@@ -266,13 +239,6 @@ bool View::isFocus() const {
     return window() && window()->focus() && (window()->focus() == this || window()->focus()->isDescendantOf(this));
 }
 
-bool View::isDescendantOf(const View* view) const {
-    if (superview() == view) {
-        return true;
-    }
-    return superview() && superview()->isDescendantOf(view);
-}
-
 bool View::hasMouse() const {
     return superview() && superview()->_subviewWithMouse == this;
 }
@@ -314,7 +280,7 @@ AffineTransformation View::renderTransformation() {
 }
 
 View* View::superview() const {
-    return _superview;
+    return parent();
 }
 
 Application* View::application() const {
@@ -328,8 +294,8 @@ Rectangle<double> View::windowBounds() const {
 }
 
 void View::setBoundsRelative(double x, double y, double width, double height) {
-    if (_superview) {
-        auto& superBounds = _superview->bounds();
+    if (superview()) {
+        auto& superBounds = superview()->bounds();
         setBounds(x * superBounds.width, y * superBounds.height, width * superBounds.width, height * superBounds.height);
     }
 }
@@ -372,7 +338,7 @@ bool View::hitTest(double x, double y) {
 View* View::hitTestView(double x, double y) {
     auto hit = hitTest(x, y);
     if (hit || !_clipsToBounds) {
-        for (auto& subview : _subviews) {
+        for (auto& subview : subviews()) {
             if (subview->isVisible()) {
                 auto point = subview->superviewToLocal(x, y);
                 auto view = subview->hitTestView(point.x, point.y);
@@ -445,32 +411,21 @@ void View::keyDown(KeyCode key, KeyModifiers mod, bool repeat) {
     Responder::keyDown(key, mod, repeat);
 }
 
-bool View::hasRelation(View::Relation relation, const View* view) const {
+bool View::hasRelation(View::Relation relation, gsl::not_null<const View*> view) const {
     switch (relation) {
         case Relation::kAny:
             return application() ? application() == view->application() : commonView(view) != nullptr;
         case Relation::kHierarchy:
-            return window() ? window() == view->window() : commonView(view) != nullptr;
+            return TreeNode::hasRelation(TreeNode::Relation::kCommonRoot, view);
         case Relation::kDescendant:
-            return isDescendantOf(view);
+            return TreeNode::hasRelation(TreeNode::Relation::kDescendant, view);
         case Relation::kAncestor:
-            return view->isDescendantOf(this);
+            return TreeNode::hasRelation(TreeNode::Relation::kAncestor, view);
         case Relation::kSibling:
-            return view != this && superview() && superview() == view->superview();
+            return TreeNode::hasRelation(TreeNode::Relation::kSibling, view);
         case Relation::kSelf:
-            return view == this;
+            return TreeNode::hasRelation(TreeNode::Relation::kSelf, view);
     }
-}
-
-const View* View::commonView(const View* other) const {
-    auto view = this;
-    while (view) {
-        if (view == other || view->isAnscestorOf(other)) {
-            return view;
-        }
-        view = view->superview();
-    }
-    return nullptr;
 }
 
 void View::dispatchUpdate(std::chrono::high_resolution_clock::duration elapsed) {
@@ -568,7 +523,7 @@ bool View::dispatchMouseDown(MouseButton button, double x, double y) {
     if (!isVisible()) { return false; }
 
     if (_childrenInterceptInteractions) {
-        for (auto& subview : _subviews) {
+        for (auto& subview : subviews()) {
             auto point = subview->superviewToLocal(x, y);
             if ((!subview->clipsToBounds() || subview->hitTest(point.x, point.y)) && subview->dispatchMouseDown(button, point.x, point.y)) {
                 return true;
@@ -588,7 +543,7 @@ bool View::dispatchMouseUp(MouseButton button, double startX, double startY, dou
     if (!isVisible()) { return false; }
 
     if (_childrenInterceptInteractions) {
-        for (auto& subview : _subviews) {
+        for (auto& subview : subviews()) {
             auto startPoint = subview->superviewToLocal(startX, startY);
             auto point = subview->superviewToLocal(x, y);
             if ((!subview->clipsToBounds() || subview->hitTest(point.x, point.y)) && subview->dispatchMouseUp(button, startPoint.x, startPoint.y, point.x, point.y)) {
@@ -610,7 +565,7 @@ bool View::dispatchMouseMovement(double x, double y) {
     View* subviewWithMouse = nullptr;
 
     if (_childrenInterceptInteractions) {
-        for (auto& subview : _subviews) {
+        for (auto& subview : subviews()) {
             auto point = subview->superviewToLocal(x, y);
             if ((!subview->clipsToBounds() || subview->hitTest(point.x, point.y)) && subview->dispatchMouseMovement(point.x, point.y)) {
                 subviewWithMouse = subview;
@@ -645,7 +600,7 @@ bool View::dispatchMouseWheel(double xPos, double yPos, int xWheel, int yWheel) 
     if (!isVisible()) { return false; }
 
     if (_childrenInterceptInteractions) {
-        for (auto& subview : _subviews) {
+        for (auto& subview : subviews()) {
             auto point = subview->superviewToLocal(xPos, yPos);
             if ((!subview->clipsToBounds() || subview->hitTest(point.x, point.y)) &&
                 subview->dispatchMouseWheel(point.x, point.y, xWheel, yWheel)) {
@@ -713,7 +668,7 @@ void View::_dispatchFutureVisibilityChange(bool visible) {
         willDisappear();
     }
 
-    for (auto& subview : _subviews) {
+    for (auto& subview : subviews()) {
         if (subview->isVisible()) {
             subview->_dispatchFutureVisibilityChange(visible);
         }
@@ -727,7 +682,7 @@ void View::_dispatchVisibilityChange(bool visible) {
         disappeared();
     }
 
-    for (auto& subview : _subviews) {
+    for (auto& subview : subviews()) {
         if (subview->isVisible()) {
             subview->_dispatchVisibilityChange(visible);
         }
@@ -751,7 +706,7 @@ void View::_dispatchWindowChange(Window* window) {
 
     windowChanged();
 
-    for (auto& subview : _subviews) {
+    for (auto& subview : subviews()) {
         subview->_dispatchWindowChange(window);
     }
 
@@ -789,7 +744,7 @@ void View::_updateFocusableRegions(std::vector<std::tuple<View*, Rectangle<doubl
     }
 
     if (_childrenInterceptInteractions) {
-        for (auto subview : _subviews) {
+        for (auto subview : subviews()) {
             subview->_updateFocusableRegions(regions);
         }
     }
@@ -832,8 +787,7 @@ void View::_renderAndRenderSubviews(const RenderTarget* target, const Rectangle<
     auto xScale = (_bounds.width != 0.0 ? area.width / _bounds.width : 1.0);
     auto yScale = (_bounds.height != 0.0 ? area.height / _bounds.height : 1.0);
 
-    for (auto it = _subviews.rbegin(); it != _subviews.rend(); ++it) {
-        auto subview = *it;
+    for (auto& subview : Reverse(subviews())) {
         Rectangle<int> subarea(std::round(area.x + xScale * subview->_bounds.x),
                                std::round(area.y + yScale * subview->_bounds.y),
                                std::round(xScale * subview->_scale.x * subview->_bounds.width),
@@ -860,15 +814,13 @@ void View::_listen(std::type_index index, std::function<void(const void*, View*)
 }
 
 std::vector<View*> View::_topViewsForRelation(View::Relation relation) {
-    std::vector<View*> ret;
-    auto view = this;
-    while (view->superview()) {
-        view = view->superview();
-    }
-    ret.emplace_back(view);
+    auto* thisRootView = root();
+    std::vector<View*> ret{thisRootView};
     if (relation == Relation::kAny && application()) {
         for (auto window : application()->windows()) {
-            ret.emplace_back(window->contentView());
+            if (window->contentView() != thisRootView) {
+                ret.emplace_back(window->contentView());
+            }
         }
     }
     return ret;
@@ -891,5 +843,3 @@ void View::_checkUpdateSubscription() {
 bool View::_shouldSubscribeToUpdates() {
     return (!_updateHooks.empty() || _touchpadFocus.needsUpdates()) && isVisibleInOpenWindow();
 }
-
-}}

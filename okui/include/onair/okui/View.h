@@ -19,10 +19,13 @@
 #include "onair/stdts/optional.h"
 
 #include "onair/AbstractTaskScheduler.h"
+#include "onair/TreeNode.h"
 
 #include <list>
 #include <typeindex>
 #include <unordered_map>
+
+#include <gsl.h>
 
 namespace onair {
 namespace okui {
@@ -35,35 +38,37 @@ class Window;
 * View rendering can be cached or buffered to a texture. One reason this may be done is to apply post-rendering
 * effects such as tinting or reflection. When this is done, the contents of the view are clipped to its bounds.
 */
-class View : public Responder {
+class View : public Responder, private TreeNode<View> {
 public:
-    View() {}
+    friend class TreeNode<View>;
+
+    View() = default;
     View(std::string name) : _name{std::move(name)} {}
     virtual ~View();
 
     std::string name() const;
     void setName(std::string name) { _name = std::move(name); }
 
-    void addSubview(View* view);
-    void addHiddenSubview(View* view);
-    void removeSubview(View* view);
+    void addSubview(gsl::not_null<View*> view);
+    void addHiddenSubview(gsl::not_null<View*> view);
+    void removeSubview(gsl::not_null<View*> view);
 
     void addSubviews() {}
     template <typename... Views>
-    void addSubviews(View* view, Views&&... views) {
+    void addSubviews(gsl::not_null<View*> view, Views&&... views) {
         addSubview(view);
         addSubviews(std::forward<Views>(views)...);
     }
 
     void removeSubviews() {}
     template <typename... Views>
-    void removeSubviews(View* view, Views&&... views) {
+    void removeSubviews(gsl::not_null<View*> view, Views&&... views) {
         removeSubview(view);
         removeSubviews(std::forward<Views>(views)...);
     }
 
     View* superview() const;
-    const std::list<View*>& subviews() const { return _subviews; }
+    const std::list<View*>& subviews() const { return children(); }
 
     Window* window() const { return _window; }
     Application* application() const;
@@ -192,9 +197,6 @@ public:
 
     TouchpadFocus& touchpadFocus() { return _touchpadFocus; }
 
-    bool isDescendantOf(const View* view) const;
-    bool isAnscestorOf(const View* view) const { return view->isDescendantOf(this); }
-
     /**
     * @param rendersToTexture if true, the view is rendered to a texture, making it available via renderTexture
     */
@@ -292,12 +294,15 @@ public:
     *
     * For example, hasRelation(kDescendant, superview()) should return true.
     */
-    bool hasRelation(Relation relation, const View* view) const;
+    bool hasRelation(Relation relation, gsl::not_null<const View*> view) const;
 
     /**
     * Returns the first view that both views have in their hierarchy, if any.
     */
-    const View* commonView(const View* other) const;
+    const View* commonView(gsl::not_null<const View*>(other)) const { return commonNode(other); }
+
+    using TreeNode::isDescendantOf;
+    using TreeNode::isAnscestorOf;
 
     /**
     * Posts a message to listeners with the given relation. The view and its potential listeners must have an
@@ -348,7 +353,7 @@ public:
     template <typename T>
     auto set(T&& object, Relation relation = Relation::kHierarchy) {
         _provisions.emplace_back(std::forward<T>(object), relation);
-        return stdts::any_cast<typename std::decay<T>::type>(&_provisions.back().object);
+        return stdts::any_cast<std::decay_t<T>>(&_provisions.back().object);
     }
 
     /**
@@ -367,9 +372,10 @@ public:
                 if (auto object = stdts::any_cast<T>(&provision.object)) {
                     ret = object;
                     *shouldContinue = false;
-                    return;
+                    return 1;
                 }
             }
+            return 0;
         });
         return ret;
     }
@@ -526,8 +532,6 @@ private:
     bool              _interceptsInteractions = true;
     bool              _childrenInterceptInteractions = true;
 
-    View*             _superview = nullptr;
-    std::list<View*>  _subviews; // ordered back to front
     Window*           _window = nullptr;
 
     View*             _subviewWithMouse = nullptr;
@@ -587,61 +591,21 @@ private:
     void _listen(std::type_index index, std::function<void(const void*, View*)> action, Relation relation);
 
     template <typename F>
-    bool _traverseRelation(Relation relation, F&& function) {
-        bool shouldContinue = true;
+    void _traverseRelation(Relation relation, F&& function) {
         switch (relation) {
-            case Relation::kSelf:
-                function(this, &shouldContinue);
-                break;
-            case Relation::kSibling:
-                if (!superview()) {
-                    break;
-                }
-                for (auto view : superview()->subviews()) {
-                    if (view == this) { continue; }
-                    function(view, &shouldContinue);
-                    if (!shouldContinue) {
-                        break;
-                    }
-                }
-                break;
-            case Relation::kDescendant: {
-                std::list<View*> parents({this});
-                while (shouldContinue && !parents.empty()) {
-                    auto parent = parents.front();
-                    parents.pop_front();
-                    for (auto view : parent->subviews()) {
-                        function(view, &shouldContinue);
-                        if (!shouldContinue) {
-                            break;
-                        }
-                        parents.push_back(view);
-                    }
+            case Relation::kAny: {
+                bool shouldContinue = true;
+                for (auto& v : _topViewsForRelation(relation)) {
+                    v->TreeNode::traverseRelation(TreeNode::Relation::kCommonRoot, function, 0, &shouldContinue);
                 }
                 break;
             }
-            case Relation::kAncestor: {
-                auto view = superview();
-                while (view) {
-                    function(view, &shouldContinue);
-                    if (!shouldContinue) {
-                        break;
-                    }
-                    view = view->superview();
-                }
-                break;
-            }
-            case Relation::kHierarchy:
-            case Relation::kAny:
-                for (auto view : _topViewsForRelation(relation)) {
-                    shouldContinue = view->_traverseRelation(Relation::kSelf, function) && view->_traverseRelation(Relation::kDescendant, function);
-                    if (!shouldContinue) {
-                        break;
-                    }
-                }
-                break;
+            case Relation::kHierarchy:  TreeNode::traverseRelation(TreeNode::Relation::kCommonRoot, function, 0); break;
+            case Relation::kDescendant: TreeNode::traverseRelation(TreeNode::Relation::kDescendant, function, 0); break;
+            case Relation::kAncestor:   TreeNode::traverseRelation(TreeNode::Relation::kAncestor,   function, 0); break;
+            case Relation::kSibling:    TreeNode::traverseRelation(TreeNode::Relation::kSibling,    function, 0); break;
+            case Relation::kSelf:       TreeNode::traverseRelation(TreeNode::Relation::kSelf,       function, 0); break;
         }
-        return shouldContinue;
     }
 
     std::vector<View*> _topViewsForRelation(Relation relation);
