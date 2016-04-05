@@ -4,18 +4,18 @@
 
 #if ONAIR_ANDROID
 
-#include "onair/jni/JavaClass.h"
-#include "onair/jni/NativeClass.h"
-#include "onair/jni/JNIContext.h"
-#include "onair/jni/android/app/Activity.h"
+#include "jshackle/JavaClass.h"
+#include "jshackle/NativeClass.h"
+#include "jshackle/JNIContext.h"
+#include "jshackle/android/app/Activity.h"
 #include <android/asset_manager_jni.h>
 
 namespace onair {
 namespace okui {
 namespace applications {
 
-ONAIR_JNI_JAVA_CLASS_BEGIN(AndroidJavaHelper);
-    ONAIR_JNI_JAVA_CLASS_CONSTRUCTOR(AndroidJavaHelper, android::app::Activity);
+JSHACKLE_JAVA_CLASS_BEGIN(AndroidJavaHelper);
+    JSHACKLE_JAVA_CLASS_CONSTRUCTOR(AndroidJavaHelper, android::app::Activity);
 
     struct OpenDialogCallback {
         OpenDialogCallback(std::function<void(int)> f) : f{std::move(f)} {}
@@ -23,18 +23,18 @@ ONAIR_JNI_JAVA_CLASS_BEGIN(AndroidJavaHelper);
         std::function<void(int)> f;
     };
 
-    ONAIR_JNI_NATIVE_CLASS_BEGIN(JavaOpenDialogCallback, OpenDialogCallback);
-        ONAIR_JNI_NATIVE_CLASS_METHOD(void, invoke, int);
-    ONAIR_JNI_NATIVE_CLASS_END();
+    JSHACKLE_NATIVE_CLASS_BEGIN(JavaOpenDialogCallback, OpenDialogCallback);
+        JSHACKLE_NATIVE_CLASS_METHOD(void, invoke, int);
+    JSHACKLE_NATIVE_CLASS_END();
 
-    ONAIR_JNI_JAVA_CLASS_METHOD(void, openDialog, const char*, const char*, const std::vector<std::string>&, OpenDialogCallback*);
-    ONAIR_JNI_JAVA_CLASS_METHOD(std::string, distinctId);
-    ONAIR_JNI_JAVA_CLASS_METHOD(std::string, operatingSystem);
-    ONAIR_JNI_JAVA_CLASS_METHOD(std::string, deviceModel);
-    ONAIR_JNI_JAVA_CLASS_METHOD(float, renderScale);
-    ONAIR_JNI_JAVA_CLASS_METHOD(bool, hasNetworkConnection);
-    ONAIR_JNI_JAVA_CLASS_METHOD(bool, isMobileConnection);
-ONAIR_JNI_JAVA_CLASS_END();
+    JSHACKLE_JAVA_CLASS_METHOD(void, openDialog, const char*, const char*, const std::vector<std::string>&, OpenDialogCallback*);
+    JSHACKLE_JAVA_CLASS_METHOD(std::string, distinctId);
+    JSHACKLE_JAVA_CLASS_METHOD(std::string, operatingSystem);
+    JSHACKLE_JAVA_CLASS_METHOD(std::string, deviceModel);
+    JSHACKLE_JAVA_CLASS_METHOD(float, renderScale);
+    JSHACKLE_JAVA_CLASS_METHOD(bool, hasNetworkConnection);
+    JSHACKLE_JAVA_CLASS_METHOD(bool, isMobileConnection);
+JSHACKLE_JAVA_CLASS_END();
 
 /**
 * Provides some native Platform overrides for Android.
@@ -89,16 +89,16 @@ private:
     JNIEnv* _jniEnv = nullptr;
     jobject _activity = nullptr;
 
-    std::shared_ptr<jni::JNIContext> _jniContext;
+    std::shared_ptr<jshackle::JNIContext> _jniContext;
     std::unique_ptr<AndroidJavaHelper> _javaHelper;
 
     std::unique_ptr<ResourceManager> _resourceManager;
 
-    static std::weak_ptr<jni::JNIContext> _sJNIContext;
+    static std::weak_ptr<jshackle::JNIContext> _sJNIContext;
 };
 
 template <typename Base>
-std::weak_ptr<jni::JNIContext> Android<Base>::_sJNIContext;
+std::weak_ptr<jshackle::JNIContext> Android<Base>::_sJNIContext;
 
 template <typename Base>
 inline Android<Base>::Android() {
@@ -115,7 +115,7 @@ inline Android<Base>::Android() {
     if (existingContext) {
         _jniContext = existingContext;
     } else {
-        _jniContext = std::make_shared<jni::JNIContext>(jvm, _jniEnv->GetVersion());
+        _jniContext = std::make_shared<jshackle::JNIContext>(jvm, _jniEnv->GetVersion());
         AndroidJavaHelper::Traits::Register(_jniContext.get(), "tv/watchonair/okui/Helper");
         AndroidJavaHelper::JavaOpenDialogCallback::Traits::Register(_jniContext.get(), "tv/watchonair/okui/Helper$OpenDialogCallback");
         _sJNIContext = _jniContext;

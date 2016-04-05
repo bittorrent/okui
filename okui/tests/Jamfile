@@ -27,8 +27,8 @@ exe okui-tests :
 lib okui-tests-android :
     okui-tests-common/<link>static
     src/android.cpp
+    ../../jshackle//jshackle
 :
-    <include>../../apk-wrapper/include
     <link>shared
     <build>no
     <target-os>android:<build>yes

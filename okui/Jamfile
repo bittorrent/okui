@@ -25,7 +25,7 @@ lib okui :
 	../foundation//foundation
 	../third-party/libpng//png
 	libturbojpeg
-	../jni//jni
+	../jshackle//jshackle
 :
 	<include>./include
 	<link>static

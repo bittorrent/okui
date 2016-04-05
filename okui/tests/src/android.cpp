@@ -2,8 +2,8 @@
 
 #if ONAIR_ANDROID
 
-#include <onair/jni/BuiltIns.h>
-#include <onair/jni/JNIContext.h>
+#include <jshackle/BuiltIns.h>
+#include <jshackle/JNIContext.h>
 
 #include <gtest/gtest.h>
 #include <android/log.h>
@@ -57,8 +57,8 @@ extern "C" int SDL_main(int argc, char* argv[]) {
         return 1;
     }
 
-    auto context = std::make_unique<onair::jni::JNIContext>(jvm, kJniVersion);
-    onair::jni::RegisterBuiltIns(context.get());
+    auto context = std::make_unique<jshackle::JNIContext>(jvm, kJniVersion);
+    jshackle::RegisterBuiltIns(context.get());
 
     int initArgc = 1;
     const char* initArgv[] = {"okui-tests"};
