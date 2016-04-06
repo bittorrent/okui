@@ -27,10 +27,10 @@
 		0CBA337C1C1F50C70000D621 /* GoogleTests.mm in Sources */ = {isa = PBXBuildFile; fileRef = 0C5CA50D1BED4D6400F7800E /* GoogleTests.mm */; };
 		0CBA337D1C1F50CA0000D621 /* GoogleTests.mm in Sources */ = {isa = PBXBuildFile; fileRef = 0C5CA50D1BED4D6400F7800E /* GoogleTests.mm */; };
 		0CBA337E1C1F50CE0000D621 /* GoogleTests.mm in Sources */ = {isa = PBXBuildFile; fileRef = 0C5CA50D1BED4D6400F7800E /* GoogleTests.mm */; };
-		0CBA338C1C1F517A0000D621 /* Montserrat-regular.fnt in Resources */ = {isa = PBXBuildFile; fileRef = 0CBA33871C1F51630000D621 /* Montserrat-regular.fnt */; };
-		0CBA338D1C1F517A0000D621 /* Montserrat-regular.png in Resources */ = {isa = PBXBuildFile; fileRef = 0CBA33881C1F51630000D621 /* Montserrat-regular.png */; };
-		0CBA338E1C1F51810000D621 /* Montserrat-regular.fnt in Resources */ = {isa = PBXBuildFile; fileRef = 0CBA33871C1F51630000D621 /* Montserrat-regular.fnt */; };
-		0CBA338F1C1F51810000D621 /* Montserrat-regular.png in Resources */ = {isa = PBXBuildFile; fileRef = 0CBA33881C1F51630000D621 /* Montserrat-regular.png */; };
+		0CED10791CB8374300687D7A /* Montserrat-regular.fnt in Resources */ = {isa = PBXBuildFile; fileRef = 0CBA33871C1F51630000D621 /* Montserrat-regular.fnt */; };
+		0CED107A1CB8374300687D7A /* Montserrat-regular.png in Resources */ = {isa = PBXBuildFile; fileRef = 0CBA33881C1F51630000D621 /* Montserrat-regular.png */; };
+		0CED107B1CB8377800687D7A /* Montserrat-regular.fnt in Resources */ = {isa = PBXBuildFile; fileRef = 0CBA33871C1F51630000D621 /* Montserrat-regular.fnt */; };
+		0CED107C1CB8377800687D7A /* Montserrat-regular.png in Resources */ = {isa = PBXBuildFile; fileRef = 0CBA33881C1F51630000D621 /* Montserrat-regular.png */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -93,9 +93,10 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		0C2EAE101CB8148300A2A0EC /* tests.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; name = tests.xcconfig; path = tests/tests.xcconfig; sourceTree = "<group>"; };
 		0C5CA5031BED4D3B00F7800E /* okui-tests-osx-bundle.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "okui-tests-osx-bundle.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
 		0C5CA50B1BED4D4900F7800E /* libc++.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = "libc++.tbd"; path = "usr/lib/libc++.tbd"; sourceTree = SDKROOT; };
-		0C5CA50D1BED4D6400F7800E /* GoogleTests.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; name = GoogleTests.mm; path = "../third-party/gtest-xcode/src/GoogleTests.mm"; sourceTree = "<group>"; };
+		0C5CA50D1BED4D6400F7800E /* GoogleTests.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; name = GoogleTests.mm; path = "../scraps/dependencies/ci-tacklebox/gtest-xcode/GoogleTests.mm"; sourceTree = "<group>"; };
 		0C5CA52D1BED4EDA00F7800E /* OpenGL.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenGL.framework; path = System/Library/Frameworks/OpenGL.framework; sourceTree = SDKROOT; };
 		0C5CA52F1BED4F7000F7800E /* IOKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = IOKit.framework; path = System/Library/Frameworks/IOKit.framework; sourceTree = SDKROOT; };
 		0C5CA5311BED4F8F00F7800E /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = System/Library/Frameworks/Cocoa.framework; sourceTree = SDKROOT; };
@@ -126,7 +127,7 @@
 		0CBA33661C1F4F830000D621 /* okui-tests-appletvsimulator-bundle.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "okui-tests-appletvsimulator-bundle.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
 		0CBA33701C1F4FF40000D621 /* libc++.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = "libc++.tbd"; path = "Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS9.2.sdk/usr/lib/libc++.tbd"; sourceTree = DEVELOPER_DIR; };
 		0CBA33731C1F4FFF0000D621 /* libc++.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = "libc++.tbd"; path = "Platforms/AppleTVOS.platform/Developer/SDKs/AppleTVOS9.1.sdk/usr/lib/libc++.tbd"; sourceTree = DEVELOPER_DIR; };
-		0CBA33761C1F50300000D621 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; name = main.m; path = "../third-party/gtest-xcode/src/ios-host/main.m"; sourceTree = "<group>"; };
+		0CBA33761C1F50300000D621 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; name = main.m; path = "../scraps/dependencies/ci-tacklebox/gtest-xcode/ios-host/main.m"; sourceTree = "<group>"; };
 		0CBA33871C1F51630000D621 /* Montserrat-regular.fnt */ = {isa = PBXFileReference; lastKnownFileType = text; name = "Montserrat-regular.fnt"; path = "tests/resources/Montserrat-regular.fnt"; sourceTree = "<group>"; };
 		0CBA33881C1F51630000D621 /* Montserrat-regular.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "Montserrat-regular.png"; path = "tests/resources/Montserrat-regular.png"; sourceTree = "<group>"; };
 		52B8EF5B1B55805800A0F1D5 /* include */ = {isa = PBXFileReference; lastKnownFileType = folder; path = include; sourceTree = "<group>"; };
@@ -231,6 +232,7 @@
 		0C5CA53F1BED52D700F7800E /* tests */ = {
 			isa = PBXGroup;
 			children = (
+				0C2EAE101CB8148300A2A0EC /* tests.xcconfig */,
 				0CBA33761C1F50300000D621 /* main.m */,
 				0C5CA50D1BED4D6400F7800E /* GoogleTests.mm */,
 				0CBA338B1C1F51670000D621 /* resources */,
@@ -644,6 +646,8 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				0CED10791CB8374300687D7A /* Montserrat-regular.fnt in Resources */,
+				0CED107A1CB8374300687D7A /* Montserrat-regular.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -658,6 +662,8 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				0CED107B1CB8377800687D7A /* Montserrat-regular.fnt in Resources */,
+				0CED107C1CB8377800687D7A /* Montserrat-regular.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -672,8 +678,6 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				0CBA338C1C1F517A0000D621 /* Montserrat-regular.fnt in Resources */,
-				0CBA338D1C1F517A0000D621 /* Montserrat-regular.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -688,8 +692,6 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				0CBA338E1C1F51810000D621 /* Montserrat-regular.fnt in Resources */,
-				0CBA338F1C1F51810000D621 /* Montserrat-regular.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -972,10 +974,8 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
-				COMPRESS_PNG_FILES = NO;
 				ENABLE_BITCODE = NO;
-				INFOPLIST_FILE = "$(PROJECT_DIR)/../third-party/gtest-xcode/src/ios-host/Info.plist";
+				INFOPLIST_FILE = "$(PROJECT_DIR)/../scraps/dependencies/ci-tacklebox/gtest-xcode/ios-host/Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 9.2;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				OTHER_LDFLAGS = (
@@ -1010,10 +1010,8 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
-				COMPRESS_PNG_FILES = NO;
 				ENABLE_BITCODE = NO;
-				INFOPLIST_FILE = "$(PROJECT_DIR)/../third-party/gtest-xcode/src/ios-host/Info.plist";
+				INFOPLIST_FILE = "$(PROJECT_DIR)/../scraps/dependencies/ci-tacklebox/gtest-xcode/ios-host/Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 9.2;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				OTHER_LDFLAGS = (
@@ -1049,10 +1047,8 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
-				COMPRESS_PNG_FILES = NO;
 				ENABLE_BITCODE = NO;
-				INFOPLIST_FILE = "$(PROJECT_DIR)/../third-party/gtest-xcode/src/ios-host/Info.plist";
+				INFOPLIST_FILE = "$(PROJECT_DIR)/../scraps/dependencies/ci-tacklebox/gtest-xcode/ios-host/Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 9.2;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				OTHER_LDFLAGS = (
@@ -1087,10 +1083,8 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
-				COMPRESS_PNG_FILES = NO;
 				ENABLE_BITCODE = NO;
-				INFOPLIST_FILE = "$(PROJECT_DIR)/../third-party/gtest-xcode/src/ios-host/Info.plist";
+				INFOPLIST_FILE = "$(PROJECT_DIR)/../scraps/dependencies/ci-tacklebox/gtest-xcode/ios-host/Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 9.2;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				OTHER_LDFLAGS = (
@@ -1127,8 +1121,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = "App Icon & Top Shelf Image";
 				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
-				COMPRESS_PNG_FILES = NO;
-				INFOPLIST_FILE = "$(PROJECT_DIR)/../third-party/gtest-xcode/src/tvos-host/Info.plist";
+				INFOPLIST_FILE = "$(PROJECT_DIR)/../scraps/dependencies/ci-tacklebox/gtest-xcode/tvos-host/Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				OTHER_LDFLAGS = (
 					"$(inherited)",
@@ -1160,8 +1153,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = "App Icon & Top Shelf Image";
 				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
-				COMPRESS_PNG_FILES = NO;
-				INFOPLIST_FILE = "$(PROJECT_DIR)/../third-party/gtest-xcode/src/tvos-host/Info.plist";
+				INFOPLIST_FILE = "$(PROJECT_DIR)/../scraps/dependencies/ci-tacklebox/gtest-xcode/tvos-host/Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				OTHER_LDFLAGS = (
 					"$(inherited)",
@@ -1194,26 +1186,8 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = "App Icon & Top Shelf Image";
 				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
-				COMPRESS_PNG_FILES = NO;
-				INFOPLIST_FILE = "$(PROJECT_DIR)/../third-party/gtest-xcode/src/tvos-host/Info.plist";
+				INFOPLIST_FILE = "$(PROJECT_DIR)/../scraps/dependencies/ci-tacklebox/gtest-xcode/tvos-host/Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
-				OTHER_LDFLAGS = (
-					"$(inherited)",
-					"-framework",
-					UIKit,
-					"-framework",
-					OpenGLES,
-					"-framework",
-					GameController,
-					"-framework",
-					AudioToolbox,
-					"-framework",
-					CoreAudio,
-					"-framework",
-					CoreMedia,
-					"-framework",
-					GameController,
-				);
 				PRODUCT_BUNDLE_IDENTIFIER = "tv.watchonair.okui-test-appletvsimulator-host";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = appletvos;
@@ -1227,26 +1201,8 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = "App Icon & Top Shelf Image";
 				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
-				COMPRESS_PNG_FILES = NO;
-				INFOPLIST_FILE = "$(PROJECT_DIR)/../third-party/gtest-xcode/src/tvos-host/Info.plist";
+				INFOPLIST_FILE = "$(PROJECT_DIR)/../scraps/dependencies/ci-tacklebox/gtest-xcode/tvos-host/Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
-				OTHER_LDFLAGS = (
-					"$(inherited)",
-					"-framework",
-					UIKit,
-					"-framework",
-					OpenGLES,
-					"-framework",
-					GameController,
-					"-framework",
-					AudioToolbox,
-					"-framework",
-					CoreAudio,
-					"-framework",
-					CoreMedia,
-					"-framework",
-					GameController,
-				);
 				PRODUCT_BUNDLE_IDENTIFIER = "tv.watchonair.okui-test-appletvsimulator-host";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = appletvos;
@@ -1260,9 +1216,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				BUNDLE_LOADER = "$(TEST_HOST)";
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
-				COMPRESS_PNG_FILES = NO;
-				INFOPLIST_FILE = "$(PROJECT_DIR)/../third-party/gtest-xcode/src/ios-bundle/Info.plist";
+				INFOPLIST_FILE = "$(PROJECT_DIR)/../scraps/dependencies/ci-tacklebox/gtest-xcode/ios-bundle/Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 9.2;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				OTHER_LDFLAGS = (
@@ -1297,9 +1251,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				BUNDLE_LOADER = "$(TEST_HOST)";
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
-				COMPRESS_PNG_FILES = NO;
-				INFOPLIST_FILE = "$(PROJECT_DIR)/../third-party/gtest-xcode/src/ios-bundle/Info.plist";
+				INFOPLIST_FILE = "$(PROJECT_DIR)/../scraps/dependencies/ci-tacklebox/gtest-xcode/ios-bundle/Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 9.2;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				OTHER_LDFLAGS = (
@@ -1335,9 +1287,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				BUNDLE_LOADER = "$(TEST_HOST)";
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
-				COMPRESS_PNG_FILES = NO;
-				INFOPLIST_FILE = "$(PROJECT_DIR)/../third-party/gtest-xcode/src/ios-bundle/Info.plist";
+				INFOPLIST_FILE = "$(PROJECT_DIR)/../scraps/dependencies/ci-tacklebox/gtest-xcode/ios-bundle/Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 9.2;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				OTHER_LDFLAGS = (
@@ -1372,9 +1322,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				BUNDLE_LOADER = "$(TEST_HOST)";
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
-				COMPRESS_PNG_FILES = NO;
-				INFOPLIST_FILE = "$(PROJECT_DIR)/../third-party/gtest-xcode/src/ios-bundle/Info.plist";
+				INFOPLIST_FILE = "$(PROJECT_DIR)/../scraps/dependencies/ci-tacklebox/gtest-xcode/ios-bundle/Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 9.2;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				OTHER_LDFLAGS = (
@@ -1410,8 +1358,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				BUNDLE_LOADER = "$(TEST_HOST)";
-				COMPRESS_PNG_FILES = NO;
-				INFOPLIST_FILE = "$(PROJECT_DIR)/../third-party/gtest-xcode/src/tvos-bundle/Info.plist";
+				INFOPLIST_FILE = "$(PROJECT_DIR)/../scraps/dependencies/ci-tacklebox/gtest-xcode/tvos-bundle/Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				OTHER_LDFLAGS = (
 					"$(inherited)",
@@ -1442,8 +1389,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				BUNDLE_LOADER = "$(TEST_HOST)";
-				COMPRESS_PNG_FILES = NO;
-				INFOPLIST_FILE = "$(PROJECT_DIR)/../third-party/gtest-xcode/src/tvos-bundle/Info.plist";
+				INFOPLIST_FILE = "$(PROJECT_DIR)/../scraps/dependencies/ci-tacklebox/gtest-xcode/tvos-bundle/Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				OTHER_LDFLAGS = (
 					"$(inherited)",
@@ -1475,8 +1421,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				BUNDLE_LOADER = "$(TEST_HOST)";
-				COMPRESS_PNG_FILES = NO;
-				INFOPLIST_FILE = "$(PROJECT_DIR)/../third-party/gtest-xcode/src/tvos-bundle/Info.plist";
+				INFOPLIST_FILE = "$(PROJECT_DIR)/../scraps/dependencies/ci-tacklebox/gtest-xcode/tvos-bundle/Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				OTHER_LDFLAGS = (
 					"$(inherited)",
@@ -1507,8 +1452,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				BUNDLE_LOADER = "$(TEST_HOST)";
-				COMPRESS_PNG_FILES = NO;
-				INFOPLIST_FILE = "$(PROJECT_DIR)/../third-party/gtest-xcode/src/tvos-bundle/Info.plist";
+				INFOPLIST_FILE = "$(PROJECT_DIR)/../scraps/dependencies/ci-tacklebox/gtest-xcode/tvos-bundle/Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				OTHER_LDFLAGS = (
 					"$(inherited)",
@@ -1538,6 +1482,7 @@
 		};
 		52B8EF531B557FC800A0F1D5 /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 0C2EAE101CB8148300A2A0EC /* tests.xcconfig */;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
@@ -1572,18 +1517,14 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				HEADER_SEARCH_PATHS = "$(PROJECT_DIR)/../third-party/gtest/include";
 				MACOSX_DEPLOYMENT_TARGET = 10.10;
 				MTL_ENABLE_DEBUG_INFO = YES;
 				ONLY_ACTIVE_ARCH = YES;
 				OTHER_LDFLAGS = (
 					"$(inherited)",
 					"-Wl,-force_load,$(PROJECT_DIR)/tests/bin/xcode/$(PLATFORM_NAME)/$(CONFIGURATION:rfc1034identifier:lower)/libokui-gtests.a",
-					"$(PROJECT_DIR)/../third-party/gtest/bin/xcode/$(PLATFORM_NAME)/$(CONFIGURATION:rfc1034identifier:lower)/libgtest.a",
 					"$(PROJECT_DIR)/bin/xcode/$(PLATFORM_NAME)/$(CONFIGURATION:rfc1034identifier:lower)/libokui.a",
-					"$(PROJECT_DIR)/../foundation/bin/xcode/$(PLATFORM_NAME)/$(CONFIGURATION:rfc1034identifier:lower)/libfoundation.a",
 					"$(PROJECT_DIR)/../bin/$(PLATFORM_NAME)/$(CONFIGURATION:rfc1034identifier:lower)/libthird-party.a",
-					"$(PROJECT_DIR)/../third-party/sdl/build/bin/xcode/$(PLATFORM_NAME)/release/libsdl2.a",
 					"-liconv",
 					"-lz",
 					"-framework",
@@ -1601,6 +1542,7 @@
 		};
 		52B8EF541B557FC800A0F1D5 /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 0C2EAE101CB8148300A2A0EC /* tests.xcconfig */;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
@@ -1628,17 +1570,13 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				HEADER_SEARCH_PATHS = "$(PROJECT_DIR)/../third-party/gtest/include";
 				MACOSX_DEPLOYMENT_TARGET = 10.10;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				OTHER_LDFLAGS = (
 					"$(inherited)",
 					"-Wl,-force_load,$(PROJECT_DIR)/tests/bin/xcode/$(PLATFORM_NAME)/$(CONFIGURATION:rfc1034identifier:lower)/libokui-gtests.a",
-					"$(PROJECT_DIR)/../third-party/gtest/bin/xcode/$(PLATFORM_NAME)/$(CONFIGURATION:rfc1034identifier:lower)/libgtest.a",
 					"$(PROJECT_DIR)/bin/xcode/$(PLATFORM_NAME)/$(CONFIGURATION:rfc1034identifier:lower)/libokui.a",
-					"$(PROJECT_DIR)/../foundation/bin/xcode/$(PLATFORM_NAME)/$(CONFIGURATION:rfc1034identifier:lower)/libfoundation.a",
 					"$(PROJECT_DIR)/../bin/$(PLATFORM_NAME)/$(CONFIGURATION:rfc1034identifier:lower)/libthird-party.a",
-					"$(PROJECT_DIR)/../third-party/sdl/build/bin/xcode/$(PLATFORM_NAME)/release/libsdl2.a",
 					"-liconv",
 					"-lz",
 					"-framework",

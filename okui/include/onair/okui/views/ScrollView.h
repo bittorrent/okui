@@ -5,7 +5,7 @@
 #include "onair/okui/View.h"
 #include "onair/okui/Animation.h"
 
-#include "onair/Timer.h"
+#include "scraps/Timer.h"
 
 namespace onair {
 namespace okui {
@@ -52,7 +52,7 @@ private:
 
     Point<double> _lastMousePos{-1.0, -1.0};
     onair::okui::View _contentView;
-    onair::SteadyTimer _velocityTimer;
+    scraps::SteadyTimer _velocityTimer;
 
     onair::okui::Animation<double> _animX{0};
     onair::okui::Animation<double> _animY{0};

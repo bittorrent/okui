@@ -2,7 +2,7 @@
 
 #include "onair/okui/config.h"
 
-#if ONAIR_MAC_OS_X
+#if SCRAPS_MAC_OS_X
 
 #include "onair/okui/applications/Apple.h"
 #include "onair/okui/Application.h"

@@ -1,6 +1,6 @@
 #include "onair/okui/applications/IOS.h"
 
-#if ONAIR_IOS
+#if SCRAPS_IOS
 
 @implementation AlertViewHelper
     + (void)showAlertView:(UIAlertView*)alertView withCompletionHandler:(CompletionHandler)handler {

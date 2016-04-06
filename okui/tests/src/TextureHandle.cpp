@@ -3,7 +3,7 @@
 #include "onair/okui/FileTexture.h"
 #include "onair/okui/TextureHandle.h"
 
-using namespace onair;
+using namespace scraps;
 using namespace onair::okui;
 
 TEST(TextureHandle, callback) {

@@ -14,7 +14,7 @@ public:
 };
 
 
-#ifdef ONAIR_ANDROID
+#ifdef SCRAPS_ANDROID
 
 // On Android, the native application provides a resource manager.
 using TestApplication = TestApplicationBase;
@@ -33,7 +33,7 @@ private:
     onair::okui::FileResourceManager _resourceManager{ResourceManagerPath().c_str()};
 };
 
-#endif // ONAIR_ANDROID
+#endif // SCRAPS_ANDROID
 
 
 #endif // ONAIR_OKUI_HAS_NATIVE_APPLICATION

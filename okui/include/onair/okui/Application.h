@@ -8,13 +8,13 @@
 #include "onair/okui/Window.h"
 #include "onair/okui/CursorTypes.h"
 
-#include "onair/TaskQueue.h"
+#include "scraps/TaskQueue.h"
 
-#if ONAIR_MAC_OS_X
+#if SCRAPS_MAC_OS_X
 #import <AppKit/NSWindow.h>
 #endif
 
-#if ONAIR_ANDROID
+#if SCRAPS_ANDROID
 #include <jni.h>
 #endif
 
@@ -135,7 +135,7 @@ public:
                              bool allowDirectories,
                              bool allowMultiple,
                              std::function<void(std::vector<std::string>)> action) {
-        ONAIR_ASSERT(false);
+        SCRAPS_ASSERT(false);
     }
 
     /**
@@ -205,7 +205,7 @@ public:
     *
     * This method is thread-safe.
     */
-    TaskQueue* taskScheduler() { return &_taskQueue; }
+    scraps::TaskQueue* taskScheduler() { return &_taskQueue; }
 
     /**
     * The application-wide first responder is the active window's first responder or the application if
@@ -258,11 +258,11 @@ public:
     void addListener(View* view, std::type_index index, std::function<void(const void*, View*)>* action, View::Relation relation);
     void removeListeners(View* view);
 
-#if ONAIR_MAC_OS_X
+#if SCRAPS_MAC_OS_X
     virtual NSWindow* nativeWindow(Window* window) const = 0;
 #endif
 
-#if ONAIR_ANDROID
+#if SCRAPS_ANDROID
     virtual jobject nativeActivity(JNIEnv** envOut = nullptr) const = 0;
 #endif
 
@@ -287,7 +287,7 @@ private:
     std::list<Window*> _windows;
 
     std::string _clipboard;
-    TaskQueue _taskQueue;
+    scraps::TaskQueue _taskQueue;
 
     struct Listener {
         Listener(View* view, std::function<void(const void*, View*)>* action, View::Relation relation)

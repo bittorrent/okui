@@ -2,8 +2,8 @@
 
 #include "onair/okui/config.h"
 
-#include "onair/utility.h"
-#include "onair/stdts/any.h"
+#include "scraps/utility.h"
+#include "scraps/stdts/any.h"
 
 namespace onair {
 namespace okui {
@@ -12,11 +12,11 @@ namespace okui {
 * This is the type used to represent command ids.
 */
 using Command = uint64_t;
-using CommandContext = stdts::any;
+using CommandContext = scraps::stdts::any;
 
 inline namespace literals {
     constexpr Command operator "" _cmd(const char* str, size_t length) {
-        return FNV1A64(str, length);
+        return scraps::FNV1A64(str, length);
     }
 }
 

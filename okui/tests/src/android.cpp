@@ -1,6 +1,6 @@
 #include "onair/okui/config.h"
 
-#if ONAIR_ANDROID
+#if SCRAPS_ANDROID
 
 #include <jshackle/BuiltIns.h>
 #include <jshackle/JNIContext.h>
@@ -48,12 +48,12 @@ extern "C" int SDL_main(int argc, char* argv[]) {
     logFD(stdout, 1, ANDROID_LOG_INFO);
     logFD(stderr, 2, ANDROID_LOG_ERROR);
 
-    ONAIR_ASSERT(g_jvm);
+    SCRAPS_ASSERT(g_jvm);
     JavaVM* jvm = g_jvm;
 
     JNIEnv* env = nullptr;
     if (jvm->GetEnv((void**)&env, kJniVersion) != JNI_OK) {
-        ONAIR_LOGF_ERROR("failed to get the environment using GetEnv()");
+        SCRAPS_LOGF_ERROR("failed to get the environment using GetEnv()");
         return 1;
     }
 

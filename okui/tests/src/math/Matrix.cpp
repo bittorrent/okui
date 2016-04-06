@@ -2,7 +2,7 @@
 
 #include "onair/okui/math/Matrix.h"
 
-using namespace onair;
+using namespace scraps;
 using namespace onair::okui;
 using namespace onair::okui::math;
 

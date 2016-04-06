@@ -1,7 +1,7 @@
 #include "onair/okui/Application.h"
 
-#include "onair/HTTPRequest.h"
-#include "onair/thread.h"
+#include "scraps/HTTPRequest.h"
+#include "scraps/thread.h"
 
 namespace onair {
 namespace okui {
@@ -44,12 +44,12 @@ std::future<std::shared_ptr<const std::string>> Application::download(const std:
     _backgroundTasks.emplace_back(std::async(std::launch::async, [caBundlePath = _caBundlePath, url, download, promise = std::move(promise)] () mutable {
         std::shared_ptr<std::string> result;
 
-        HTTPRequest request;
+        scraps::HTTPRequest request;
         request.setCABundlePath(std::move(caBundlePath));
         request.initiate(url);
         request.wait();
         if (request.responseStatus() != 200) {
-            ONAIR_LOGF_WARNING("response code %d from %s", request.responseStatus(), url);
+            SCRAPS_LOGF_WARNING("response code %d from %s", request.responseStatus(), url);
         } else {
             result = std::make_shared<std::string>(request.responseBody());
         }

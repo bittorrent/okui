@@ -73,7 +73,7 @@ TextureShader::TextureShader(const char* fragmentShader) {
     _blendingFlagsUniform = _program.uniform("blendingFlags");
 
     if (!_program.error().empty()) {
-        ONAIR_LOGF_ERROR("error creating shader: %s", _program.error().c_str());
+        SCRAPS_LOGF_ERROR("error creating shader: %s", _program.error().c_str());
         return;
     }
 

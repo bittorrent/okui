@@ -1,6 +1,6 @@
 #include "onair/okui/applications/OSX.h"
 
-#if ONAIR_MAC_OS_X
+#if SCRAPS_MAC_OS_X
 
 @implementation MenuTarget
 

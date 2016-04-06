@@ -4,11 +4,11 @@
 
 #include <boost/filesystem.hpp>
 
-using namespace onair;
+using namespace scraps;
 using namespace onair::okui;
 
 TEST(FileResourceManager, loading) {
-#ifdef ONAIR_ANDROID
+#ifdef SCRAPS_ANDROID
     std::string path{"/sdcard/Download/FileResourceManager.loading"};
 #else
     std::string path = (boost::filesystem::temp_directory_path() / "FileResourceManager.loading").string();

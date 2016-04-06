@@ -2,7 +2,7 @@
 
 #include "onair/okui/config.h"
 
-#if ONAIR_ANDROID
+#if SCRAPS_ANDROID
 
 #include "jshackle/JavaClass.h"
 #include "jshackle/NativeClass.h"

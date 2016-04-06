@@ -16,7 +16,7 @@ std::shared_ptr<std::string> FileResourceManager::load(const char* name) {
     std::ifstream f(path);
 
     if (!f.is_open()) {
-        ONAIR_LOGF_ERROR("error opening resource: %s", path.c_str());
+        SCRAPS_LOGF_ERROR("error opening resource: %s", path.c_str());
         return nullptr;
     }
 

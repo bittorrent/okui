@@ -2,7 +2,7 @@
 
 #include "onair/okui/Color.h"
 
-using namespace onair;
+using namespace scraps;
 using namespace onair::okui;
 
 // construction

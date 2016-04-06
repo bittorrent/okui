@@ -4,7 +4,7 @@ namespace onair {
 namespace okui {
 namespace opengl {
     
-#if ONAIR_IOS || ONAIR_TVOS
+#if SCRAPS_IOS || SCRAPS_TVOS
 #define glGenVertexArrays glGenVertexArraysOES
 #define glDeleteVertexArrays glDeleteVertexArraysOES
 #define glBindVertexArray glBindVertexArrayOES

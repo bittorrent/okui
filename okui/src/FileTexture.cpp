@@ -57,7 +57,7 @@ void FileTexture::setData(std::shared_ptr<const std::string> data) {
     } else if (_readJPEGMetadata()) {
         _type = Type::kJPEG;
     } else {
-        ONAIR_LOG_ERROR("unknown file type");
+        SCRAPS_LOG_ERROR("unknown file type");
         _type = Type::kUnknown;
         _data = nullptr;
     }
@@ -117,7 +117,7 @@ GLuint FileTexture::_loadPNG(opengl::TextureCache* textureCache) {
     auto _ = gsl::finally([&]{ png_destroy_read_struct(&png, &info, nullptr); });
 
     if (setjmp(png_jmpbuf(png))) {
-        ONAIR_LOGF_ERROR("error reading png data");
+        SCRAPS_LOGF_ERROR("error reading png data");
         return 0;
     }
 
@@ -139,7 +139,7 @@ GLuint FileTexture::_loadPNG(opengl::TextureCache* textureCache) {
     0;
 
     if (!glFormat) {
-        ONAIR_LOGF_ERROR("unsupported color type (%d)", static_cast<int>(colorType));
+        SCRAPS_LOGF_ERROR("unsupported color type (%d)", static_cast<int>(colorType));
         return 0;
     }
 
@@ -147,14 +147,14 @@ GLuint FileTexture::_loadPNG(opengl::TextureCache* textureCache) {
 
     int bitDepth = png_get_bit_depth(png, info);
     if (bitDepth != 8 && bitDepth != 16) {
-        ONAIR_LOGF_ERROR("unsupported bit depth");
+        SCRAPS_LOGF_ERROR("unsupported bit depth");
         return 0;
     }
 
     const auto components = ((colorType & PNG_COLOR_MASK_COLOR) ? 3 : 1) + ((colorType & PNG_COLOR_MASK_ALPHA) ? 1 : 0);
     if (bytesPerRow != components * (bitDepth >> 3) * _width) {
         assert(false);
-        ONAIR_LOGF_ERROR("unknown error");
+        SCRAPS_LOGF_ERROR("unknown error");
         return 0;
     }
 
@@ -233,7 +233,7 @@ GLuint FileTexture::_loadJPEG(opengl::TextureCache* textureCache) {
 
     int width{0}, height{0}, jpegSubsamp{0}, jpegColorspace{0};
     if (tjDecompressHeader3(decompressor, reinterpret_cast<const unsigned char*>(_data->data()), _data->size(), &width, &height, &jpegSubsamp, &jpegColorspace)) {
-        ONAIR_LOG_ERROR("error reading jpeg header: {}", tjGetErrorStr());
+        SCRAPS_LOG_ERROR("error reading jpeg header: {}", tjGetErrorStr());
         return 0;
     }
 
@@ -253,7 +253,7 @@ GLuint FileTexture::_loadJPEG(opengl::TextureCache* textureCache) {
     image.resize(bytesPerRow * _allocatedHeight);
 
     if (tjDecompress2(decompressor, reinterpret_cast<const unsigned char*>(_data->data()), _data->size(), image.data(), width, bytesPerRow, height, pixelFormat, 0)) {
-        ONAIR_LOG_ERROR("error decompressing jpeg: {}", tjGetErrorStr());
+        SCRAPS_LOG_ERROR("error decompressing jpeg: {}", tjGetErrorStr());
         return 0;
     }
 

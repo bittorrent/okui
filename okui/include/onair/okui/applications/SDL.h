@@ -9,13 +9,13 @@
 #include "onair/okui/Point.h"
 #include "onair/okui/applications/SDLKeycode.h"
 
-#include "onair/Timer.h"
+#include "scraps/Timer.h"
 
 #include <unordered_map>
 
 #include <SDL2/SDL.h>
 
-#if ONAIR_MAC_OS_X
+#if SCRAPS_MAC_OS_X
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Wextern-c-compat"
 #include <SDL2/SDL_syswm.h>
@@ -24,7 +24,7 @@
 @interface OKUISDLApplication : NSApplication
 @property onair::okui::Application* application;
 @end
-#endif // ONAIR_MAC_OS_X
+#endif // SCRAPS_MAC_OS_X
 
 namespace onair {
 namespace okui {
@@ -66,11 +66,11 @@ public:
     virtual void showCursor(bool visible = true) override;
     virtual bool isCursorVisible() const override;
 
-#if ONAIR_MAC_OS_X
+#if SCRAPS_MAC_OS_X
     virtual NSWindow* nativeWindow(Window* window) const override;
 #endif
 
-#if ONAIR_ANDROID
+#if SCRAPS_ANDROID
     /**
     * @return a new local reference to the activity
     */
@@ -146,17 +146,17 @@ private:
 };
 
 inline SDL::SDL() {
-#if ONAIR_MAC_OS_X
+#if SCRAPS_MAC_OS_X
     // make sure we use our application class instead of sdl's
     ((OKUISDLApplication*)[OKUISDLApplication sharedApplication]).application = this;
     [NSApp finishLaunching];
 #endif
 
     if (SDL_Init(SDL_INIT_EVERYTHING) < 0) {
-        ONAIR_LOGF_ERROR("error initializing sdl: %s", SDL_GetError());
+        SCRAPS_LOGF_ERROR("error initializing sdl: %s", SDL_GetError());
     }
 
-#if ONAIR_TVOS
+#if SCRAPS_TVOS
     SDL_SetHint(SDL_HINT_APPLE_TV_CONTROLLER_UI_EVENTS, "1");
 #endif
 
@@ -189,7 +189,7 @@ inline void SDL::run() {
     bool shouldQuit = false;
 
     static constexpr auto minFrameInterval = 1000ms/60;
-    onair::SteadyTimer timer;
+    scraps::SteadyTimer timer;
     timer.start();
 
     while (!shouldQuit) {
@@ -376,7 +376,7 @@ inline std::string SDL::operatingSystem() const {
     return SDL_GetPlatform();
 }
 
-#if ONAIR_MAC_OS_X
+#if SCRAPS_MAC_OS_X
 inline NSWindow* SDL::nativeWindow(Window* window) const {
     if (auto w = _sdlWindow(window)) {
         // XXX: SDL_SysWMinfo's default constructor and destructor are deleted...
@@ -391,7 +391,7 @@ inline NSWindow* SDL::nativeWindow(Window* window) const {
         if (SDL_GetWindowWMInfo(w, &info) != SDL_TRUE) {
             return nil;
         }
-        ONAIR_ASSERT(info.subsystem == SDL_SYSWM_COCOA);
+        SCRAPS_ASSERT(info.subsystem == SDL_SYSWM_COCOA);
         if (info.subsystem != SDL_SYSWM_COCOA) {
             return nil;
         }
@@ -401,7 +401,7 @@ inline NSWindow* SDL::nativeWindow(Window* window) const {
 }
 #endif
 
-#if ONAIR_ANDROID
+#if SCRAPS_ANDROID
 inline jobject SDL::nativeActivity(JNIEnv** envOut) const {
     auto env = reinterpret_cast<JNIEnv*>(SDL_AndroidGetJNIEnv());
     auto activity = reinterpret_cast<jobject>(SDL_AndroidGetActivity());
@@ -411,7 +411,7 @@ inline jobject SDL::nativeActivity(JNIEnv** envOut) const {
         }
         return activity;
     }
-    ONAIR_LOGF_ERROR("unable to get android activity");
+    SCRAPS_LOGF_ERROR("unable to get android activity");
     return nullptr;
 }
 #endif
@@ -456,7 +456,7 @@ inline SDL_Window* SDL::_sdlWindow(Window* window) const {
 }
 
 inline void SDL::_handleMouseMotionEvent(const SDL_MouseMotionEvent& event) {
-    if (platform::kIsTVOS) { return; }
+    if (scraps::platform::kIsTVOS) { return; }
 
     auto window = _window(event.windowID);
     if (!window) { return; }
@@ -471,7 +471,7 @@ inline void SDL::_handleMouseMotionEvent(const SDL_MouseMotionEvent& event) {
 }
 
 inline void SDL::_handleMouseButtonEvent(const SDL_MouseButtonEvent& event) {
-    if (platform::kIsTVOS) { return; }
+    if (scraps::platform::kIsTVOS) { return; }
 
     auto window = _window(event.windowID);
     if (!window) { return; }
@@ -489,7 +489,7 @@ inline void SDL::_handleMouseButtonEvent(const SDL_MouseButtonEvent& event) {
 }
 
 inline void SDL::_handleMouseWheelEvent(const SDL_MouseWheelEvent& event) {
-    if (platform::kIsTVOS) { return; }
+    if (scraps::platform::kIsTVOS) { return; }
 
     auto window = _window(event.windowID);
     if (!window) { return; }
@@ -659,7 +659,7 @@ inline void SDL::showCursor(bool visible) {
     auto ret = SDL_ShowCursor(visible);
 
     if (ret < 0) {
-        ONAIR_LOG_ERROR("showCursor error {}, {}", ret, SDL_GetError());
+        SCRAPS_LOG_ERROR("showCursor error {}, {}", ret, SDL_GetError());
     }
 }
 
@@ -667,7 +667,7 @@ inline bool SDL::isCursorVisible() const {
     auto ret = SDL_ShowCursor(-1);
 
     if (ret < 0) {
-        ONAIR_LOG_ERROR("isCursorVisible error {}, {}", ret, SDL_GetError());
+        SCRAPS_LOG_ERROR("isCursorVisible error {}, {}", ret, SDL_GetError());
     }
 
     return ret;

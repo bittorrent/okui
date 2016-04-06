@@ -4,6 +4,7 @@
 
 #include "onair/okui/View.h"
 
+using namespace scraps;
 using namespace onair;
 using namespace onair::okui;
 
@@ -19,7 +20,7 @@ TEST(View, localToSuperview) {
 #if ONAIR_OKUI_HAS_NATIVE_APPLICATION
 TEST(View, localToWindow) {
     TestApplication application;
-    Window window(&application);
+    okui::Window window(&application);
 
     View a, b, c;
     b.setBounds(10, 20, 10, 10);
@@ -62,7 +63,7 @@ TEST(View, isVisibleInOpenWindow) {
     EXPECT_FALSE(a.isVisibleInOpenWindow());
 
     TestApplication application;
-    Window window(&application);
+    okui::Window window(&application);
 
     window.contentView()->addSubview(&a);
     EXPECT_FALSE(a.isVisibleInOpenWindow());
@@ -94,7 +95,7 @@ TEST(View, focus) {
     EXPECT_FALSE(b.isFocus());
 
     TestApplication application;
-    Window window(&application);
+    okui::Window window(&application);
     window.contentView()->addSubviews(&a, &b);
     EXPECT_FALSE(a.isFocus());
     EXPECT_FALSE(b.isFocus());
@@ -304,7 +305,7 @@ TEST(View, appearedDisappeared) {
     EXPECT_FALSE(b.isVisibleInOpenWindow());
 
     TestApplication application;
-    Window window(&application);
+    okui::Window window(&application);
     window.contentView()->addSubview(&a);
 
     EXPECT_FALSE(a.isVisibleInOpenWindow());
@@ -355,7 +356,7 @@ TEST(View, hasRelation) {
     EXPECT_FALSE(b.hasRelation(View::Relation::kSibling, &b));
 
     TestApplication application;
-    Window window(&application);
+    okui::Window window(&application);
     window.contentView()->addSubview(&a);
 
     EXPECT_TRUE(a.hasRelation(View::Relation::kAny, &b));
@@ -365,7 +366,7 @@ TEST(View, hasRelation) {
     EXPECT_TRUE(b.hasRelation(View::Relation::kAny, &c));
     EXPECT_TRUE(b.hasRelation(View::Relation::kHierarchy, &c));
 
-    Window secondWindow(&application);
+    okui::Window secondWindow(&application);
     secondWindow.contentView()->addSubview(&c);
 
     EXPECT_TRUE(a.hasRelation(View::Relation::kAny, &b));
@@ -395,7 +396,7 @@ TEST(View, messagePosting) {
     }, View::Relation::kAncestor);
 
     TestApplication application;
-    Window window(&application);
+    okui::Window window(&application);
     window.contentView()->addSubview(&a);
     a.addSubview(&b);
     a.addSubview(&c);

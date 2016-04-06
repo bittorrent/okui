@@ -2,7 +2,7 @@
 
 #include "onair/okui/Application.h"
 
-#if ONAIR_MAC_OS_X
+#if SCRAPS_MAC_OS_X
 
 #import <AppKit/AppKit.h>
 

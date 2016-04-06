@@ -7,8 +7,8 @@ rule okui-frameworks ( properties * ) {
 }
 
 cpp-pch pch :
-	../foundation//project_defaults
-	../foundation//foundation_headers
+	../scraps/lib//project_defaults
+	../scraps/lib//scraps_headers
 	src/pch.h
 :
 	<conditional>@use-pch
@@ -22,7 +22,7 @@ lib libGLESv2   : : <name>GLESv2 <link>shared ;
 lib okui :
 	pch
 	[ glob-tree-ex src : *.cpp ]
-	../foundation//foundation
+	../scraps/lib//scraps
 	../third-party/libpng//png
 	libturbojpeg
 	../jshackle//jshackle

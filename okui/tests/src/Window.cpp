@@ -4,13 +4,14 @@
 
 #include "onair/okui/Window.h"
 
+using namespace scraps;
 using namespace onair;
 using namespace onair::okui;
 
 #if ONAIR_OKUI_HAS_NATIVE_APPLICATION
 TEST(Window, setFocus) {
     TestApplication application;
-    Window window(&application);
+    okui::Window window(&application);
 
     struct FocusableView : public View {
         virtual bool canBecomeFocus() override { return true; }

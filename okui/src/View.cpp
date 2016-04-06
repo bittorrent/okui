@@ -7,7 +7,7 @@
 #include "onair/okui/shapes/Rectangle.h"
 #include "onair/okui/Window.h"
 
-#include "onair/stdts/optional.h"
+#include "scraps/stdts/optional.h"
 
 #include <typeinfo>
 
@@ -15,7 +15,7 @@
 #include <cxxabi.h>
 #endif
 
-using namespace onair;
+using namespace scraps;
 using namespace onair::okui;
 
 View::~View() {
@@ -64,7 +64,7 @@ void View::addHiddenSubview(gsl::not_null<View*> view) {
 }
 
 void View::addSubview(gsl::not_null<View*> view) {
-    ONAIR_ASSERT(view != this);
+    SCRAPS_ASSERT(view != this);
 
     if (view->_name.empty()) {
         view->setName(view->name()); // name() returns typeid if _name is empty
@@ -97,7 +97,7 @@ void View::addSubview(gsl::not_null<View*> view) {
 }
 
 void View::removeSubview(gsl::not_null<View*> view) {
-    ONAIR_ASSERT(view != this);
+    SCRAPS_ASSERT(view != this);
 
     if (view->isFocus()) {
         view->focusAncestor();
@@ -456,7 +456,7 @@ void View::dispatchUpdate(std::chrono::high_resolution_clock::duration elapsed) 
         return;
     }
 
-    if (platform::kIsTVOS && canBecomeFocus()) {
+    if (scraps::platform::kIsTVOS && canBecomeFocus()) {
         View* newFocus = nullptr;
         _touchpadFocus.update(elapsed, this, &newFocus);
         if (newFocus) {
@@ -472,7 +472,7 @@ void View::dispatchUpdate(std::chrono::high_resolution_clock::duration elapsed) 
     }
 }
 
-void View::renderAndRenderSubviews(const RenderTarget* target, const Rectangle<int>& area, stdts::optional<Rectangle<int>> clipBounds) {
+void View::renderAndRenderSubviews(const RenderTarget* target, const Rectangle<int>& area, scraps::stdts::optional<Rectangle<int>> clipBounds) {
     if (!isVisible() || !area.width || !area.height) { return; }
 
     if (!_requiresTextureRendering() && !_cachesRender) {
@@ -492,7 +492,7 @@ void View::renderAndRenderSubviews(const RenderTarget* target, const Rectangle<i
         _renderCache = std::make_unique<opengl::Framebuffer>();
         _renderCacheColorAttachment = _renderCache->addColorAttachment(area.width, area.height);
         // TODO: stencil attachment
-        ONAIR_ASSERT(_renderCache->isComplete());
+        SCRAPS_ASSERT(_renderCache->isComplete());
         _hasCachedRender = false;
     }
     _renderCacheTexture->set(_renderCacheColorAttachment->texture(), area.width, area.height, true);
@@ -640,19 +640,19 @@ bool View::dispatchMouseWheel(double xPos, double yPos, int xWheel, int yWheel) 
 }
 
 void View::touchUp(size_t finger, Point<double> position, double pressure) {
-    if (!platform::kIsTVOS) { return; }
+    if (!scraps::platform::kIsTVOS) { return; }
     _touchpadFocus.touchUp(position);
     _checkUpdateSubscription();
 }
 
 void View::touchDown(size_t finger, Point<double> position, double pressure) {
-    if (!platform::kIsTVOS) { return; }
+    if (!scraps::platform::kIsTVOS) { return; }
     _touchpadFocus.touchDown(position);
     _checkUpdateSubscription();
 }
 
 void View::touchMovement(size_t finger, Point<double> position, Point<double> distance, double pressure) {
-    if (!platform::kIsTVOS) { return; }
+    if (!scraps::platform::kIsTVOS) { return; }
     _touchpadFocus.touchMovement(position, distance);
     _checkUpdateSubscription();
 }
@@ -776,7 +776,7 @@ bool View::_requiresTextureRendering() {
     return _rendersToTexture || _tintColor.r < 1.0 || _tintColor.g < 1.0 || _tintColor.b < 1.0 || _tintColor.a < 1.0;
 }
 
-void View::_renderAndRenderSubviews(const RenderTarget* target, const Rectangle<int>& area, bool shouldClear, stdts::optional<Rectangle<int>> clipBounds) {
+void View::_renderAndRenderSubviews(const RenderTarget* target, const Rectangle<int>& area, bool shouldClear, scraps::stdts::optional<Rectangle<int>> clipBounds) {
     glViewport(area.x, target->height() - area.maxY(), area.width, area.height);
     Blending blending{BlendFunction::kDefault};
 
@@ -848,8 +848,8 @@ std::vector<View*> View::_topViewsForRelation(View::Relation relation) {
     return ret;
 }
 
-AbstractTaskScheduler* View::_taskScheduler() const {
-    ONAIR_ASSERT(application());
+scraps::AbstractTaskScheduler* View::_taskScheduler() const {
+    SCRAPS_ASSERT(application());
     return application()->taskScheduler();
 }
 

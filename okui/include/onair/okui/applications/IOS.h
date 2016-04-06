@@ -2,7 +2,7 @@
 
 #include "onair/okui/config.h"
 
-#if ONAIR_IOS || ONAIR_TVOS
+#if SCRAPS_IOS || SCRAPS_TVOS
 
 #include "onair/okui/applications/Apple.h"
 #include "onair/okui/Window.h"
@@ -12,7 +12,7 @@
 #import <UIKit/UIKit.h>
 #import <AVFoundation/AVFoundation.h>
 
-#if ONAIR_IOS
+#if SCRAPS_IOS
 @interface AlertViewHelper : NSObject<UIAlertViewDelegate>
     typedef void(^CompletionHandler)(NSInteger buttonIndex);
     @property (strong,nonatomic) CompletionHandler completionHandler;
@@ -59,7 +59,7 @@ inline bool IOS<Base>::openURL(const char* url) {
 
 template <typename Base>
 inline void IOS<Base>::openDialog(Window* window, const char* title, const char* message, const std::vector<std::string>& buttons, std::function<void(int)> action) {
-#if ONAIR_IOS
+#if SCRAPS_IOS
     UIAlertView* alert = [UIAlertView new];
     alert.title = [NSString stringWithUTF8String:title];
     alert.message = [NSString stringWithUTF8String:message];
@@ -76,14 +76,14 @@ inline void IOS<Base>::openDialog(Window* window, const char* title, const char*
 
 template <typename Base>
 inline void IOS<Base>::showStatusBar() {
-#if ONAIR_IOS
+#if SCRAPS_IOS
     [[UIApplication sharedApplication] setStatusBarHidden:false withAnimation:UIStatusBarAnimationNone];
 #endif
 }
 
 template <typename Base>
 inline void IOS<Base>::hideStatusBar() {
-#if ONAIR_IOS
+#if SCRAPS_IOS
     [[UIApplication sharedApplication] setStatusBarHidden:true withAnimation:UIStatusBarAnimationNone];
 #endif
 }
@@ -91,7 +91,7 @@ inline void IOS<Base>::hideStatusBar() {
 template <typename Base>
 inline std::string IOS<Base>::operatingSystem() const {
     UIDevice* device = [UIDevice currentDevice];
-    return Format("{} {}", [[device systemName] UTF8String], [[device systemVersion] UTF8String]);
+    return scraps::Format("{} {}", [[device systemName] UTF8String], [[device systemVersion] UTF8String]);
 }
 
 template <typename Base>

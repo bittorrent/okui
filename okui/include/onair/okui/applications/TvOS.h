@@ -2,7 +2,7 @@
 
 #include "onair/okui/config.h"
 
-#if ONAIR_TVOS
+#if SCRAPS_TVOS
 
 #include "onair/okui/applications/IOS.h"
 

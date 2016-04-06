@@ -2,7 +2,7 @@
 
 #include "onair/okui/config.h"
 
-#include "onair/utility.h"
+#include "scraps/utility.h"
 
 #include <cmath>
 
@@ -26,17 +26,17 @@ constexpr T Linear(double t, const T& b, const T& c, double d) {
 struct Sine {
     template <class T>
     static T EaseIn(double t, const T& b, const T& c, double d) {
-        return -c * cos(t/d * (kPi/2)) + c + b;
+        return -c * cos(t/d * (scraps::kPi/2)) + c + b;
     }
 
     template <class T>
     static T EaseOut(double t, const T& b, const T& c, double d) {
-        return c * sin(t/d * (kPi/2)) + b;
+        return c * sin(t/d * (scraps::kPi/2)) + b;
     }
 
     template <class T>
     static T EaseInOut(double t, const T& b, const T& c, double d) {
-        return -c/2 * (cos(kPi * t/d) - 1) + b;
+        return -c/2 * (cos(scraps::kPi * t/d) - 1) + b;
     }
 };
 

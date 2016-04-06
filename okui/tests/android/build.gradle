@@ -20,7 +20,7 @@ model {
 
     android.sources {
         main {
-            java.source.srcDirs = ['src', '../../../third-party/sdl/src/android-project/src']
+            java.source.srcDirs = ['src', '../../../dependencies/ci-tacklebox/sdl/repository/android-project/src']
         }
     }
 }

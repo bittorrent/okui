@@ -3,7 +3,7 @@
 #include "onair/okui/config.h"
 #include "onair/okui/Animation.h"
 
-using namespace onair;
+using namespace scraps;
 using namespace onair::okui;
 
 template <typename T>

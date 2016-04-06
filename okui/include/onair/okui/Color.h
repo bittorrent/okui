@@ -2,7 +2,7 @@
 
 #include "onair/okui/config.h"
 
-#include "onair/utility.h"
+#include "scraps/utility.h"
 
 namespace onair {
 namespace okui {
@@ -34,7 +34,7 @@ namespace detail {
 template <char Char>
 struct HexConversion {
     static_assert((Char >= '0' && Char <= '9') || (Char >= 'a' && Char <= 'f') || (Char >= 'A' && Char <= 'F'), "non-hex character");
-    static constexpr uint8_t value = HexToDec(Char);
+    static constexpr uint8_t value = scraps::HexToDec(Char);
 };
 
 template <char Zero, char X, char RHi, char RLo, char GHi, char GLo, char BHi, char BLo, char AHi, char ALo>

@@ -16,10 +16,10 @@
 #include "onair/okui/TouchpadFocus.h"
 #include "onair/okui/WeakTexture.h"
 
-#include "onair/stdts/optional.h"
+#include "scraps/stdts/optional.h"
 
-#include "onair/AbstractTaskScheduler.h"
-#include "onair/TreeNode.h"
+#include "scraps/AbstractTaskScheduler.h"
+#include "scraps/TreeNode.h"
 
 #include <list>
 #include <typeindex>
@@ -38,9 +38,9 @@ class Window;
 * View rendering can be cached or buffered to a texture. One reason this may be done is to apply post-rendering
 * effects such as tinting or reflection. When this is done, the contents of the view are clipped to its bounds.
 */
-class View : public Responder, private TreeNode<View> {
+class View : public Responder, private scraps::TreeNode<View> {
 public:
-    friend class TreeNode<View>;
+    friend class scraps::TreeNode<View>;
 
     View() = default;
     View(std::string name) : _name{std::move(name)} {}
@@ -364,7 +364,7 @@ public:
     template <typename T>
     auto set(T&& object, Relation relation = Relation::kHierarchy) {
         _provisions.emplace_back(std::forward<T>(object), relation);
-        return stdts::any_cast<std::decay_t<T>>(&_provisions.back().object);
+        return scraps::stdts::any_cast<std::decay_t<T>>(&_provisions.back().object);
     }
 
     /**
@@ -380,7 +380,7 @@ public:
         _traverseRelation(relation, [&](View* view, bool* shouldContinue) {
             for (auto& provision : view->_provisions) {
                 if (!hasRelation(provision.relation, view)) { continue; }
-                if (auto object = stdts::any_cast<T>(&provision.object)) {
+                if (auto object = scraps::stdts::any_cast<T>(&provision.object)) {
                     ret = object;
                     *shouldContinue = false;
                     return 1;
@@ -397,7 +397,7 @@ public:
     * If the view is destroyed, the invocation will be canceled.
     */
     template <typename... Args>
-    auto async(Args&&... args) -> decltype(std::declval<AbstractTaskScheduler>().async(std::forward<Args>(args)...)) {
+    auto async(Args&&... args) -> decltype(std::declval<scraps::AbstractTaskScheduler>().async(std::forward<Args>(args)...)) {
         return _taskScheduler()->async(_taskScope, std::forward<Args>(args)...);
     }
 
@@ -407,7 +407,7 @@ public:
     * If the view is destroyed, the invocation will be canceled.
     */
     template <typename... Args>
-    auto asyncAfter(Args&&... args) -> decltype(std::declval<AbstractTaskScheduler>().asyncAfter(std::forward<Args>(args)...)) {
+    auto asyncAfter(Args&&... args) -> decltype(std::declval<scraps::AbstractTaskScheduler>().asyncAfter(std::forward<Args>(args)...)) {
         return _taskScheduler()->asyncAfter(_taskScope, std::forward<Args>(args)...);
     }
 
@@ -512,7 +512,7 @@ public:
     * @param area the area within the target to render to. the view will fill this area
     * @param clipBounds the bounds within the target to clip rendering of the view and its children to
     */
-    void renderAndRenderSubviews(const RenderTarget* target, const Rectangle<int>& area, stdts::optional<Rectangle<int>> clipBounds = stdts::nullopt);
+    void renderAndRenderSubviews(const RenderTarget* target, const Rectangle<int>& area, scraps::stdts::optional<Rectangle<int>> clipBounds = scraps::stdts::nullopt);
 
     bool dispatchMouseDown(MouseButton button, double x, double y);
     bool dispatchMouseUp(MouseButton button, double startX, double startY, double x, double y);
@@ -573,15 +573,15 @@ private:
     std::list<Listener> _listeners;
 
     struct Provision {
-        Provision(stdts::any object, Relation relation)
+        Provision(scraps::stdts::any object, Relation relation)
             : object{std::move(object)}, relation{relation} {}
 
-        stdts::any object;
+        scraps::stdts::any object;
         Relation relation;
     };
     std::list<Provision> _provisions;
 
-    AbstractTaskScheduler::TaskScope _taskScope;
+    scraps::AbstractTaskScheduler::TaskScope _taskScope;
 
     TouchpadFocus _touchpadFocus;
 
@@ -598,7 +598,7 @@ private:
     void _updateFocusableRegions(std::vector<std::tuple<View*, Rectangle<double>>>& regions);
 
     bool _requiresTextureRendering();
-    void _renderAndRenderSubviews(const RenderTarget* target, const Rectangle<int>& area, bool shouldClear = false, stdts::optional<Rectangle<int>> clipBounds = stdts::nullopt);
+    void _renderAndRenderSubviews(const RenderTarget* target, const Rectangle<int>& area, bool shouldClear = false, scraps::stdts::optional<Rectangle<int>> clipBounds = scraps::stdts::nullopt);
 
     void _post(std::type_index index, const void* ptr, Relation relation);
     void _listen(std::type_index index, std::function<void(const void*, View*)> action, Relation relation);
@@ -623,7 +623,7 @@ private:
 
     std::vector<View*> _topViewsForRelation(Relation relation);
 
-    AbstractTaskScheduler* _taskScheduler() const;
+    scraps::AbstractTaskScheduler* _taskScheduler() const;
     void _updateTouchFocus(std::chrono::high_resolution_clock::duration elapsed);
 
     void _checkUpdateSubscription();

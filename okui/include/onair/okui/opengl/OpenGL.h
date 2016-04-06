@@ -1,8 +1,8 @@
 #pragma once
 
-#include "onair/platform.h"
+#include "scraps/platform.h"
 
-#if ONAIR_IOS || ONAIR_TVOS
+#if SCRAPS_IOS || SCRAPS_TVOS
     #include <OpenGLES/ES2/gl.h>
     #include <OpenGLES/ES2/glext.h>
     #define OPENGL_ES 1
@@ -51,7 +51,7 @@
     { \
         auto err = glGetError(); \
         if (err != GL_NO_ERROR) { \
-            ONAIR_LOGF_WARNING("opengl error 0x%x", err);\
+            SCRAPS_LOGF_WARNING("opengl error 0x%x", err);\
         } \
     }
 #else

@@ -8,7 +8,7 @@
 #include "onair/okui/Application.h"
 #include "onair/okui/Color.h"
 
-#include "onair/Timer.h"
+#include "scraps/Timer.h"
 
 namespace onair {
 namespace okui {
@@ -98,7 +98,7 @@ private:
         virtual void render() override;
         virtual void appeared() override { timer.restart(); }
         Color color{1, 1, 1, 1};
-        SteadyTimer timer;
+        scraps::SteadyTimer timer;
     };
 
     void _textChanged(bool invokeAction = true);

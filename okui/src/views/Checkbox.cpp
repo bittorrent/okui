@@ -4,7 +4,7 @@ namespace onair {
 namespace okui {
 namespace views {
 
-using namespace onair;
+using namespace scraps;
 
 void Checkbox::setState(State state, bool invokeAction) {
     _state = state;

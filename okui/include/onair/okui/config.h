@@ -1,4 +1,10 @@
 #pragma once
 
-#include "onair/config.h"
-#include "onair/logging.h"
+#include "scraps/config.h"
+#include "scraps/logging.h"
+
+namespace onair {
+namespace okui {
+using namespace std::literals;
+} // namespace okui
+} // namespace onair
