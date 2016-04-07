@@ -441,11 +441,13 @@ public:
     * Override this if you want odd-shaped views to have accurate hit boxes.
     */
     virtual bool hitTest(double x, double y);
+    bool hitTest(const Point<double>& p) { return hitTest(p.x, p.y); }
 
     /**
     * Return the most descendant visible view which intersects with (x, y)
     */
     View* hitTestView(double x, double y);
+    View* hitTestView(const Point<double>& p) { return hitTestView(p.x, p.y); }
 
     /**
     * Override these to handle mouse events. Call the base implementation to pass on the event.

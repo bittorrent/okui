@@ -19,6 +19,7 @@ public:
     virtual void focusGained() override;
     virtual void focusLost() override;
     virtual void disappeared() override;
+    virtual void mouseMovement(double x, double y) override;
 
     void setScaling(double scaling) { setScaling({scaling, scaling}); }
     void setScaling(double x, double y) { setScaling({x, y}); }
@@ -43,18 +44,27 @@ template <typename View>
 void PopoutFocus<View>::focusGained() {
     _popoutAnimation.target(1.0, 70ms, interpolation::Exponential::EaseOut);
     this->addUpdateHook("PopoutFocus", [&] { _updateBounds(); });
+    View::focusGained();
 }
 
 template <typename View>
 void PopoutFocus<View>::focusLost() {
     _popoutAnimation.target(0.0, 400ms, interpolation::Exponential::EaseOut);
     this->addUpdateHook("PopoutFocus", [&] { _updateBounds(); });
+    View::focusLost();
 }
 
 template <typename View>
 void PopoutFocus<View>::disappeared() {
     _popoutAnimation.reset(0.0);
     _updateBounds();
+    View::disappeared();
+}
+
+template <typename View>
+void PopoutFocus<View>::mouseMovement(double x, double y) {
+    this->focus();
+    View::mouseMovement(x, y);
 }
 
 template <typename View>
