@@ -302,7 +302,7 @@ public:
     const View* commonView(gsl::not_null<const View*>(other)) const { return commonNode(other); }
 
     using TreeNode::isDescendantOf;
-    using TreeNode::isAnscestorOf;
+    using TreeNode::isAncestorOf;
 
     /**
     * Posts a message to listeners with the given relation. The view and its potential listeners must have an

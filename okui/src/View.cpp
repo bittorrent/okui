@@ -735,7 +735,7 @@ void View::_updateFocusableRegions(std::vector<std::tuple<View*, Rectangle<doubl
             }
         }
         auto focus = window()->focus();
-        if (canBecomeFocus() && (!focus || (focus != this && !isDescendantOf(focus) && !focus->isDescendantOf(this)))) {
+        if (canBecomeFocus() && (!focus || (focus != this && !isDescendantOf(focus) && !isAncestorOf(focus)))) {
             regions.emplace_back(this, windowBounds);
             if (clipsToBounds()) {
                 return;
