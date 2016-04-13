@@ -164,6 +164,17 @@ public:
     void focus();
 
     /**
+     * Sets the focus to the next ancestor that can receive focus. If the
+     * immediate parent is unable to receive focus, it will continue up the
+     * hierarchy until a suitable focus target is found. If none is found, focus
+     * is set to null.
+     *
+     * Note that this view may retain focus in the case that it receives focus
+     * as a result of being the preferred focus of one of its ancestors.
+     */
+    void focusAncestor();
+
+    /**
     * If the view or any of its children are focused, unfocuses them.
     */
     void unfocus();

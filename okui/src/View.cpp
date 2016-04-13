@@ -31,6 +31,8 @@ View::~View() {
         _previousFocus->_nextFocus = _nextFocus;
     }
 
+    _preferredFocus = nullptr;
+
     while (!subviews().empty()) {
         removeSubview(subviews().front());
     }
@@ -97,7 +99,12 @@ void View::addSubview(gsl::not_null<View*> view) {
 void View::removeSubview(gsl::not_null<View*> view) {
     ONAIR_ASSERT(view != this);
 
-    view->unfocus();
+    if (view->isFocus()) {
+        view->focusAncestor();
+        if (view->isFocus()) {
+            view->unfocus();
+        }
+    }
 
     bool viewIsDisappearing = view->isVisibleInOpenWindow();
 
@@ -187,6 +194,21 @@ void View::bringToFront() {
 void View::focus() {
     if (window()) {
         window()->setFocus(this);
+    }
+}
+
+void View::focusAncestor() {
+    auto* nextFocus = superview();
+    while (nextFocus) {
+        if (nextFocus->canBecomeFocus()) {
+            break;
+        }
+        nextFocus = nextFocus->superview();
+    }
+    if (nextFocus) {
+        nextFocus->focus();
+    } else {
+        unfocus();
     }
 }
 

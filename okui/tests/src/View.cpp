@@ -120,6 +120,85 @@ TEST(View, focus) {
     EXPECT_FALSE(a.isFocus());
     EXPECT_FALSE(b.isFocus());
 }
+
+TEST(View, removeSubviewRefocuses) {
+    struct FocusableView : View {
+        virtual bool canBecomeFocus() override { return true; }
+    };
+
+    TestApplication application;
+    Window window{&application};
+    FocusableView a, b, c;
+    window.contentView()->addSubview(&a);
+    a.addSubviews(&b, &c);
+
+    b.focus();
+    ASSERT_TRUE(a.isFocus());
+    ASSERT_TRUE(b.isFocus());
+    ASSERT_FALSE(c.isFocus());
+
+    a.removeSubview(&b);
+    EXPECT_TRUE(a.isFocus());
+    EXPECT_FALSE(b.isFocus());
+    EXPECT_FALSE(c.isFocus());
+
+    a.setPreferredFocus(&c);
+    a.addSubview(&b);
+    b.focus();
+    EXPECT_TRUE(a.isFocus());
+    EXPECT_TRUE(b.isFocus());
+    EXPECT_FALSE(c.isFocus());
+
+    a.removeSubview(&b);
+    EXPECT_TRUE(a.isFocus());
+    EXPECT_FALSE(b.isFocus());
+    EXPECT_TRUE(c.isFocus());
+}
+
+TEST(View, destructionRefocuses) {
+    struct FocusableView : View {
+        virtual bool canBecomeFocus() override { return true; }
+    };
+
+    TestApplication application;
+    Window window{&application};
+    FocusableView a;
+    window.contentView()->addSubview(&a);
+    {
+        FocusableView b;
+        a.addSubview(&b);
+        b.focus();
+        ASSERT_TRUE(a.isFocus());
+        ASSERT_TRUE(b.isFocus());
+    }
+
+    EXPECT_TRUE(a.isFocus());
+}
+
+TEST(View, focusAncestor) {
+    struct FocusableView : View {
+        virtual bool canBecomeFocus() override { return true; }
+    };
+
+    TestApplication application;
+    Window window{&application};
+    FocusableView a;
+    View b;
+    FocusableView c;
+    window.contentView()->addSubview(&a);
+    a.addSubview(&b);
+    b.addSubview(&c);
+
+    c.focus();
+    ASSERT_TRUE(a.isFocus());
+    ASSERT_TRUE(b.isFocus());
+    ASSERT_TRUE(c.isFocus());
+
+    c.focusAncestor();
+    EXPECT_TRUE(a.isFocus());
+    EXPECT_FALSE(b.isFocus());
+    EXPECT_FALSE(c.isFocus());
+}
 #endif // ONAIR_OKUI_HAS_NATIVE_APPLICATION
 
 TEST(View, focusCycle) {
@@ -346,7 +425,7 @@ TEST(View, provisions) {
     } state;
 
     a.set(state);
-    
+
     auto* attachedState = a.get<State>();
     ASSERT_NE(attachedState, nullptr);
     EXPECT_EQ(attachedState->x, 7);
