@@ -7,7 +7,6 @@
 
 #if ONAIR_OKUI_HAS_NATIVE_APPLICATION && !OPENGL_ES // TODO: fix for OpenGL ES
 
-using namespace scraps;
 using namespace onair::okui;
 
 TEST(RectangleShape, normal) {
@@ -25,7 +24,7 @@ TEST(RectangleShape, normal) {
         framebuffer.finish();
 
         framebuffer.iteratePixels([&](int x, int y, Color pixel) {
-        	EXPECT_EQ(pixel, rect.contains(x, y) ? Color(1, 1, 1, 1) : Color(0, 0, 0, 1));
+            EXPECT_EQ(pixel, rect.contains(x, y) ? Color(1, 1, 1, 1) : Color(0, 0, 0, 1));
         });
     });
 }

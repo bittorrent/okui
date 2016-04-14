@@ -4,7 +4,6 @@
 
 #include "onair/okui/View.h"
 
-using namespace scraps;
 using namespace onair;
 using namespace onair::okui;
 

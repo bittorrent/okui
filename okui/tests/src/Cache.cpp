@@ -2,7 +2,6 @@
 
 #include "onair/okui/Cache.h"
 
-using namespace scraps;
 using namespace onair::okui;
 
 TEST(Cache, basicOperation) {

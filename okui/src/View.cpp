@@ -15,7 +15,6 @@
 #include <cxxabi.h>
 #endif
 
-using namespace scraps;
 using namespace onair::okui;
 
 View::~View() {

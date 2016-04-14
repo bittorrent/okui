@@ -8,7 +8,6 @@
 #include "onair/okui/opengl/Stencil.h"
 #include "onair/okui/shapes/Rectangle.h"
 
-using namespace scraps;
 using namespace onair::okui;
 using namespace onair::okui::opengl;
 

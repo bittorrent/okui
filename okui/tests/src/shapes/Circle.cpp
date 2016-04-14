@@ -5,7 +5,6 @@
 
 #include "onair/okui/shapes/Circle.h"
 
-using namespace scraps;
 using namespace onair::okui;
 
 #if ONAIR_OKUI_HAS_NATIVE_APPLICATION && !OPENGL_ES // TODO: fix for OpenGL ES

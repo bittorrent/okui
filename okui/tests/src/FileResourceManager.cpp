@@ -4,7 +4,6 @@
 
 #include <boost/filesystem.hpp>
 
-using namespace scraps;
 using namespace onair::okui;
 
 TEST(FileResourceManager, loading) {

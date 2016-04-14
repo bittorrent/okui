@@ -7,7 +7,6 @@
 
 #if ONAIR_OKUI_HAS_NATIVE_APPLICATION
 
-using namespace scraps;
 using namespace onair::okui;
 
 void CheckGlyph(const BitmapFont::Glyph& glyph, double x, double y, double width, double height, double xoffset, double yoffset, double xadvance) {

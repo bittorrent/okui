@@ -2,7 +2,6 @@
 
 #include "onair/okui/Rectangle.h"
 
-using namespace scraps;
 using namespace onair::okui;
 
 TEST(Rectangle, construction) {

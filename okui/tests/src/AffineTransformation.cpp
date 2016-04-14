@@ -2,7 +2,6 @@
 
 #include "onair/okui/AffineTransformation.h"
 
-using namespace scraps;
 using namespace onair::okui;
 
 TEST(AffineTransformation, translation) {

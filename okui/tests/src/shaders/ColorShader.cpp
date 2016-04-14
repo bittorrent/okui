@@ -7,7 +7,6 @@
 
 #if ONAIR_OKUI_HAS_NATIVE_APPLICATION && !OPENGL_ES // TODO: fix for OpenGL ES
 
-using namespace scraps;
 using namespace onair::okui;
 
 TEST(ColorShader, basic) {
@@ -25,7 +24,7 @@ TEST(ColorShader, basic) {
         framebuffer.finish();
 
         framebuffer.iteratePixels([&](int x, int y, Color pixel) {
-        	EXPECT_EQ(pixel, rect.contains(x, y) ? Color(1, 1, 1, 1) : Color(0, 0, 0, 1));
+            EXPECT_EQ(pixel, rect.contains(x, y) ? Color(1, 1, 1, 1) : Color(0, 0, 0, 1));
         });
     });
 }
@@ -56,7 +55,7 @@ TEST(ColorShader, gradient) {
         EXPECT_EQ(pixel.g, 0);
         EXPECT_NEAR(pixel.b, 1, 0.01);
         EXPECT_EQ(pixel.a, 1);
-        
+
         pixel = framebuffer.getPixel(7, 74);
         EXPECT_NEAR(pixel.r, 0.5, 0.01);
         EXPECT_EQ(pixel.g, 0);

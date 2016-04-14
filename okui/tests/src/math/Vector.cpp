@@ -2,7 +2,6 @@
 
 #include "onair/okui/math/Vector.h"
 
-using namespace scraps;
 using namespace onair::okui;
 using namespace onair::okui::math;
 
