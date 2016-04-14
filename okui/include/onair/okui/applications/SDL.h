@@ -109,9 +109,9 @@ private:
         virtual std::string name() const override;
         virtual std::string guid() const override;
 
-        virtual size_t buttons() const override { return SDL_JoystickNumButtons(joystick); }
+        virtual size_t buttons() const override { return static_cast<size_t>(SDL_JoystickNumButtons(joystick)); }
 
-        virtual size_t axes() const override { return SDL_JoystickNumAxes(joystick); }
+        virtual size_t axes() const override { return static_cast<size_t>(SDL_JoystickNumAxes(joystick)); }
         virtual Controller::AxisType axisType(size_t axis) const override;
 
         SDL_Joystick* joystick;
@@ -510,11 +510,11 @@ inline void SDL::_handleMouseWheelEvent(const SDL_MouseWheelEvent& event) {
 inline void SDL::_handleFingerEvent(const SDL_TouchFingerEvent& event) {
     switch (event.type) {
         case SDL_FINGERUP:
-            return firstResponder()->touchUp(event.fingerId, {event.x, event.y}, event.pressure);
+            return firstResponder()->touchUp(static_cast<size_t>(event.fingerId), {event.x, event.y}, event.pressure);
         case SDL_FINGERDOWN:
-            return firstResponder()->touchDown(event.fingerId, {event.x, event.y}, event.pressure);
+            return firstResponder()->touchDown(static_cast<size_t>(event.fingerId), {event.x, event.y}, event.pressure);
         case SDL_FINGERMOTION:
-            return firstResponder()->touchMovement(event.fingerId, {event.x, event.y}, {event.dx, event.dy}, event.pressure);
+            return firstResponder()->touchMovement(static_cast<size_t>(event.fingerId), {event.x, event.y}, {event.dx, event.dy}, event.pressure);
         default:
             break;
     }

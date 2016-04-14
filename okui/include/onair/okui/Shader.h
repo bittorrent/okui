@@ -64,12 +64,12 @@ public:
         _transformation.transform(p[1].x, p[1].y, &pT[1].x, &pT[1].y);
         _transformation.transform(p[2].x, p[2].y, &pT[2].x, &pT[2].y);
 
-        _triangle.a.x  = pT[0].x;
-        _triangle.a.y  = pT[0].y;
-        _triangle.b.x  = pT[1].x;
-        _triangle.b.y  = pT[1].y;
-        _triangle.c.x  = pT[2].x;
-        _triangle.c.y  = pT[2].y;
+        _triangle.a.x  = static_cast<GLfloat>(pT[0].x);
+        _triangle.a.y  = static_cast<GLfloat>(pT[0].y);
+        _triangle.b.x  = static_cast<GLfloat>(pT[1].x);
+        _triangle.b.y  = static_cast<GLfloat>(pT[1].y);
+        _triangle.c.x  = static_cast<GLfloat>(pT[2].x);
+        _triangle.c.y  = static_cast<GLfloat>(pT[2].y);
 
         _processTriangle(p, pT, curve);
 
