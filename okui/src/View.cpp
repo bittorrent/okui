@@ -8,6 +8,7 @@
 #include "onair/okui/Window.h"
 
 #include "scraps/stdts/optional.h"
+#include "scraps/Reverse.h"
 
 #include <typeinfo>
 
@@ -298,10 +299,6 @@ AffineTransformation View::renderTransformation() {
     // 2/width and 2/height because clip space is -1 to 1 (2x2), so scale down into clip space
     // Scale y is negative and translate (-1, 1) to get the top left to be (0, 0)
     return AffineTransformation{-1, 1, 0, 0, 2.0/_bounds.width, -2.0/_bounds.height};
-}
-
-View* View::superview() const {
-    return parent();
 }
 
 Application* View::application() const {

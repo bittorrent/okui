@@ -67,7 +67,8 @@ public:
         removeSubviews(std::forward<Views>(views)...);
     }
 
-    View* superview() const;
+    const View* superview() const { return parent(); }
+    View* superview()             { return parent(); }
     const std::list<View*>& subviews() const { return children(); }
 
     Window* window() const { return _window; }
