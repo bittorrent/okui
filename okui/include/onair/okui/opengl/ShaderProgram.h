@@ -36,7 +36,7 @@ public:
 
 	struct Uniform {
 		Uniform() {}
-		explicit Uniform(GLint location) : location(location) {}
+        explicit Uniform(GLint location_) : location{location_} {}
 		void operator=(GLint n) { glUniform1i(location, n); }
 		void operator=(GLfloat f) { glUniform1f(location, f); }
 		void setMatrix4(const GLfloat* m, size_t count = 1) { glUniformMatrix4fv(location, static_cast<GLsizei>(count), GL_FALSE, m); }

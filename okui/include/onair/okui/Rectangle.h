@@ -28,8 +28,8 @@ struct Rectangle {
     T minY() const { return y; }
     T maxY() const { return y + height; }
 
-    Rectangle<T> withPosition(T x, T y) const { return {x, y, width, height}; }
-    Rectangle<T> withSize(T width, T height) const { return {x, y, width, height}; }
+    Rectangle<T> withPosition(T x_, T y_) const { return {x_, y_, width, height}; }
+    Rectangle<T> withSize(T width_, T height_) const { return {x, y, width_, height_}; }
 
     /**
     * Tests if the rectangle contains the given point.

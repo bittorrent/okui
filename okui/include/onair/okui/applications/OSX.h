@@ -96,8 +96,8 @@ inline void OSX<Base>::selectFiles(bool allowFiles, bool allowDirectories, bool 
         }
 
         std::vector<std::string> selection;
-        for (NSString* filename in panel.filenames) {
-            selection.push_back([filename UTF8String]);
+        for (NSURL* filename in panel.URLs) {
+            selection.push_back([[filename path] UTF8String]);
         }
         action(std::move(selection));
     }];

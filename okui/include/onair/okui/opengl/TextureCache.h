@@ -10,21 +10,21 @@ namespace okui {
 namespace opengl {
 
 struct TextureCacheEntry {
-	TextureCacheEntry(GLuint id) : id(id) {}
-	
-	TextureCacheEntry(TextureCacheEntry&& other) {
-		std::swap(id, other.id);
-	}
-	
-	~TextureCacheEntry() {
-		if (id) {
-			glDeleteTextures(1, &id);
-		}
-	}
-	
-	GLuint id = 0;
+    TextureCacheEntry(GLuint id_) : id{id_} {}
+
+    TextureCacheEntry(TextureCacheEntry&& other) { std::swap(id, other.id); }
+
+    ~TextureCacheEntry() {
+        if (id) {
+            glDeleteTextures(1, &id);
+        }
+    }
+
+    GLuint id = 0;
 };
 
 using TextureCache = Cache<TextureCacheEntry>;
 
-}}}
+} // namespace opengl
+} // namespace okui
+} // namespace onair
