@@ -1,0 +1,9 @@
+#include "./okui.xcconfig"
+
+okui_ldflags_macosx = $(okui_path)/bin/darwin-4.2.1/$(CONFIGURATION:rfc1034identifier:lower)/link-static/libokui.a
+okui_ldflags_iphoneos = $(okui_path)/bin/darwin-iphoneos/$(CONFIGURATION:rfc1034identifier:lower)/architecture-arm/build-no/link-static/target-os-iphone/libokui.a
+okui_ldflags_appletvos = $(okui_path)/bin/darwin-appletvos/$(CONFIGURATION:rfc1034identifier:lower)/architecture-arm/build-no/link-static/target-os-appletv/libokui.a
+okui_ldflags_iphonesimulator = $(okui_path)/bin/darwin-iphonesimulator/$(CONFIGURATION:rfc1034identifier:lower)/architecture-x86/build-no/link-static/target-os-iphone/libokui.a
+okui_ldflags_appletvsimulator = $(okui_path)/bin/darwin-appletvsimulator/$(CONFIGURATION:rfc1034identifier:lower)/architecture-x86/build-no/link-static/target-os-appletv/libokui.a
+
+okui_ldflags = $(okui_ldflags_$(PLATFORM_NAME))
