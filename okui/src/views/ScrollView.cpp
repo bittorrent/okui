@@ -27,8 +27,8 @@ void ScrollView::mouseWheel(double xPos, double yPos, int xWheel, int yWheel) {
     static constexpr auto multiplier = 10.0f;
 
     auto contentViewBounds = _contentView.bounds();
-    contentViewBounds.x += xWheel * multiplier;
-    contentViewBounds.y += yWheel * multiplier;
+    contentViewBounds.x += -xWheel * multiplier;
+    contentViewBounds.y += -yWheel * multiplier;
 
     _mouseDown = true;
     _scroll(contentViewBounds);

@@ -498,8 +498,13 @@ inline void SDL::_handleMouseWheelEvent(const SDL_MouseWheelEvent& event) {
         case SDL_MOUSEWHEEL: {
             int xPos = 0, yPos = 0;
             SDL_GetMouseState(&xPos, &yPos);
-            // TODO: invert scrolling per-os
-            window->dispatchMouseWheel(xPos, yPos, -event.x, event.y);
+            auto xMotion = -event.x;
+            auto yMotion = event.y;
+            if (event.direction == SDL_MOUSEWHEEL_FLIPPED) {
+                xMotion *= -1;
+                yMotion *= -1;
+            }
+            window->dispatchMouseWheel(xPos, yPos, xMotion, yMotion);
             break;
         }
         default:
