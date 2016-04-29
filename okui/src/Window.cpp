@@ -67,7 +67,7 @@ TextureHandle Window::loadTextureResource(const std::string& name) {
     auto hashable = std::string("resource:") + name;
 
     if (auto hit = _textureCache.get(hashable)) {
-        return hit->newHandle();
+        return hit;
     }
 
     auto resource = application()->loadResource(name.c_str());
@@ -75,20 +75,20 @@ TextureHandle Window::loadTextureResource(const std::string& name) {
         return nullptr;
     }
     auto handle = _textureCache.add(TextureHandle{std::make_shared<FileTexture>(resource)}, hashable);
-    _texturesToLoad.emplace_back(handle->newHandle());
-    return handle->newHandle();
+    _texturesToLoad.emplace_back(handle.newHandle());
+    return handle;
 }
 
 TextureHandle Window::loadTextureFromMemory(std::shared_ptr<const std::string> data) {
     auto hashable = std::string("memory:") + std::to_string(reinterpret_cast<uintptr_t>(data->data())) + ":" + std::to_string(data->size());
 
     if (auto hit = _textureCache.get(hashable)) {
-        return hit->newHandle();
+        return hit;
     }
 
     auto handle = _textureCache.add(TextureHandle{std::make_shared<FileTexture>(data)}, hashable);
-    _texturesToLoad.emplace_back(handle->newHandle());
-    return handle->newHandle();
+    _texturesToLoad.emplace_back(handle.newHandle());
+    return handle;
 }
 
 TextureHandle Window::loadTextureFromURL(const std::string& url) {

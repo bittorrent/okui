@@ -16,7 +16,7 @@ public:
     void clearTexture();
 
     void setTextureResource(std::string resource);
-    void setTextureFromURL(std::string url);
+    void setTextureFromURL(std::string url, std::string placeholderResource = "");
     void setTextureColor(Color color);
     void setTextureDistanceField(double edge = 0.5);
 
@@ -28,7 +28,9 @@ public:
 
 private:
     TextureHandle                   _texture;
+    TextureHandle                   _placeholderTexture;
     std::string                     _resource;
+    std::string                     _placeholderResource;
     bool                            _fromURL = false;
     Color                           _color = {1, 1, 1, 1};
     scraps::stdts::optional<double> _distanceFieldEdge;

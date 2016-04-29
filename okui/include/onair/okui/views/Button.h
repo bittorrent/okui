@@ -26,6 +26,7 @@ public:
 
     void setTextureResource(std::string resource, State state = State::kNormal);
     void setTextureFromURL(std::string url, State state = State::kNormal);
+    void setTextureFromURL(std::string url, std::string placeholderResource, State state = State::kNormal);
     void setTextureColor(Color color, State state = State::kNormal);
     void setTextureDistanceField(double edge = 0.5, State state = State::kNormal);
 

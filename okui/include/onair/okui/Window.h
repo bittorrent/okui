@@ -11,6 +11,7 @@
 #include "onair/okui/BitmapFont.h"
 #include "onair/okui/FileTexture.h"
 #include "onair/okui/View.h"
+#include "onair/okui/TextureCache.h"
 
 #include <future>
 #include <unordered_map>
@@ -179,8 +180,8 @@ private:
     View* _initialFocus = nullptr;
 
     ShaderCache _shaderCache;
-    Cache<TextureHandle> _textureCache;
-    Cache<BitmapFont> _bitmapFontCache;
+    scraps::Cache<TextureHandle> _textureCache;
+    scraps::Cache<BitmapFont> _bitmapFontCache;
     std::vector<TextureHandle> _texturesToLoad;
     opengl::TextureCache _openGLTextureCache;
 

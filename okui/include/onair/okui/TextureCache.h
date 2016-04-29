@@ -2,21 +2,18 @@
 
 #include "onair/okui/config.h"
 
-#include <mutex>
+#include "onair/okui/TextureHandle.h"
 
-#include <unordered_map>
+#include "scraps/Cache.h"
 
-namespace onair {
-namespace okui {
+namespace scraps {
 
 /**
 * Thread-safe.
 */
-template <typename Entry>
-class Cache {
+template <>
+class Cache<onair::okui::TextureHandle> {
 public:
-    using EntryReference = std::shared_ptr<Entry>;
-
     // order matters. policy can be upgraded, but not downgraded via add
     enum Policy {
         kRemoveUnreferenced,
@@ -27,12 +24,12 @@ public:
     * Gets the given entry from the cache if it exists.
     */
     template <typename T>
-    EntryReference get(T&& hashable) const {
+    onair::okui::TextureHandle get(T&& hashable) {
         std::lock_guard<std::mutex> l(_mutex);
         auto hash = std::hash<typename std::remove_reference<T>::type>()(std::forward<T>(hashable));
 
         auto it = _entries.find(hash);
-        return it == _entries.end() ? nullptr : it->second.entry;
+        return it == _entries.end() ? nullptr : it->second.entry.newHandle();
     }
 
     /**
@@ -42,25 +39,8 @@ public:
     * exists in the cache, so always use the returned entry.
     */
     template <typename T>
-    EntryReference add(std::shared_ptr<Entry> entry, T&& hashable, Policy policy = kRemoveUnreferenced) {
-        std::lock_guard<std::mutex> l(_mutex);
-        auto hash = std::hash<typename std::remove_reference<T>::type>()(std::forward<T>(hashable));
-
-        auto it = _entries.find(hash);
-        if (it != _entries.end()) {
-            if (policy > it->second.policy) {
-                it->second.policy = policy;
-            }
-            return it->second.entry;
-        }
-
-        _removeExpired();
-
-        EntryInfo info;
-        info.entry = entry;
-        info.policy = policy;
-        _entries[hash] = info;
-        return info.entry;
+    onair::okui::TextureHandle add(onair::okui::TextureHandle& entry, T&& hashable, Policy policy = kRemoveUnreferenced) {
+        return add(entry.newHandle(), std::forward<T>(hashable), policy);
     }
 
     /**
@@ -69,8 +49,25 @@ public:
     * Ownership of entry is relinquished.
     */
     template <typename T>
-    EntryReference add(Entry&& entry, T&& hashable, Policy policy = kRemoveUnreferenced) {
-        return add(std::make_shared<Entry>(std::move(entry)), std::forward<T>(hashable), policy);
+    onair::okui::TextureHandle add(onair::okui::TextureHandle&& entry, T&& hashable, Policy policy = kRemoveUnreferenced) {
+        std::lock_guard<std::mutex> l(_mutex);
+        auto hash = std::hash<typename std::remove_reference<T>::type>()(std::forward<T>(hashable));
+
+        auto it = _entries.find(hash);
+        if (it != _entries.end()) {
+            if (policy > it->second.policy) {
+                it->second.policy = policy;
+            }
+            return it->second.entry.newHandle();
+        }
+
+        _removeExpired();
+
+        EntryInfo info;
+        info.entry = entry.newHandle();
+        info.policy = policy;
+        _entries[hash] = std::move(info);
+        return std::move(entry);
     }
 
     /**
@@ -100,24 +97,23 @@ public:
     }
 
 private:
-    mutable std::mutex _mutex;
-
     struct EntryInfo {
-        std::shared_ptr<Entry> entry;
+        onair::okui::TextureHandle entry;
         Policy policy;
     };
 
-    std::unordered_map<size_t, EntryInfo> _entries;
-
     void _removeExpired() {
         for (auto it = _entries.begin(); it != _entries.end();) {
-            if (it->second.entry.use_count() == 1 && it->second.policy == kRemoveUnreferenced) {
+            if (it->second.entry.unique() && it->second.policy == kRemoveUnreferenced) {
                 it = _entries.erase(it);
             } else {
                 ++it;
             }
         }
     }
+
+    mutable std::mutex _mutex;
+    std::unordered_map<size_t, EntryInfo> _entries;
 };
 
-}}
+}

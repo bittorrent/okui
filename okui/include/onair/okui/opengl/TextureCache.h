@@ -2,8 +2,9 @@
 
 #include "onair/okui/config.h"
 
-#include "onair/okui/Cache.h"
 #include "onair/okui/opengl/OpenGL.h"
+
+#include "scraps/Cache.h"
 
 namespace onair {
 namespace okui {
@@ -23,7 +24,7 @@ struct TextureCacheEntry {
     GLuint id = 0;
 };
 
-using TextureCache = Cache<TextureCacheEntry>;
+using TextureCache = scraps::Cache<TextureCacheEntry>;
 
 } // namespace opengl
 } // namespace okui

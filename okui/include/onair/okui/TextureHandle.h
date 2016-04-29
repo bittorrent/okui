@@ -52,6 +52,8 @@ public:
     */
     void invokeLoadCallbacks();
 
+    bool unique() const { return _texture.unique(); }
+
 private:
     std::shared_ptr<Texture> _texture;
 

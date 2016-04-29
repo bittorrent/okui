@@ -34,6 +34,10 @@ void Button::setTextureFromURL(std::string url, State state) {
     _stateImageView(state).setTextureFromURL(std::move(url));
 }
 
+void Button::setTextureFromURL(std::string url, std::string placeholderResource, State state) {
+    _stateImageView(state).setTextureFromURL(std::move(url), std::move(placeholderResource));
+}
+
 void Button::setTextureColor(Color color, State state) {
     _stateImageView(state).setTextureColor(color);
     if (state == State::kNormal) { _normalColor = color; }

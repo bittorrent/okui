@@ -2,8 +2,9 @@
 
 #include "onair/okui/config.h"
 
-#include "onair/okui/Cache.h"
 #include "onair/okui/ResourceManager.h"
+
+#include "scraps/Cache.h"
 
 namespace onair {
 namespace okui {
@@ -16,7 +17,7 @@ public:
 
 private:
     const std::string _directory;
-    Cache<std::string> _cache;
+    scraps::Cache<std::string> _cache;
 };
 
 }}
