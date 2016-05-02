@@ -25,9 +25,8 @@ public:
     */
     template <typename T>
     onair::okui::TextureHandle get(T&& hashable) {
-        std::lock_guard<std::mutex> l(_mutex);
         auto hash = std::hash<typename std::remove_reference<T>::type>()(std::forward<T>(hashable));
-
+        std::lock_guard<std::mutex> l(_mutex);
         auto it = _entries.find(hash);
         return it == _entries.end() ? nullptr : it->second.entry.newHandle();
     }
@@ -50,8 +49,8 @@ public:
     */
     template <typename T>
     onair::okui::TextureHandle add(onair::okui::TextureHandle&& entry, T&& hashable, Policy policy = kRemoveUnreferenced) {
-        std::lock_guard<std::mutex> l(_mutex);
         auto hash = std::hash<typename std::remove_reference<T>::type>()(std::forward<T>(hashable));
+        std::lock_guard<std::mutex> l(_mutex);
 
         auto it = _entries.find(hash);
         if (it != _entries.end()) {
@@ -63,10 +62,7 @@ public:
 
         _removeExpired();
 
-        EntryInfo info;
-        info.entry = entry.newHandle();
-        info.policy = policy;
-        _entries[hash] = std::move(info);
+        _entries[hash] = {entry.newHandle(), policy};
         return std::move(entry);
     }
 
@@ -83,8 +79,8 @@ public:
     */
     template <typename T>
     void remove(T&& hashable) {
-        std::lock_guard<std::mutex> l(_mutex);
         auto hash = std::hash<typename std::remove_reference<T>::type>()(std::forward<T>(hashable));
+        std::lock_guard<std::mutex> l(_mutex);
         _entries.erase(hash);
     }
 
