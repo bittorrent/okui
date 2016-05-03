@@ -6,7 +6,6 @@ alias okui-tests-common :
     [ glob-tree-ex src : *.cpp : android.cpp ]
     ..//okui
     $(DEPENDENCIES_PATH)/gtest//gtest/<link>static
-    $(DEPENDENCIES_PATH)/sdl//SDL2/<link>static
 : : :
     <define>OKUI_TEST_RESOURCES_PATH=\\\"$(OKUI_TEST_RESOURCES_PATH)\\\"
 ;

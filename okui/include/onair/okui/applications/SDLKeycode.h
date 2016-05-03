@@ -1,20 +1,20 @@
 #pragma once
 #include "onair/okui/config.h"
 #include "onair/okui/KeyCode.h"
+
 #include <SDL2/SDL.h>
 #include <cstdint>
 
 namespace onair {
 namespace okui {
 
-// constexpr no worky for gcc 4.9
-/* constexpr */ inline KeyModifiers ConvertKeyModifiers(uint16_t mods) {
+constexpr KeyModifiers ConvertKeyModifiers(uint16_t mods) {
     KeyModifiers result = KeyModifier::kNone;
 
     if (mods & KMOD_LSHIFT) { result |= KeyModifier::kLShift; }
     if (mods & KMOD_RSHIFT) { result |= KeyModifier::kRShift; }
-    if (mods & KMOD_LCTRL)  { result |= KeyModifier::kLControl;  }
-    if (mods & KMOD_RCTRL)  { result |= KeyModifier::kRControl;  }
+    if (mods & KMOD_LCTRL)  { result |= KeyModifier::kLControl; }
+    if (mods & KMOD_RCTRL)  { result |= KeyModifier::kRControl; }
     if (mods & KMOD_LALT)   { result |= KeyModifier::kLAlt;   }
     if (mods & KMOD_RALT)   { result |= KeyModifier::kRAlt;   }
     if (mods & KMOD_LGUI)   { result |= KeyModifier::kLSuper; }
@@ -26,7 +26,7 @@ namespace okui {
     return result;
 }
 
-/* constexpr */ inline KeyCode ConvertKeyCode(SDL_Keycode keyCode) {
+constexpr KeyCode ConvertKeyCode(SDL_Keycode keyCode) {
     switch (keyCode) {
         case SDLK_UNKNOWN:           return KeyCode::kUnknown;
         case SDLK_RETURN:            return KeyCode::kReturn;

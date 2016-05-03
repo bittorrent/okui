@@ -17,8 +17,26 @@ cpp-pch pch :
 
 lib libpng : ../third-party/needs//libpng : <name>png ;
 lib libturbojpeg : ../third-party/needs//libjpeg-turbo : <name>turbojpeg ;
-lib libm        : : <name>m <link>shared ;
-lib libGLESv2   : : <name>GLESv2 <link>shared ;
+lib libm         : : <name>m <link>shared ;
+lib libGLESv2    : : <name>GLESv2 <link>shared ;
+lib libiconv     : : <name>iconv ;
+
+
+lib libSDL2 : ../third-party/needs//sdl2
+:
+    <name>SDL2
+: :
+    [ conditional <target-os>darwin :
+        <framework>AudioUnit
+        <framework>Carbon
+        <framework>Cocoa
+        <framework>CoreAudio
+        <framework>ForceFeedback
+        <framework>Foundation
+        <framework>IOKit
+        <source>libiconv
+    ]
+;
 
 lib okui :
     pch
@@ -26,6 +44,7 @@ lib okui :
     ../scraps/lib//scraps
     libpng
     libturbojpeg
+    libSDL2
     ../jshackle//jshackle
 :
     <include>./include

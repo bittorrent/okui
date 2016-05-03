@@ -1,13 +1,12 @@
 #include "../scraps/lib/scraps.xcconfig"
 #include "../dependencies/ci-tacklebox/gtest-xcode/gtest-xcode.xcconfig"
 #include "../dependencies/ci-tacklebox/boost/boost.xcconfig"
-#include "../dependencies/ci-tacklebox/sdl/sdl.xcconfig"
 #include "../scraps/dependencies/needs/needs.xcconfig"
 
 COMPRESS_PNG_FILES = NO
 STRIP_PNG_TEXT = NO
 
-dependency_ldflags =  $(gtest_ldflags) $(scraps_ldflags) $(boost_ldflags) $(curl_ldflags) $(openssl_ldflags) $(sdl_ldflags) "-lz"
+dependency_ldflags =  $(gtest_ldflags) $(scraps_ldflags) $(boost_ldflags) $(curl_ldflags) $(openssl_ldflags) "-lz"
 
 OTHER_LDFLAGS = $(inherited) $(dependency_ldflags)
 
