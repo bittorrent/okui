@@ -762,7 +762,7 @@ void View::_updateFocusableRegions(std::vector<std::tuple<View*, Rectangle<doubl
     }
 
     if (_childrenInterceptInteractions) {
-        for (auto subview : subviews()) {
+        for (auto subview : Reverse(subviews())) {
             subview->_updateFocusableRegions(regions);
         }
     }
