@@ -51,10 +51,6 @@ void Button::press() {
     if (_action) { _action(); }
 }
 
-void Button::buttonDown(const okui::Controller& controller, size_t button) {
-    if (_action) { _action(); }
-}
-
 void Button::mouseDown(MouseButton button, double x, double y) {
     _changeState(State::kDepressed);
     _mouseDown = true;
@@ -74,7 +70,7 @@ void Button::mouseExit() {
 }
 
 void Button::keyDown(KeyCode key, KeyModifiers mod, bool repeat) {
-    if (key == KeyCode::kSpace || key == KeyCode::kReturn) {
+    if (key == KeyCode::kSpace || key == KeyCode::kReturn || key == KeyCode::kSelect) {
         if (_action) { _action(); }
         return;
     }

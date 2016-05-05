@@ -33,7 +33,6 @@ public:
     void press();
 
     virtual bool canBecomeFocus() override { return true; }
-    virtual void buttonDown(const okui::Controller& controller, size_t button) override;
     virtual void mouseDown(MouseButton button, double x, double y) override;
     virtual void mouseUp(MouseButton button, double startX, double startY, double x, double y) override;
     virtual void mouseExit() override;
