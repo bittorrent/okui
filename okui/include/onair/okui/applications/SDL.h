@@ -66,6 +66,8 @@ public:
     virtual void showCursor(bool visible = true) override;
     virtual bool isCursorVisible() const override;
 
+    virtual void setCanHandleNavigateBack(bool canHandle = true) override;
+
 #if SCRAPS_MAC_OS_X
     virtual NSWindow* nativeWindow(Window* window) const override;
 #endif
@@ -456,8 +458,6 @@ inline SDL_Window* SDL::_sdlWindow(Window* window) const {
 }
 
 inline void SDL::_handleMouseMotionEvent(const SDL_MouseMotionEvent& event) {
-    if (scraps::platform::kIsTVOS) { return; }
-
     auto window = _window(event.windowID);
     if (!window) { return; }
 
@@ -471,8 +471,6 @@ inline void SDL::_handleMouseMotionEvent(const SDL_MouseMotionEvent& event) {
 }
 
 inline void SDL::_handleMouseButtonEvent(const SDL_MouseButtonEvent& event) {
-    if (scraps::platform::kIsTVOS) { return; }
-
     auto window = _window(event.windowID);
     if (!window) { return; }
 
@@ -489,8 +487,6 @@ inline void SDL::_handleMouseButtonEvent(const SDL_MouseButtonEvent& event) {
 }
 
 inline void SDL::_handleMouseWheelEvent(const SDL_MouseWheelEvent& event) {
-    if (scraps::platform::kIsTVOS) { return; }
-
     auto window = _window(event.windowID);
     if (!window) { return; }
 
@@ -676,6 +672,12 @@ inline bool SDL::isCursorVisible() const {
     }
 
     return ret;
+}
+
+inline void SDL::setCanHandleNavigateBack(bool canHandle) {
+#if SCRAPS_TVOS
+    SDL_SetHint(SDL_HINT_APPLE_TV_CONTROLLER_UI_EVENTS, canHandle ? "0" : "1");
+#endif
 }
 
 }}}

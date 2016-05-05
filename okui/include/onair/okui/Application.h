@@ -195,6 +195,8 @@ public:
     virtual void showCursor(bool visible = true) {}
     virtual bool isCursorVisible() const { return true; }
 
+    virtual void setCanHandleNavigateBack(bool canHandle = true) {}
+
     virtual bool hasStatusBar() const { return false; }
 
     virtual void showStatusBar() {}
