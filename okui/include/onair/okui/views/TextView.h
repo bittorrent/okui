@@ -69,7 +69,9 @@ public:
 
     const Style& style() const { return _style; }
     double lineHeight() const;
+    size_t numLines() const { return _lines.size(); }
     double textWidth() const { return _textWidth; }
+    double textHeight() const { return lineHeight() * std::min<double>(numLines(), 1); }
     Point<int> lineColumnPosition(size_t line, size_t column) const;
     std::pair<size_t, size_t> lineColumnAtPosition(int x, int y) const;
 
