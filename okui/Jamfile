@@ -1,37 +1,37 @@
 rule okui-frameworks ( properties * ) {
-	if <target-os>iphone in $(properties) || <target-os>appletv in $(properties) || <target-os>darwin in $(properties) {
-		local result ;
-		result += <framework>OpenGL ;
-		return $(result) ;
-	}
+    if <target-os>iphone in $(properties) || <target-os>appletv in $(properties) || <target-os>darwin in $(properties) {
+        local result ;
+        result += <framework>OpenGL ;
+        return $(result) ;
+    }
 }
 
 cpp-pch pch :
-	../scraps/lib//project_defaults
-	../scraps/lib//scraps_headers
-	src/pch.h
+    ../scraps/lib//project_defaults
+    ../scraps/lib//scraps_headers
+    src/pch.h
 :
-	<conditional>@use-pch
-	<include>./include
+    <conditional>@use-pch
+    <include>./include
 ;
 
 lib libturbojpeg : ../third-party/needs//libjpeg-turbo : <name>turbojpeg ;
-lib libm        : : <name>m ;
+lib libm        : : <name>m <link>shared ;
 lib libGLESv2   : : <name>GLESv2 <link>shared ;
 
 lib okui :
-	pch
-	[ glob-tree-ex src : *.cpp ]
-	../scraps/lib//scraps
-	../third-party/libpng//png
-	libturbojpeg
-	../jshackle//jshackle
+    pch
+    [ glob-tree-ex src : *.cpp ]
+    ../scraps/lib//scraps
+    ../third-party/libpng//png
+    libturbojpeg
+    ../jshackle//jshackle
 :
-	<include>./include
-	<link>static
-	<target-os>linux:<source>libm
-	<target-os>android:<source>libGLESv2
+    <include>./include
+    <link>static
+    <target-os>linux:<source>libm
+    <target-os>android:<source>libGLESv2
 : :
-	<include>./include
-	<conditional>@okui-frameworks
+    <include>./include
+    <conditional>@okui-frameworks
 ;
