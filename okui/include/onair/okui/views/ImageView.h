@@ -13,12 +13,19 @@ namespace views {
 
 class ImageView : public View {
 public:
-    void clearTexture();
+    enum class TextureDrawMode {
+        kFill,
+        kFit
+    };
 
     void setTextureResource(std::string resource);
     void setTextureFromURL(std::string url, std::string placeholderResource = "");
     void setTextureColor(Color color);
     void setTextureDistanceField(double edge = 0.5);
+
+    void setDrawMode(TextureDrawMode drawMode) { _drawMode = drawMode; }
+
+    void clearTexture();
 
     TextureHandle& texture() { return _texture; }
     const Color& textureColor() const { return _color; }
@@ -34,6 +41,7 @@ private:
     bool                            _fromURL = false;
     Color                           _color = {1, 1, 1, 1};
     scraps::stdts::optional<double> _distanceFieldEdge;
+    TextureDrawMode                 _drawMode = TextureDrawMode::kFit;
 };
 
 }}}

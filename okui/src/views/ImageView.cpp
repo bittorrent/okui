@@ -53,7 +53,12 @@ void ImageView::render() {
         }
 
         shader->setColor(_color);
-        shader->drawScaledFit(**texture, 0, 0, bounds().width, bounds().height);
+        if (_drawMode == TextureDrawMode::kFit) {
+            shader->drawScaledFit(**texture, 0, 0, bounds().width, bounds().height);
+        } else {
+            shader->drawScaledFill(**texture, 0, 0, bounds().width, bounds().height);
+        }
+
         shader->flush();
     }
 }
