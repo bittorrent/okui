@@ -18,6 +18,12 @@
 
 using namespace onair::okui;
 
+namespace {
+    View* PreferredFocusLeaf(View* focus) {
+        return (!focus || !focus->preferredFocus()) ? focus : PreferredFocusLeaf(focus->preferredFocus());
+    }
+}
+
 View::~View() {
     if (application()) {
         application()->removeListeners(this);
@@ -198,18 +204,17 @@ void View::focus() {
 }
 
 void View::focusAncestor() {
-    auto* nextFocus = superview();
-    while (nextFocus) {
-        if (nextFocus->canBecomeFocus()) {
-            break;
+    for (auto nextFocus = superview(); nextFocus; nextFocus = nextFocus->superview()) {
+        if (!nextFocus->canBecomeFocus()) {
+            continue;
         }
-        nextFocus = nextFocus->superview();
+        if (PreferredFocusLeaf(nextFocus) != this) {
+            nextFocus->focus();
+            return;
+        }
     }
-    if (nextFocus) {
-        nextFocus->focus();
-    } else {
-        unfocus();
-    }
+
+    unfocus();
 }
 
 void View::unfocus() {
