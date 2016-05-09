@@ -253,7 +253,7 @@ void TextView::_computeLines() {
                 for (size_t i = line.size(); i > 0; --i) {
                     auto& candidate = line[i - 1];
                     auto glyph = _font->glyph(candidate);
-                    if (!glyph->width) {
+                    if (glyph && !glyph->width) {
                         // whitespace
                         if (i > 0) {
                             _lines.emplace_back(&line[0], i - 1);
