@@ -338,8 +338,11 @@ void Window::ensureTextures() {
             if (status == std::future_status::ready) {
                 if (auto data = download.download.get()) {
                     texture->setData(data);
-                    texture->load(&_openGLTextureCache);
-                    download.handle.invokeLoadCallbacks();
+                    if (texture->load(&_openGLTextureCache)) {
+                        download.handle.invokeLoadCallbacks();
+                    } else {
+                        SCRAPS_LOG_ERROR("error loading texture: {}", it->first);
+                    }
                 }
                 download.isComplete = true;
             }
