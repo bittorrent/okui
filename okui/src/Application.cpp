@@ -92,5 +92,13 @@ void Application::removeListeners(View* view) {
     }
 }
 
+size_t Application::downloadCacheSize() const {
+    size_t ret = 0;
+    for (auto& kv : _downloads) {
+        ret += sizeof(kv) + (kv.second->result ? kv.second->result->size() : 0);
+    }
+    return ret;
+}
+
 } // namespace okui
 } // namespace onair

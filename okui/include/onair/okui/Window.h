@@ -77,6 +77,7 @@ public:
     void setRenderScale(double scale) { _renderScale = scale; _updateContentLayout(); }
 
     double framesPerSecond() const { return _framesPerSecond; }
+    size_t loadedTextures() const { return _openGLTextureCache.size(); }
 
     ShaderCache* shaderCache() { return &_shaderCache; }
 
@@ -118,6 +119,26 @@ public:
     template <typename T>
     auto get() {
         return contentView()->get<T>(View::Relation::kSelf);
+    }
+
+    /**
+    * Asynchronously schedules a function to be invoked using the application's task scheduler.
+    *
+    * If the window is destroyed, the invocation will be canceled.
+    */
+    template <typename... Args>
+    auto async(Args&&... args) -> decltype(std::declval<scraps::AbstractTaskScheduler>().async(std::forward<Args>(args)...)) {
+        return contentView()->async(std::forward<Args>(args)...);
+    }
+
+    /**
+    * Asynchronously schedules a function to be invoked after a delay using the application's task scheduler.
+    *
+    * If the window is destroyed, the invocation will be canceled.
+    */
+    template <typename... Args>
+    auto asyncAfter(Args&&... args) -> decltype(std::declval<scraps::AbstractTaskScheduler>().asyncAfter(std::forward<Args>(args)...)) {
+        return contentView()->asyncAfter(std::forward<Args>(args)...);
     }
 
     void beginDragging(View* view);

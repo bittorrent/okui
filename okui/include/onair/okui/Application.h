@@ -268,6 +268,9 @@ public:
     virtual jobject nativeActivity(JNIEnv** envOut = nullptr) const = 0;
 #endif
 
+    size_t cachedDownloads() const { return _downloads.size(); }
+    size_t downloadCacheSize() const;
+
 protected:
     void _update(Window* window) { window->_update(); }
     void _render(Window* window) { window->_render(); }
