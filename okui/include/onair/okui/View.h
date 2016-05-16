@@ -326,6 +326,11 @@ public:
     void post(T& message, Relation relation = Relation::kHierarchy) {
         _post(std::type_index(typeid(typename std::decay_t<T>)), &message, relation);
     }
+    template <typename T>
+    void post(T&& message, Relation relation = Relation::kHierarchy) {
+        T m = std::move(message);
+        _post(std::type_index(typeid(typename std::decay_t<T>)), &m, relation);
+    }
 
     template <typename T>
     struct ListenerAction : ListenerAction<decltype(&T::operator())> {};

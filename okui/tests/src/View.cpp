@@ -402,8 +402,16 @@ TEST(View, messagePosting) {
 
     int message = 7;
     a.post(message, View::Relation::kDescendant);
-
     EXPECT_EQ(received, 2);
+
+    a.listen([&] (const int& message, View* sender) {
+        EXPECT_EQ(sender, &b);
+        EXPECT_EQ(message, 5);
+        ++received;
+    }, View::Relation::kDescendant);
+
+    b.post(5, View::Relation::kAncestor);
+    EXPECT_EQ(received, 3);
 }
 #endif // ONAIR_OKUI_HAS_NATIVE_APPLICATION
 
