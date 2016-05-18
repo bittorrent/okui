@@ -15,6 +15,7 @@ cpp-pch pch :
     <include>./include
 ;
 
+lib libpng : ../third-party/needs//libpng : <name>png ;
 lib libturbojpeg : ../third-party/needs//libjpeg-turbo : <name>turbojpeg ;
 lib libm        : : <name>m <link>shared ;
 lib libGLESv2   : : <name>GLESv2 <link>shared ;
@@ -23,7 +24,7 @@ lib okui :
     pch
     [ glob-tree-ex src : *.cpp ]
     ../scraps/lib//scraps
-    ../third-party/libpng//png
+    libpng
     libturbojpeg
     ../jshackle//jshackle
 :
