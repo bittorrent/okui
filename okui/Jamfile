@@ -1,11 +1,3 @@
-rule okui-frameworks ( properties * ) {
-    if <target-os>iphone in $(properties) || <target-os>appletv in $(properties) || <target-os>darwin in $(properties) {
-        local result ;
-        result += <framework>OpenGL ;
-        return $(result) ;
-    }
-}
-
 cpp-pch pch :
     ../scraps//project_defaults
     ../scraps//scraps_headers
@@ -36,6 +28,23 @@ lib libSDL2 : ../third-party/needs//sdl2
         <framework>IOKit
         <source>libiconv
     ]
+
+    [ conditional <target-os>appletv :
+        <framework>CoreAudio
+        <framework>CoreGraphics
+        <framework>GameController
+        <framework>QuartzCore
+        <framework>UIKit
+    ]
+
+    [ conditional <target-os>iphone :
+        <framework>CoreAudio
+        <framework>CoreGraphics
+        <framework>CoreMotion
+        <framework>GameController
+        <framework>QuartzCore
+        <framework>UIKit
+    ]
 ;
 
 lib okui :
@@ -53,5 +62,7 @@ lib okui :
     <target-os>android:<source>libGLESv2
 : :
     <include>./include
-    <conditional>@okui-frameworks
+    <target-os>darwin:<framework>OpenGL
+    <target-os>iphone:<framework>OpenGLES
+    <target-os>appletv:<framework>OpenGLES
 ;

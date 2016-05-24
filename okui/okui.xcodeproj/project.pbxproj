@@ -296,7 +296,7 @@
 /* Begin PBXLegacyTarget section */
 		0C5CA4AF1BED4BB500F7800E /* okui-tests-macosx */ = {
 			isa = PBXLegacyTarget;
-			buildArgumentsString = "--target=okui/tests --platform=macosx --configuration=$(CONFIGURATION:rfc1034identifier:lower)";
+			buildArgumentsString = "--target=tests --platform=macosx --configuration=$(CONFIGURATION:rfc1034identifier:lower) build";
 			buildConfigurationList = 0C5CA4B01BED4BB500F7800E /* Build configuration list for PBXLegacyTarget "okui-tests-macosx" */;
 			buildPhases = (
 			);
@@ -310,7 +310,7 @@
 		};
 		0C5CA4B31BED4BC000F7800E /* okui-tests-iphoneos */ = {
 			isa = PBXLegacyTarget;
-			buildArgumentsString = "--target=okui/tests --platform=iphoneos --configuration=$(CONFIGURATION:rfc1034identifier:lower)";
+			buildArgumentsString = "--target=tests --platform=iphoneos --configuration=$(CONFIGURATION:rfc1034identifier:lower) build";
 			buildConfigurationList = 0C5CA4B41BED4BC000F7800E /* Build configuration list for PBXLegacyTarget "okui-tests-iphoneos" */;
 			buildPhases = (
 			);
@@ -324,7 +324,7 @@
 		};
 		0C5CA4B71BED4BCA00F7800E /* okui-tests-iphonesimulator */ = {
 			isa = PBXLegacyTarget;
-			buildArgumentsString = "--target=okui/tests --platform=iphonesimulator --configuration=$(CONFIGURATION:rfc1034identifier:lower)";
+			buildArgumentsString = "--target=tests --platform=iphonesimulator --configuration=$(CONFIGURATION:rfc1034identifier:lower) build";
 			buildConfigurationList = 0C5CA4B81BED4BCA00F7800E /* Build configuration list for PBXLegacyTarget "okui-tests-iphonesimulator" */;
 			buildPhases = (
 			);
@@ -338,7 +338,7 @@
 		};
 		0C5CA4BB1BED4BD300F7800E /* okui-tests-appletvos */ = {
 			isa = PBXLegacyTarget;
-			buildArgumentsString = "--target=okui/tests --platform=appletvos --configuration=$(CONFIGURATION:rfc1034identifier:lower)";
+			buildArgumentsString = "--target=tests --platform=appletvos --configuration=$(CONFIGURATION:rfc1034identifier:lower) build";
 			buildConfigurationList = 0C5CA4BC1BED4BD300F7800E /* Build configuration list for PBXLegacyTarget "okui-tests-appletvos" */;
 			buildPhases = (
 			);
@@ -352,7 +352,7 @@
 		};
 		0C5CA4BF1BED4BDB00F7800E /* okui-tests-appletvsimulator */ = {
 			isa = PBXLegacyTarget;
-			buildArgumentsString = "--target=okui/tests --platform=appletvsimulator --configuration=$(CONFIGURATION:rfc1034identifier:lower)";
+			buildArgumentsString = "--target=tests --platform=appletvsimulator --configuration=$(CONFIGURATION:rfc1034identifier:lower) build";
 			buildConfigurationList = 0C5CA4C01BED4BDB00F7800E /* Build configuration list for PBXLegacyTarget "okui-tests-appletvsimulator" */;
 			buildPhases = (
 			);
@@ -1522,9 +1522,6 @@
 				ONLY_ACTIVE_ARCH = YES;
 				OTHER_LDFLAGS = (
 					"$(inherited)",
-					"-Wl,-force_load,$(PROJECT_DIR)/tests/bin/xcode/$(PLATFORM_NAME)/$(CONFIGURATION:rfc1034identifier:lower)/libokui-gtests.a",
-					"$(PROJECT_DIR)/bin/xcode/$(PLATFORM_NAME)/$(CONFIGURATION:rfc1034identifier:lower)/libokui.a",
-					"$(PROJECT_DIR)/../bin/$(PLATFORM_NAME)/$(CONFIGURATION:rfc1034identifier:lower)/libthird-party.a",
 					"-liconv",
 					"-lz",
 					"-framework",
@@ -1574,9 +1571,6 @@
 				MTL_ENABLE_DEBUG_INFO = NO;
 				OTHER_LDFLAGS = (
 					"$(inherited)",
-					"-Wl,-force_load,$(PROJECT_DIR)/tests/bin/xcode/$(PLATFORM_NAME)/$(CONFIGURATION:rfc1034identifier:lower)/libokui-gtests.a",
-					"$(PROJECT_DIR)/bin/xcode/$(PLATFORM_NAME)/$(CONFIGURATION:rfc1034identifier:lower)/libokui.a",
-					"$(PROJECT_DIR)/../bin/$(PLATFORM_NAME)/$(CONFIGURATION:rfc1034identifier:lower)/libthird-party.a",
 					"-liconv",
 					"-lz",
 					"-framework",

@@ -1,13 +1,20 @@
-#include "../scraps/lib/scraps.xcconfig"
+#include "../okui.xcconfig"
+#include "./okui-tests.xcconfig"
+#include "../scraps/scraps.xcconfig"
 #include "../dependencies/ci-tacklebox/gtest-xcode/gtest-xcode.xcconfig"
-#include "../dependencies/ci-tacklebox/boost/boost.xcconfig"
-#include "../scraps/dependencies/needs/needs.xcconfig"
+
+boost_ldflags = $(PROJECT_DIR)/../scraps/needs/boost/build/universal/$(PLATFORM_NAME)/lib/libboost_system.a $(PROJECT_DIR)/../scraps/needs/boost/build/universal/$(PLATFORM_NAME)/lib/libboost_filesystem.a $(PROJECT_DIR)/../scraps/needs/boost/build/universal/$(PLATFORM_NAME)/lib/libboost_program_options.a
+curl_ldflags = $(PROJECT_DIR)/../scraps/needs/curl/build/universal/$(PLATFORM_NAME)/lib/libcurl.a
+openssl_ldflags = $(PROJECT_DIR)/../scraps/needs/openssl/build/universal/$(PLATFORM_NAME)/lib/libcrypto.a $(PROJECT_DIR)/../scraps/needs/openssl/build/universal/$(PLATFORM_NAME)/lib/libssl.a
+libjpegturbo_ldflags = $(PROJECT_DIR)/../third-party/needs/libjpeg-turbo/build/universal/$(PLATFORM_NAME)/lib/libturbojpeg.a
+libpng_ldflags = $(PROJECT_DIR)/../third-party/needs/libpng/build/universal/$(PLATFORM_NAME)/lib/libpng.a
+sdl2_ldflags = $(PROJECT_DIR)/../third-party/needs/sdl2/build/universal/$(PLATFORM_NAME)/lib/libSDL2.a
 
 COMPRESS_PNG_FILES = NO
 STRIP_PNG_TEXT = NO
 
-dependency_ldflags =  $(gtest_ldflags) $(scraps_ldflags) $(boost_ldflags) $(curl_ldflags) $(openssl_ldflags) "-lz"
+dependency_ldflags =  $(gtest_ldflags) $(scraps_ldflags) $(boost_ldflags) $(curl_ldflags) $(openssl_ldflags) $(libpng_ldflags) $(sdl2_ldflags) $(libjpegturbo_ldflags) "-lz"
 
-OTHER_LDFLAGS = $(inherited) $(dependency_ldflags)
+OTHER_LDFLAGS = $(inherited) $(okui_gtests_ldflags) $(okui_ldflags) $(dependency_ldflags)
 
 HEADER_SEARCH_PATHS = $(inherited) $(gtest_header_search_paths)
