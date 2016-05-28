@@ -7,8 +7,8 @@ rule okui-frameworks ( properties * ) {
 }
 
 cpp-pch pch :
-    ../scraps/lib//project_defaults
-    ../scraps/lib//scraps_headers
+    ../scraps//project_defaults
+    ../scraps//scraps_headers
     src/pch.h
 :
     <conditional>@use-pch
@@ -41,7 +41,7 @@ lib libSDL2 : ../third-party/needs//sdl2
 lib okui :
     pch
     [ glob-tree-ex src : *.cpp ]
-    ../scraps/lib//scraps
+    ../scraps//scraps
     libpng
     libturbojpeg
     libSDL2
