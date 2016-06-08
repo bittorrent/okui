@@ -7,7 +7,7 @@ cpp-pch pch :
     <include>./include
 ;
 
-lib libpng : ../third-party/needs//libpng : <name>png ;
+lib libpng : ../third-party/needs//libpng : <name>png <link>static ;
 lib libturbojpeg : ../third-party/needs//libjpeg-turbo : <name>turbojpeg ;
 lib libm         : : <name>m <link>shared ;
 lib libGLESv2    : : <name>GLESv2 <link>shared ;
