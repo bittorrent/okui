@@ -234,6 +234,8 @@ inline void SDL::run() {
 
         timer.restart();
 
+        if (scraps::platform::kIsTVOS && _backgrounded) { continue; }
+
         taskScheduler()->run();
 
         for (auto& kv : _windows) {
