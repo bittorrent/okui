@@ -10,7 +10,6 @@ cpp-pch pch :
 lib libpng : ../third-party/needs//libpng : <name>png <link>static ;
 lib libturbojpeg : ../third-party/needs//libjpeg-turbo : <name>turbojpeg ;
 lib libm         : : <name>m <link>shared ;
-lib libGLESv2    : : <name>GLESv2 <link>shared ;
 lib libiconv     : : <name>iconv ;
 
 
@@ -59,10 +58,6 @@ lib okui :
     <include>./include
     <link>static
     <target-os>linux:<source>libm
-    <target-os>android:<source>libGLESv2
 : :
     <include>./include
-    <target-os>darwin:<framework>OpenGL
-    <target-os>iphone:<framework>OpenGLES
-    <target-os>appletv:<framework>OpenGLES
 ;

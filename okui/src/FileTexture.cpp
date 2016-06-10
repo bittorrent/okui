@@ -220,7 +220,7 @@ GLuint FileTexture::_loadPNG(opengl::TextureCache* textureCache) {
     }
 #endif
 
-    ONAIR_OKUI_GL_ERROR_CHECK();
+    SCRAPS_GL_ERROR_CHECK();
 
     _cacheEntry = textureCache->add(texture, texture);
 
@@ -274,7 +274,7 @@ GLuint FileTexture::_loadJPEG(opengl::TextureCache* textureCache) {
     }
 #endif
 
-    ONAIR_OKUI_GL_ERROR_CHECK();
+    SCRAPS_GL_ERROR_CHECK();
 
     _cacheEntry = textureCache->add(texture, texture);
 

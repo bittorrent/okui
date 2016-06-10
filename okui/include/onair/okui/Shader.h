@@ -6,8 +6,9 @@
 #include "onair/okui/Point.h"
 
 #include "onair/okui/opengl/ShaderProgram.h"
-#include "onair/okui/opengl/VertexArrayBuffer.h"
 #include "onair/okui/AffineTransformation.h"
+
+#include "scraps/opengl/VertexArrayBuffer.h"
 
 namespace onair {
 namespace okui {
@@ -81,7 +82,7 @@ public:
 protected:
     opengl::ShaderProgram _program;
     std::vector<Vertex> _vertices;
-    opengl::VertexArrayBuffer _vertexArrayBuffer;
+    scraps::opengl::VertexArrayBuffer _vertexArrayBuffer;
     AffineTransformation _transformation;
     opengl::ShaderProgram::Uniform _blendingFlagsUniform;
 
@@ -149,7 +150,7 @@ protected:
 
 }}
 
-#define ONAIR_OKUI_SHADER_FRAGMENT_SHADER_HEADER ONAIR_OKUI_FRAGMENT_SHADER_HEADER \
+#define ONAIR_OKUI_SHADER_FRAGMENT_SHADER_HEADER SCRAPS_FRAGMENT_SHADER_HEADER \
     "uniform int blendingFlags;\n" \
     "vec4 unmultipliedInput(vec4 c) { return vec4((blendingFlags == 1 || blendingFlags == 3) ? (c.a > 0.0 ? c.rgb / c.a : vec3(0.0)) : c.rgb, c.a); }" \
     "vec4 multipliedOutput(vec4 c) { return vec4(c.rgb * (blendingFlags >= 2 ? c.a : 1.0), c.a); }" \

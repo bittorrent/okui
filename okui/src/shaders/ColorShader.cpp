@@ -5,7 +5,7 @@ namespace okui {
 namespace shaders {
 
 ColorShader::ColorShader() {
-    opengl::Shader vsh(ONAIR_OKUI_VERTEX_SHADER_HEADER R"(
+    opengl::Shader vsh(SCRAPS_VERTEX_SHADER_HEADER R"(
         ATTRIBUTE_IN vec2 positionAttrib;
         ATTRIBUTE_IN vec4 colorAttrib;
         ATTRIBUTE_IN vec4 curveAttrib;
@@ -72,7 +72,7 @@ ColorShader::ColorShader() {
     _vertexArrayBuffer.setAttribute(_program.attribute("colorAttrib"), 4, GL_FLOAT, GL_FALSE, stride, offsetof(Vertex, r));
     _vertexArrayBuffer.setAttribute(_program.attribute("curveAttrib"), 4, GL_FLOAT, GL_FALSE, stride, offsetof(Vertex, cu));
 
-    ONAIR_OKUI_GL_ERROR_CHECK();
+    SCRAPS_GL_ERROR_CHECK();
 }
 
 void ColorShader::setColor(const Color& color) {

@@ -394,7 +394,7 @@ void Window::_render() {
     RenderTarget target(_renderWidth, _renderHeight);
     _contentView->renderAndRenderSubviews(&target, {0, 0, _renderWidth, _renderHeight});
 
-    ONAIR_OKUI_GL_ERROR_CHECK();
+    SCRAPS_GL_ERROR_CHECK();
 }
 
 void Window::_didResize(int width, int height) {
