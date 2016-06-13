@@ -27,6 +27,7 @@ namespace okui {
 
 class Application : public Responder {
 public:
+    Application();
     virtual ~Application();
 
     virtual std::string name() const = 0;
