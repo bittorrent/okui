@@ -37,8 +37,6 @@ View::~View() {
         _previousFocus->_nextFocus = _nextFocus;
     }
 
-    _preferredFocus = nullptr;
-
     while (!subviews().empty()) {
         removeSubview(subviews().front());
     }
@@ -64,12 +62,7 @@ std::string View::name() const {
     return _name;
 }
 
-void View::addHiddenSubview(gsl::not_null<View*> view) {
-    view->setIsVisible(false);
-    addSubview(view);
-}
-
-void View::addSubview(gsl::not_null<View*> view) {
+void View::addSubview(View* view) {
     SCRAPS_ASSERT(view != this);
 
     if (view->_name.empty()) {
@@ -102,7 +95,12 @@ void View::addSubview(gsl::not_null<View*> view) {
     invalidateRenderCache();
 }
 
-void View::removeSubview(gsl::not_null<View*> view) {
+void View::addHiddenSubview(View* view) {
+    view->hide();
+    addSubview(view);
+}
+
+void View::removeSubview(View* view) {
     SCRAPS_ASSERT(view != this);
 
     if (view->isFocus()) {
@@ -434,7 +432,7 @@ void View::keyDown(KeyCode key, KeyModifiers mod, bool repeat) {
     Responder::keyDown(key, mod, repeat);
 }
 
-bool View::hasRelation(View::Relation relation, gsl::not_null<const View*> view) const {
+bool View::hasRelation(View::Relation relation, const View* view) const {
     switch (relation) {
         case Relation::kAny:
             return application() ? application() == view->application() : commonView(view) != nullptr;

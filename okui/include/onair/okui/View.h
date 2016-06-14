@@ -49,20 +49,20 @@ public:
     std::string name() const;
     void setName(std::string name) { _name = std::move(name); }
 
-    void addSubview(gsl::not_null<View*> view);
-    void addHiddenSubview(gsl::not_null<View*> view);
-    void removeSubview(gsl::not_null<View*> view);
+    void addSubview(View* view);
+    void addHiddenSubview(View* view);
+    void removeSubview(View* view);
 
     void addSubviews() {}
     template <typename... Views>
-    void addSubviews(gsl::not_null<View*> view, Views&&... views) {
+    void addSubviews(View* view, Views&&... views) {
         addSubview(view);
         addSubviews(std::forward<Views>(views)...);
     }
 
     void removeSubviews() {}
     template <typename... Views>
-    void removeSubviews(gsl::not_null<View*> view, Views&&... views) {
+    void removeSubviews(View* view, Views&&... views) {
         removeSubview(view);
         removeSubviews(std::forward<Views>(views)...);
     }
@@ -165,13 +165,8 @@ public:
     void focus();
 
     /**
-     * Sets the focus to the next ancestor that can receive focus. If the
-     * immediate parent is unable to receive focus, it will continue up the
-     * hierarchy until a suitable focus target is found. If none is found, focus
-     * is set to null.
-     *
-     * Note that this view may retain focus in the case that it receives focus
-     * as a result of being the preferred focus of one of its ancestors.
+     * Sets the focus to the next ancestor that can be focused which doesn't result in this view
+     * retaining focus (which would otherwise happen if your ancestor's preferred focus was you)
      */
     void focusAncestor();
 
@@ -306,12 +301,12 @@ public:
     *
     * For example, hasRelation(kDescendant, superview()) should return true.
     */
-    bool hasRelation(Relation relation, gsl::not_null<const View*> view) const;
+    bool hasRelation(Relation relation, const View* view) const;
 
     /**
     * Returns the first view that both views have in their hierarchy, if any.
     */
-    const View* commonView(gsl::not_null<const View*>(other)) const { return commonNode(other); }
+    const View* commonView(const View* other) const { return commonNode(other); }
 
     using TreeNode::isDescendantOf;
     using TreeNode::isAncestorOf;
