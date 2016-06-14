@@ -2,12 +2,13 @@
 
 #include "onair/okui/config.h"
 
-#include "scraps/HTTPConnection.h"
-#include "scraps/TCPAcceptor.h"
+#include "scraps/net/HTTPConnection.h"
+#include "scraps/net/TCPAcceptor.h"
 
 #include "TestApplication.h"
 
 using namespace scraps;
+using namespace scraps::net;
 using namespace onair::okui;
 
 namespace {
