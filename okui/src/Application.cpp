@@ -1,14 +1,14 @@
 #include "onair/okui/Application.h"
 
-#include "scraps/curl.h"
 #include "scraps/thread.h"
+#include "scraps/net/curl.h"
 #include "scraps/net/HTTPRequest.h"
 
 namespace onair {
 namespace okui {
 
 Application::Application() {
-    scraps::InitCURLThreadSafety();
+    scraps::net::InitCURLThreadSafety();
 }
 
 Application::~Application() {
