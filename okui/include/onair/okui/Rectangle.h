@@ -60,6 +60,13 @@ struct Rectangle {
     std::vector<Rectangle> operator-(const Rectangle& other) const;
 
     /**
+    * Interpolates based on a factor, where 0 returns this rectangle, and 1 returns the other
+    * rectangle.
+    */
+    template <typename Interpolation>
+    Rectangle interpolate(const Rectangle& other, double factor, Interpolation&& interpolation) const;
+
+    /**
     * Returns the area that another rectangle of the given aspect ratio (width / height) would
     * need to occupy to fill this rectangle via scaling only.
     */
@@ -157,9 +164,9 @@ Rectangle<T> Rectangle<T>::intersection(const Rectangle& other) const {
     auto min = Point<T>{std::max(minX(), other.minX()), std::max(minY(), other.minY())},
          max = Point<T>{std::min(maxX(), other.maxX()), std::min(maxY(), other.maxY())};
 
-    if (max.x <= min.x || max.y <= min.y) { return Rectangle<T>(); }
+    if (max.x <= min.x || max.y <= min.y) { return {}; }
 
-    return Rectangle<T>{min.x, min.y, max.x - min.x, max.y - min.y};
+    return {min.x, min.y, max.x - min.x, max.y - min.y};
 }
 
 template <typename T>
@@ -191,17 +198,28 @@ std::vector<Rectangle<T>> Rectangle<T>::operator-(const Rectangle& other) const 
 }
 
 template <typename T>
+template <typename Interpolation>
+Rectangle<T> Rectangle<T>::interpolate(const Rectangle<T>& other, double factor, Interpolation&& interpolation) const {
+    return {
+        interpolation(factor, x, other.x - x, 1.0),
+        interpolation(factor, y, other.y - y, 1.0),
+        interpolation(factor, width, other.width - width, 1.0),
+        interpolation(factor, height, other.height - height, 1.0)
+    };
+}
+
+template <typename T>
 Rectangle<double> Rectangle<T>::scaledFill(double aspectRatio) const {
     auto scaledHeight = std::max((double)width / aspectRatio, (double)height);
     auto scaledWidth = scaledHeight * aspectRatio;
-    return Rectangle<double>(x - 0.5 * (scaledWidth - width), y - 0.5 * (scaledHeight - height), scaledWidth, scaledHeight);
+    return {x - 0.5 * (scaledWidth - width), y - 0.5 * (scaledHeight - height), scaledWidth, scaledHeight};
 }
 
 template <typename T>
 Rectangle<double> Rectangle<T>::scaledFit(double aspectRatio) const {
     auto scaledHeight = std::min((double)width / aspectRatio, (double)height);
     auto scaledWidth = scaledHeight * aspectRatio;
-    return Rectangle<double>(x - 0.5 * (scaledWidth - width), y - 0.5 * (scaledHeight - height), scaledWidth, scaledHeight);
+    return {x - 0.5 * (scaledWidth - width), y - 0.5 * (scaledHeight - height), scaledWidth, scaledHeight};
 }
 
 }}

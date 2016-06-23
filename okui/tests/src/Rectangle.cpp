@@ -1,6 +1,7 @@
 #include "gtest/gtest.h"
 
 #include "onair/okui/Rectangle.h"
+#include "onair/okui/interpolation.h"
 
 using namespace onair::okui;
 
@@ -132,6 +133,12 @@ TEST(Rectangle, intersection) {
 
         EXPECT_EQ(a.intersection(b), Rectangle<int>(770, 0, 1130, 500));
     }
+}
+
+TEST(Rectangle, interpolation) {
+    EXPECT_EQ(Rectangle<int>(10, 10, 100, 200).interpolate(Rectangle<int>(-110, -310, 50, 300), 0.0, interpolation::Linear<int>), Rectangle<int>(10, 10, 100, 200));
+    EXPECT_EQ(Rectangle<int>(10, 10, 100, 200).interpolate(Rectangle<int>(-110, -310, 50, 300), 1.0, interpolation::Linear<int>), Rectangle<int>(-110, -310, 50, 300));
+    EXPECT_EQ(Rectangle<int>(10, 10, 100, 200).interpolate(Rectangle<int>(-110, -310, 50, 300), 0.7, interpolation::Linear<int>), Rectangle<int>(-74, -214, 65, 270));
 }
 
 TEST(Rectangle, scaledFill) {
