@@ -582,11 +582,11 @@ private:
     };
     std::list<Provision> _provisions;
 
-    scraps::AbstractTaskScheduler::TaskScope _taskScope;
-
     TouchpadFocus _touchpadFocus;
 
     std::unordered_map<size_t, std::function<void()>> _updateHooks;
+
+    scraps::AbstractTaskScheduler::TaskScope _taskScope; /* keep last */
 
     void _invalidateSuperviewRenderCache();
     void _setBounds(const Rectangle<double>& bounds);
