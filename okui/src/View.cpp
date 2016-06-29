@@ -37,6 +37,8 @@ View::~View() {
         _previousFocus->_nextFocus = _nextFocus;
     }
 
+    SCRAPS_ASSERT(!isFocus());
+
     while (!subviews().empty()) {
         removeSubview(subviews().front());
     }

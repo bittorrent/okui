@@ -44,6 +44,10 @@ public:
 
     View() = default;
     View(std::string name) : _name{std::move(name)} {}
+
+    /**
+    * It is an error to destroy a focused view. Remove the view first if needed.
+    */
     virtual ~View();
 
     std::string name() const;
