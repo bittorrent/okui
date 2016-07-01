@@ -10,9 +10,9 @@ namespace okui {
 class FileTexture : public Texture {
 public:
     FileTexture() = default;
-    FileTexture(std::shared_ptr<const std::string> data) { setData(data); }
+    FileTexture(std::shared_ptr<const std::string> data, const char* name = nullptr) { setData(data, name); }
 
-    void setData(std::shared_ptr<const std::string> data);
+    void setData(std::shared_ptr<const std::string> data, const char* name = nullptr);
 
     enum class Type {
         kUnknown, kPNG, kJPEG
@@ -37,13 +37,13 @@ private:
     int _width{0}, _height{0};
     int _allocatedWidth{0}, _allocatedHeight{0};
     opengl::TextureCache::EntryReference _cacheEntry;
-    
+
     bool _readPNGMetadata();
     GLuint _loadPNG(opengl::TextureCache* textureCache);
 
     bool _readJPEGMetadata();
     GLuint _loadJPEG(opengl::TextureCache* textureCache);
-    
+
     GLuint _generateTexture(GLint internalformat, GLenum format, GLenum type, const GLvoid * data);
 };
 

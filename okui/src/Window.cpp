@@ -74,7 +74,7 @@ TextureHandle Window::loadTextureResource(const std::string& name) {
     if (!resource) {
         return nullptr;
     }
-    auto handle = _textureCache.add(TextureHandle{std::make_shared<FileTexture>(resource)}, hashable);
+    auto handle = _textureCache.add(TextureHandle{std::make_shared<FileTexture>(resource, name.c_str())}, hashable);
     _texturesToLoad.emplace_back(handle.newHandle());
     return handle;
 }

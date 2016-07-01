@@ -48,7 +48,7 @@ static void PNGError(png_structp png, png_const_charp message) {
 
 static void PNGWarning(png_structp png, png_const_charp message) { /* nop */ }
 
-void FileTexture::setData(std::shared_ptr<const std::string> data) {
+void FileTexture::setData(std::shared_ptr<const std::string> data, const char* name) {
     _data = data;
     _cacheEntry = nullptr;
 
@@ -57,7 +57,7 @@ void FileTexture::setData(std::shared_ptr<const std::string> data) {
     } else if (_readJPEGMetadata()) {
         _type = Type::kJPEG;
     } else {
-        SCRAPS_LOG_ERROR("unknown file type");
+        SCRAPS_LOG_ERROR("unknown file type {}", name ? name : "");
         _type = Type::kUnknown;
         _data = nullptr;
     }
