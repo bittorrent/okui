@@ -155,6 +155,14 @@ TEST(View, removeSubviewRefocuses) {
     EXPECT_TRUE(c.isFocus());
 }
 
+TEST(View, removeSubviews) {
+    View a, b, c;
+    a.addSubviews(&b, &c);
+    EXPECT_EQ(a.subviews().size(), 2);
+    a.removeSubviews();
+    EXPECT_EQ(a.subviews().size(), 0);
+}
+
 TEST(View, destructionRefocuses) {
     struct FocusableView : View {
         virtual bool canBecomeFocus() override { return true; }

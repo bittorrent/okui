@@ -64,11 +64,15 @@ public:
         addSubviews(std::forward<Views>(views)...);
     }
 
-    void removeSubviews() {}
+    /**
+    * Removes all subviews.
+    */
+    void removeSubviews();
+
     template <typename... Views>
     void removeSubviews(View* view, Views&&... views) {
         removeSubview(view);
-        removeSubviews(std::forward<Views>(views)...);
+        _removeSubviewArgs(std::forward<Views>(views)...);
     }
 
     const View* superview() const { return parent(); }
@@ -594,6 +598,13 @@ private:
 
     void _invalidateSuperviewRenderCache();
     void _setBounds(const Rectangle<double>& bounds);
+
+    void _removeSubviewArgs() {}
+    template <typename... Views>
+    void _removeSubviewArgs(View* view, Views&&... views) {
+        removeSubview(view);
+        _removeSubviewArgs(std::forward<Views>(views)...);
+    }
 
     void _dispatchFutureVisibilityChange(bool visible);
     void _dispatchVisibilityChange(bool visible);

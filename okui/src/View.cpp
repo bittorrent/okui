@@ -37,9 +37,7 @@ View::~View() {
         _previousFocus->_nextFocus = _nextFocus;
     }
 
-    while (!subviews().empty()) {
-        removeSubview(subviews().front());
-    }
+    removeSubviews();
 
     if (superview()) {
         superview()->removeSubview(this);
@@ -133,6 +131,12 @@ void View::removeSubview(View* view) {
     }
 
     invalidateRenderCache();
+}
+
+void View::removeSubviews() {
+    while (!subviews().empty()) {
+        removeSubview(subviews().front());
+    }
 }
 
 void View::setIsVisible(bool isVisible) {
