@@ -27,5 +27,6 @@ constexpr Command kCommandCut        = "cut"_cmd;
 constexpr Command kCommandPaste      = "paste"_cmd;
 constexpr Command kCommandQuit       = "quit"_cmd;
 constexpr Command kCommandSelectAll  = "select all"_cmd;
+constexpr Command kCommandBack       = "back"_cmd;
 
 }} // namespace onair::okui

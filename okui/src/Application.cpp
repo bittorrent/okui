@@ -1,5 +1,7 @@
 #include "onair/okui/Application.h"
 
+#include "onair/okui/Window.h"
+
 #include "scraps/thread.h"
 #include "scraps/net/curl.h"
 #include "scraps/net/HTTPRequest.h"
@@ -15,6 +17,10 @@ Application::~Application() {
     for (auto& task : _backgroundTasks) {
         task.wait();
     }
+}
+
+Responder* Application::firstResponder() {
+    return activeWindow() ? activeWindow()->firstResponder() : this;
 }
 
 std::future<std::shared_ptr<const std::string>> Application::download(const std::string& url, bool useCache) {
@@ -74,7 +80,7 @@ std::future<std::shared_ptr<const std::string>> Application::download(const std:
     return future;
 }
 
-void Application::post(View* sender, std::type_index index, const void* message, View::Relation relation) {
+void Application::post(View* sender, std::type_index index, const void* message, Relation relation) {
     auto range = _listeners.equal_range(index);
     for (auto it = range.first; it != range.second; ++it) {
         if (it->second.view->hasRelation(relation, sender) && sender->hasRelation(it->second.relation, it->second.view)) {
@@ -83,7 +89,7 @@ void Application::post(View* sender, std::type_index index, const void* message,
     }
 }
 
-void Application::addListener(View* view, std::type_index index, std::function<void(const void*, View*)>* action, View::Relation relation) {
+void Application::addListener(View* view, std::type_index index, std::function<void(const void*, View*)>* action, Relation relation) {
     _listeners.emplace(index, Listener(view, action, relation));
 }
 
@@ -103,6 +109,22 @@ size_t Application::downloadCacheSize() const {
         ret += sizeof(kv) + (kv.second->result ? kv.second->result->size() : 0);
     }
     return ret;
+}
+
+void Application::_update(Window* window) {
+    window->_update();
+}
+
+void Application::_render(Window* window) {
+    window->_render();
+}
+
+void Application::_didResize(Window* window, int width, int height) {
+    window->_didResize(width, height);
+}
+
+void Application::_assignWindowSize(Window* window) {
+    getWindowSize(window, &window->_width, &window->_height);
 }
 
 } // namespace okui

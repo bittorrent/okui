@@ -1,4 +1,4 @@
-#include "onair/okui/views/Button.h"
+#include "onair/okui/views/ImageButton.h"
 
 #include "onair/okui/Application.h"
 
@@ -18,81 +18,42 @@ constexpr auto DepressedColor(Color c) {
 
 }
 
-void Button::setAction(std::function<void()> action) {
-    _action = std::move(action);
-}
-
-void Button::setAction(Command command, CommandContext context) {
-    _action = [=] { application()->command(command, context); };
-}
-
-void Button::setTextureResource(std::string resource, State state) {
+void ImageButton::setTextureResource(std::string resource, State state) {
     _stateImageView(state).setTextureResource(std::move(resource));
 }
 
-void Button::setTextureFromURL(std::string url, State state) {
+void ImageButton::setTextureFromURL(std::string url, State state) {
     _stateImageView(state).setTextureFromURL(std::move(url));
 }
 
-void Button::setTextureFromURL(std::string url, std::string placeholderResource, State state) {
+void ImageButton::setTextureFromURL(std::string url, std::string placeholderResource, State state) {
     _stateImageView(state).setTextureFromURL(std::move(url), std::move(placeholderResource));
 }
 
-void Button::setTextureColor(Color color, State state) {
+void ImageButton::setTextureColor(Color color, State state) {
     _stateImageView(state).setTextureColor(color);
     if (state == State::kNormal) { _normalColor = color; }
 }
 
-void Button::setTextureDistanceField(double edge, State state) {
+void ImageButton::setTextureDistanceField(double edge, State state) {
     _stateImageView(state).setTextureDistanceField(edge);
 }
 
-void Button::press() {
-    if (_action) { _action(); }
-}
-
-void Button::mouseDown(MouseButton button, double x, double y) {
-    _changeState(State::kDepressed);
-    _mouseDown = true;
-}
-
-void Button::mouseUp(MouseButton button, double startX, double startY, double x, double y) {
-    if (_mouseDown) {
-        _mouseDown = false;
-        _changeState(State::kNormal);
-        if (_action) { _action(); }
-    }
-}
-
-void Button::mouseExit() {
-    _changeState(State::kNormal);
-    _mouseDown = false;
-}
-
-void Button::keyDown(KeyCode key, KeyModifiers mod, bool repeat) {
-    if (key == KeyCode::kSpace || key == KeyCode::kReturn || key == KeyCode::kSelect) {
-        if (_action) { _action(); }
-        return;
-    }
-
-    onair::okui::View::keyDown(key, mod, repeat);
-}
-
-void Button::layout() {
+void ImageButton::layout() {
     for (auto& i : _imageViews) {
         i.second.setBoundsRelative(0, 0, 1, 1);
     }
 }
 
-ImageView& Button::_stateImageView(State state) {
+ImageView& ImageButton::_stateImageView(State state) {
     auto imageIt = _imageViews.find(state);
 
     if (imageIt == _imageViews.end()){
         auto& image = _imageViews[state];
         addHiddenSubview(&image);
         image.setBoundsRelative(0, 0, 1, 1);
-        if (_state == state) {
-            _changeState(state);
+        if (this->state() == state) {
+            stateChanged();
         }
 
         return image;
@@ -101,14 +62,14 @@ ImageView& Button::_stateImageView(State state) {
     return imageIt->second;
 }
 
-void Button::_changeState(State state) {
+void ImageButton::stateChanged() {
     for (auto& i : _imageViews) {
-        i.second.setIsVisible(i.first == state);
+        i.second.setIsVisible(i.first == state());
     }
 
     auto normalImageView = _imageViews.find(State::kNormal);
 
-    switch (state) {
+    switch (state()) {
         case State::kNormal:
             if (normalImageView != _imageViews.end()) {
                 normalImageView->second.setTextureColor(_normalColor);

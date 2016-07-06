@@ -65,6 +65,17 @@ public:
 
     virtual bool isMobileConnection() const override;
 
+    virtual bool canHandleCommand(Command command) override {
+        return command == kCommandBack || Base::canHandleCommand(command);
+    }
+
+    virtual void handleCommand(Command command, CommandContext context) override {
+        if (command == kCommandBack) {
+            return quit();
+        }
+        Base::handleCommand(command, context);
+    }
+
     class AssetResourceManager : public ResourceManager {
     public:
         AssetResourceManager(JNIEnv* env, jobject assetManager)
@@ -147,9 +158,16 @@ template <typename Base>
 inline void Android<Base>::openDialog(Window* window,
                          const char* title,
                          const char* message,
-                         const std::vector<std::string>& buttons,
-                         std::function<void(int)> action) {
-    _javaHelper->openDialog(title, message, buttons, new AndroidJavaHelper::OpenDialogCallback([=] (int button) {
+                         const std::vector<DialogButton>& buttons,
+                         std::function<void(int)> action)
+{
+    // TODO: support button styles?
+    std::vector<std::string> buttonLabels;
+    for (auto& button : buttons) {
+        buttonLabels.emplace_back(button.label);
+    }
+
+    _javaHelper->openDialog(title, message, buttonLabels, new AndroidJavaHelper::OpenDialogCallback([=] (int button) {
         this->taskScheduler()->async([=] {
             action(button);
         });

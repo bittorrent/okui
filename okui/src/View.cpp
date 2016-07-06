@@ -103,9 +103,6 @@ void View::removeSubview(View* view) {
 
     if (view->isFocus()) {
         view->focusAncestor();
-        if (view->isFocus()) {
-            view->unfocus();
-        }
     }
 
     bool viewIsDisappearing = view->isVisibleInOpenWindow();
@@ -207,7 +204,7 @@ void View::focus() {
 
 void View::focusAncestor() {
     for (auto nextFocus = superview(); nextFocus; nextFocus = nextFocus->superview()) {
-        if (!nextFocus->canBecomeFocus()) {
+        if (!nextFocus->canBecomeFocus() || !nextFocus->isVisible() || !nextFocus->ancestorsAreVisible()) {
             continue;
         }
         if (PreferredFocusLeaf(nextFocus) != this) {
@@ -436,7 +433,7 @@ void View::keyDown(KeyCode key, KeyModifiers mod, bool repeat) {
     Responder::keyDown(key, mod, repeat);
 }
 
-bool View::hasRelation(View::Relation relation, const View* view) const {
+bool View::hasRelation(Relation relation, const View* view) const {
     switch (relation) {
         case Relation::kAny:
             return application() ? application() == view->application() : commonView(view) != nullptr;
@@ -701,6 +698,10 @@ void View::_dispatchFutureVisibilityChange(bool visible) {
 }
 
 void View::_dispatchVisibilityChange(bool visible) {
+    if (!visible && isFocus()) {
+        focusAncestor();
+    }
+
     if (visible) {
         appeared();
     } else {
@@ -719,6 +720,10 @@ void View::_dispatchVisibilityChange(bool visible) {
 void View::_dispatchWindowChange(Window* window) {
     if (application()) {
         application()->removeListeners(this);
+    }
+
+    if (_window) {
+        _window->unsubscribeFromUpdates(this);
     }
 
     _window = window;
@@ -825,20 +830,20 @@ void View::_renderAndRenderSubviews(const RenderTarget* target, const Rectangle<
     }
 }
 
-void View::_post(std::type_index index, const void* ptr, View::Relation relation) {
+void View::_post(std::type_index index, const void* ptr, Relation relation) {
     if (application()) {
         application()->post(this, index, ptr, relation);
     }
 }
 
-void View::_listen(std::type_index index, std::function<void(const void*, View*)> action, View::Relation relation) {
+void View::_listen(std::type_index index, std::function<void(const void*, View*)> action, Relation relation) {
     _listeners.emplace_back(index, std::move(action), relation);
     if (application()) {
         application()->addListener(this, index, &_listeners.back().action, relation);
     }
 }
 
-std::vector<View*> View::_topViewsForRelation(View::Relation relation) {
+std::vector<View*> View::_topViewsForRelation(Relation relation) {
     auto* thisRootView = root();
     std::vector<View*> ret{thisRootView};
     if (relation == Relation::kAny && application()) {

@@ -2,12 +2,13 @@
 
 #include "onair/okui/config.h"
 
+#include "onair/okui/Application.h"
+#include "onair/okui/Command.h"
 #include "onair/okui/Controller.h"
 #include "onair/okui/FileResourceManager.h"
-#include "onair/okui/Application.h"
 #include "onair/okui/Rectangle.h"
-#include "onair/okui/Point.h"
 #include "onair/okui/applications/SDLKeycode.h"
+#include "onair/okui/Window.h"
 
 #include "scraps/Timer.h"
 
@@ -25,6 +26,8 @@
 @property onair::okui::Application* application;
 @end
 #endif // SCRAPS_MAC_OS_X
+
+using namespace std::literals;
 
 namespace onair {
 namespace okui {
@@ -65,8 +68,6 @@ public:
     virtual void setCursorType(CursorType type) override;
     virtual void showCursor(bool visible = true) override;
     virtual bool isCursorVisible() const override;
-
-    virtual void setCanHandleNavigateBack(bool canHandle = true) override;
 
 #if SCRAPS_MAC_OS_X
     virtual NSWindow* nativeWindow(Window* window) const override;
@@ -135,6 +136,8 @@ private:
     void _handleJoystickAxisEvent(const SDL_JoyAxisEvent& event);
     void _handleJoystickButtonEvent(const SDL_JoyButtonEvent& event);
 
+    void _checkBackCommand();
+
     std::unordered_map<Window*, uint32_t> _windowIds;
     std::unordered_map<uint32_t, WindowInfo> _windows;
     Window* _activeWindow = nullptr;
@@ -173,6 +176,8 @@ inline SDL::SDL() {
         SDL_free(path);
         setResourceManager(_resourceManager.get());
     }
+
+    _checkBackCommand();
 }
 
 inline SDL::~SDL() {
@@ -678,9 +683,10 @@ inline bool SDL::isCursorVisible() const {
     return ret;
 }
 
-inline void SDL::setCanHandleNavigateBack(bool canHandle) {
+inline void SDL::_checkBackCommand() {
 #if SCRAPS_TVOS
-    SDL_SetHint(SDL_HINT_APPLE_TV_CONTROLLER_UI_EVENTS, canHandle ? "0" : "1");
+    SDL_SetHint(SDL_HINT_APPLE_TV_CONTROLLER_UI_EVENTS, firstResponder()->chainCanHandleCommand(kCommandBack) ? "0" : "1");
+    taskScheduler()->asyncAfter(100ms, [this]{ _checkBackCommand(); });
 #endif
 }
 

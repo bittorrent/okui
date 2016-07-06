@@ -232,7 +232,7 @@ bool Window::moveFocus(Direction direction) {
     return false;
 }
 
-void Window::openDialog(const char* title, const char* message, const std::vector<std::string>& buttons, std::function<void(int)> action) {
+void Window::openDialog(const char* title, const char* message, const std::vector<DialogButton>& buttons, std::function<void(int)> action) {
     return application()->openDialog(this, title, message, buttons, std::move(action));
 }
 

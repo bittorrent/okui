@@ -2,16 +2,16 @@
 
 #include "onair/okui/config.h"
 
-#include "onair/okui/views/ImageView.h"
+#include "onair/okui/View.h"
 
 #include <functional>
-#include <unordered_map>
 
 namespace onair {
 namespace okui {
 namespace views {
 
-class Button : public View {
+template <typename BaseView>
+class Button : public BaseView {
 public:
     enum class State {
         kNormal,
@@ -19,36 +19,63 @@ public:
     };
 
     State state() const { return _state; }
-    TextureHandle& texture(State state = State::kNormal) { return _imageViews[state].texture(); }
-    ImageView& image(State state = State::kNormal) { return _imageViews[state]; }
 
-    void setAction(std::function<void()> action);
-    void setAction(Command command, CommandContext context);
+    void setAction(std::function<void()> action) {
+        _action = std::move(action);
+    }
 
-    void setTextureResource(std::string resource, State state = State::kNormal);
-    void setTextureFromURL(std::string url, State state = State::kNormal);
-    void setTextureFromURL(std::string url, std::string placeholderResource, State state = State::kNormal);
-    void setTextureColor(Color color, State state = State::kNormal);
-    void setTextureDistanceField(double edge = 0.5, State state = State::kNormal);
+    void setAction(Command command, CommandContext context = {}) {
+        _action = [=] { this->application()->command(command, context); };
+    }
 
-    void press();
+    void press() {
+        if (_action) { _action(); }
+    }
 
     virtual bool canBecomeFocus() override { return true; }
-    virtual void mouseDown(MouseButton button, double x, double y) override;
-    virtual void mouseUp(MouseButton button, double startX, double startY, double x, double y) override;
-    virtual void mouseExit() override;
-    virtual void keyDown(KeyCode key, KeyModifiers mod, bool repeat) override;
-    virtual void layout() override;
+
+    virtual void mouseDown(MouseButton button, double x, double y) override {
+        _changeState(State::kDepressed);
+        _mouseDown = true;
+    }
+
+    virtual void mouseUp(MouseButton button, double startX, double startY, double x, double y) override {
+        if (_mouseDown) {
+            _mouseDown = false;
+            _changeState(State::kNormal);
+            if (_action) { _action(); }
+        }
+    }
+
+    virtual void mouseExit() override {
+        _changeState(State::kNormal);
+        _mouseDown = false;
+    }
+
+    virtual void keyDown(KeyCode key, KeyModifiers mod, bool repeat) override {
+        if (key == KeyCode::kSpace || key == KeyCode::kReturn || key == KeyCode::kSelect) {
+            if (_action) { _action(); }
+            return;
+        }
+
+        BaseView::keyDown(key, mod, repeat);
+    }
+
+protected:
+    /**
+    * Subclasses can use this to update when their state changes.
+    */
+    virtual void stateChanged() {}
 
 private:
-    ImageView& _stateImageView(State state);
-    void _changeState(State state);
+    std::function<void()> _action;
+    bool _mouseDown = false;
+    State _state = State::kNormal;
 
-    State                                _state = State::kNormal;
-    std::unordered_map<State, ImageView> _imageViews;
-    Color                                _normalColor = {1, 1, 1, 1};
-    std::function<void()>                _action;
-    bool                                 _mouseDown = false;
+    void _changeState(State state) {
+        _state = state;
+        stateChanged();
+    }
 };
 
 }}}

@@ -1,1 +1,3 @@
-exe sdf-generator : main.cpp ../../../third-party/libpng//png ;
+lib png : ../../../third-party/needs//libpng : <name>png ;
+lib z ;
+exe sdf-generator : main.cpp png z ;

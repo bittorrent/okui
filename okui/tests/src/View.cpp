@@ -336,52 +336,52 @@ TEST(View, appearedDisappeared) {
 TEST(View, hasRelation) {
     View a, b, c;
 
-    EXPECT_FALSE(a.hasRelation(View::Relation::kAny, &b));
-    EXPECT_FALSE(a.hasRelation(View::Relation::kHierarchy, &b));
-    EXPECT_FALSE(a.hasRelation(View::Relation::kDescendant, &b));
-    EXPECT_FALSE(a.hasRelation(View::Relation::kAncestor, &b));
-    EXPECT_FALSE(a.hasRelation(View::Relation::kSibling, &b));
+    EXPECT_FALSE(a.hasRelation(Relation::kAny, &b));
+    EXPECT_FALSE(a.hasRelation(Relation::kHierarchy, &b));
+    EXPECT_FALSE(a.hasRelation(Relation::kDescendant, &b));
+    EXPECT_FALSE(a.hasRelation(Relation::kAncestor, &b));
+    EXPECT_FALSE(a.hasRelation(Relation::kSibling, &b));
 
     a.addSubview(&b);
-    EXPECT_TRUE(a.hasRelation(View::Relation::kAny, &b));
-    EXPECT_TRUE(a.hasRelation(View::Relation::kHierarchy, &b));
-    EXPECT_TRUE(b.hasRelation(View::Relation::kHierarchy, &a));
-    EXPECT_FALSE(a.hasRelation(View::Relation::kDescendant, &b));
-    EXPECT_TRUE(a.hasRelation(View::Relation::kAncestor, &b));
-    EXPECT_TRUE(b.hasRelation(View::Relation::kDescendant, &a));
-    EXPECT_FALSE(a.hasRelation(View::Relation::kSibling, &b));
+    EXPECT_TRUE(a.hasRelation(Relation::kAny, &b));
+    EXPECT_TRUE(a.hasRelation(Relation::kHierarchy, &b));
+    EXPECT_TRUE(b.hasRelation(Relation::kHierarchy, &a));
+    EXPECT_FALSE(a.hasRelation(Relation::kDescendant, &b));
+    EXPECT_TRUE(a.hasRelation(Relation::kAncestor, &b));
+    EXPECT_TRUE(b.hasRelation(Relation::kDescendant, &a));
+    EXPECT_FALSE(a.hasRelation(Relation::kSibling, &b));
 
     a.addSubview(&c);
-    EXPECT_TRUE(c.hasRelation(View::Relation::kAny, &b));
-    EXPECT_TRUE(c.hasRelation(View::Relation::kHierarchy, &b));
-    EXPECT_FALSE(c.hasRelation(View::Relation::kDescendant, &b));
-    EXPECT_FALSE(c.hasRelation(View::Relation::kAncestor, &b));
-    EXPECT_FALSE(a.hasRelation(View::Relation::kSibling, &c));
-    EXPECT_FALSE(c.hasRelation(View::Relation::kSibling, &a));
-    EXPECT_TRUE(c.hasRelation(View::Relation::kSibling, &b));
-    EXPECT_TRUE(b.hasRelation(View::Relation::kSibling, &c));
-    EXPECT_FALSE(b.hasRelation(View::Relation::kSibling, &b));
+    EXPECT_TRUE(c.hasRelation(Relation::kAny, &b));
+    EXPECT_TRUE(c.hasRelation(Relation::kHierarchy, &b));
+    EXPECT_FALSE(c.hasRelation(Relation::kDescendant, &b));
+    EXPECT_FALSE(c.hasRelation(Relation::kAncestor, &b));
+    EXPECT_FALSE(a.hasRelation(Relation::kSibling, &c));
+    EXPECT_FALSE(c.hasRelation(Relation::kSibling, &a));
+    EXPECT_TRUE(c.hasRelation(Relation::kSibling, &b));
+    EXPECT_TRUE(b.hasRelation(Relation::kSibling, &c));
+    EXPECT_FALSE(b.hasRelation(Relation::kSibling, &b));
 
     TestApplication application;
     okui::Window window(&application);
     window.contentView()->addSubview(&a);
 
-    EXPECT_TRUE(a.hasRelation(View::Relation::kAny, &b));
-    EXPECT_TRUE(a.hasRelation(View::Relation::kHierarchy, &b));
-    EXPECT_TRUE(a.hasRelation(View::Relation::kAny, &c));
-    EXPECT_TRUE(a.hasRelation(View::Relation::kHierarchy, &c));
-    EXPECT_TRUE(b.hasRelation(View::Relation::kAny, &c));
-    EXPECT_TRUE(b.hasRelation(View::Relation::kHierarchy, &c));
+    EXPECT_TRUE(a.hasRelation(Relation::kAny, &b));
+    EXPECT_TRUE(a.hasRelation(Relation::kHierarchy, &b));
+    EXPECT_TRUE(a.hasRelation(Relation::kAny, &c));
+    EXPECT_TRUE(a.hasRelation(Relation::kHierarchy, &c));
+    EXPECT_TRUE(b.hasRelation(Relation::kAny, &c));
+    EXPECT_TRUE(b.hasRelation(Relation::kHierarchy, &c));
 
     okui::Window secondWindow(&application);
     secondWindow.contentView()->addSubview(&c);
 
-    EXPECT_TRUE(a.hasRelation(View::Relation::kAny, &b));
-    EXPECT_TRUE(a.hasRelation(View::Relation::kHierarchy, &b));
-    EXPECT_TRUE(a.hasRelation(View::Relation::kAny, &c));
-    EXPECT_FALSE(a.hasRelation(View::Relation::kHierarchy, &c));
-    EXPECT_TRUE(b.hasRelation(View::Relation::kAny, &c));
-    EXPECT_FALSE(b.hasRelation(View::Relation::kHierarchy, &c));
+    EXPECT_TRUE(a.hasRelation(Relation::kAny, &b));
+    EXPECT_TRUE(a.hasRelation(Relation::kHierarchy, &b));
+    EXPECT_TRUE(a.hasRelation(Relation::kAny, &c));
+    EXPECT_FALSE(a.hasRelation(Relation::kHierarchy, &c));
+    EXPECT_TRUE(b.hasRelation(Relation::kAny, &c));
+    EXPECT_FALSE(b.hasRelation(Relation::kHierarchy, &c));
 }
 #endif // ONAIR_OKUI_HAS_NATIVE_APPLICATION
 
@@ -394,13 +394,13 @@ TEST(View, messagePosting) {
     b.listen([&] (const int& message) {
         EXPECT_EQ(message, 7);
         ++received;
-    }, View::Relation::kAncestor);
+    }, Relation::kAncestor);
 
     c.listen([&] (const int& message, View* sender) {
         EXPECT_EQ(sender, &a);
         EXPECT_EQ(message, 7);
         ++received;
-    }, View::Relation::kAncestor);
+    }, Relation::kAncestor);
 
     TestApplication application;
     okui::Window window(&application);
@@ -409,16 +409,16 @@ TEST(View, messagePosting) {
     a.addSubview(&c);
 
     int message = 7;
-    a.post(message, View::Relation::kDescendant);
+    a.post(message, Relation::kDescendant);
     EXPECT_EQ(received, 2);
 
     a.listen([&] (const int& message, View* sender) {
         EXPECT_EQ(sender, &b);
         EXPECT_EQ(message, 5);
         ++received;
-    }, View::Relation::kDescendant);
+    }, Relation::kDescendant);
 
-    b.post(5, View::Relation::kAncestor);
+    b.post(5, Relation::kAncestor);
     EXPECT_EQ(received, 3);
 }
 #endif // ONAIR_OKUI_HAS_NATIVE_APPLICATION
@@ -428,13 +428,13 @@ TEST(View, provisions) {
 
     int n = 0;
 
-    a.set(&n);
+    a.set(n);
     a.addSubview(&b);
     b.addSubview(&c);
 
-    EXPECT_NE(a.get<int*>(), nullptr);
-    EXPECT_NE(b.get<int*>(View::Relation::kAncestor), nullptr);
-    EXPECT_NE(c.get<int*>(View::Relation::kAncestor), nullptr);
+    EXPECT_TRUE(a.get<int>());
+    EXPECT_TRUE(b.inherit<int>());
+    EXPECT_TRUE(c.inherit<int>());
 
     struct State {
         int x = 7;
@@ -442,13 +442,13 @@ TEST(View, provisions) {
 
     a.set(state);
 
-    auto* attachedState = a.get<State>();
-    ASSERT_NE(attachedState, nullptr);
+    auto attachedState = a.get<State>();
+    ASSERT_TRUE(attachedState);
     EXPECT_EQ(attachedState->x, 7);
 
     attachedState->x = 8;
-    auto* attachedState2 = a.get<State>();
-    ASSERT_NE(attachedState2, nullptr);
+    auto attachedState2 = a.get<State>();
+    ASSERT_TRUE(attachedState2);
     EXPECT_EQ(attachedState2->x, 8);
 }
 

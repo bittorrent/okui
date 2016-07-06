@@ -3,6 +3,7 @@
 #include "onair/okui/config.h"
 
 #include "onair/okui/opengl/TextureCache.h"
+#include "onair/okui/DialogButton.h"
 #include "onair/okui/Direction.h"
 #include "onair/okui/Menu.h"
 #include "onair/okui/Point.h"
@@ -107,18 +108,18 @@ public:
     void openDialog(
         const char* title,
         const char* message,
-        const std::vector<std::string>& buttons,
+        const std::vector<DialogButton>& buttons,
         std::function<void(int)> action = std::function<void(int)>()
     );
 
     template <typename T>
     auto set(T&& object) {
-        return contentView()->set(std::forward<T>(object), View::Relation::kHierarchy);
+        return contentView()->set(std::forward<T>(object), Relation::kHierarchy);
     }
 
     template <typename T>
     auto get() {
-        return contentView()->get<T>(View::Relation::kSelf);
+        return contentView()->get<T>();
     }
 
     /**

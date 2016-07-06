@@ -72,7 +72,7 @@ public:
 
     virtual bool canHandleCommand(Command command) { return false; }
 
-    virtual void handleCommand(Command command, CommandContext context) {
+    virtual void handleCommand(Command command, CommandContext context = {}) {
         if (auto next = nextResponder()) { next->handleCommand(command, context); }
     }
 

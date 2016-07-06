@@ -12,16 +12,6 @@
 #import <UIKit/UIKit.h>
 #import <AVFoundation/AVFoundation.h>
 
-#if SCRAPS_IOS
-@interface AlertViewHelper : NSObject<UIAlertViewDelegate>
-    typedef void(^CompletionHandler)(NSInteger buttonIndex);
-    @property (strong,nonatomic) CompletionHandler completionHandler;
-
-    + (void)showAlertView:(UIAlertView*)alertView withCompletionHandler:(CompletionHandler)handler;
-    - (void)alertView:(UIAlertView *)alertView didDismissWithButtonIndex:(NSInteger)buttonIndex;
-@end
-#endif
-
 namespace onair {
 namespace okui {
 namespace applications {
@@ -37,7 +27,7 @@ public:
     virtual bool canOpenURL(const char* url) const override;
     virtual bool openURL(const char* url) override;
 
-    virtual void openDialog(Window* window, const char* title, const char* message, const std::vector<std::string>& buttons, std::function<void(int)> action = std::function<void(int)>()) override;
+    virtual void openDialog(Window* window, const char* title, const char* message, const std::vector<DialogButton>& buttons, std::function<void(int)> action = {}) override;
 
     virtual bool hasStatusBar() const override { return true; }
     virtual void showStatusBar() override;
@@ -58,20 +48,21 @@ inline bool IOS<Base>::openURL(const char* url) {
 }
 
 template <typename Base>
-inline void IOS<Base>::openDialog(Window* window, const char* title, const char* message, const std::vector<std::string>& buttons, std::function<void(int)> action) {
-#if SCRAPS_IOS
-    UIAlertView* alert = [UIAlertView new];
-    alert.title = [NSString stringWithUTF8String:title];
-    alert.message = [NSString stringWithUTF8String:message];
+inline void IOS<Base>::openDialog(Window* window, const char* title, const char* message, const std::vector<DialogButton>& buttons, std::function<void(int)> action) {
+    UIAlertController* alert = [UIAlertController alertControllerWithTitle:[NSString stringWithUTF8String:title]
+                                message:[NSString stringWithUTF8String:message] preferredStyle:UIAlertControllerStyleAlert];
+
+    int i = 0;
     for (auto& button : buttons) {
-        [alert addButtonWithTitle:[NSString stringWithUTF8String:button.c_str()]];
+        auto style = button.isCancel ? UIAlertActionStyleCancel : (button.isDestructive ? UIAlertActionStyleDestructive : UIAlertActionStyleDefault);
+        UIAlertAction* alertAction = [UIAlertAction actionWithTitle:[NSString stringWithUTF8String:button.label.c_str()] style:style handler:^(UIAlertAction* alertAction) {
+            action(i);
+        }];
+        [alert addAction:alertAction];
+        ++i;
     }
-    [AlertViewHelper showAlertView:alert withCompletionHandler:^(NSInteger buttonIndex) {
-        if (action) {
-            action(buttonIndex);
-        }
-    }];
-#endif
+
+    [[UIApplication sharedApplication].keyWindow.rootViewController presentViewController:alert animated:YES completion:nil];
 }
 
 template <typename Base>

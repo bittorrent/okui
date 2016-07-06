@@ -2,11 +2,12 @@
 
 #include "onair/okui/config.h"
 
+#include "onair/okui/CursorTypes.h"
+#include "onair/okui/DialogButton.h"
+#include "onair/okui/Menu.h"
+#include "onair/okui/Relation.h"
 #include "onair/okui/ResourceManager.h"
 #include "onair/okui/Responder.h"
-#include "onair/okui/Menu.h"
-#include "onair/okui/Window.h"
-#include "onair/okui/CursorTypes.h"
 
 #include "scraps/TaskQueue.h"
 
@@ -24,6 +25,11 @@
 
 namespace onair {
 namespace okui {
+
+class Window;
+struct WindowPosition;
+
+class View;
 
 class Application : public Responder {
 public:
@@ -157,8 +163,8 @@ public:
     virtual void openDialog(Window* window,
                             const char* title,
                             const char* message,
-                            const std::vector<std::string>& buttons,
-                            std::function<void(int)> action = std::function<void(int)>()) = 0;
+                            const std::vector<DialogButton>& buttons,
+                            std::function<void(int)> action = {}) = 0;
 
     virtual double renderScale() const { return 1.0; }
 
@@ -196,8 +202,6 @@ public:
     virtual void showCursor(bool visible = true) {}
     virtual bool isCursorVisible() const { return true; }
 
-    virtual void setCanHandleNavigateBack(bool canHandle = true) {}
-
     virtual bool hasStatusBar() const { return false; }
 
     virtual void showStatusBar() {}
@@ -214,12 +218,12 @@ public:
     * The application-wide first responder is the active window's first responder or the application if
     * there are no open windows.
     */
-    Responder* firstResponder() { return activeWindow() ? activeWindow()->firstResponder() : this; }
+    Responder* firstResponder();
 
     /**
     * Executes the given command. Equivalent to `firstResponder()->handleCommand(command, context)`.
     */
-    void command(Command command, CommandContext context) { firstResponder()->handleCommand(command, context); }
+    void command(Command command, CommandContext context = {}) { firstResponder()->handleCommand(command, context); }
 
     virtual bool canHandleCommand(Command command) override {
         return command == kCommandQuit;
@@ -253,12 +257,12 @@ public:
     /**
     * Used by views to post messages to listeners.
     */
-    void post(View* sender, std::type_index index, const void* message, View::Relation relation);
+    void post(View* sender, std::type_index index, const void* message, Relation relation);
 
     /**
     * Used by views to listed for posted messages.
     */
-    void addListener(View* view, std::type_index index, std::function<void(const void*, View*)>* action, View::Relation relation);
+    void addListener(View* view, std::type_index index, std::function<void(const void*, View*)>* action, Relation relation);
     void removeListeners(View* view);
 
 #if SCRAPS_MAC_OS_X
@@ -272,11 +276,36 @@ public:
     size_t cachedDownloads() const { return _downloads.size(); }
     size_t downloadCacheSize() const;
 
+    /**
+    * Makes the given object available via get(). This can be used to store or make available arbitrary
+    * state that views can access via View::inherit.
+    */
+    template <typename T>
+    auto set(T&& object) {
+        _provisions.emplace_front(std::forward<T>(object));
+        return scraps::stdts::any_cast<std::decay_t<T>>(&_provisions.front().object);
+    }
+
+    /**
+    * Returns a pointer to an object stored via set.
+    */
+    template <typename T>
+    T* get() {
+        for (auto& provision : _provisions) {
+            if (auto object = scraps::stdts::any_cast<T>(&provision.object)) {
+                return object;
+            } else if (auto pointer = scraps::stdts::any_cast<T*>(&provision.object)) {
+                return *pointer;
+            }
+        }
+        return nullptr;
+    }
+
 protected:
-    void _update(Window* window) { window->_update(); }
-    void _render(Window* window) { window->_render(); }
-    void _didResize(Window* window, int width, int height) { window->_didResize(width, height); }
-    void _assignWindowSize(Window* window) { getWindowSize(window, &window->_width, &window->_height); }
+    void _update(Window* window);
+    void _render(Window* window);
+    void _didResize(Window* window, int width, int height);
+    void _assignWindowSize(Window* window);
 
 private:
     struct DownloadInfo {
@@ -296,15 +325,22 @@ private:
     scraps::TaskQueue _taskQueue;
 
     struct Listener {
-        Listener(View* view, std::function<void(const void*, View*)>* action, View::Relation relation)
+        Listener(View* view, std::function<void(const void*, View*)>* action, Relation relation)
             : view{view}, action{action}, relation{relation} {}
 
         View* view;
         std::function<void(const void*, View*)>* action;
-        View::Relation relation;
+        Relation relation;
     };
 
     std::multimap<std::type_index, Listener> _listeners;
+
+    struct Provision {
+        Provision(scraps::stdts::any object) : object{std::move(object)} {}
+        scraps::stdts::any object;
+    };
+
+    std::list<Provision> _provisions;
 };
 
 } // namespace okui

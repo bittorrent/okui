@@ -12,9 +12,12 @@ namespace views {
 /**
 * PopoutFocus implements a focusable view that pops out towards the viewer.
 */
-template <typename View>
-class PopoutFocus : public View {
+template <typename BaseView>
+class PopoutFocus : public BaseView {
 public:
+    template <typename... Args>
+    PopoutFocus(Args&&... args) : BaseView{std::forward<Args>(args)...} {}
+
     virtual bool canBecomeFocus() override { return true; }
     virtual void focusGained() override;
     virtual void focusLost() override;
@@ -30,6 +33,8 @@ public:
     void setSize(double width, double height) { setSize({width, height}); }
     void setSize(Point<double> size);
 
+    const Animation<double>& popoutAnimation() const { return _popoutAnimation; }
+
 private:
     void _updateBounds();
 
@@ -40,54 +45,54 @@ private:
     Point<double>     _size;
 };
 
-template <typename View>
-void PopoutFocus<View>::focusGained() {
+template <typename BaseView>
+void PopoutFocus<BaseView>::focusGained() {
     _popoutAnimation.target(1.0, 70ms, interpolation::Exponential::EaseOut);
     this->addUpdateHook("PopoutFocus", [&] { _updateBounds(); });
-    View::focusGained();
+    BaseView::focusGained();
 }
 
-template <typename View>
-void PopoutFocus<View>::focusLost() {
+template <typename BaseView>
+void PopoutFocus<BaseView>::focusLost() {
     _popoutAnimation.target(0.0, 400ms, interpolation::Exponential::EaseOut);
     this->addUpdateHook("PopoutFocus", [&] { _updateBounds(); });
-    View::focusLost();
+    BaseView::focusLost();
 }
 
-template <typename View>
-void PopoutFocus<View>::disappeared() {
+template <typename BaseView>
+void PopoutFocus<BaseView>::disappeared() {
     _popoutAnimation.reset(0.0);
     _updateBounds();
-    View::disappeared();
+    BaseView::disappeared();
 }
 
-template <typename View>
-void PopoutFocus<View>::mouseMovement(double x, double y) {
+template <typename BaseView>
+void PopoutFocus<BaseView>::mouseMovement(double x, double y) {
     this->focus();
-    View::mouseMovement(x, y);
+    BaseView::mouseMovement(x, y);
 }
 
-template <typename View>
-void PopoutFocus<View>::setScaling(Point<double> scaling) {
+template <typename BaseView>
+void PopoutFocus<BaseView>::setScaling(Point<double> scaling) {
     _scaling = scaling;
     _updateBounds();
 }
 
-template <typename View>
-void PopoutFocus<View>::setAnchor(Point<double> parentPosition, Point<double> selfPercentage) {
+template <typename BaseView>
+void PopoutFocus<BaseView>::setAnchor(Point<double> parentPosition, Point<double> selfPercentage) {
     _parentAnchorPosition = parentPosition;
     _selfAnchorPercentage = selfPercentage;
     _updateBounds();
 }
 
-template <typename View>
-void PopoutFocus<View>::setSize(Point<double> size) {
+template <typename BaseView>
+void PopoutFocus<BaseView>::setSize(Point<double> size) {
     _size = size;
     _updateBounds();
 }
 
-template <typename View>
-void PopoutFocus<View>::_updateBounds() {
+template <typename BaseView>
+void PopoutFocus<BaseView>::_updateBounds() {
     auto popout = _popoutAnimation.current();
     if (popout <= 0.0) {
         this->removeUpdateHook("PopoutFocus");

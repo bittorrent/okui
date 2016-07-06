@@ -6,10 +6,12 @@
 #include "onair/okui/shaders/ColorShader.h"
 #include "onair/okui/shaders/DistanceFieldShader.h"
 #include "onair/okui/shaders/TextureShader.h"
+#include "onair/okui/Application.h"
 #include "onair/okui/Color.h"
 #include "onair/okui/Point.h"
 #include "onair/okui/Rectangle.h"
 #include "onair/okui/RenderTarget.h"
+#include "onair/okui/Relation.h"
 #include "onair/okui/Responder.h"
 #include "onair/okui/ShaderCache.h"
 #include "onair/okui/TextureHandle.h"
@@ -49,6 +51,8 @@ public:
     * It is an error to destroy a focused view. Remove the view first if needed.
     */
     virtual ~View();
+
+    using Relation = okui::Relation;
 
     std::string name() const;
     void setName(std::string name) { _name = std::move(name); }
@@ -295,15 +299,6 @@ public:
     Point<double> localToWindow(double x, double y) const;
     Point<double> localToWindow(const Point<double>& p) const;
 
-    enum class Relation {
-        kAny,
-        kHierarchy,
-        kAncestor,
-        kDescendant,
-        kSibling,
-        kSelf,
-    };
-
     /**
     * Returns true if this view has the given relation to the given view.
     *
@@ -372,33 +367,25 @@ public:
     */
     template <typename T>
     auto set(T&& object, Relation relation = Relation::kHierarchy) {
-        _provisions.emplace_back(std::forward<T>(object), relation);
-        return scraps::stdts::any_cast<std::decay_t<T>>(&_provisions.back().object);
+        _provisions.emplace_front(std::forward<T>(object), relation);
+        return scraps::stdts::any_cast<std::decay_t<T>>(&_provisions.front().object);
     }
 
     /**
-    * Gets an object provided via provide. It will return a pointer to the first object it finds of the
+    * Finds an object provided via provide. It will return a pointer to the first object it finds of the
     * specified type. If more than one objects of the given type has been provided, it is undefined
     * which one will be returned.
     *
     * @param relation only objects from views of the given relation will be returned
     */
     template <typename T>
-    auto get(Relation relation = Relation::kSelf) {
-        T* ret = nullptr;
-        _traverseRelation(relation, [&](View* view, bool* shouldContinue) {
-            for (auto& provision : view->_provisions) {
-                if (!hasRelation(provision.relation, view)) { continue; }
-                if (auto object = scraps::stdts::any_cast<T>(&provision.object)) {
-                    ret = object;
-                    *shouldContinue = false;
-                    return 1;
-                }
-            }
-            return 0;
-        });
-        return ret;
-    }
+    T* find(Relation relation = Relation::kHierarchy);
+
+    template <typename T>
+    T* get() { return find<T>(Relation::kSelf); }
+
+    template <typename T>
+    T* inherit() { return find<T>(Relation::kAncestor); }
 
     /**
     * Asynchronously schedules a function to be invoked using the application's task scheduler.
@@ -645,5 +632,30 @@ private:
     void _checkUpdateSubscription();
     bool _shouldSubscribeToUpdates();
 };
+
+template <typename T>
+T* View::find(Relation relation) {
+    T* ret = nullptr;
+    _traverseRelation(relation, [&](View* view, bool* shouldContinue) {
+        for (auto& provision : view->_provisions) {
+            if (!hasRelation(provision.relation, view)) { continue; }
+            if (auto object = scraps::stdts::any_cast<T>(&provision.object)) {
+                ret = object;
+                *shouldContinue = false;
+                return 1;
+            }
+            if (auto pointer = scraps::stdts::any_cast<T*>(&provision.object)) {
+                ret = *pointer;
+                *shouldContinue = false;
+                return 1;
+            }
+        }
+        return 0;
+    });
+    if (!ret && application() && (relation == Relation::kHierarchy || relation == Relation::kAny || relation == Relation::kAncestor)) {
+        return application()->get<T>();
+    }
+    return ret;
+}
 
 }}

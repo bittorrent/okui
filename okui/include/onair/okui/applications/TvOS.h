@@ -11,7 +11,7 @@ namespace okui {
 namespace applications {
 
 /**
-* Provides some native Platform overrides for iOS.
+* Provides some native Platform overrides for TvOS.
 *
 * This isn't intended to be a full implementation, but can be used as a base for other implementations.
 */
@@ -23,11 +23,12 @@ public:
         return std::string{[[paths firstObject] UTF8String]};
     }
 
-    virtual void openDialog(Window* window,
-                            const char* title,
-                            const char* message,
-                            const std::vector<std::string>& buttons,
-                            std::function<void(int)> action = std::function<void(int)>()) override {} // TODO: implement
+    virtual void keyUp(KeyCode key, KeyModifiers mod, bool repeat) override {
+        if (key == KeyCode::kMenu) {
+            return this->command(kCommandBack);
+        }
+        IOS<Base>::keyUp(key, mod, repeat);
+    }
 };
 
 } // namespace applications

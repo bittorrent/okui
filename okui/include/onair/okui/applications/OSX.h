@@ -15,7 +15,7 @@
 #import <AppKit/NSMenu.h>
 #import <AppKit/NSOpenPanel.h>
 
-@interface MenuTarget : NSObject {    
+@interface MenuTarget : NSObject {
     onair::okui::Application* _application;
     std::vector<const onair::okui::MenuItem*> _menuItems;
 }
@@ -46,7 +46,7 @@ public:
     virtual bool canOpenURL(const char* url) const override;
     virtual bool openURL(const char* url) override;
 
-    virtual void openDialog(Window* window, const char* title, const char* message, const std::vector<std::string>& buttons, std::function<void(int)> action = std::function<void(int)>()) override;
+    virtual void openDialog(Window* window, const char* title, const char* message, const std::vector<DialogButton>& buttons, std::function<void(int)> action = std::function<void(int)>()) override;
 
     virtual const Menu* getMenu() const override { return &_applicationMenu; }
     virtual void setMenu(const Menu& menu) override;
@@ -115,12 +115,13 @@ inline bool OSX<Base>::openURL(const char* url) {
 }
 
 template <typename Base>
-inline void OSX<Base>::openDialog(Window* window, const char* title, const char* message, const std::vector<std::string>& buttons, std::function<void(int)> action) {
+inline void OSX<Base>::openDialog(Window* window, const char* title, const char* message, const std::vector<DialogButton>& buttons, std::function<void(int)> action) {
     NSAlert* alert = [NSAlert new];
     alert.messageText = [NSString stringWithUTF8String:title];
     alert.informativeText = [NSString stringWithUTF8String:message];
     for (auto& button : buttons) {
-        [alert addButtonWithTitle:[NSString stringWithUTF8String:button.c_str()]];
+        // TODO: support button styles?
+        [alert addButtonWithTitle:[NSString stringWithUTF8String:button.label.c_str()]];
     }
     [alert beginSheetModalForWindow:(window ? Base::nativeWindow(window) : [NSApp keyWindow]) completionHandler:^(NSModalResponse returnCode) {
         if (action) {
