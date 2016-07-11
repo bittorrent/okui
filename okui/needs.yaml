@@ -1,0 +1,87 @@
+libraries:
+    libjpeg-turbo:
+        download: http://downloads.sourceforge.net/project/libjpeg-turbo/1.4.90%20%281.5%20beta1%29/libjpeg-turbo-1.4.90.tar.gz
+        checksum: 62af89207d08252a1d8c4997ae50e11f4195ed74
+        project:
+            environment:
+                PATH: '{{ needs_file|dirname }}/libjpeg-turbo/bin:{{ needs_file|dirname }}/../dependencies/ci-tacklebox/nasm/build/host/bin:{current}'
+            configure-steps:
+            {% if platform == 'osx' %}
+                - ./configure --host=x86_64-apple-darwin CCAS=nasm
+            {% elif platform == 'ios' or platform == 'tvos' %}
+                - ./configure --host=aarch64-apple-darwin CCAS=nasm
+            {% elif platform == 'iossimulator' and architecture == 'i386' %}
+                - ./configure --host=i686-apple-darwin
+            {% elif platform == 'android' %}
+                - ./configure --host=arm-linux-androideabi CCAS=arm-linux-androideabi-as
+            {% else %}
+                - ./configure
+            {% endif %}
+            build-steps:
+                - make -j8
+                - make install prefix={build_directory} libdir={build_directory}/lib
+                # TODO: either only build the static version or find a way to
+                # specify static in the b2 files.
+                - rm -f {build_directory}/lib/*.dylib
+                - rm -f {build_directory}/lib/*.so
+                - textutil -convert txt -output license release/License.rtf
+                - printf "This software is based in part on the work of the Independent JPEG Group.\n\n$(cat license)" > license
+                - xxd -i license {build_directory}/include/tjlicense.c
+    libpng:
+        download: http://downloads.sourceforge.net/project/libpng/libpng16/1.6.23/libpng-1.6.23.tar.gz
+        checksum: 26c68ff9905dbeb85d1cc9c673726e9e0669e7a0
+        project:
+            configure-args:
+                - --disable-shared
+        {% if architecture == 'armv7' or architecture == 'arm64' %}
+                - --enable-arm-neon=yes
+        {% endif %}
+            post-build:
+                - xxd -i LICENSE {build_directory}/include/pnglicense.c
+    sdl2:
+        repository: git@github.com:bittorrent/SDL.git
+        commit: e6c442fb49dfc16979a31d6e947b57e47705bb5f
+        project:
+        {% if platform in ['ios', 'tvos', 'iossimulator', 'tvossimulator'] %}
+            xcode-project: Xcode-iOS/SDL/SDL.xcodeproj
+            xcode-target: {{'libSDL-tv' if platform in ['tvos', 'tvossimulator'] else 'libSDL' }}
+            # When installed from xcode, the headers are in `include` when we
+            # want them to match the other builds: `include/SDL2`
+            post-build:
+                - mv {build_directory}/include {build_directory}/SDL2
+                - mkdir {build_directory}/include
+                - mv {build_directory}/SDL2 {build_directory}/include/SDL2
+                # private SDL headers used by the viewer
+                - mkdir {build_directory}/include/SDL2/private-headers
+                - cp src/video/uikit/SDL_uikitappdelegate.h {build_directory}/include/SDL2/private-headers/
+        {% else %}
+            configure-args:
+                - --disable-shared
+                - --disable-video-x11
+                - --disable-video-opengles1
+                {% if platform == 'android' %}
+                - --host=arm-linux-androideabi
+                {% endif %}
+            post-build:
+        {% endif %}
+                - xxd -i COPYING.txt {build_directory}/include/SDL2/license.c
+
+universal-binaries:
+    macosx:
+        osx:
+            - x86_64
+    iphoneos:
+        ios:
+            - armv7
+            - arm64
+    iphonesimulator:
+        iossimulator:
+            - i386
+            - x86_64
+    appletvos:
+        tvos:
+            - arm64
+    appletvsimulator:
+        tvossimulator:
+            - x86_64
+

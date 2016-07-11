@@ -1,10 +1,10 @@
-lib libpng : ../third-party/needs//libpng : <name>png <link>static ;
-lib libturbojpeg : ../third-party/needs//libjpeg-turbo : <name>turbojpeg ;
+lib libpng : ./needs//libpng : <name>png <link>static ;
+lib libturbojpeg : ./needs//libjpeg-turbo : <name>turbojpeg ;
 lib libm         : : <name>m <link>shared ;
 lib libiconv     : : <name>iconv ;
 
 
-lib libSDL2 : ../third-party/needs//sdl2
+lib libSDL2 : ./needs//sdl2
 :
     <name>SDL2
 : :
