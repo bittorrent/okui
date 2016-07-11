@@ -10,7 +10,6 @@ Window::Window(Application* application)
 {
     _application->addWindow(this);
     _contentView = std::make_unique<View>();
-    _contentView->_window = this;
 }
 
 Window::~Window() {
@@ -25,6 +24,7 @@ void Window::open() {
     _contentView->_dispatchFutureVisibilityChange(true);
     application()->openWindow(this, _title.c_str(), _position, _width, _height);
     _isOpen = true;
+    _contentView->_dispatchWindowChange(this);
     _updateContentLayout();
     _contentView->_dispatchVisibilityChange(true);
 }
@@ -35,6 +35,7 @@ void Window::close() {
     application()->closeWindow(this);
     _isOpen = false;
     _contentView->_dispatchVisibilityChange(false);
+    _contentView->_dispatchWindowChange(nullptr);
 }
 
 void Window::setPosition(const WindowPosition& pos) {

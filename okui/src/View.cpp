@@ -76,13 +76,11 @@ void View::addSubview(View* view) {
     if (view->superview()) {
         view->superview()->removeSubview(view);
     }
+
     addChildToFront(view);
 
-    if (_window != view->window()) {
-        if (view->window()) {
-            view->window()->endDragging(view);
-            view->window()->unsubscribeFromUpdates(view);
-        }
+    SCRAPS_ASSERT(view->window() == nullptr);
+    if (_window && _window->isOpen()) {
         view->_dispatchWindowChange(_window);
     }
 
@@ -726,6 +724,7 @@ void View::_dispatchWindowChange(Window* window) {
         _window->unsubscribeFromUpdates(this);
     }
 
+    SCRAPS_ASSERT(_window != window);
     _window = window;
 
     if (application()) {

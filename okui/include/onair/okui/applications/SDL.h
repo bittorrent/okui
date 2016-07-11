@@ -106,7 +106,7 @@ private:
     };
 
     struct Controller : onair::okui::Controller {
-        explicit Controller(SDL_Joystick* joystick) : joystick{joystick} {}
+        explicit Controller(SDL_Joystick* joystick);
         ~Controller();
 
         virtual std::string name() const override;
@@ -159,6 +159,12 @@ inline SDL::SDL() {
 
     if (SDL_Init(SDL_INIT_EVERYTHING) < 0) {
         SCRAPS_LOGF_ERROR("error initializing sdl: %s", SDL_GetError());
+    }
+
+    SCRAPS_LOG_INFO("{} controllers found", SDL_NumJoysticks());
+
+    for(int i = 0; i < SDL_NumJoysticks(); ++i) {
+        SCRAPS_LOG_INFO("Controller {}: {}", i, SDL_JoystickNameForIndex(i));
     }
 
 #if OPENGL_ES
@@ -421,8 +427,15 @@ inline jobject SDL::nativeActivity(JNIEnv** envOut) const {
 }
 #endif
 
+inline SDL::Controller::Controller(SDL_Joystick* joystick)
+    : joystick{joystick}
+{
+    SCRAPS_LOG_DEBUG("Controller added: {}", name());
+}
+
 inline SDL::Controller::~Controller() {
     if (SDL_JoystickGetAttached(joystick)) {
+        SCRAPS_LOG_DEBUG("Controller removed: {}", name());
         SDL_JoystickClose(joystick);
     }
 }

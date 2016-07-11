@@ -7,46 +7,48 @@
 namespace onair {
 namespace okui {
 
-inline constexpr bool IsPowerOfTwo(int x) {
-    return (x != 0) && !(x & (x - 1));
-}
-
-inline constexpr int NextPowerOfTwo(int x) {
-    if (x < 0) {
-        return 0;
+namespace {
+    constexpr bool IsPowerOfTwo(int x) {
+        return (x != 0) && !(x & (x - 1));
     }
-    --x;
-    x |= x >> 1;
-    x |= x >> 2;
-    x |= x >> 4;
-    x |= x >> 8;
-    x |= x >> 16;
-    return x + 1;
-}
 
-struct PNGInput {
-    PNGInput(const void* data, size_t length) : data(data), length(length) {}
-
-    const void* data;
-    size_t length;
-    size_t position = 0;
-};
-
-static void PNGRead(png_structp png, png_bytep data, png_size_t length) {
-    PNGInput* input = reinterpret_cast<PNGInput*>(png_get_io_ptr(png));
-    if (length > input->length - input->position) {
-        png_error(png, "read error (not enough data)");
-    } else {
-        memcpy(data, reinterpret_cast<const char*>(input->data) + input->position, length);
-        input->position += length;
+    constexpr int NextPowerOfTwo(int x) {
+        if (x < 0) {
+            return 0;
+        }
+        --x;
+        x |= x >> 1;
+        x |= x >> 2;
+        x |= x >> 4;
+        x |= x >> 8;
+        x |= x >> 16;
+        return x + 1;
     }
-}
 
-static void PNGError(png_structp png, png_const_charp message) {
-    longjmp(png_jmpbuf(png), 1);
-}
+    struct PNGInput {
+        PNGInput(const void* data, size_t length) : data(data), length(length) {}
 
-static void PNGWarning(png_structp png, png_const_charp message) { /* nop */ }
+        const void* data;
+        size_t length;
+        size_t position = 0;
+    };
+
+    void PNGRead(png_structp png, png_bytep data, png_size_t length) {
+        PNGInput* input = reinterpret_cast<PNGInput*>(png_get_io_ptr(png));
+        if (length > input->length - input->position) {
+            png_error(png, "read error (not enough data)");
+        } else {
+            memcpy(data, reinterpret_cast<const char*>(input->data) + input->position, length);
+            input->position += length;
+        }
+    }
+
+    void PNGError(png_structp png, png_const_charp message) {
+        longjmp(png_jmpbuf(png), 1);
+    }
+
+    void PNGWarning(png_structp png, png_const_charp message) { /* nop */ }
+}
 
 void FileTexture::setData(std::shared_ptr<const std::string> data, const char* name) {
     _data = data;
