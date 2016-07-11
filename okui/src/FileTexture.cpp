@@ -8,6 +8,8 @@ namespace onair {
 namespace okui {
 
 namespace {
+
+#if OPENGL_ES
     constexpr bool IsPowerOfTwo(int x) {
         return (x != 0) && !(x & (x - 1));
     }
@@ -24,6 +26,7 @@ namespace {
         x |= x >> 16;
         return x + 1;
     }
+#endif // OPENGL_ES
 
     struct PNGInput {
         PNGInput(const void* data, size_t length) : data(data), length(length) {}
@@ -48,7 +51,8 @@ namespace {
     }
 
     void PNGWarning(png_structp png, png_const_charp message) { /* nop */ }
-}
+
+} // anonymous namespace
 
 void FileTexture::setData(std::shared_ptr<const std::string> data, const char* name) {
     _data = data;
