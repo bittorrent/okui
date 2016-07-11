@@ -1,15 +1,34 @@
 libraries:
+    gas-preprocessor:
+        repository: https://github.com/libjpeg-turbo/gas-preprocessor.git
+        commit: 4338df436a20ad4d28c7cd37852323e902f1144c
+        project:
+            build-steps:
+                - mkdir -p {build_directory}/bin/
+                - cp gas-preprocessor.pl {build_directory}/bin/
+    nasm:
+        download: 'http://www.nasm.us/pub/nasm/releasebuilds/2.11.06/nasm-2.11.06.tar.bz2'
+        checksum: 'eaad6f440d3f8d2172d7fd93bed224d4052b904f'
     libjpeg-turbo:
         download: http://downloads.sourceforge.net/project/libjpeg-turbo/1.4.90%20%281.5%20beta1%29/libjpeg-turbo-1.4.90.tar.gz
         checksum: 62af89207d08252a1d8c4997ae50e11f4195ed74
+        dependencies:
+            - gas-preprocessor
+            {% if target == 'host' %}
+            - nasm
+            {% endif %}
         project:
             environment:
-                PATH: '{{ needs_file|dirname }}/libjpeg-turbo/bin:{{ needs_file|dirname }}/../dependencies/ci-tacklebox/nasm/build/host/bin:{current}'
+                {% if target == 'host' %}
+                PATH: '{{ build_directory('gas-preprocessor') }}/bin:{{ build_directory('nasm') }}/bin:{current}'
+                {% else %}
+                PATH: '{{ build_directory('gas-preprocessor') }}/bin:{current}'
+                {% endif %}
             configure-steps:
             {% if platform == 'osx' %}
                 - ./configure --host=x86_64-apple-darwin CCAS=nasm
             {% elif platform == 'ios' or platform == 'tvos' %}
-                - ./configure --host=aarch64-apple-darwin CCAS=nasm
+                - ./configure --host=aarch64-apple-darwin
             {% elif platform == 'iossimulator' and architecture == 'i386' %}
                 - ./configure --host=i686-apple-darwin
             {% elif platform == 'android' %}
@@ -84,4 +103,3 @@ universal-binaries:
     appletvsimulator:
         tvossimulator:
             - x86_64
-

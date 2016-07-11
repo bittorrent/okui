@@ -1,1 +1,11 @@
+/bin
+/dist
+/tests/android/src/main/assets
+/tests/android/src/main/libs
+/tests/bin
+/tests/dist
 /needs
+
+# tacklebox
+/okui.xcconfig
+/tests/okui-tests.xcconfig
