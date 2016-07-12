@@ -1,0 +1,3 @@
+[submodule "needy"]
+	path = needy
+	url = git@github.com:bittorrent/needy.git
