@@ -6,9 +6,9 @@
 boost_ldflags = $(PROJECT_DIR)/../scraps/needs/boost/build/universal/$(PLATFORM_NAME)/lib/libboost_system.a $(PROJECT_DIR)/../scraps/needs/boost/build/universal/$(PLATFORM_NAME)/lib/libboost_filesystem.a $(PROJECT_DIR)/../scraps/needs/boost/build/universal/$(PLATFORM_NAME)/lib/libboost_program_options.a
 curl_ldflags = $(PROJECT_DIR)/../scraps/needs/curl/build/universal/$(PLATFORM_NAME)/lib/libcurl.a
 openssl_ldflags = $(PROJECT_DIR)/../scraps/needs/openssl/build/universal/$(PLATFORM_NAME)/lib/libcrypto.a $(PROJECT_DIR)/../scraps/needs/openssl/build/universal/$(PLATFORM_NAME)/lib/libssl.a
-libjpegturbo_ldflags = $(PROJECT_DIR)/../third-party/needs/libjpeg-turbo/build/universal/$(PLATFORM_NAME)/lib/libturbojpeg.a
-libpng_ldflags = $(PROJECT_DIR)/../third-party/needs/libpng/build/universal/$(PLATFORM_NAME)/lib/libpng.a
-sdl2_ldflags = $(PROJECT_DIR)/../third-party/needs/sdl2/build/universal/$(PLATFORM_NAME)/lib/libSDL2.a
+libjpegturbo_ldflags = $(PROJECT_DIR)/../okui/needs/libjpeg-turbo/build/universal/$(PLATFORM_NAME)/lib/libturbojpeg.a
+libpng_ldflags = $(PROJECT_DIR)/../okui/needs/libpng/build/universal/$(PLATFORM_NAME)/lib/libpng.a
+sdl2_ldflags = $(PROJECT_DIR)/../okui/needs/sdl2/build/universal/$(PLATFORM_NAME)/lib/libSDL2.a
 
 COMPRESS_PNG_FILES = NO
 STRIP_PNG_TEXT = NO

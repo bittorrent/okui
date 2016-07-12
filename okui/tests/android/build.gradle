@@ -20,7 +20,7 @@ model {
 
     android.sources {
         main {
-            java.source.srcDirs = ['src', '../../../deps/third-party/needs/sdl2/source/android-project/src']
+            java.source.srcDirs = ['src', '../../../deps/okui/needs/sdl2/source/android-project/src']
         }
     }
 }
