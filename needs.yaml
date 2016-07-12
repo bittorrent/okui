@@ -10,16 +10,16 @@ libraries:
         download: 'http://www.nasm.us/pub/nasm/releasebuilds/2.11.06/nasm-2.11.06.tar.bz2'
         checksum: 'eaad6f440d3f8d2172d7fd93bed224d4052b904f'
     libjpeg-turbo:
-        download: http://downloads.sourceforge.net/project/libjpeg-turbo/1.4.90%20%281.5%20beta1%29/libjpeg-turbo-1.4.90.tar.gz
+        download: https://s3.amazonaws.com/live-dev-deps/libjpeg-turbo-1.4.90.tar.gz
         checksum: 62af89207d08252a1d8c4997ae50e11f4195ed74
         dependencies:
             - gas-preprocessor
-            {% if target == 'host' %}
+            {% if platform == host_platform %}
             - nasm
             {% endif %}
         project:
             environment:
-                {% if target == 'host' %}
+                {% if platform == host_platform %}
                 PATH: '{{ build_directory('gas-preprocessor') }}/bin:{{ build_directory('nasm') }}/bin:{current}'
                 {% else %}
                 PATH: '{{ build_directory('gas-preprocessor') }}/bin:{current}'
@@ -47,7 +47,7 @@ libraries:
                 - sed -nE '/\*\//q; /^\/\*/d; s/^ *\* ?//p' turbojpeg.h >> license
                 - xxd -i license {build_directory}/include/tjlicense.c
     libpng:
-        download: http://downloads.sourceforge.net/project/libpng/libpng16/1.6.23/libpng-1.6.23.tar.gz
+        download: https://s3.amazonaws.com/live-dev-deps/libpng-1.6.23.tar.gz
         checksum: 26c68ff9905dbeb85d1cc9c673726e9e0669e7a0
         project:
             configure-args:
