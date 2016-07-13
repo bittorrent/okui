@@ -284,8 +284,14 @@ public:
     /**
     * Converts a point from local coordinates to superview coordinates.
     */
-    Point<double> localToSuperview(double x, double y) const;
-    Point<double> localToSuperview(const Point<double>& p) const;
+    Point<double> localToSuperview(double x, double y) const { return localToAncestor(x, y, superview()); }
+    Point<double> localToSuperview(const Point<double>& p) const { return localToSuperview(p.x, p.y); }
+
+    /**
+    * Converts a point from local coordinates to the coordinates of an ancestor.
+    */
+    Point<double> localToAncestor(double x, double y, const View* ancestor) const;
+    Point<double> localToAncestor(const Point<double>& p, const View* ancestor) const { return localToAncestor(p.x, p.y, ancestor); }
 
     /**
     * Converts a point from super coordinates to local coordinates.

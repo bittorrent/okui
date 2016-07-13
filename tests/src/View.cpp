@@ -16,6 +16,17 @@ TEST(View, localToSuperview) {
     EXPECT_EQ(p.y, 20);
 }
 
+TEST(View, localToAncestor) {
+    View a, b, c;
+    b.setBounds(10, 20, 10, 10);
+    a.addSubview(&b);
+    c.setBounds(20, 25, 5, 5);
+    b.addSubview(&c);
+    auto p = c.localToAncestor(0, 0, &a);
+    EXPECT_EQ(p.x, 30);
+    EXPECT_EQ(p.y, 45);
+}
+
 #if ONAIR_OKUI_HAS_NATIVE_APPLICATION
 TEST(View, localToWindow) {
     TestApplication application;

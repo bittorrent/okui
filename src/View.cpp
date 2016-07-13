@@ -314,12 +314,11 @@ void View::setBoundsRelative(double x, double y, double width, double height) {
     }
 }
 
-Point<double> View::localToSuperview(double x, double y) const {
-    return Point<double>(bounds().x + x, bounds().y + y);
-}
-
-Point<double> View::localToSuperview(const Point<double>& p) const {
-    return localToSuperview(p.x, p.y);
+Point<double> View::localToAncestor(double x, double y, const View* ancestor) const {
+    SCRAPS_ASSERT(!ancestor || ancestor->isAncestorOf(this));
+    const auto xSuper = bounds().x + x;
+    const auto ySuper = bounds().y + y;
+    return ancestor && ancestor != superview() ? superview()->localToAncestor(xSuper, ySuper, ancestor) : Point<double>(xSuper, ySuper);
 }
 
 Point<double> View::superviewToLocal(double x, double y) const {
