@@ -183,16 +183,6 @@ void TextView::render(const RenderTarget* renderTarget, const Rectangle<int>& ar
     if (!_font) { return; }
 
     auto distanceFieldShader = this->distanceFieldShader();
-
-    auto glyphId = BitmapFont::GlyphId{0x4f}; // 'O'
-
-    double fontScale   = _fontScale(),
-           glyphWidth  = _font->width(&glyphId, 1) * fontScale,
-           glyphHeight = _font->capHeight() * fontScale,
-           clipWidth   = 0,
-           clipHeight  = 0;
-    renderTransformation().transform(glyphWidth, glyphHeight, &clipWidth, &clipHeight);
-
     distanceFieldShader->enableSupersampling(true);
     distanceFieldShader->setEdge(std::min(std::max(1.0 - _style.weight() / 200.0, 0.0), 1.0));
 

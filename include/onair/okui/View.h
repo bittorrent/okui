@@ -279,7 +279,7 @@ public:
         return ret;
     }
 
-    AffineTransformation renderTransformation();
+    const AffineTransformation& renderTransformation() const { return _renderTransformation; }
 
     /**
     * Converts a point from local coordinates to superview coordinates.
@@ -553,6 +553,8 @@ private:
 
     Color             _backgroundColor{0.0, 0.0};
     Color             _tintColor{1.0};
+
+    AffineTransformation _renderTransformation;
 
     std::unique_ptr<opengl::Framebuffer> _renderCache;
     opengl::Framebuffer::Attachment* _renderCacheColorAttachment = nullptr;

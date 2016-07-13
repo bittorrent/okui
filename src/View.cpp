@@ -297,12 +297,6 @@ TextureHandle View::loadTextureFromURL(const std::string& url) {
     return handle;
 }
 
-AffineTransformation View::renderTransformation() {
-    // 2/width and 2/height because clip space is -1 to 1 (2x2), so scale down into clip space
-    // Scale y is negative and translate (-1, 1) to get the top left to be (0, 0)
-    return AffineTransformation{-1, 1, 0, 0, 2.0/_bounds.width, -2.0/_bounds.height};
-}
-
 Application* View::application() const {
     return window() ? window()->application() : nullptr;
 }
@@ -784,11 +778,21 @@ bool View::_requiresTextureRendering() {
 }
 
 void View::_renderAndRenderSubviews(const RenderTarget* target, const Rectangle<int>& area, bool shouldClear, scraps::stdts::optional<Rectangle<int>> clipBounds) {
-    glViewport(area.x, target->height() - area.maxY(), area.width, area.height);
+    auto xScale = (_bounds.width != 0.0 ? area.width / _bounds.width : 1.0);
+    auto yScale = (_bounds.height != 0.0 ? area.height / _bounds.height : 1.0);
+
+    auto visibleArea = Rectangle<int>{0, 0, target->width(), target->height()}.intersection(area);
+    _renderTransformation = AffineTransformation(
+        -1, 1,
+        (area.x - visibleArea.x) / xScale, (area.y - visibleArea.y) / yScale,
+        2.0/_bounds.width*area.width/visibleArea.width, -2.0/_bounds.height*area.height/visibleArea.height
+    );
+
+    glViewport(visibleArea.x, target->height() - visibleArea.maxY(), visibleArea.width, visibleArea.height);
     Blending blending{BlendFunction::kDefault};
 
     if (_clipsToBounds) {
-        clipBounds = clipBounds ? clipBounds->intersection(area) : area;
+        clipBounds = clipBounds ? clipBounds->intersection(visibleArea) : visibleArea;
     }
 
     if (shouldClear) {
@@ -812,9 +816,6 @@ void View::_renderAndRenderSubviews(const RenderTarget* target, const Rectangle<
     }
 
     render(target, area);
-
-    auto xScale = (_bounds.width != 0.0 ? area.width / _bounds.width : 1.0);
-    auto yScale = (_bounds.height != 0.0 ? area.height / _bounds.height : 1.0);
 
     for (auto& subview : Reverse(subviews())) {
         Rectangle<int> subarea(std::round(area.x + xScale * subview->_bounds.x),
