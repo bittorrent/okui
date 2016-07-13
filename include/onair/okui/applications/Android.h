@@ -47,6 +47,8 @@ public:
     Android();
     virtual ~Android();
 
+    android::app::Activity* activity() { return _javaActivity.get(); }
+
     virtual void openDialog(Window* window,
                             const char* title,
                             const char* message,
@@ -99,6 +101,7 @@ public:
 private:
     JNIEnv* _jniEnv = nullptr;
     jobject _activity = nullptr;
+    std::unique_ptr<android::app::Activity> _javaActivity;
 
     std::shared_ptr<jshackle::JNIContext> _jniContext;
     std::unique_ptr<AndroidJavaHelper> _javaHelper;
@@ -132,7 +135,8 @@ inline Android<Base>::Android() {
         _sJNIContext = _jniContext;
     }
 
-    _javaHelper = std::make_unique<AndroidJavaHelper>(android::app::Activity{_jniEnv, _activity});
+    _javaActivity = std::make_unique<android::app::Activity>(_jniEnv, _activity);
+    _javaHelper = std::make_unique<AndroidJavaHelper>(*_javaActivity);
 
     _jniEnv->PushLocalFrame(10);
 
