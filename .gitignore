@@ -1,3 +1,4 @@
+.DS_Store
 /bin
 /dist
 /tests/android/src/main/assets
@@ -5,6 +6,7 @@
 /tests/bin
 /tests/dist
 /needs
+/android/build
 
 # tacklebox
 /.configure/
