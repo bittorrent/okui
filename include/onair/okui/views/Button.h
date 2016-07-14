@@ -32,7 +32,9 @@ public:
         if (_action) { _action(); }
     }
 
-    virtual bool canBecomeFocus() override { return true; }
+    void setCanBecomeFocused(bool canBecomeFocused) { _canBecomeFocused = canBecomeFocused; }
+
+    virtual bool canBecomeFocus() override { return _canBecomeFocused; }
 
     virtual void mouseDown(MouseButton button, double x, double y) override {
         _changeState(State::kDepressed);
@@ -69,8 +71,9 @@ protected:
 
 private:
     std::function<void()> _action;
-    bool _mouseDown = false;
-    State _state = State::kNormal;
+    bool                  _mouseDown = false;
+    State                 _state = State::kNormal;
+    bool                  _canBecomeFocused = true;
 
     void _changeState(State state) {
         _state = state;
