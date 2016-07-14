@@ -2,8 +2,9 @@
 
 #include "onair/okui/config.h"
 
-#if __APPLE__
+#if SCRAPS_APPLE
 
+#include "onair/okui/applications/AppleUserPreferences.h"
 #include "onair/okui/FileResourceManager.h"
 #include "onair/okui/KeyCode.h"
 
@@ -32,15 +33,19 @@ public:
 
     virtual std::string deviceModel() const override;
 
+    virtual UserPreferencesInterface* getUserPreferences() override { return _userPreferences.get(); }
+
 private:
-    std::unique_ptr<ResourceManager> _resourceManager;
+    std::unique_ptr<ResourceManager>      _resourceManager;
+    std::unique_ptr<AppleUserPreferences> _userPreferences;
 };
 
 template <typename Base>
 inline Apple<Base>::Apple() {
-    	NSString* path = [[NSBundle mainBundle] resourcePath];
+    NSString* path = [[NSBundle mainBundle] resourcePath];
     _resourceManager = std::make_unique<FileResourceManager>([path UTF8String]);
     Base::setResourceManager(_resourceManager.get());
+    _userPreferences = std::make_unique<AppleUserPreferences>();
 }
 
 template <typename Base>

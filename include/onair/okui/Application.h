@@ -8,6 +8,7 @@
 #include "onair/okui/Relation.h"
 #include "onair/okui/ResourceManager.h"
 #include "onair/okui/Responder.h"
+#include "onair/okui/UserPreferencesInterface.h"
 
 #include "scraps/TaskQueue.h"
 
@@ -105,6 +106,8 @@ public:
 
     ResourceManager* resourceManager() { return _resourceManager; }
     void setResourceManager(ResourceManager* resourceManager) { _resourceManager = resourceManager; }
+
+    virtual UserPreferencesInterface* getUserPreferences() = 0;
 
     /**
     * Should return a path suitable for storing preferences or other persistent user data.

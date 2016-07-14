@@ -4,10 +4,13 @@
 
 #if SCRAPS_ANDROID
 
+#include "onair/okui/applications/AndroidUserPreferences.h"
+
 #include "jshackle/JavaClass.h"
 #include "jshackle/NativeClass.h"
 #include "jshackle/JNIContext.h"
 #include "jshackle/android/app/Activity.h"
+
 #include <android/asset_manager_jni.h>
 
 namespace onair {
@@ -63,6 +66,8 @@ public:
 
     virtual std::string deviceModel() const override;
 
+    virtual UserPreferencesInterface* getUserPreferences() override { return _userPreferences.get(); }
+
     virtual bool hasNetworkConnection() const override;
 
     virtual bool isMobileConnection() const override;
@@ -99,14 +104,13 @@ public:
     };
 
 private:
-    JNIEnv* _jniEnv = nullptr;
-    jobject _activity = nullptr;
-    std::unique_ptr<android::app::Activity> _javaActivity;
-
-    std::shared_ptr<jshackle::JNIContext> _jniContext;
-    std::unique_ptr<AndroidJavaHelper> _javaHelper;
-
-    std::unique_ptr<ResourceManager> _resourceManager;
+    JNIEnv*                                    _jniEnv = nullptr;
+    jobject                                    _activity = nullptr;
+    std::unique_ptr<android::app::Activity>    _javaActivity;
+    std::shared_ptr<jshackle::JNIContext>      _jniContext;
+    std::unique_ptr<AndroidUserPreferences>    _userPreferences;
+    std::unique_ptr<AndroidJavaHelper>         _javaHelper;
+    std::unique_ptr<ResourceManager>           _resourceManager;
 
     static std::weak_ptr<jshackle::JNIContext> _sJNIContext;
 };
@@ -137,6 +141,7 @@ inline Android<Base>::Android() {
 
     _javaActivity = std::make_unique<android::app::Activity>(_jniEnv, _activity);
     _javaHelper = std::make_unique<AndroidJavaHelper>(*_javaActivity);
+    _userPreferences = std::make_unique<AndroidUserPreferences>(_javaActivity.get());
 
     _jniEnv->PushLocalFrame(10);
 
