@@ -36,7 +36,6 @@ public:
     virtual void setFloat(const std::string& key, float value) override               { _editor->putFloat(key, value); _editor->apply(); }
     virtual void setString(const std::string& key, const std::string& value) override { _editor->putString(key, value); _editor->apply(); }
 
-
 private:
     android::content::SharedPreferences* _sharedPrefs;
     android::content::SharedPreferences::Editor* _editor;

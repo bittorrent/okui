@@ -787,12 +787,15 @@ void View::_renderAndRenderSubviews(const RenderTarget* target, const Rectangle<
         2.0/_bounds.width*area.width/visibleArea.width, -2.0/_bounds.height*area.height/visibleArea.height
     );
 
-    glViewport(visibleArea.x, target->height() - visibleArea.maxY(), visibleArea.width, visibleArea.height);
-    Blending blending{BlendFunction::kDefault};
-
     if (_clipsToBounds) {
         clipBounds = clipBounds ? clipBounds->intersection(visibleArea) : visibleArea;
+        if (clipBounds->size().magnitudeSquared() == 0) {
+            return;
+        }
     }
+
+    glViewport(visibleArea.x, target->height() - visibleArea.maxY(), visibleArea.width, visibleArea.height);
+    Blending blending{BlendFunction::kDefault};
 
     if (shouldClear) {
         glDisable(GL_SCISSOR_TEST);
