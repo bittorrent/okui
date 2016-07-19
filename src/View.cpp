@@ -473,6 +473,12 @@ void View::renderAndRenderSubviews(const RenderTarget* target, const Rectangle<i
         return;
     }
 
+    clipBounds = clipBounds ? clipBounds->intersection(area) : area;
+
+    if (!_rendersToTexture && clipBounds->size().magnitudeSquared() == 0) {
+        return;
+    }
+
     // make sure the render cache is up-to-date
 
     GLint previousFramebuffer = 0;
@@ -503,8 +509,6 @@ void View::renderAndRenderSubviews(const RenderTarget* target, const Rectangle<i
 
     glViewport(area.x, target->height() - area.maxY(), area.width, area.height);
     Blending blending{BlendFunction::kDefault};
-
-    clipBounds = clipBounds ? clipBounds->intersection(area) : area;
     glEnable(GL_SCISSOR_TEST);
     glScissor(clipBounds->x, target->height() - clipBounds->maxY(), clipBounds->width, clipBounds->height);
 
