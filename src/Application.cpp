@@ -23,6 +23,12 @@ Responder* Application::firstResponder() {
     return activeWindow() ? activeWindow()->firstResponder() : this;
 }
 
+void Application::command(Command command, CommandContext context) {
+    if (chainCanHandleCommand(command)) {
+        firstResponder()->handleCommand(command, context);
+    }
+}
+
 std::future<std::shared_ptr<const std::string>> Application::download(const std::string& url, bool useCache) {
     auto it = _downloads.find(url);
     auto download = it == _downloads.end() ? (_downloads[url] = std::make_shared<DownloadInfo>()) : _downloads[url];

@@ -224,9 +224,9 @@ public:
     Responder* firstResponder();
 
     /**
-    * Executes the given command. Equivalent to `firstResponder()->handleCommand(command, context)`.
+    * Executes the given command if the responder chain can handle it.
     */
-    void command(Command command, CommandContext context = {}) { firstResponder()->handleCommand(command, context); }
+    void command(Command command, CommandContext context = {});
 
     virtual bool canHandleCommand(Command command) override {
         return command == kCommandQuit;
