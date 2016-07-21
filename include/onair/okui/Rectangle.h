@@ -201,10 +201,10 @@ template <typename T>
 template <typename Interpolation>
 Rectangle<T> Rectangle<T>::interpolate(const Rectangle<T>& other, double factor, Interpolation&& interpolation) const {
     return {
-        interpolation(factor, x, other.x - x, 1.0),
-        interpolation(factor, y, other.y - y, 1.0),
-        interpolation(factor, width, other.width - width, 1.0),
-        interpolation(factor, height, other.height - height, 1.0)
+        interpolation(x, other.x - x, factor),
+        interpolation(y, other.y - y, factor),
+        interpolation(width, other.width - width, factor),
+        interpolation(height, other.height - height, factor)
     };
 }
 

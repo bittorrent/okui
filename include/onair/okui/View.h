@@ -42,56 +42,44 @@ class Window;
 */
 class View : public Responder, private scraps::TreeNode<View> {
 public:
-    friend class scraps::TreeNode<View>;
+    using Relation = okui::Relation;
 
     View() = default;
-    View(std::string name) : _name{std::move(name)} {}
+    explicit View(std::string name) : _name{std::move(name)} {}
+    View(const View&) = delete;
+    View(View&&) = delete;
+    View& operator=(const View&) = delete;
+    View& operator=(View&&) = delete;
 
     /**
     * It is an error to destroy a focused view. Remove the view first if needed.
     */
     virtual ~View();
 
-    using Relation = okui::Relation;
-
     std::string name() const;
     void setName(std::string name) { _name = std::move(name); }
 
     void addSubview(View* view);
+    template <typename... Views>
+    void addSubviews(View* view, Views&&... views)  { _addSubviews(view, std::forward<Views>(views)...); }
     void addHiddenSubview(View* view);
     void removeSubview(View* view);
-
-    void addSubviews() {}
     template <typename... Views>
-    void addSubviews(View* view, Views&&... views) {
-        addSubview(view);
-        addSubviews(std::forward<Views>(views)...);
-    }
-
-    /**
-    * Removes all subviews.
-    */
+    void removeSubviews(View* view, Views&&... views) { _removeSubviews(view, std::forward<Views>(views)...); }
     void removeSubviews();
 
-    template <typename... Views>
-    void removeSubviews(View* view, Views&&... views) {
-        removeSubview(view);
-        _removeSubviewArgs(std::forward<Views>(views)...);
-    }
-
-    const View* superview() const { return parent(); }
-    View* superview()             { return parent(); }
-    const std::list<View*>& subviews() const { return children(); }
-
-    Window* window() const { return _window; }
+    Window* window() const                   { return _window; }
     Application* application() const;
 
-    const Rectangle<double>& bounds() const { return _bounds; }
+    const View* superview() const            { return parent(); }
+    View* superview()                        { return parent(); }
+    const std::list<View*>& subviews() const { return children(); }
+
+    const Rectangle<double>& bounds() const  { return _bounds; }
+    Rectangle<double> windowBounds() const;
 
     template <typename... Args>
-    void setBounds(Args&&... args) { _setBounds(Rectangle<double>(std::forward<Args>(args)...)); }
-
-    Rectangle<double> windowBounds() const;
+    void setBounds(Args&&... args)           { _setBounds(Rectangle<double>(std::forward<Args>(args)...)); }
 
     /**
     * Sets bounds as a percent of superview bounds (0-1)
@@ -269,15 +257,7 @@ public:
     * Get or create a shader cached via the window's shader cache.
     */
     template <typename T>
-    T* shader(const char* identifier) {
-        auto s = shaderCache()->get(std::string(identifier));
-        if (!s) {
-            s = shaderCache()->add(std::make_unique<T>(), std::string(identifier), ShaderCache::Policy::kKeepForever);
-        }
-        auto ret = dynamic_cast<T*>(s->get());
-        ret->setTransformation(renderTransformation());
-        return ret;
-    }
+    T* shader(const char* identifier);
 
     const AffineTransformation& renderTransformation() const { return _renderTransformation; }
 
@@ -530,41 +510,8 @@ public:
     virtual void touchMovement(size_t finger, Point<double> position, Point<double> distance, double pressure) override;
 
 private:
-    View(const View& other) = delete;
-    View(const View&& other) = delete;
-
+    friend class scraps::TreeNode<View>;
     friend class Window;
-
-    std::string       _name;
-    bool              _isVisible = true;
-
-    bool              _rendersToTexture = false;
-    bool              _cachesRender = false;
-    bool              _hasCachedRender = false;
-    bool              _clipsToBounds = true;
-
-    Rectangle<double> _bounds;
-    bool              _interceptsInteractions = true;
-    bool              _childrenInterceptInteractions = true;
-
-    Window*           _window = nullptr;
-
-    View*             _subviewWithMouse = nullptr;
-
-    View*             _nextFocus = nullptr;
-    View*             _previousFocus = nullptr;
-    View*             _preferredFocus = nullptr;
-
-    Point<double>     _scale{1.0, 1.0};
-
-    Color             _backgroundColor{0.0, 0.0};
-    Color             _tintColor{1.0};
-
-    AffineTransformation _renderTransformation;
-
-    std::unique_ptr<opengl::Framebuffer> _renderCache;
-    opengl::Framebuffer::Attachment* _renderCacheColorAttachment = nullptr;
-    std::shared_ptr<WeakTexture> _renderCacheTexture = std::make_shared<WeakTexture>();
 
     struct Listener {
         Listener(std::type_index index, std::function<void(const void*, View*)> action, Relation relation)
@@ -574,7 +521,6 @@ private:
         std::function<void(const void*, View*)> action;
         Relation relation;
     };
-    std::list<Listener> _listeners;
 
     struct Provision {
         Provision(scraps::stdts::any object, Relation relation)
@@ -583,23 +529,18 @@ private:
         scraps::stdts::any object;
         Relation relation;
     };
-    std::list<Provision> _provisions;
 
-    TouchpadFocus _touchpadFocus;
+    void _addSubviews() {}
+    template <typename... Views>
+    void _addSubviews(View* view, Views&&... views);
 
-    std::unordered_map<size_t, std::function<void()>> _updateHooks;
+    void _removeSubviews() {}
+    template <typename... Views>
+    void _removeSubviews(View* view, Views&&... views);
 
-    scraps::AbstractTaskScheduler::TaskScope _taskScope; /* keep last */
-
-    void _invalidateSuperviewRenderCache();
     void _setBounds(const Rectangle<double>& bounds);
 
-    void _removeSubviewArgs() {}
-    template <typename... Views>
-    void _removeSubviewArgs(View* view, Views&&... views) {
-        removeSubview(view);
-        _removeSubviewArgs(std::forward<Views>(views)...);
-    }
+    void _invalidateSuperviewRenderCache();
 
     void _dispatchFutureVisibilityChange(bool visible);
     void _dispatchVisibilityChange(bool visible);
@@ -615,22 +556,7 @@ private:
     void _listen(std::type_index index, std::function<void(const void*, View*)> action, Relation relation);
 
     template <typename F>
-    void _traverseRelation(Relation relation, F&& function) {
-        switch (relation) {
-            case Relation::kAny: {
-                bool shouldContinue = true;
-                for (auto& v : _topViewsForRelation(relation)) {
-                    v->TreeNode::traverseRelation(TreeNode::Relation::kCommonRoot, function, 0, &shouldContinue);
-                }
-                break;
-            }
-            case Relation::kHierarchy:  TreeNode::traverseRelation(TreeNode::Relation::kCommonRoot, function, 0); break;
-            case Relation::kDescendant: TreeNode::traverseRelation(TreeNode::Relation::kDescendant, function, 0); break;
-            case Relation::kAncestor:   TreeNode::traverseRelation(TreeNode::Relation::kAncestor,   function, 0); break;
-            case Relation::kSibling:    TreeNode::traverseRelation(TreeNode::Relation::kSibling,    function, 0); break;
-            case Relation::kSelf:       TreeNode::traverseRelation(TreeNode::Relation::kSelf,       function, 0); break;
-        }
-    }
+    void _traverseRelation(Relation relation, F&& function);
 
     std::vector<View*> _topViewsForRelation(Relation relation);
 
@@ -639,7 +565,50 @@ private:
 
     void _checkUpdateSubscription();
     bool _shouldSubscribeToUpdates();
+
+    std::string _name;
+    bool _isVisible                     = true;
+    bool _rendersToTexture              = false;
+    bool _cachesRender                  = false;
+    bool _hasCachedRender               = false;
+    bool _clipsToBounds                 = true;
+    bool _interceptsInteractions        = true;
+    bool _childrenInterceptInteractions = true;
+
+    Window* _window                     = nullptr;
+    View*   _subviewWithMouse           = nullptr;
+    View*   _nextFocus                  = nullptr;
+    View*   _previousFocus              = nullptr;
+    View*   _preferredFocus             = nullptr;
+
+    Rectangle<double>    _bounds;
+    Point<double>        _scale{1.0, 1.0};
+    Color                _backgroundColor{0.0, 0.0};
+    Color                _tintColor{1.0};
+    AffineTransformation _renderTransformation;
+
+    std::unique_ptr<opengl::Framebuffer> _renderCache;
+    opengl::Framebuffer::Attachment*     _renderCacheColorAttachment = nullptr;
+    std::shared_ptr<WeakTexture>         _renderCacheTexture = std::make_shared<WeakTexture>();
+
+    std::list<Listener>                               _listeners;
+    std::list<Provision>                              _provisions;
+    TouchpadFocus                                     _touchpadFocus;
+    std::unordered_map<size_t, std::function<void()>> _updateHooks;
+
+    scraps::AbstractTaskScheduler::TaskScope          _taskScope; /* must be the last member */
 };
+
+template <typename T>
+T* View::shader(const char* identifier) {
+    auto s = shaderCache()->get(std::string(identifier));
+    if (!s) {
+        s = shaderCache()->add(std::make_unique<T>(), std::string(identifier), ShaderCache::Policy::kKeepForever);
+    }
+    auto ret = dynamic_cast<T*>(s->get());
+    ret->setTransformation(renderTransformation());
+    return ret;
+}
 
 template <typename T>
 T* View::find(Relation relation) {
@@ -664,6 +633,36 @@ T* View::find(Relation relation) {
         return application()->get<T>();
     }
     return ret;
+}
+
+template <typename F>
+void View::_traverseRelation(Relation relation, F&& function) {
+    switch (relation) {
+        case Relation::kAny: {
+            bool shouldContinue = true;
+            for (auto& v : _topViewsForRelation(relation)) {
+                v->TreeNode::traverseRelation(TreeNode::Relation::kCommonRoot, function, 0, &shouldContinue);
+            }
+            break;
+        }
+        case Relation::kHierarchy:  TreeNode::traverseRelation(TreeNode::Relation::kCommonRoot, function, 0); break;
+        case Relation::kDescendant: TreeNode::traverseRelation(TreeNode::Relation::kDescendant, function, 0); break;
+        case Relation::kAncestor:   TreeNode::traverseRelation(TreeNode::Relation::kAncestor,   function, 0); break;
+        case Relation::kSibling:    TreeNode::traverseRelation(TreeNode::Relation::kSibling,    function, 0); break;
+        case Relation::kSelf:       TreeNode::traverseRelation(TreeNode::Relation::kSelf,       function, 0); break;
+    }
+}
+
+template <typename... Views>
+void View::_addSubviews(View* view, Views&&... views) {
+    addSubview(view);
+    _addSubviews(std::forward<Views>(views)...);
+}
+
+template <typename... Views>
+void View::_removeSubviews(View* view, Views&&... views) {
+    removeSubview(view);
+    _removeSubviews(std::forward<Views>(views)...);
 }
 
 }}

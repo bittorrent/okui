@@ -11,6 +11,7 @@ using namespace onair::okui;
 TEST(Window, setFocus) {
     TestApplication application;
     okui::Window window(&application);
+    window.open();
 
     struct FocusableView : public View {
         virtual bool canBecomeFocus() override { return true; }

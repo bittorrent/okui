@@ -19,7 +19,9 @@ LabeledPopoutButton::LabeledPopoutButton() {
     _label.setClipsToBounds(false);
     _label.setAlignment(TextView::Style::HorizontalAlignment::kCenter);
     _label.setOverflowBehavior(TextView::Style::OverflowBehavior::kWrap);
-    addSubviews(&_body, &_label);
+
+    addSubview(&_body);
+    addSubview(&_label);
 }
 
 void LabeledPopoutButton::setLabelStyle(TextView::Style focused, TextView::Style unfocused) {

@@ -37,6 +37,7 @@ void Window::close() {
     application()->closeWindow(this);
     _isOpen = false;
     _contentView->_dispatchVisibilityChange(false);
+    _contentView->_dispatchWindowChange(nullptr);
 }
 
 void Window::setPosition(const WindowPosition& pos) {

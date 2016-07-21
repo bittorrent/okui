@@ -106,7 +106,9 @@ TEST(View, focus) {
 
     TestApplication application;
     okui::Window window(&application);
-    window.contentView()->addSubviews(&a, &b);
+    window.open();
+    window.contentView()->addSubview(&a);
+    window.contentView()->addSubview(&b);
     EXPECT_FALSE(a.isFocus());
     EXPECT_FALSE(b.isFocus());
 
@@ -139,9 +141,11 @@ TEST(View, removeSubviewRefocuses) {
 
     TestApplication application;
     Window window{&application};
+    window.open();
     FocusableView a, b, c;
     window.contentView()->addSubview(&a);
-    a.addSubviews(&b, &c);
+    a.addSubview(&b);
+    a.addSubview(&c);
 
     b.focus();
     ASSERT_TRUE(a.isFocus());
@@ -168,7 +172,8 @@ TEST(View, removeSubviewRefocuses) {
 
 TEST(View, removeSubviews) {
     View a, b, c;
-    a.addSubviews(&b, &c);
+    a.addSubview(&b);
+    a.addSubview(&c);
     EXPECT_EQ(a.subviews().size(), 2);
     a.removeSubviews();
     EXPECT_EQ(a.subviews().size(), 0);
@@ -181,6 +186,7 @@ TEST(View, destructionRefocuses) {
 
     TestApplication application;
     Window window{&application};
+    window.open();
     FocusableView a;
     window.contentView()->addSubview(&a);
     {
@@ -201,6 +207,7 @@ TEST(View, focusAncestor) {
 
     TestApplication application;
     Window window{&application};
+    window.open();
     FocusableView a;
     View b;
     FocusableView c;
@@ -375,6 +382,7 @@ TEST(View, hasRelation) {
 
     TestApplication application;
     okui::Window window(&application);
+    window.open();
     window.contentView()->addSubview(&a);
 
     EXPECT_TRUE(a.hasRelation(Relation::kAny, &b));
@@ -385,6 +393,7 @@ TEST(View, hasRelation) {
     EXPECT_TRUE(b.hasRelation(Relation::kHierarchy, &c));
 
     okui::Window secondWindow(&application);
+    secondWindow.open();
     secondWindow.contentView()->addSubview(&c);
 
     EXPECT_TRUE(a.hasRelation(Relation::kAny, &b));
@@ -415,6 +424,7 @@ TEST(View, messagePosting) {
 
     TestApplication application;
     okui::Window window(&application);
+    window.open();
     window.contentView()->addSubview(&a);
     a.addSubview(&b);
     a.addSubview(&c);
