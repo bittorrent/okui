@@ -1,5 +1,7 @@
 .DS_Store
+/b2
 /bin
+/ci-bin
 /dist
 /tests/android/src/main/assets
 /tests/android/src/main/libs

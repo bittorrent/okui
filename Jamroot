@@ -1,0 +1,99 @@
+project okui ;
+
+lib libpng : ./needs//libpng : <name>png <link>static ;
+lib libturbojpeg : ./needs//libjpeg-turbo : <name>turbojpeg ;
+lib libiconv     : : <name>iconv ;
+
+rule okui-frameworks ( properties * ) {
+    if <target-os>iphone in $(properties) || <target-os>appletv in $(properties) || <target-os>darwin in $(properties) {
+        local result ;
+        result += <framework>CoreFoundation ;
+        result += <framework>Foundation ;
+
+        if <target-os>darwin in $(properties) {
+            result += <framework>OpenGL ;
+        }
+
+        return $(result) ;
+    }
+}
+
+lib GL     : : <link>shared ;
+lib m      : : <link>shared ;
+lib GLESv2 : : <link>shared ;
+
+alias objc : : : :
+    <target-os>darwin:<cxxflags>"-x objective-c++"
+    <target-os>iphone:<cxxflags>"-x objective-c++"
+    <target-os>appletv:<cxxflags>"-x objective-c++"
+    <target-os>darwin:<cflags>-fobjc-arc
+    <target-os>iphone:<cflags>-fobjc-arc
+    <target-os>appletv:<cflags>-fobjc-arc
+;
+
+alias jshackle  : $(NEEDS_PATH)//jshackle ;
+
+local PKG_CONFIG_PATH = [ modules.peek project-config : PKG_CONFIG_PATH ] ;
+if ($(PKG_CONFIG_PATH)) {
+    local cflags = [ SHELL "PKG_CONFIG_PATH=$(PKG_CONFIG_PATH) pkg-config scraps --cflags" : strip-eol ] ;
+    local ldflags = [ SHELL "PKG_CONFIG_PATH=$(PKG_CONFIG_PATH) pkg-config scraps --libs --static" : strip-eol ] ;
+    alias scraps : : : : <cflags>$(cflags) <linkflags>$(ldflags) ;
+} else {
+    alias scraps : ../scraps//scraps ;
+}
+
+lib libSDL2 : ./needs//sdl2
+:
+    <name>SDL2
+: :
+    [ conditional <target-os>darwin :
+        <framework>AudioUnit
+        <framework>Carbon
+        <framework>Cocoa
+        <framework>CoreAudio
+        <framework>ForceFeedback
+        <framework>Foundation
+        <framework>IOKit
+        <source>libiconv
+    ]
+
+    [ conditional <target-os>appletv :
+        <framework>CoreAudio
+        <framework>CoreGraphics
+        <framework>GameController
+        <framework>QuartzCore
+        <framework>UIKit
+    ]
+
+    [ conditional <target-os>iphone :
+        <framework>CoreAudio
+        <framework>CoreGraphics
+        <framework>CoreMotion
+        <framework>GameController
+        <framework>QuartzCore
+        <framework>UIKit
+    ]
+;
+
+lib okui :
+    [ glob-tree-ex src : *.cpp ]
+    scraps
+    libpng
+    libturbojpeg
+    libSDL2
+    jshackle
+    objc
+:
+    <include>include
+    <cxxflags>"-std=c++1y"
+    <link>static
+    [ conditional <target-os>linux :
+        <source>GL
+        <source>m
+    ]
+: :
+    <include>include
+    <cxxflags>"-std=c++1y"
+    <conditional>@okui-frameworks
+    <target-os>android:<source>GLESv2
+;

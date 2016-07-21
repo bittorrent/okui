@@ -1,0 +1,29 @@
+#!/usr/bin/env python
+
+import argparse
+import os
+import subprocess
+
+project_root = os.path.dirname(os.path.abspath(__file__))
+os.chdir(project_root)
+
+needy = os.path.join(project_root, 'needy', 'scripts', 'needy')
+
+parser = argparse.ArgumentParser(description='Builds user-supplied dependencies.')
+parser.add_argument('--needy-target-args', default='', help='arguments to select the needy target with')
+parser.add_argument('--needy-satisfy-args', default='', help='the arguments to use with needy satisfy')
+parser.add_argument('--configure', action='store_true', help='if true, configure will also be invoked')
+args = parser.parse_args()
+
+libraries = ['scraps']
+needy_args = ' '.join(libraries + [args.needy_target_args])
+needy_satisfy_args = args.needy_target_args + ' ' + args.needy_satisfy_args
+
+subprocess.check_call('{} satisfy {} {}'.format(needy, ' '.join(libraries), needy_satisfy_args), shell=True)
+
+configure_command = 'PKG_CONFIG_PATH=`{} pkg-config-path {}` ./configure --needy-satisfy-args="{}"'.format(needy, needy_args, needy_satisfy_args)
+
+if args.configure:
+    subprocess.check_call(configure_command, shell=True)
+else:
+    print('Dependencies built. To use them, configure like so:\n{}'.format(configure_command))

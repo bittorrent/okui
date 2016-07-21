@@ -1,0 +1,45 @@
+#!/usr/bin/env python
+
+import argparse
+import os
+import stat
+import subprocess
+import sys
+
+project_root = os.path.dirname(os.path.abspath(__file__))
+os.chdir(project_root)
+
+needy = os.path.join(project_root, 'needy', 'scripts', 'needy')
+
+
+def bootstrap_b2():
+    subprocess.check_call([needy, 'satisfy', 'boost-build'])
+
+    b2 = os.path.join(project_root, 'b2')
+    b2_bin = os.path.join(subprocess.check_output([needy, 'builddir', 'boost-build']).decode(), 'bin')
+
+    with open(b2, 'w') as f:
+        f.write('#!/bin/sh\n{} "$@"'.format(os.path.join(b2_bin, 'b2')))
+    os.chmod(b2, os.stat(b2).st_mode | stat.S_IEXEC)
+
+
+def generate_needs_jamfile(satisfy_args):
+    subprocess.check_call('{} generate jamfile --satisfy-args="{}"'.format(needy, satisfy_args), shell=True)
+
+
+def generate_project_config():
+    with open('project-config.jam', 'w') as f:
+        f.write('PKG_CONFIG_PATH = "{}" ;\n'.format(os.environ['PKG_CONFIG_PATH'] if 'PKG_CONFIG_PATH' in os.environ else ''))
+
+parser = argparse.ArgumentParser(description='Configures the library.')
+parser.add_argument('--bootstrap-b2', action='store_true', help='bootstrap b2')
+parser.add_argument('--needy-satisfy-args', default='', help='the arguments to pass on to needy satisfy')
+args = parser.parse_args()
+
+if args.bootstrap_b2:
+    bootstrap_b2()
+
+generate_needs_jamfile(args.needy_satisfy_args)
+generate_project_config()
+
+print('Configuration complete. You may now build via ' + ('./b2' if args.bootstrap_b2 else 'b2') + '.')

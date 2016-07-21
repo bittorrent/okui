@@ -1,29 +1,36 @@
-DEPENDENCIES_PATH = [ SHELL "python3 -m ci_tacklebox.ci.properties dependencies_path" : strip-eol ] ;
+path-constant NEEDS_PATH : ../needs ;
+
+lib gtest : $(NEEDS_PATH)//googletest : <name>gtest ;
+lib gtest_main : $(NEEDS_PATH)//googletest : <name>gtest_main ;
 
 path-constant OKUI_TEST_RESOURCES_PATH : ./resources ;
 
 alias okui-tests-common :
     [ glob-tree-ex src : *.cpp : android.cpp ]
     ..//okui
-    $(DEPENDENCIES_PATH)/gtest//gtest/<link>static
+    gtest
 : : :
     <define>OKUI_TEST_RESOURCES_PATH=\\\"$(OKUI_TEST_RESOURCES_PATH)\\\"
 ;
 
 lib okui-gtests : okui-tests-common :
-    <conditional>@unit-test-library
+    <target-os>iphone:<build>no
+    <target-os>appletv:<build>no
     <link>static
 ;
 
 exe okui-tests :
     okui-tests-common/<link>static
-    $(DEPENDENCIES_PATH)/gtest//gtest_main/<link>static
+    gtest_main
 :
-    <conditional>@unit-test-executable
-    <build>no
-    <target-os>darwin:<build>yes
+    <target-os>iphone:<build>no
+    <target-os>appletv:<build>no
     <target-os>darwin:<framework>CoreVideo
 ;
+
+import testing ;
+unit-test run : okui-tests ;
+explicit run ;
 
 lib okui-tests-android :
     okui-tests-common/<link>static

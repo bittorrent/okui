@@ -1,4 +1,11 @@
 libraries:
+    boost-build:
+        download: https://github.com/boostorg/build/archive/2016.03.tar.gz
+        checksum: 0e6936337c25fc87d2aff8ea6c63019e9c1e319a
+        project:
+            build-steps:
+                - ./bootstrap.sh
+                - ./b2 install --prefix={build_directory}
     gas-preprocessor:
         repository: https://github.com/libjpeg-turbo/gas-preprocessor.git
         commit: 4338df436a20ad4d28c7cd37852323e902f1144c
@@ -9,6 +16,12 @@ libraries:
     nasm:
         download: 'http://www.nasm.us/pub/nasm/releasebuilds/2.11.06/nasm-2.11.06.tar.bz2'
         checksum: 'eaad6f440d3f8d2172d7fd93bed224d4052b904f'
+    scraps:
+        repository: git@github.com:bittorrent/scraps.git
+        commit: 84fc06197d1cb4d6302d117841b338de243da9b1
+        project:
+            type: boostbuild
+            pre-build: ./configure
     libjpeg-turbo:
         download: https://s3.amazonaws.com/live-dev-deps/libjpeg-turbo-1.4.90.tar.gz
         checksum: 62af89207d08252a1d8c4997ae50e11f4195ed74
@@ -84,6 +97,16 @@ libraries:
             post-build:
         {% endif %}
                 - xxd -i COPYING.txt {build_directory}/include/SDL2/license.c
+    googletest:
+        repository: git@github.com:google/googletest.git
+        commit: 43359642a1c16ad3f4fc575c7edd0cb935810815
+        project:
+            build-steps:
+                - cp -R googletest/include {build_directory}
+                - $CXX {{ '-stdlib=libc++' if platform != 'android' }} -isystem googletest/include -I googletest -c googletest/src/gtest-all.cc  -o googletest/src/gtest-all.o
+                - $CXX {{ '-stdlib=libc++' if platform != 'android' }} -isystem googletest/include -I googletest -c googletest/src/gtest_main.cc -o googletest/src/gtest_main.o
+                - ar -rv {build_directory}/lib/libgtest.a      googletest/src/gtest-all.o
+                - ar -rv {build_directory}/lib/libgtest_main.a googletest/src/gtest_main.o
 
 universal-binaries:
     macosx:
