@@ -9,7 +9,7 @@ Window::Window(Application* application)
     , _deviceRenderScale{application->renderScale()}
 {
     _application->addWindow(this);
-    _contentView = std::make_unique<View>();
+    _contentView = std::make_unique<View>("Window ContentView");
 }
 
 Window::~Window() {
@@ -21,6 +21,7 @@ Window::~Window() {
 }
 
 void Window::open() {
+    if (_isOpen) { return; }
     _contentView->_dispatchFutureVisibilityChange(true);
     application()->openWindow(this, _title.c_str(), _position, _width, _height);
     _isOpen = true;
@@ -30,6 +31,7 @@ void Window::open() {
 }
 
 void Window::close() {
+    if (!_isOpen) { return; }
     closing();
     _contentView->_dispatchFutureVisibilityChange(false);
     application()->closeWindow(this);
