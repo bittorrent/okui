@@ -11,6 +11,7 @@ alias okui-tests-common :
     gtest
 : : :
     <define>OKUI_TEST_RESOURCES_PATH=\\\"$(OKUI_TEST_RESOURCES_PATH)\\\"
+    <target-os>darwin:<framework>CoreVideo
 ;
 
 lib okui-gtests : okui-tests-common :
@@ -20,16 +21,15 @@ lib okui-gtests : okui-tests-common :
 ;
 
 exe okui-tests :
-    okui-tests-common/<link>static
     gtest_main
+    okui-gtests
 :
     <target-os>iphone:<build>no
     <target-os>appletv:<build>no
-    <target-os>darwin:<framework>CoreVideo
 ;
 
 import testing ;
-unit-test run : okui-tests ;
+unit-test run : okui-tests-common gtest_main ;
 explicit run ;
 
 lib okui-tests-android :

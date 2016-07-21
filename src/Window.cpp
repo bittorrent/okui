@@ -13,11 +13,11 @@ Window::Window(Application* application)
 }
 
 Window::~Window() {
-    close();
-    _application->removeWindow(this);
-
     // the content view should be destroyed before the window's other members
     _contentView.reset();
+
+    _application->closeWindow(this);
+    _application->removeWindow(this);
 }
 
 void Window::open() {
@@ -37,7 +37,6 @@ void Window::close() {
     application()->closeWindow(this);
     _isOpen = false;
     _contentView->_dispatchVisibilityChange(false);
-    _contentView->_dispatchWindowChange(nullptr);
 }
 
 void Window::setPosition(const WindowPosition& pos) {
