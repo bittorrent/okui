@@ -10,12 +10,6 @@
 #include "scraps/stdts/optional.h"
 #include "scraps/Reverse.h"
 
-#include <typeinfo>
-
-#if __clang__ || __GNUC__
-#include <cxxabi.h>
-#endif
-
 using namespace onair::okui;
 
 namespace {
@@ -42,22 +36,6 @@ View::~View() {
     if (superview()) {
         superview()->removeSubview(this);
     }
-}
-
-std::string View::name() const {
-    if (_name.empty()) {
-#if __clang__ || __GNUC__
-        struct FreeDeleter { void operator()(char* p) const { std::free(p); } };
-        int status = 0;
-        auto name = std::unique_ptr<char, FreeDeleter>{abi::__cxa_demangle(typeid(*this).name(), nullptr, nullptr, &status)};
-        if (status == 0) {
-            return name.get();
-        }
-#endif
-        return typeid(*this).name();
-    }
-
-    return _name;
 }
 
 void View::addSubview(View* view) {

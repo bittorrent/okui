@@ -22,6 +22,7 @@
 
 #include "scraps/AbstractTaskScheduler.h"
 #include "scraps/TreeNode.h"
+#include "scraps/utility.h"
 
 #include <list>
 #include <typeindex>
@@ -56,7 +57,7 @@ public:
     */
     virtual ~View();
 
-    std::string name() const;
+    std::string name() const       { return _name.empty() ? scraps::Demangle(typeid(*this).name()) : _name; }
     void setName(std::string name) { _name = std::move(name); }
 
     void addSubview(View* view);
@@ -76,10 +77,9 @@ public:
     const std::list<View*>& subviews() const { return children(); }
 
     const Rectangle<double>& bounds() const  { return _bounds; }
-    Rectangle<double> windowBounds() const;
-
     template <typename... Args>
     void setBounds(Args&&... args)           { _setBounds(Rectangle<double>(std::forward<Args>(args)...)); }
+    Rectangle<double> windowBounds() const;
 
     /**
     * Sets bounds as a percent of superview bounds (0-1)
@@ -391,6 +391,16 @@ public:
     template <typename... Args>
     auto asyncAfter(Args&&... args) -> decltype(std::declval<scraps::AbstractTaskScheduler>().asyncAfter(std::forward<Args>(args)...)) {
         return _taskScheduler()->asyncAfter(_taskScope, std::forward<Args>(args)...);
+    }
+
+    /**
+    * Asynchronously schedules a function to be invoked at a time using the application's task scheduler.
+    *
+    * If the view is destroyed, the invocation will be canceled.
+    */
+    template <typename... Args>
+    auto asyncAt(Args&&... args) -> decltype(std::declval<scraps::AbstractTaskScheduler>().asyncAt(std::forward<Args>(args)...)) {
+        return _taskScheduler()->asyncAt(_taskScope, std::forward<Args>(args)...);
     }
 
     /**
