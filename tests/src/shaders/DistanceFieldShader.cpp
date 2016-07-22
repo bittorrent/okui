@@ -33,22 +33,22 @@ TEST(DistanceFieldShader, edgeZero) {
 
         // top left
         auto pixel = framebuffer.getPixel(19, 19);
-        EXPECT_EQ(pixel, Color(0, 0, 0, 1));
+        EXPECT_EQ(pixel, Color::kBlack);
         pixel = framebuffer.getPixel(20, 20);
-        EXPECT_GT(pixel.r, 0.5);
-        EXPECT_LT(pixel.r, 1);
+        EXPECT_GT(pixel.redF(), 0.5);
+        EXPECT_LT(pixel.redF(), 1);
         pixel = framebuffer.getPixel(21, 21);
-        EXPECT_EQ(pixel, Color(1, 1, 1, 1));
+        EXPECT_EQ(pixel, Color::kWhite);
         pixel = framebuffer.getPixel(28, 28);
-        EXPECT_EQ(pixel, Color(1, 1, 1, 1));
+        EXPECT_EQ(pixel, Color::kWhite);
 
         // bottom right
         pixel = framebuffer.getPixel(69, 89);
-        EXPECT_EQ(pixel, Color(1, 1, 1, 1));
+        EXPECT_EQ(pixel, Color::kWhite);
         pixel = framebuffer.getPixel(70, 90);
-        EXPECT_GT(pixel.r, 0);
+        EXPECT_GT(pixel.redF(), 0);
         pixel = framebuffer.getPixel(72, 92);
-        EXPECT_EQ(pixel, Color(0, 0, 0, 1));
+        EXPECT_EQ(pixel, Color::kBlack);
     });
 }
 
@@ -77,21 +77,21 @@ TEST(DistanceFieldShader, edgeHalf) {
 
         // top left
         auto pixel = framebuffer.getPixel(26, 26);
-        EXPECT_EQ(pixel, Color(0, 0, 0, 1));
+        EXPECT_EQ(pixel, Color::kBlack);
         pixel = framebuffer.getPixel(28, 28);
-        EXPECT_GT(pixel.r, 0.5);
-        EXPECT_LT(pixel.r, 1);
+        EXPECT_GT(pixel.redF(), 0.5);
+        EXPECT_LT(pixel.redF(), 1);
         pixel = framebuffer.getPixel(29, 29);
-        EXPECT_EQ(pixel, Color(1, 1, 1, 1));
+        EXPECT_EQ(pixel, Color::kWhite);
 
         // bottom right
         pixel = framebuffer.getPixel(61, 81);
-        EXPECT_EQ(pixel, Color(1, 1, 1, 1));
+        EXPECT_EQ(pixel, Color::kWhite);
         pixel = framebuffer.getPixel(63, 83);
-        EXPECT_GT(pixel.r, 0);
-        EXPECT_LT(pixel.r, 1);
+        EXPECT_GT(pixel.redF(), 0);
+        EXPECT_LT(pixel.redF(), 1);
         pixel = framebuffer.getPixel(64, 84);
-        EXPECT_EQ(pixel, Color(0, 0, 0, 1));
+        EXPECT_EQ(pixel, Color::kBlack);
     });
 }
 

@@ -14,7 +14,7 @@ TEST(LineShape, normal) {
         TestFramebuffer framebuffer(320, 200);
 
         auto shader = view->colorShader();
-        shader->setColor(1, 1, 1, 1);
+        shader->setColor(Color::kWhite);
         shader->setTransformation(framebuffer.transformation());
 
         Point<double> p1(12.0, 20.0);
@@ -32,17 +32,17 @@ TEST(LineShape, normal) {
 
             if (t < 0) {        // before the start
                 if ((p1-p).magnitude() < aa) {
-                    EXPECT_EQ(pixel, Color(0, 0, 0, 1));
+                    EXPECT_EQ(pixel, Color::kBlack);
                 }
             } else if (t > 1) { // after the end
                 if ((p-p2).magnitude() < aa) {
-                    EXPECT_EQ(pixel, Color(0, 0, 0, 1));
+                    EXPECT_EQ(pixel, Color::kBlack);
                 }
             } else {
                 auto proj = p1 + (p2-p1) * t;
                 auto distance = (proj-p).magnitude();
                 if (distance < (2.5-aa) && (p-p2).magnitude() < aa && (p1-p).magnitude() < aa) {
-                    EXPECT_EQ(pixel, Color(1, 1, 1, 1));
+                    EXPECT_EQ(pixel, Color::kWhite);
                 }
             }
         });

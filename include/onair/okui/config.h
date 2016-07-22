@@ -1,7 +1,6 @@
 #pragma once
 
 #include "scraps/config.h"
-#include "scraps/logging.h"
 
 #ifndef __ASSERT_MACROS_DEFINE_VERSIONS_WITHOUT_UNDERSCORES
 #define __ASSERT_MACROS_DEFINE_VERSIONS_WITHOUT_UNDERSCORES 0
@@ -10,6 +9,8 @@
 namespace onair {
 namespace okui {
 
+inline namespace literals {}
+
 using namespace std::literals;
 
-} } //namespace onair::okui
+} } // namespace onair::okui

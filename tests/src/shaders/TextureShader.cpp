@@ -59,36 +59,36 @@ TEST(TextureShader, scaledFill) {
         framebuffer.finish();
 
         auto pixel = framebuffer.getPixel(19, 19);
-        EXPECT_EQ(pixel, Color(0, 0, 0, 1));
+        EXPECT_EQ(pixel, Color::kBlack);
 
         pixel = framebuffer.getPixel(20, 20);
-        EXPECT_LT(pixel.r, 1);
-        EXPECT_GT(pixel.r, 0.5);
-        EXPECT_EQ(pixel.g, 1);
-        EXPECT_EQ(pixel.b, 0);
+        EXPECT_LT(pixel.redF(), 1);
+        EXPECT_GT(pixel.redF(), 0.5);
+        EXPECT_EQ(pixel.greenF(), 1);
+        EXPECT_EQ(pixel.blueF(), 0);
 
         pixel = framebuffer.getPixel(119, 20);
-        EXPECT_LT(pixel.r, 0.5);
-        EXPECT_GT(pixel.r, 0);
-        EXPECT_EQ(pixel.g, 1);
-        EXPECT_EQ(pixel.b, 0);
+        EXPECT_LT(pixel.redF(), 0.5);
+        EXPECT_GT(pixel.redF(), 0);
+        EXPECT_EQ(pixel.greenF(), 1);
+        EXPECT_EQ(pixel.blueF(), 0);
 
         pixel = framebuffer.getPixel(20, 149);
-        EXPECT_LT(pixel.r, 1);
-        EXPECT_GT(pixel.r, 0.5);
-        EXPECT_EQ(pixel.g, 0);
-        EXPECT_LT(pixel.b, 0.5);
-        EXPECT_GT(pixel.b, 0);
+        EXPECT_LT(pixel.redF(), 1);
+        EXPECT_GT(pixel.redF(), 0.5);
+        EXPECT_EQ(pixel.greenF(), 0);
+        EXPECT_LT(pixel.blueF(), 0.5);
+        EXPECT_GT(pixel.blueF(), 0);
 
         pixel = framebuffer.getPixel(119, 149);
-        EXPECT_LT(pixel.r, 0.5);
-        EXPECT_GT(pixel.r, 0);
-        EXPECT_EQ(pixel.g, 0);
-        EXPECT_LT(pixel.b, 1);
-        EXPECT_GT(pixel.b, 0.5);
+        EXPECT_LT(pixel.redF(), 0.5);
+        EXPECT_GT(pixel.redF(), 0);
+        EXPECT_EQ(pixel.greenF(), 0);
+        EXPECT_LT(pixel.blueF(), 1);
+        EXPECT_GT(pixel.blueF(), 0.5);
 
         pixel = framebuffer.getPixel(50, 150);
-        EXPECT_EQ(pixel, Color(0, 0, 0, 1));
+        EXPECT_EQ(pixel, Color::kBlack);
     });
 }
 
@@ -114,10 +114,10 @@ TEST(TextureShader, scaledFit) {
 
         framebuffer.finish();
 
-        EXPECT_EQ(framebuffer.getPixel(30, 34), Color(0, 0, 0, 1));
-        EXPECT_EQ(framebuffer.getPixel(30, 137), Color(0, 0, 0, 1));
-        EXPECT_NE(framebuffer.getPixel(30, 40), Color(0, 0, 0, 1));
-        EXPECT_NE(framebuffer.getPixel(30, 125), Color(0, 0, 0, 1));
+        EXPECT_EQ(framebuffer.getPixel(30, 34), Color::kBlack);
+        EXPECT_EQ(framebuffer.getPixel(30, 137), Color::kBlack);
+        EXPECT_NE(framebuffer.getPixel(30, 40), Color::kBlack);
+        EXPECT_NE(framebuffer.getPixel(30, 125), Color::kBlack);
     });
 }
 
@@ -136,7 +136,7 @@ TEST(TextureShader, color) {
 
         auto shader = view->textureShader();
         shader->setTransformation(framebuffer.transformation());
-        shader->setColor(0.5, 0.25, 0, 1.0);
+        shader->setColor(RGBAF(0.5, 0.25, 0, 1.0));
 
         shader->drawScaledFit(*texture, 20, 20, 100, 130);
 
@@ -145,28 +145,28 @@ TEST(TextureShader, color) {
         framebuffer.finish();
 
         auto pixel = framebuffer.getPixel(19, 20);
-        EXPECT_EQ(pixel, Color(0, 0, 0, 1));
+        EXPECT_EQ(pixel, Color::kBlack);
 
         pixel = framebuffer.getPixel(22, 40);
-        EXPECT_NEAR(pixel.r, 0.5, 0.1);
-        EXPECT_NEAR(pixel.g, 0.25, 0.1);
-        EXPECT_NEAR(pixel.b, 0, 0.1);
-        EXPECT_EQ(pixel.a, 1);
+        EXPECT_NEAR(pixel.redF(), 0.5, 0.1);
+        EXPECT_NEAR(pixel.greenF(), 0.25, 0.1);
+        EXPECT_NEAR(pixel.blueF(), 0, 0.1);
+        EXPECT_EQ(pixel.alphaF(), 1);
 
         pixel = framebuffer.getPixel(117, 40);
-        EXPECT_NEAR(pixel.r, 0, 0.1);
-        EXPECT_NEAR(pixel.g, 0.25, 0.1);
-        EXPECT_NEAR(pixel.b, 0, 0.1);
-        EXPECT_EQ(pixel.a, 1);
+        EXPECT_NEAR(pixel.redF(), 0, 0.1);
+        EXPECT_NEAR(pixel.greenF(), 0.25, 0.1);
+        EXPECT_NEAR(pixel.blueF(), 0, 0.1);
+        EXPECT_EQ(pixel.alphaF(), 1);
 
         pixel = framebuffer.getPixel(22, 132);
-        EXPECT_NEAR(pixel.r, 0.5, 0.1);
-        EXPECT_NEAR(pixel.g, 0, 0.1);
-        EXPECT_NEAR(pixel.b, 0, 0.1);
-        EXPECT_EQ(pixel.a, 1);
+        EXPECT_NEAR(pixel.redF(), 0.5, 0.1);
+        EXPECT_NEAR(pixel.greenF(), 0, 0.1);
+        EXPECT_NEAR(pixel.blueF(), 0, 0.1);
+        EXPECT_EQ(pixel.alphaF(), 1);
 
         pixel = framebuffer.getPixel(50, 137);
-        EXPECT_EQ(pixel, Color(0, 0, 0, 1));
+        EXPECT_EQ(pixel, Color::kBlack);
     });
 }
 

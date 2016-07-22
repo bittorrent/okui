@@ -21,7 +21,7 @@ TEST(Stencil, normal) {
         TestFramebuffer framebuffer(width, height);
 
         auto shader = view->colorShader();
-        shader->setColor(1.0, 1.0, 1.0, 1.0);
+        shader->setColor(Color::kWhite);
         shader->setTransformation(AffineTransformation{-1, 1, 0, 0, 2.0 / width, -2.0 / height});
 
         Stencil stencil(view->window());
@@ -41,7 +41,7 @@ TEST(Stencil, normal) {
                 // let the edge pixels go either way
                 return;
             }
-            EXPECT_EQ(pixel, (b.contains(x, y) && !a.contains(x, y)) ? Color(1, 1, 1, 1) : Color(0, 0, 0, 1));
+            EXPECT_EQ(pixel, (b.contains(x, y) && !a.contains(x, y)) ? Color::kWhite : Color::kBlack);
         });
     });
 }
@@ -51,7 +51,7 @@ TEST(Stencil, inversion) {
         TestFramebuffer framebuffer(width, height);
 
         auto shader = view->colorShader();
-        shader->setColor(1.0, 1.0, 1.0, 1.0);
+        shader->setColor(Color::kWhite);
         shader->setTransformation(AffineTransformation{-1, 1, 0, 0, 2.0 / width, -2.0 / height});
 
         Stencil stencil(view->window());
@@ -72,7 +72,7 @@ TEST(Stencil, inversion) {
                 // let the edge pixels go either way
                 return;
             }
-            EXPECT_EQ(pixel, intersection.contains(x, y) ? Color(1, 1, 1, 1) : Color(0, 0, 0, 1));
+            EXPECT_EQ(pixel, intersection.contains(x, y) ? Color::kWhite : Color::kBlack);
         });
     });
 }

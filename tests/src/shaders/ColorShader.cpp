@@ -14,7 +14,7 @@ TEST(ColorShader, basic) {
         TestFramebuffer framebuffer(320, 200);
 
         auto shader = view->colorShader();
-        shader->setColor(1, 1, 1, 1);
+        shader->setColor(Color::kWhite);
         shader->setTransformation(framebuffer.transformation());
 
         auto rect = Rectangle<double>(2, 13, 11, 123);
@@ -24,7 +24,7 @@ TEST(ColorShader, basic) {
         framebuffer.finish();
 
         framebuffer.iteratePixels([&](int x, int y, Color pixel) {
-            EXPECT_EQ(pixel, rect.contains(x, y) ? Color(1, 1, 1, 1) : Color(0, 0, 0, 1));
+            EXPECT_EQ(pixel, rect.contains(x, y) ? Color::kWhite : Color::kBlack);
         });
     });
 }
@@ -35,8 +35,8 @@ TEST(ColorShader, gradient) {
 
         auto shader = view->colorShader();
         shader->setTransformation(framebuffer.transformation());
-        shader->setColorA(2, 13, 1, 0, 0, 1);
-        shader->setColorB(13, 136, 0, 0, 1, 1);
+        shader->setColorA(2, 13, RGBAF(1, 0, 0, 1));
+        shader->setColorB(13, 136, RGBAF(0, 0, 1, 1));
 
         auto rect = Rectangle<double>(2, 13, 11, 123);
         shapes::Rectangle(rect).draw(shader);
@@ -45,22 +45,22 @@ TEST(ColorShader, gradient) {
         framebuffer.finish();
 
         auto pixel = framebuffer.getPixel(2, 13);
-        EXPECT_NEAR(pixel.r, 1, 0.01);
-        EXPECT_EQ(pixel.g, 0);
-        EXPECT_NEAR(pixel.b, 0, 0.01);
-        EXPECT_EQ(pixel.a, 1);
+        EXPECT_NEAR(pixel.redF(), 1, 0.01);
+        EXPECT_EQ(pixel.greenF(), 0);
+        EXPECT_NEAR(pixel.blueF(), 0, 0.01);
+        EXPECT_EQ(pixel.alphaF(), 1);
 
         pixel = framebuffer.getPixel(12, 135);
-        EXPECT_NEAR(pixel.r, 0, 0.01);
-        EXPECT_EQ(pixel.g, 0);
-        EXPECT_NEAR(pixel.b, 1, 0.01);
-        EXPECT_EQ(pixel.a, 1);
+        EXPECT_NEAR(pixel.redF(), 0, 0.01);
+        EXPECT_EQ(pixel.greenF(), 0);
+        EXPECT_NEAR(pixel.blueF(), 1, 0.01);
+        EXPECT_EQ(pixel.alphaF(), 1);
 
         pixel = framebuffer.getPixel(7, 74);
-        EXPECT_NEAR(pixel.r, 0.5, 0.01);
-        EXPECT_EQ(pixel.g, 0);
-        EXPECT_NEAR(pixel.b, 0.5, 0.01);
-        EXPECT_EQ(pixel.a, 1);
+        EXPECT_NEAR(pixel.redF(), 0.5, 0.01);
+        EXPECT_EQ(pixel.greenF(), 0);
+        EXPECT_NEAR(pixel.blueF(), 0.5, 0.01);
+        EXPECT_EQ(pixel.alphaF(), 1);
     });
 }
 

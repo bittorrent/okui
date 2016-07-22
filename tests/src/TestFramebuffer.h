@@ -7,6 +7,8 @@
 
 #if !OPENGL_ES // TODO: fix for OpenGL ES
 
+using namespace onair::okui;
+
 struct TestFramebuffer {
     TestFramebuffer(int width, int height) {
         colorAttachment = framebuffer.addColorAttachment(width, height);
@@ -29,7 +31,7 @@ struct TestFramebuffer {
 
     onair::okui::Color getPixel(size_t x, size_t y) {
         auto* p = &pixels[((colorAttachment->height()-y-1)*colorAttachment->width() + x)*4];
-        return {p[0]/255.0, p[1]/255.0, p[2]/255.0, p[3]/255.0};
+        return RGBA(p[0], p[1], p[2], p[3]);
     }
 
     template<typename F> // F policy: void(int x, int y, Color pixel)

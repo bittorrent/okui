@@ -14,7 +14,7 @@ TEST(RectangleShape, normal) {
         TestFramebuffer framebuffer(320, 200);
 
         auto shader = view->colorShader();
-        shader->setColor(1, 1, 1, 1);
+        shader->setColor(Color::kWhite);
         shader->setTransformation(framebuffer.transformation());
 
         auto rect = Rectangle<double>(2, 13, 11, 123);
@@ -24,7 +24,7 @@ TEST(RectangleShape, normal) {
         framebuffer.finish();
 
         framebuffer.iteratePixels([&](int x, int y, Color pixel) {
-            EXPECT_EQ(pixel, rect.contains(x, y) ? Color(1, 1, 1, 1) : Color(0, 0, 0, 1));
+            EXPECT_EQ(pixel, rect.contains(x, y) ? Color::kWhite : Color::kBlack);
         });
     });
 }
@@ -34,7 +34,7 @@ TEST(RectangleShape, round) {
         TestFramebuffer framebuffer(320,200);
 
         auto shader = view->colorShader();
-        shader->setColor(1.0, 1.0, 1.0, 1.0);
+        shader->setColor(Color::kWhite);
         shader->setTransformation(framebuffer.transformation());
 
         auto rect = Rectangle<double>(2, 13, 11, 123);
@@ -44,17 +44,17 @@ TEST(RectangleShape, round) {
         framebuffer.finish();
 
         //  Check that the corners aren't written to
-        EXPECT_EQ(framebuffer.getPixel(rect.minX(), rect.minY()), Color(0, 0, 0, 1));
-        EXPECT_EQ(framebuffer.getPixel(rect.maxX(), rect.minY()), Color(0, 0, 0, 1));
-        EXPECT_EQ(framebuffer.getPixel(rect.minX(), rect.maxY()), Color(0, 0, 0, 1));
-        EXPECT_EQ(framebuffer.getPixel(rect.maxX(), rect.maxY()), Color(0, 0, 0, 1));
+        EXPECT_EQ(framebuffer.getPixel(rect.minX(), rect.minY()), Color::kBlack);
+        EXPECT_EQ(framebuffer.getPixel(rect.maxX(), rect.minY()), Color::kBlack);
+        EXPECT_EQ(framebuffer.getPixel(rect.minX(), rect.maxY()), Color::kBlack);
+        EXPECT_EQ(framebuffer.getPixel(rect.maxX(), rect.maxY()), Color::kBlack);
 
         //  Check that the main area is written to
         auto rect1 = Rectangle<double>(2, 13+3, 11, 123-6);
         auto rect2 = Rectangle<double>(2+3, 13, 11-6, 123);
         framebuffer.iteratePixels([&](int x, int y, const Color& pixel) {
             if (rect1.contains(x, y) || rect2.contains(x, y)) {
-                EXPECT_EQ(pixel, Color(1, 1, 1, 1));
+                EXPECT_EQ(pixel, Color::kWhite);
             }
         });
     });
@@ -65,7 +65,7 @@ TEST(RectangleShape, rotate) {
         TestFramebuffer framebuffer(320, 200);
 
         auto shader = view->colorShader();
-        shader->setColor(1, 1, 1, 1);
+        shader->setColor(Color::kWhite);
         shader->setTransformation(framebuffer.transformation());
 
         auto rect = Rectangle<double>(20, 3, 15, 10);
@@ -77,7 +77,7 @@ TEST(RectangleShape, rotate) {
         auto rotatedRect = Rectangle<double>(10, 3, 10, 15);
 
         framebuffer.iteratePixels([&](int x, int y, Color pixel) {
-            EXPECT_EQ(pixel, rotatedRect.contains(x, y) ? Color(1, 1, 1, 1) : Color(0, 0, 0, 1));
+            EXPECT_EQ(pixel, rotatedRect.contains(x, y) ? Color::kWhite : Color::kBlack);
         });
     });
 }

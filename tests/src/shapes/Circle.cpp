@@ -14,7 +14,7 @@ TEST(CircleShape, normal) {
         TestFramebuffer framebuffer(320, 200);
 
         auto shader = view->colorShader();
-        shader->setColor(1, 1, 1, 1);
+        shader->setColor(Color::kWhite);
         shader->setTransformation(framebuffer.transformation());
 
         Point<double> pos(12.0, 20.0);
@@ -29,9 +29,9 @@ TEST(CircleShape, normal) {
             auto distance = (Point<double>(static_cast<double>(x), static_cast<double>(y)) - pos).magnitude();
 
             if (distance < (7-aa)) {
-                EXPECT_EQ(pixel, Color(1, 1, 1, 1));
+                EXPECT_EQ(pixel, Color::kWhite);
             } else if (distance > (7+aa)) {
-                EXPECT_EQ(pixel, Color(0, 0, 0, 1));
+                EXPECT_EQ(pixel, Color::kBlack);
             }
         });
     });

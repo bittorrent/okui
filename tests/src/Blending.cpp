@@ -21,23 +21,23 @@ TEST(Blending, erasure) {
 
         auto shader = view->colorShader();
 
-        shader->setColor(1.0, 1.0, 0.0);
+        shader->setColor(RGBF(1.0, 1.0, 0.0));
         shapes::Rectangle((width - height * 0.5) * 0.5, height * 0.25, height * 0.5, height * 0.5).round(height * 0.25).draw(shader);
         shader->flush();
 
         {
             Blending blending{BlendFunction::kErasure};
-            shader->setColor(1.0, 0.0, 0.0, 0.0);
+            shader->setColor(RGBAF(1.0, 0.0, 0.0, 0.0));
             shapes::Rectangle((width - height * 0.25) * 0.5, height * 0.375, height * 0.25, height * 0.25).round(height * 0.125).draw(shader);
             shader->flush();
         }
 
         framebuffer.finish();
 
-        EXPECT_EQ(framebuffer.getPixel(width * 0.1, height * 0.5), Color(0.0, 0.0));
-        EXPECT_EQ(framebuffer.getPixel(width * 0.5, height * 0.1), Color(0.0, 0.0));
-        EXPECT_EQ(framebuffer.getPixel(width * 0.5, height * 0.5), Color(0.0, 1.0, 0.0));
-        EXPECT_EQ(framebuffer.getPixel(width * 0.5, height * 0.30), Color(1.0, 1.0, 0.0));
+        EXPECT_EQ(framebuffer.getPixel(width * 0.1, height * 0.5), RGBAF(0.0, 0.0, 0.0, 0.0));
+        EXPECT_EQ(framebuffer.getPixel(width * 0.5, height * 0.1), RGBAF(0.0, 0.0, 0.0, 0.0));
+        EXPECT_EQ(framebuffer.getPixel(width * 0.5, height * 0.5), RGBF(0.0, 1.0, 0.0));
+        EXPECT_EQ(framebuffer.getPixel(width * 0.5, height * 0.30), RGBF(1.0, 1.0, 0.0));
     });
 }
 
@@ -52,22 +52,22 @@ TEST(Blending, alphaLock) {
 
         auto shader = view->colorShader();
 
-        shader->setColor(1.0, 0.0, 0.0);
+        shader->setColor(RGBF(1.0, 0.0, 0.0));
         shapes::Rectangle((width - height * 0.5) * 0.5, height * 0.25, height * 0.5, height * 0.5).round(height * 0.25).draw(shader);
         shader->flush();
 
         {
             Blending blending{BlendFunction::kAlphaLock};
-            shader->setColor(0.0, 1.0, 0.0);
+            shader->setColor(RGBF(0.0, 1.0, 0.0));
             shapes::Rectangle(0.0, height * 0.4, width, height * 0.2).draw(shader);
             shader->flush();
         }
 
         framebuffer.finish();
 
-        EXPECT_EQ(framebuffer.getPixel(width * 0.1, height * 0.5), Color(0.0, 0.0));
-        EXPECT_EQ(framebuffer.getPixel(width * 0.5, height * 0.1), Color(0.0, 0.0));
-        EXPECT_EQ(framebuffer.getPixel(width * 0.5, height * 0.5), Color(0.0, 1.0, 0.0));
+        EXPECT_EQ(framebuffer.getPixel(width * 0.1, height * 0.5), RGBAF(0.0, 0.0, 0.0, 0.0));
+        EXPECT_EQ(framebuffer.getPixel(width * 0.5, height * 0.1), RGBAF(0.0, 0.0, 0.0, 0.0));
+        EXPECT_EQ(framebuffer.getPixel(width * 0.5, height * 0.5), RGBF(0.0, 1.0, 0.0));
     });
 }
 
