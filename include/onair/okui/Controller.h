@@ -22,4 +22,4 @@ public:
     virtual AxisType axisType(size_t index) const = 0;
 };
 
-}} // namespace onair::okui
+} } //namespace onair::okui

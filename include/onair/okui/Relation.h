@@ -18,4 +18,4 @@ enum class Relation {
     kSelf,
 };
 
-}}
+} } //namespace onair::okui

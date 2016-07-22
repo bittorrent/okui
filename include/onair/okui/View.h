@@ -105,22 +105,15 @@ public:
     /**
     * Sets the view's background color.
     */
-    template <typename... Args>
-    void setBackgroundColor(Args&&... args) { _backgroundColor = Color(std::forward<Args>(args)...); }
-
-    const Color& backgroundColor() const { return _backgroundColor; }
+    void setBackgroundColor(const Color& color) { _backgroundColor = color; }
+    const Color& backgroundColor() const        { return _backgroundColor; }
 
     /**
     * Sets the view's tint. If this is anything but opaque white, this is a post-rendering effect that
     * clips the view's contents.
     */
-    template <typename... Args>
-    void setTintColor(Args&&... args) {
-        _tintColor = Color(std::forward<Args>(args)...);
-        _invalidateSuperviewRenderCache();
-    }
-
-    const Color& tintColor() const { return _tintColor; }
+    void setTintColor(const Color& color) { _tintColor = color; _invalidateSuperviewRenderCache(); }
+    const Color& tintColor() const        { return _tintColor; }
 
     /**
     * Sets the view's opacity. If this is anything but 1, this is a post-rendering effect that
@@ -128,9 +121,8 @@ public:
     *
     * This effectively sets the alpha component of the view's tint color.
     */
-    void setOpacity(double opacity);
-
-    double opacity() const { return _tintColor.a; }
+    void setOpacity(double opacity)  { setTintColor(_tintColor.withAlphaF(opacity)); }
+    double opacity() const           { return _tintColor.alphaF(); }
 
     /**
     * Returns true if the view's ancestors are visible or if the view has no ancestors.
@@ -593,8 +585,8 @@ private:
 
     Rectangle<double>    _bounds;
     Point<double>        _scale{1.0, 1.0};
-    Color                _backgroundColor{0.0, 0.0};
-    Color                _tintColor{1.0};
+    Color                _backgroundColor = Color::kTransparentBlack;
+    Color                _tintColor = Color::kWhite;
     AffineTransformation _renderTransformation;
 
     std::unique_ptr<opengl::Framebuffer> _renderCache;
@@ -608,6 +600,18 @@ private:
 
     scraps::AbstractTaskScheduler::TaskScope          _taskScope; /* must be the last member */
 };
+
+template <typename... Views>
+void View::_addSubviews(View* view, Views&&... views) {
+    addSubview(view);
+    _addSubviews(std::forward<Views>(views)...);
+}
+
+template <typename... Views>
+void View::_removeSubviews(View* view, Views&&... views) {
+    removeSubview(view);
+    _removeSubviews(std::forward<Views>(views)...);
+}
 
 template <typename T>
 T* View::shader(const char* identifier) {
@@ -663,16 +667,4 @@ void View::_traverseRelation(Relation relation, F&& function) {
     }
 }
 
-template <typename... Views>
-void View::_addSubviews(View* view, Views&&... views) {
-    addSubview(view);
-    _addSubviews(std::forward<Views>(views)...);
-}
-
-template <typename... Views>
-void View::_removeSubviews(View* view, Views&&... views) {
-    removeSubview(view);
-    _removeSubviews(std::forward<Views>(views)...);
-}
-
-}}
+} } //namespace onair::okui

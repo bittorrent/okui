@@ -11,8 +11,7 @@ namespace {
 constexpr auto kDepressedBrightness = 0.8;
 
 constexpr auto DepressedColor(Color c) {
-    auto color = c * kDepressedBrightness;
-    color.a = c.a;
+    auto color = (c * kDepressedBrightness).withAlphaF(c.alphaF());
     return color;
 }
 

@@ -39,7 +39,7 @@ private:
     std::string                     _resource;
     std::string                     _placeholderResource;
     bool                            _fromURL = false;
-    Color                           _color = {1, 1, 1, 1};
+    Color                           _color = Color::kWhite;
     scraps::stdts::optional<double> _distanceFieldEdge;
     TextureDrawMode                 _drawMode = TextureDrawMode::kFit;
 };

@@ -6,8 +6,14 @@ namespace onair {
 namespace okui {
 
 enum class Direction {
-    kLeft, kRight, kUp, kDown,
-    kUpLeft, kUpRight, kDownLeft, kDownRight,
+    kLeft,
+    kRight,
+    kUp,
+    kDown,
+    kUpLeft,
+    kUpRight,
+    kDownLeft,
+    kDownRight
 };
 
-}} // namespace onair::okui
+} } //namespace onair::okui

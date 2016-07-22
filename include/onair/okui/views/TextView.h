@@ -89,11 +89,6 @@ public:
     void setOverflowBehavior(Style::OverflowBehavior overflowBehavior);
     void setWeight(double weight);
 
-    template <typename ColorArg, typename... RemColorArgs>
-    auto setTextColor(ColorArg&& colorArg, RemColorArgs&&... remColorArgs) -> typename std::enable_if<!std::is_convertible<ColorArg, const Color&>::value>::type {
-        setTextColor(Color(std::forward<ColorArg>(colorArg), std::forward<RemColorArgs>(remColorArgs)...));
-    }
-
     virtual void render(const RenderTarget* renderTarget, const Rectangle<int>& area) override;
     virtual void layout() override;
     virtual void windowChanged() override;

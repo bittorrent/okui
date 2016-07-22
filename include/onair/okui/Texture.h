@@ -49,4 +49,4 @@ public:
     virtual GLuint id() const = 0;
 };
 
-}}
+} } //namespace onair::okui

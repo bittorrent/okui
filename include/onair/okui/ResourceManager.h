@@ -14,4 +14,4 @@ public:
     virtual std::shared_ptr<std::string> load(const char* name) = 0;
 };
 
-}}
+} } //namespace onair::okui

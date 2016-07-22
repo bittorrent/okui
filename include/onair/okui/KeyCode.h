@@ -278,4 +278,4 @@ enum class KeyCode {
     kSleep
 };
 
-}}
+} } //namespace onair::okui

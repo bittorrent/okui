@@ -19,18 +19,13 @@ struct TextureVertex {
     GLfloat cu, cv, cm, caa;
     GLfloat s, t;
 };
-    
+
 class TextureShader : public ShaderBase<TextureVertex> {
 public:
     TextureShader(const char* fragmentShader = nullptr);
     virtual ~TextureShader() {}
 
     void setColor(const Color& color);
-
-    template <typename ColorArg, typename... RemColorArgs>
-    auto setColor(ColorArg&& colorArg, RemColorArgs&&... remColorArgs) -> typename std::enable_if<!std::is_convertible<ColorArg, const Color&>::value>::type {
-        setColor(Color(std::forward<ColorArg>(colorArg), std::forward<RemColorArgs>(remColorArgs)...));
-    }
 
     void setTexture(const Texture& texture, Rectangle<double> bounds, const AffineTransformation& texCoordTransform = AffineTransformation{})
         { setTexture(texture, bounds.x, bounds.y, bounds.width, bounds.height, texCoordTransform); }
@@ -52,7 +47,7 @@ public:
 
 private:
     AffineTransformation _texCoordTransform;
-    
+
     GLuint _texture{0};
     double _textureX1, _textureY1, _textureWidth, _textureHeight;
     bool _textureHasPremultipliedAlpha{false};

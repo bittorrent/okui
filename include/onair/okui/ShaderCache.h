@@ -12,4 +12,4 @@ namespace okui {
 using ShaderCacheEntry = std::unique_ptr<Shader>;
 using ShaderCache = scraps::Cache<ShaderCacheEntry>;
 
-}}
+} } //namespace onair::okui

@@ -9,4 +9,4 @@ namespace okui {
 
 using Stencil = opengl::Stencil;
 
-}}
+} } //namespace onair::okui

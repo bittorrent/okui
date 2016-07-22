@@ -13,4 +13,4 @@ namespace okui {
 */
 std::unordered_map<std::string, std::string> ThirdPartyLicenses();
 
-}} // namespace onair::okui
+} } //namespace onair::okui

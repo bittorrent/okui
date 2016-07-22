@@ -9,6 +9,7 @@
 
 namespace onair {
 namespace okui {
+
 using namespace std::literals;
-} // namespace okui
-} // namespace onair
+
+} } //namespace onair::okui

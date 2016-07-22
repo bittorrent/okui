@@ -17,4 +17,4 @@ struct DialogButton {
     bool isDestructive = false;
 };
 
-}} // namespace onair::okui
+} } //namespace onair::okui

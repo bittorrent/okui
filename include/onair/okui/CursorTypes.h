@@ -2,6 +2,9 @@
 
 #include "onair/okui/config.h"
 
+namespace onair {
+namespace okui {
+
 enum class CursorType {
     kArrow,
     kText,
@@ -16,3 +19,5 @@ enum class CursorType {
     kNo,
     kHand
 };
+
+} } //namespace onair::okui

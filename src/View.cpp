@@ -130,11 +130,6 @@ void View::setIsVisible(bool isVisible) {
     }
 }
 
-void View::setOpacity(double opacity) {
-    _tintColor.a = opacity;
-    _invalidateSuperviewRenderCache();
-}
-
 bool View::ancestorsAreVisible() const {
     return !superview() || (superview()->isVisible() && superview()->ancestorsAreVisible());
 }
@@ -509,7 +504,7 @@ void View::removeUpdateHook(const std::string& handle) {
 void View::postRender(std::shared_ptr<Texture> texture, const AffineTransformation& transformation) {
     auto shader = textureShader();
     shader->setTransformation(transformation);
-    shader->setColor(_tintColor.r, _tintColor.g, _tintColor.b, _tintColor.a);
+    shader->setColor(_tintColor);
     shader->drawScaledFill(*texture, Rectangle<double>(0.0, 0.0, bounds().width, bounds().height));
     shader->flush();
 }
@@ -755,7 +750,7 @@ void View::_updateFocusableRegions(std::vector<std::tuple<View*, Rectangle<doubl
 }
 
 bool View::_requiresTextureRendering() {
-    return _rendersToTexture || _tintColor.r < 1.0 || _tintColor.g < 1.0 || _tintColor.b < 1.0 || _tintColor.a < 1.0;
+    return _rendersToTexture || _tintColor != Color::kWhite;
 }
 
 void View::_renderAndRenderSubviews(const RenderTarget* target, const Rectangle<int>& area, bool shouldClear, scraps::stdts::optional<Rectangle<int>> clipBounds) {
@@ -792,9 +787,9 @@ void View::_renderAndRenderSubviews(const RenderTarget* target, const Rectangle<
         glDisable(GL_SCISSOR_TEST);
     }
 
-    if (_backgroundColor.a) {
+    if (_backgroundColor.alpha() > 0) {
         auto backgroundShader = colorShader();
-        backgroundShader->setColor(_backgroundColor.r, _backgroundColor.g, _backgroundColor.b, _backgroundColor.a);
+        backgroundShader->setColor(_backgroundColor);
         shapes::Rectangle(0.0, 0.0, bounds().width, bounds().height).draw(backgroundShader);
         backgroundShader->flush();
     }

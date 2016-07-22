@@ -73,4 +73,4 @@ T Animation<T, Clock>::current() const {
     return _interpolator(_initial, _target-_initial, t/d);
 }
 
-}}
+} } //namespace onair::okui

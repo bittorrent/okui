@@ -38,4 +38,4 @@ private:
     Point<double> _pressure{0.0, 0.0};
 };
 
-}}
+} } //namespace onair::okui

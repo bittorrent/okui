@@ -346,5 +346,4 @@ private:
     std::list<Provision> _provisions;
 };
 
-} // namespace okui
-} // namespace onair
+} } //namespace onair::okui

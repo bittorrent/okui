@@ -69,7 +69,7 @@ void LabeledPopoutButton::Body::setImageURL(std::string url, std::string placeho
 void LabeledPopoutButton::Body::setIcon(std::string sdf) {
     _iconView.setTextureResource(std::move(sdf));
     _iconView.setTextureDistanceField();
-    _iconView.setTextureColor({1.0, 1.0, 1.0, 0.8});
+    _iconView.setTextureColor(Color::kWhite.withAlphaF(0.8));
     addSubview(&_iconView);
     _iconView.bringToFront();
 }

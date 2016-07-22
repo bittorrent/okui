@@ -16,4 +16,4 @@ private:
     int _width, _height;
 };
 
-}}
+} } //namespace onair::okui

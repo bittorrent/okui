@@ -49,7 +49,7 @@ private:
         virtual void layout() override;
 
     private:
-        Color _backgroundColor{0.0, 0.0};
+        Color _backgroundColor = Color::kTransparentBlack;
         ImageView _imageView;
         ImageView _iconView;
     } _body;

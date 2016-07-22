@@ -91,13 +91,13 @@ public:
 private:
     struct SelectionHighlight : public onair::okui::View {
         virtual void render() override;
-        Color color{1, 1, 1, 0.35};
+        Color color = Color::kWhite.withAlphaF(0.35);
     };
 
     struct Cursor : public onair::okui::View {
         virtual void render() override;
         virtual void appeared() override { timer.restart(); }
-        Color color{1, 1, 1, 1};
+        Color color = Color::kWhite;
         scraps::SteadyTimer timer;
     };
 

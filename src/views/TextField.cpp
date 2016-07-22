@@ -26,7 +26,7 @@ size_t endOfWord(Iterator start, Iterator end) {
 
 TextField::TextField() {
     _textView.setAlignment(TextView::Style::HorizontalAlignment::kLeft, TextView::Style::VerticalAlignment::kCenter);
-    _textView.setTextColor(1, 1, 1, 1);
+    _textView.setTextColor(Color::kWhite);
     _textView.setOverflowBehavior(TextView::Style::OverflowBehavior::kNone);
 
     addSubview(&_scrollView);
@@ -304,7 +304,7 @@ void TextField::_updateCursorLayout() {
 void TextField::SelectionHighlight::render() {
     auto colorShader = this->colorShader();
 
-    colorShader->setColor(color.r, color.g, color.b, color.a);
+    colorShader->setColor(color);
 
     okui::shapes::Rectangle(0, 0, bounds().width, bounds().height).round(3).draw(colorShader);
 
@@ -321,7 +321,7 @@ void TextField::Cursor::render() {
     else if (s < 0.95) { alpha = 0; }
     else if (s < 1.10) { alpha = (s - 0.95)/0.15; }
 
-    colorShader->setColor(color.r, color.g, color.b, alpha);
+    colorShader->setColor(color.withAlphaF(alpha));
 
     okui::shapes::Rectangle(0, 0, bounds().width, bounds().height).draw(colorShader);
 

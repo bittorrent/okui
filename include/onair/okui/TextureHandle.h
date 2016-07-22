@@ -64,4 +64,4 @@ private:
     std::shared_ptr<WeakCallbacks> _sharedCallbacks = std::make_shared<WeakCallbacks>();
 };
 
-}}
+} } //namespace onair::okui

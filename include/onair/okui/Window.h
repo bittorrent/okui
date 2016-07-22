@@ -142,6 +142,16 @@ public:
         return contentView()->asyncAfter(std::forward<Args>(args)...);
     }
 
+    /**
+    * Asynchronously schedules a function to be invoked at a time using the application's task scheduler.
+    *
+    * If the window is destroyed, the invocation will be canceled.
+    */
+    template <typename... Args>
+    auto asyncAt(Args&&... args) -> decltype(std::declval<scraps::AbstractTaskScheduler>().asyncAt(std::forward<Args>(args)...)) {
+        return contentView()->asyncAt(std::forward<Args>(args)...);
+    }
+
     void beginDragging(View* view);
     void endDragging(View* view);
 
@@ -175,37 +185,7 @@ public:
     virtual void keyDown(KeyCode key, KeyModifiers mod, bool repeat) override;
 
 private:
-    void _update();
-    void _render();
-    void _didResize(int width, int height);
-    void _updateContentLayout();
-
     friend class Application;
-
-    Application* _application;
-
-    bool _isOpen = false;
-
-    WindowPosition _position;
-    int _width = 800;
-    int _height = 480;
-    int _renderWidth = 800;
-    int _renderHeight = 480;
-    double _renderScale = 1.0; // user defined scale
-    double _deviceRenderScale = 1.0; // scale determimed by the device used to handle high dpi displays
-
-    std::string _title{"Untitled"};
-    Menu _menu;
-
-    std::unique_ptr<View> _contentView;
-    View* _focus = nullptr;
-    View* _initialFocus = nullptr;
-
-    ShaderCache _shaderCache;
-    scraps::Cache<TextureHandle> _textureCache;
-    scraps::Cache<BitmapFont> _bitmapFontCache;
-    std::vector<TextureHandle> _texturesToLoad;
-    opengl::TextureCache _openGLTextureCache;
 
     struct TextureDownload {
         bool isComplete = false;
@@ -214,17 +194,44 @@ private:
         std::future<std::shared_ptr<const std::string>> download;
     };
 
+    void _update();
+    void _render();
+    void _didResize(int width, int height);
+    void _updateContentLayout();
+
+    std::string                  _title = "Untitled";
+    Application*                 _application = nullptr;
+    std::unique_ptr<View>        _contentView = std::make_unique<View>("Window::_contentView");
+    View*                        _focus = nullptr;
+    View*                        _initialFocus = nullptr;
+    Menu                         _menu;
+    bool                         _isOpen = false;
+
+    WindowPosition               _position;
+    int                          _width = 800;
+    int                          _height = 480;
+    int                          _renderWidth = 800;
+    int                          _renderHeight = 480;
+    double                       _renderScale = 1.0; // user defined scale
+    double                       _deviceRenderScale = 1.0; // scale determimed by the device used to handle high dpi displays
+
+    ShaderCache                  _shaderCache;
+    scraps::Cache<TextureHandle> _textureCache;
+    opengl::TextureCache         _openGLTextureCache;
+    scraps::Cache<BitmapFont>    _bitmapFontCache;
+    std::vector<TextureHandle>   _texturesToLoad;
+
     std::unordered_map<std::string, TextureDownload> _textureDownloads;
 
-    Point<double> _lastMouseDown{0.0, 0.0};
-    std::unordered_set<View*> _draggedViews;
-
-    std::unordered_set<View*> _updatingViews;
-    std::unordered_set<View*> _viewsToSubscribeToUpdates, _viewsToUnsubscribeFromUpdates;
+    Point<double>                _lastMouseDown{0.0, 0.0};
+    std::unordered_set<View*>    _draggedViews;
+    std::unordered_set<View*>    _updatingViews;
+    std::unordered_set<View*>    _viewsToSubscribeToUpdates;
+    std::unordered_set<View*>    _viewsToUnsubscribeFromUpdates;
 
     double _framesPerSecond = 0.0;
     std::chrono::high_resolution_clock::time_point _lastRenderTime = std::chrono::high_resolution_clock::now();
     std::chrono::high_resolution_clock::time_point _lastUpdateTime = std::chrono::high_resolution_clock::now();
 };
 
-}}
+} } //namespace onair::okui

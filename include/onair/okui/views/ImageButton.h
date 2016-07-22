@@ -29,7 +29,7 @@ private:
     ImageView& _stateImageView(State state);
 
     std::unordered_map<State, ImageView> _imageViews;
-    Color                                _normalColor = {1, 1, 1, 1};
+    Color                                _normalColor = Color::kWhite;
 };
 
 }}}

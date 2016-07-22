@@ -42,4 +42,4 @@ private:
     double _sxCosR, _sySinR, _sxSinR, _syCosR, _txF, _tyF;
 };
 
-}}
+} } //namespace onair::okui

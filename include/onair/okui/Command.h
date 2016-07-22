@@ -29,4 +29,4 @@ constexpr Command kCommandQuit       = "quit"_cmd;
 constexpr Command kCommandSelectAll  = "select all"_cmd;
 constexpr Command kCommandBack       = "back"_cmd;
 
-}} // namespace onair::okui
+} } //namespace onair::okui

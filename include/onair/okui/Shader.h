@@ -148,7 +148,7 @@ protected:
     }
 };
 
-}}
+} } //namespace onair::okui
 
 #define ONAIR_OKUI_SHADER_FRAGMENT_SHADER_HEADER SCRAPS_FRAGMENT_SHADER_HEADER \
     "uniform int blendingFlags;\n" \

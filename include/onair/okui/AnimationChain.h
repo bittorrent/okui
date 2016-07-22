@@ -89,4 +89,4 @@ void AnimationChain<T, Clock>::_appendTargets(T target, typename Clock::duration
     _appendTargets(std::forward<Args>(args)...);
 }
 
-}}
+} } //namespace onair::okui

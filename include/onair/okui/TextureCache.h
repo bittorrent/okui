@@ -112,4 +112,4 @@ private:
     std::unordered_map<size_t, EntryInfo> _entries;
 };
 
-}
+} // namespace scraps

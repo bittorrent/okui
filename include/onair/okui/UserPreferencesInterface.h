@@ -28,4 +28,4 @@ public:
     virtual void setString(const std::string& key, const std::string& value) = 0;
 };
 
-} } // onair::okui
+} } //namespace onair::okui

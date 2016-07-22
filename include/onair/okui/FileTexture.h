@@ -49,4 +49,4 @@ private:
     opengl::TextureCache::EntryReference _cacheEntry;
 };
 
-}}
+} } //namespace onair::okui

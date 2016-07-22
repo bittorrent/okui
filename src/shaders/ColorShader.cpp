@@ -76,22 +76,28 @@ ColorShader::ColorShader() {
 }
 
 void ColorShader::setColor(const Color& color) {
-    _triangle.a.r = _triangle.b.r = _triangle.c.r = color.r;
-    _triangle.a.g = _triangle.b.g = _triangle.c.g = color.g;
-    _triangle.a.b = _triangle.b.b = _triangle.c.b = color.b;
-    _triangle.a.a = _triangle.b.a = _triangle.c.a = color.a;
+    _triangle.a.r = _triangle.b.r = _triangle.c.r = color.redF();
+    _triangle.a.g = _triangle.b.g = _triangle.c.g = color.greenF();
+    _triangle.a.b = _triangle.b.b = _triangle.c.b = color.blueF();
+    _triangle.a.a = _triangle.b.a = _triangle.c.a = color.alphaF();
     _gradient = false;
 }
 
 void ColorShader::setColorA(double x, double y, const Color& color) {
     _transformation.transform(x, y, &_gradientPointA.x, &_gradientPointA.y);
-    _gradientPointA.r = color.r; _gradientPointA.g = color.g; _gradientPointA.b = color.b; _gradientPointA.a = color.a;
+    _gradientPointA.r = color.redF();
+    _gradientPointA.g = color.greenF();
+    _gradientPointA.b = color.blueF();
+    _gradientPointA.a = color.alphaF();
     _gradient = true;
 }
 
 void ColorShader::setColorB(double x, double y, const Color& color) {
     _transformation.transform(x, y, &_gradientPointB.x, &_gradientPointB.y);
-    _gradientPointB.r = color.r; _gradientPointB.g = color.g; _gradientPointB.b = color.b; _gradientPointB.a = color.a;
+    _gradientPointB.r = color.redF();
+    _gradientPointB.g = color.greenF();
+    _gradientPointB.b = color.blueF();
+    _gradientPointB.a = color.alphaF();
     _gradient = true;
 }
 

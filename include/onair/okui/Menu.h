@@ -122,4 +122,4 @@ private:
     std::function<State()> _stateFunc = {};
 };
 
-}}
+} } //namespace onair::okui

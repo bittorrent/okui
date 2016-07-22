@@ -222,4 +222,4 @@ Rectangle<double> Rectangle<T>::scaledFit(double aspectRatio) const {
     return {x - 0.5 * (scaledWidth - width), y - 0.5 * (scaledHeight - height), scaledWidth, scaledHeight};
 }
 
-}}
+} } //namespace onair::okui

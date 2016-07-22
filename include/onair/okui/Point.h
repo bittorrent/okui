@@ -10,4 +10,4 @@ namespace okui {
 template <typename T>
 using Point = math::Vector<T, 2>;
 
-}}
+} } //namespace onair::okui

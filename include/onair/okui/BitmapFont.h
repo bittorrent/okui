@@ -53,4 +53,4 @@ private:
     std::unordered_map<GlyphId, std::unordered_map<GlyphId, double>> _kernings;
 };
 
-}}
+} } //namespace onair::okui
