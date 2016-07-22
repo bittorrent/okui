@@ -18,7 +18,7 @@ libraries:
         checksum: 'eaad6f440d3f8d2172d7fd93bed224d4052b904f'
     scraps:
         repository: git@github.com:bittorrent/scraps.git
-        commit: 029dbb44ef8b291c6da7bbae94d33e737f984164
+        commit: 3e3079846457d57deb3c0e443a3803b03064342c
         project:
             type: boostbuild
             pre-build: ./configure
