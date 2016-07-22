@@ -59,7 +59,7 @@ public:
         std::string         _texture;
         std::string         _metadata;
         double              _textSize = 12;
-        Color               _textColor = 0x000000_rgb;
+        Color               _textColor = Color::kBlack;
         double              _letterSpacing = 0.0;
         HorizontalAlignment _horizontalAlignment = HorizontalAlignment::kLeft;
         VerticalAlignment   _verticalAlignment = VerticalAlignment::kCenter;
