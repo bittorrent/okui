@@ -442,6 +442,26 @@ TEST(View, messagePosting) {
     b.post(5, Relation::kAncestor);
     EXPECT_EQ(received, 3);
 }
+
+TEST(View, messagePostingFromApplication) {
+    View a, b;
+
+    int received = 0;
+
+    b.listen([&] (const int& message) {
+        EXPECT_EQ(message, 7);
+        ++received;
+    });
+
+    TestApplication application;
+    okui::Window window(&application);
+    window.open();
+    window.contentView()->addSubview(&a);
+    a.addSubview(&b);
+
+    application.post(7);
+    EXPECT_EQ(received, 1);
+}
 #endif // ONAIR_OKUI_HAS_NATIVE_APPLICATION
 
 TEST(View, provisions) {

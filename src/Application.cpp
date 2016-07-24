@@ -133,5 +133,14 @@ void Application::_assignWindowSize(Window* window) {
     getWindowSize(window, &window->_width, &window->_height);
 }
 
+void Application::_post(std::type_index index, const void* message) {
+    auto range = _listeners.equal_range(index);
+    for (auto it = range.first; it != range.second; ++it) {
+        if (it->second.relation == Relation::kHierarchy || it->second.relation == Relation::kAny || it->second.relation == Relation::kAncestor) {
+            (*it->second.action)(message, nullptr);
+        }
+    }
+}
+
 } // namespace okui
 } // namespace onair

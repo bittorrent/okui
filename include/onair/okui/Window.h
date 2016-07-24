@@ -171,7 +171,10 @@ public:
 
     virtual void render() {}
 
-    virtual void closing() {}
+    virtual void willOpen() {}
+    virtual void didOpen() {}
+    virtual void willClose() {}
+    virtual void didClose() {}
 
     void dispatchMouseDown(MouseButton button, double x, double y);
     void dispatchMouseUp(MouseButton button, double x, double y);

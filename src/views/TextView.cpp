@@ -115,12 +115,12 @@ void TextView::setText(const char* text) {
         _glyphs += *ptr;
     }
 
-    _computeLines();
+    _updateLines();
 }
 
 void TextView::setStyle(Style style) {
     _style = std::move(style);
-    _computeLines();
+    _updateLines();
 }
 
 void TextView::setFont(std::string texture, std::string metadata) {
@@ -130,23 +130,23 @@ void TextView::setFont(std::string texture, std::string metadata) {
 
     if (window()) {
         _font = window()->loadBitmapFontResource(_style.fontTexture().c_str(), _style.fontMetadata().c_str());
-        _computeLines();
+        _updateLines();
     }
 }
 
 void TextView::setTextSize(double size) {
     _style.textSize(size);
-    _computeLines();
+    _updateLines();
 }
 
 void TextView::setLetterSpacing(double letterSpacing) {
     _style.letterSpacing(letterSpacing);
-    _computeLines();
+    _updateLines();
 }
 
 void TextView::setLetterSpacingFromTracking(double tracking) {
     _style.letterSpacingFromTracking(tracking);
-    _computeLines();
+    _updateLines();
 }
 
 void TextView::setAlignment(Style::HorizontalAlignment alignment) {
@@ -166,7 +166,7 @@ void TextView::setAlignment(Style::HorizontalAlignment horizontal, Style::Vertic
 
 void TextView::setOverflowBehavior(Style::OverflowBehavior overflowBehavior) {
     _style.overflowBehavior(overflowBehavior);
-    _computeLines();
+    _updateLines();
 }
 
 void TextView::setWeight(double weight) {
@@ -193,25 +193,22 @@ void TextView::render(const RenderTarget* renderTarget, const Rectangle<int>& ar
 }
 
 void TextView::layout() {
-    _computeLines();
+    _updateLines();
 }
 
 void TextView::windowChanged() {
     if (window() && !_style.fontTexture().empty() && !_style.fontMetadata().empty()) {
         _font = window()->loadBitmapFontResource(_style.fontTexture().c_str(), _style.fontMetadata().c_str());
-        _computeLines();
+        _updateLines();
     }
 }
 
-void TextView::_computeLines() {
-    _textWidth = 0.0;
-    _lines.clear();
-
-    if (!_font) { return; }
+std::vector<std::basic_string<BitmapFont::GlyphId>> TextView::_computeLinesForWidth(double width) const {
+    std::vector<std::basic_string<BitmapFont::GlyphId>> lines;
+    if (!_font) { return lines; }
 
     auto fontScale = _style.textSize() / _font->size();
 
-    auto width = bounds().width;
     std::basic_string<BitmapFont::GlyphId> line;
 
     static constexpr std::array<BitmapFont::GlyphId, 3> ellipses{{ 0x2e, 0x2e, 0x2e }};
@@ -220,7 +217,7 @@ void TextView::_computeLines() {
 
     for (auto& glyph : _glyphs) {
         if (glyph == '\n') {
-            _lines.emplace_back(std::move(line));
+            lines.emplace_back(std::move(line));
             line.clear();
             skipUntilNewLine = false;
             continue;
@@ -246,7 +243,7 @@ void TextView::_computeLines() {
                     if (glyph && !glyph->width) {
                         // whitespace
                         if (i > 0) {
-                            _lines.emplace_back(&line[0], i - 1);
+                            lines.emplace_back(&line[0], i - 1);
                         }
                         if (i < line.size()) {
                             line = line.substr(i);
@@ -261,9 +258,19 @@ void TextView::_computeLines() {
     }
 
     if (!line.empty()) {
-        _lines.emplace_back(std::move(line));
+        lines.emplace_back(std::move(line));
     }
 
+    return lines;
+}
+
+void TextView::_updateLines() {
+    if (!_font) { return; }
+
+    _lines = _computeLinesForWidth(bounds().width);
+
+    _textWidth = 0.0;
+    auto fontScale = _style.textSize() / _font->size();
     for (auto& line : _lines) {
         auto letterSpacing = line.empty() ? 0 : ((line.size() - 1) * _style.letterSpacing());
         _textWidth = std::max(_textWidth, _font->width(line.data(), line.size()) * fontScale + letterSpacing);
@@ -321,14 +328,11 @@ double TextView::_calcXOffset(const std::basic_string<BitmapFont::GlyphId>& line
 double TextView::_calcYOffset() const {
     if (!_font) { return 0; }
 
-    auto lineSpacing = _font->lineSpacing() * _fontScale();
-    auto textHeight  = lineSpacing * std::min<size_t>(_lines.size(), 1);
-
     auto y = 0.0;
     if (_style.verticalAlignment() == Style::VerticalAlignment::kCenter) {
-        y = (bounds().height - textHeight) * 0.5;
+        y = (bounds().height - textHeight()) * 0.5;
     } else if (_style.verticalAlignment() == Style::VerticalAlignment::kBottom) {
-        y = bounds().height - textHeight;
+        y = bounds().height - textHeight();
     }
 
     return y;

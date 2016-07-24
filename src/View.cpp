@@ -706,6 +706,10 @@ void View::_dispatchWindowChange(Window* window) {
     windowChanged();
 
     for (auto& subview : subviews()) {
+        if (window == subview->window()) {
+            // subviews added in the above windowChanged call will have already gotten the change
+            continue;
+        }
         subview->_dispatchWindowChange(window);
     }
 

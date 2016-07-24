@@ -258,6 +258,20 @@ public:
     const std::string& caBundlePath() const { return _caBundlePath; }
 
     /**
+    * Posts a message to all listeners subscribed to any, hierarchy, or ancestors.
+    */
+    template <typename T>
+    void post(T& message) {
+        _post(std::type_index(typeid(typename std::decay_t<T>)), &message);
+    }
+
+    template <typename T>
+    void post(T&& message) {
+        auto m = std::move(message);
+        _post(std::type_index(typeid(typename std::decay_t<T>)), &m);
+    }
+
+    /**
     * Used by views to post messages to listeners.
     */
     void post(View* sender, std::type_index index, const void* message, Relation relation);
@@ -344,6 +358,8 @@ private:
     };
 
     std::list<Provision> _provisions;
+
+    void _post(std::type_index index, const void* message);
 };
 
 } } //namespace onair::okui

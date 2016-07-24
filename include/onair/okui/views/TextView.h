@@ -69,9 +69,11 @@ public:
 
     const Style& style() const { return _style; }
     double lineHeight() const;
-    size_t numLines() const { return _lines.size(); }
+    size_t lineCount() const { return _lines.size(); }
+    size_t lineCountForWidth(double width) const { return _computeLinesForWidth(width).size(); }
     double textWidth() const { return _textWidth; }
-    double textHeight() const { return lineHeight() * std::max<double>(numLines(), 1); }
+    double textHeight() const { return lineHeight() * std::max<double>(lineCount(), 1); }
+    double textHeightForWidth(double width) const { return lineHeight() * std::max<double>(lineCountForWidth(width), 1); }
     Point<int> lineColumnPosition(size_t line, size_t column) const;
     std::pair<size_t, size_t> lineColumnAtPosition(int x, int y) const;
 
@@ -94,7 +96,8 @@ public:
     virtual void windowChanged() override;
 
 private:
-    void _computeLines();
+    std::vector<std::basic_string<BitmapFont::GlyphId>> _computeLinesForWidth(double width) const;
+    void _updateLines();
     void _renderBitmapText(shaders::DistanceFieldShader* shader);
     double _calcXOffset(const std::basic_string<BitmapFont::GlyphId>& line) const;
     double _calcYOffset() const;
