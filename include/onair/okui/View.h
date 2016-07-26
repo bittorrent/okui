@@ -77,6 +77,10 @@ public:
     const std::list<View*>& subviews() const { return children(); }
 
     const Rectangle<double>& bounds() const  { return _bounds; }
+
+    double width() const { return _bounds.width; }
+    double height() const { return _bounds.height; }
+
     template <typename... Args>
     void setBounds(Args&&... args)           { _setBounds(Rectangle<double>(std::forward<Args>(args)...)); }
     Rectangle<double> windowBounds() const;
