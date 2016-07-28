@@ -15,6 +15,9 @@ namespace {
     namespace sdl2 {
         #include <SDL2/license.c>
     }
+    namespace utf8 {
+        #include <utf8/license.c>
+    }
 }
 
 std::unordered_map<std::string, std::string> ThirdPartyLicenses() {
@@ -22,6 +25,7 @@ std::unordered_map<std::string, std::string> ThirdPartyLicenses() {
         {"jpegturbo", {reinterpret_cast<char*>(jpegturbo::license), jpegturbo::license_len}},
         {"png", {reinterpret_cast<char*>(png::LICENSE), png::LICENSE_len}},
         {"sdl2", {reinterpret_cast<char*>(sdl2::COPYING_txt), sdl2::COPYING_txt_len}},
+        {"utf8", {reinterpret_cast<char*>(utf8::LICENSE), utf8::LICENSE_len}},
     }};
     static std::once_flag flag;
     std::call_once(flag, [&] {

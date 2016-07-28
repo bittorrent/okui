@@ -9,6 +9,7 @@
 /tests/dist
 /needs
 /android/build
+/third-party/utf8/needy-wrappers
 
 # tacklebox
 /.configure/

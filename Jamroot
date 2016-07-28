@@ -1,8 +1,9 @@
 project okui ;
 
-lib libpng : ./needs//libpng : <name>png <link>static ;
-lib libturbojpeg : ./needs//libjpeg-turbo : <name>turbojpeg ;
-lib libiconv     : : <name>iconv ;
+lib libpng       : needs//libpng        : <name>png <link>static ;
+lib libturbojpeg : needs//libjpeg-turbo : <name>turbojpeg ;
+lib libiconv     :                      : <name>iconv ;
+alias utf8       : needs//utf8 ;
 
 rule okui-frameworks ( properties * ) {
     if <target-os>iphone in $(properties) || <target-os>appletv in $(properties) || <target-os>darwin in $(properties) {
@@ -42,7 +43,7 @@ if ($(PKG_CONFIG_PATH)) {
     alias scraps : ../scraps//scraps ;
 }
 
-lib libSDL2 : ./needs//sdl2
+lib libSDL2 : needs//sdl2
 :
     <name>SDL2
 : :
@@ -83,6 +84,7 @@ lib okui :
     libSDL2
     jshackle
     objc
+    utf8
 :
     <include>include
     <cxxflags>"-std=c++1y"

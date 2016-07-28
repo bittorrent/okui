@@ -107,7 +107,11 @@ libraries:
                 - $CXX {{ '-stdlib=libc++' if platform != 'android' }} -isystem googletest/include -I googletest -c googletest/src/gtest_main.cc -o googletest/src/gtest_main.o
                 - ar -rv {build_directory}/lib/libgtest.a      googletest/src/gtest-all.o
                 - ar -rv {build_directory}/lib/libgtest_main.a googletest/src/gtest_main.o
-
+    utf8:
+        directory: third-party/utf8
+        project:
+            post-build:
+                - xxd -i LICENSE {build_directory}/include/utf8/license.c
 universal-binaries:
     macosx:
         osx:
