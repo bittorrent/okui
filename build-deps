@@ -3,6 +3,7 @@
 import argparse
 import os
 import subprocess
+import multiprocessing
 
 project_root = os.path.dirname(os.path.abspath(__file__))
 os.chdir(project_root)
@@ -13,11 +14,12 @@ parser = argparse.ArgumentParser(description='Builds user-supplied dependencies.
 parser.add_argument('--needy-target-args', default='', help='arguments to select the needy target with')
 parser.add_argument('--needy-satisfy-args', default='', help='the arguments to use with needy satisfy')
 parser.add_argument('--configure', action='store_true', help='if true, configure will also be invoked')
+parser.add_argument('-j', '--concurrency', default=multiprocessing.cpu_count(), type=int, help='build concurrency')
 args = parser.parse_args()
 
 libraries = ['scraps']
-needy_args = ' '.join(libraries + [args.needy_target_args])
-needy_satisfy_args = args.needy_target_args + ' ' + args.needy_satisfy_args
+needy_args = ' '.join([arg for arg in (libraries + [args.needy_target_args]) if arg])
+needy_satisfy_args = (args.needy_target_args + ' ' + args.needy_satisfy_args + ' -j ' + str(args.concurrency)).strip()
 
 subprocess.check_call('{} satisfy {} {}'.format(needy, ' '.join(libraries), needy_satisfy_args), shell=True)
 
