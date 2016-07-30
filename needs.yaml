@@ -1,4 +1,10 @@
 libraries:
+    scraps:
+        repository: git@github.com:bittorrent/scraps.git
+        commit: 122ad0247a6e8010a7152039aaf498fca6d70b0d
+        project:
+            type: boostbuild
+            pre-build: ./configure
     boost-build:
         download: https://github.com/boostorg/build/archive/2016.03.tar.gz
         checksum: 0e6936337c25fc87d2aff8ea6c63019e9c1e319a
@@ -16,12 +22,6 @@ libraries:
     nasm:
         download: 'http://www.nasm.us/pub/nasm/releasebuilds/2.11.06/nasm-2.11.06.tar.bz2'
         checksum: 'eaad6f440d3f8d2172d7fd93bed224d4052b904f'
-    scraps:
-        repository: git@github.com:bittorrent/scraps.git
-        commit: b60ab15b11b9e0502203c6b0d49fcc2472da8548
-        project:
-            type: boostbuild
-            pre-build: ./configure
     libjpeg-turbo:
         download: https://s3.amazonaws.com/live-dev-deps/libjpeg-turbo-1.4.90.tar.gz
         checksum: 62af89207d08252a1d8c4997ae50e11f4195ed74
