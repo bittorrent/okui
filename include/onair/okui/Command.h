@@ -22,11 +22,17 @@ inline namespace literals {
 
 constexpr Command kCommandNone = 0;
 
-constexpr Command kCommandCopy       = "copy"_cmd;
-constexpr Command kCommandCut        = "cut"_cmd;
-constexpr Command kCommandPaste      = "paste"_cmd;
-constexpr Command kCommandQuit       = "quit"_cmd;
-constexpr Command kCommandSelectAll  = "select all"_cmd;
-constexpr Command kCommandBack       = "back"_cmd;
+constexpr Command kCommandCopy                   = "copy"_cmd;
+constexpr Command kCommandCut                    = "cut"_cmd;
+constexpr Command kCommandPaste                  = "paste"_cmd;
+
+constexpr Command kCommandQuit                   = "quit"_cmd;
+constexpr Command kCommandSelectAll              = "select all"_cmd;
+constexpr Command kCommandBack                   = "back"_cmd;
+
+constexpr Command kCommandToggleFullscreenWindow = "toggle fullscreen window"_cmd;
+constexpr Command kCommandToggleMinimizeWindow   = "toggle window minimize"_cmd;
+constexpr Command kCommandToggleMaximizeWindow   = "toggle window maximize"_cmd;
+constexpr Command kCommandBringAllWindowsToFront = "bring all windows to front"_cmd;
 
 } } //namespace onair::okui

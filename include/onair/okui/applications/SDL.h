@@ -52,6 +52,19 @@ public:
     virtual void setWindowSize(Window* window, int width, int height) override;
     virtual void setWindowTitle(Window* window, const char* title) override;
 
+    virtual bool isWindowMinimized(Window* window) const override;
+    virtual void minimizeWindow(Window* window) override;
+
+    virtual bool isWindowMaximized(Window* window) const override;
+    virtual void maximizeWindow(Window* window) override;
+
+    virtual bool isWindowFullscreen(Window* window) const override;
+    virtual void fullscreenWindow(Window* window) override;
+
+    virtual void restoreWindow(Window* window) override;
+
+    virtual void bringWindowToFront(Window* window) override;
+
     virtual Window* activeWindow() override { return _activeWindow; }
 
     virtual std::string userStoragePath() const override;
@@ -354,6 +367,61 @@ inline void SDL::setWindowSize(Window* window, int width, int height) {
 inline void SDL::setWindowTitle(Window* window, const char* title) {
     if (auto w = _sdlWindow(window)) {
         SDL_SetWindowTitle(w, title);
+    }
+}
+
+
+inline bool SDL::isWindowMinimized(Window* window) const {
+    if (auto w = _sdlWindow(window)) {
+        return SDL_GetWindowFlags(w) & SDL_WINDOW_MINIMIZED;
+    }
+
+    return false;
+}
+
+inline void SDL::minimizeWindow(Window* window) {
+    if (auto w = _sdlWindow(window)) {
+        SDL_MinimizeWindow(w);
+    }
+}
+
+inline bool SDL::isWindowMaximized(Window* window) const {
+    if (auto w = _sdlWindow(window)) {
+        return SDL_GetWindowFlags(w) & SDL_WINDOW_MAXIMIZED;
+    }
+
+    return false;
+}
+
+inline void SDL::maximizeWindow(Window* window) {
+    if (auto w = _sdlWindow(window)) {
+        SDL_MaximizeWindow(w);
+    }
+}
+
+inline bool SDL::isWindowFullscreen(Window* window) const {
+    if (auto w = _sdlWindow(window)) {
+        return SDL_GetWindowFlags(w) & SDL_WINDOW_FULLSCREEN_DESKTOP;
+    }
+
+    return false;
+}
+
+inline void SDL::fullscreenWindow(Window* window) {
+    if (auto w = _sdlWindow(window)) {
+        SDL_SetWindowFullscreen(w, SDL_WINDOW_FULLSCREEN_DESKTOP);
+    }
+}
+
+inline void SDL::restoreWindow(Window* window) {
+    if (auto w = _sdlWindow(window)) {
+        SDL_RestoreWindow(w);
+    }
+}
+
+inline void SDL::bringWindowToFront(Window* window) {
+    if (auto w = _sdlWindow(window)) {
+        SDL_RaiseWindow(w);
     }
 }
 

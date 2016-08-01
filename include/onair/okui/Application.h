@@ -97,6 +97,20 @@ public:
     virtual void setWindowSize(Window* window, int width, int height) = 0;
     virtual void setWindowTitle(Window* window, const char* title) = 0;
 
+    virtual bool isWindowMinimized(Window* window) const = 0;
+    virtual void minimizeWindow(Window* window) = 0;
+
+    virtual bool isWindowMaximized(Window* window) const = 0;
+    virtual void maximizeWindow(Window* window) = 0;
+
+    virtual bool isWindowFullscreen(Window* window) const = 0;
+    virtual void fullscreenWindow(Window* window) = 0;
+
+    virtual void restoreWindow(Window* window) = 0;
+
+    virtual void bringWindowToFront(Window* window) = 0;
+    virtual void bringAllWindowsToFront();
+
     virtual const Menu* getMenu() const { return nullptr; }
     virtual void setMenu(const Menu& menu) {}
     virtual void setWindowMenu(Window* window, const Menu& menu) {}
@@ -228,15 +242,9 @@ public:
     */
     void command(Command command, CommandContext context = {});
 
-    virtual bool canHandleCommand(Command command) override {
-        return command == kCommandQuit;
-    }
+    virtual bool canHandleCommand(Command command) override;
 
-    virtual void handleCommand(Command command, CommandContext context) override {
-        if (command == kCommandQuit) {
-            quit();
-        }
-    }
+    virtual void handleCommand(Command command, CommandContext context) override;
 
     std::shared_ptr<std::string> loadResource(const char* name) { return resourceManager()->load(name); }
 
@@ -298,25 +306,13 @@ public:
     * state that views can access via View::inherit.
     */
     template <typename T>
-    auto set(T&& object) {
-        _provisions.emplace_front(std::forward<T>(object));
-        return scraps::stdts::any_cast<std::decay_t<T>>(&_provisions.front().object);
-    }
+    auto set(T&& object);
 
     /**
     * Returns a pointer to an object stored via set.
     */
     template <typename T>
-    T* get() {
-        for (auto& provision : _provisions) {
-            if (auto object = scraps::stdts::any_cast<T>(&provision.object)) {
-                return object;
-            } else if (auto pointer = scraps::stdts::any_cast<T*>(&provision.object)) {
-                return *pointer;
-            }
-        }
-        return nullptr;
-    }
+    T* get();
 
 protected:
     void _update(Window* window);
@@ -332,14 +328,10 @@ private:
         std::vector<std::promise<std::shared_ptr<const std::string>>> promises;
     };
 
-    ResourceManager* _resourceManager;
-    std::string _caBundlePath;
-    std::unordered_map<std::string, std::shared_ptr<DownloadInfo>> _downloads;
-    std::vector<std::future<void>> _backgroundTasks;
-    std::list<Window*> _windows;
-
-    std::string _clipboard;
-    scraps::TaskQueue _taskQueue;
+    struct Provision {
+        Provision(scraps::stdts::any object) : object{std::move(object)} {}
+        scraps::stdts::any object;
+    };
 
     struct Listener {
         Listener(View* view, std::function<void(const void*, View*)>* action, Relation relation)
@@ -350,16 +342,40 @@ private:
         Relation relation;
     };
 
-    std::multimap<std::type_index, Listener> _listeners;
-
-    struct Provision {
-        Provision(scraps::stdts::any object) : object{std::move(object)} {}
-        scraps::stdts::any object;
-    };
-
-    std::list<Provision> _provisions;
-
     void _post(std::type_index index, const void* message);
+
+    std::list<Window*>                          _windows;
+    ResourceManager*                            _resourceManager;
+    std::string                                 _caBundlePath;
+    std::string                                 _clipboard;
+
+    std::multimap<std::type_index, Listener>    _listeners;
+    std::list<Provision>                        _provisions;
+
+    std::vector<std::future<void>>              _backgroundTasks;
+    scraps::TaskQueue                           _taskQueue;
+    std::unordered_map<std::string, std::shared_ptr<DownloadInfo>> _downloads;
 };
+
+template <typename T>
+auto Application::set(T&& object) {
+    _provisions.emplace_front(std::forward<T>(object));
+    return scraps::stdts::any_cast<std::decay_t<T>>(&_provisions.front().object);
+}
+
+/**
+* Returns a pointer to an object stored via set.
+*/
+template <typename T>
+T* Application::get() {
+    for (auto& provision : _provisions) {
+        if (auto object = scraps::stdts::any_cast<T>(&provision.object)) {
+            return object;
+        } else if (auto pointer = scraps::stdts::any_cast<T*>(&provision.object)) {
+            return *pointer;
+        }
+    }
+    return nullptr;
+}
 
 } } //namespace onair::okui

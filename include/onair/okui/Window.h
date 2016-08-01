@@ -61,6 +61,23 @@ public:
     void setPosition(int x, int y);
     void setSize(int width, int height);
 
+    bool isMinimized() const;
+    void minimize();
+
+    bool isMaximized() const;
+    void maximize();
+
+    bool isFullscreen() const;
+    void fullscreen();
+
+    void bringToFront();
+
+    /**
+    * If the window is currently minimized/maximized/fullscreen, restoreWindow brings it back to the last windowed
+    * size and position
+    */
+    void restoreWindow();
+
     const std::string& title() const { return _title; }
     void setTitle(std::string title);
 

@@ -19,6 +19,12 @@ Application::~Application() {
     }
 }
 
+void Application::bringAllWindowsToFront() {
+    for (auto& window : _windows) {
+        bringWindowToFront(window);
+    }
+}
+
 Responder* Application::firstResponder() {
     return activeWindow() ? activeWindow()->firstResponder() : this;
 }
@@ -26,6 +32,42 @@ Responder* Application::firstResponder() {
 void Application::command(Command command, CommandContext context) {
     if (firstResponder()->chainCanHandleCommand(command)) {
         firstResponder()->handleCommand(command, context);
+    }
+}
+
+bool Application::canHandleCommand(Command command) {
+    return command == kCommandQuit ||
+           command == kCommandToggleFullscreenWindow ||
+           command == kCommandToggleMinimizeWindow ||
+           command == kCommandToggleMaximizeWindow ||
+           command == kCommandBringAllWindowsToFront;
+}
+
+void Application::handleCommand(Command command, CommandContext context) {
+    switch (command) {
+        case kCommandQuit:
+            quit();
+            break;
+        case kCommandToggleFullscreenWindow:
+            if (activeWindow()) {
+                isWindowFullscreen(activeWindow()) ? restoreWindow(activeWindow()) : fullscreenWindow(activeWindow());
+            }
+            break;
+        case kCommandToggleMaximizeWindow:
+            if (activeWindow()) {
+                isWindowMaximized(activeWindow()) ? restoreWindow(activeWindow()) : maximizeWindow(activeWindow());
+            }
+            break;
+        case kCommandToggleMinimizeWindow:
+        if (activeWindow()) {
+                isWindowMinimized(activeWindow()) ? restoreWindow(activeWindow()) : minimizeWindow(activeWindow());
+            }
+            break;
+        case kCommandBringAllWindowsToFront:
+            bringAllWindowsToFront();
+            break;
+        default:
+            break;
     }
 }
 
