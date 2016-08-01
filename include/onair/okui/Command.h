@@ -3,7 +3,7 @@
 #include "onair/okui/config.h"
 
 #include "scraps/utility.h"
-#include "scraps/stdts/any.h"
+#include "stdts/any.h"
 
 namespace onair {
 namespace okui {
@@ -12,7 +12,7 @@ namespace okui {
 * This is the type used to represent command ids.
 */
 using Command = uint64_t;
-using CommandContext = scraps::stdts::any;
+using CommandContext = stdts::any;
 
 inline namespace literals {
     constexpr Command operator "" _cmd(const char* str, size_t length) {

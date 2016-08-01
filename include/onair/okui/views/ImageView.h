@@ -5,7 +5,7 @@
 #include "onair/okui/Color.h"
 #include "onair/okui/View.h"
 
-#include "scraps/stdts/optional.h"
+#include "stdts/optional.h"
 
 namespace onair {
 namespace okui {
@@ -30,18 +30,22 @@ public:
     TextureHandle& texture() { return _texture; }
     const Color& textureColor() const { return _color; }
 
+    void load();
+    void unload();
+
     virtual void render() override;
     virtual void windowChanged() override;
+    virtual void willAppear() override;
 
 private:
-    TextureHandle                   _texture;
-    TextureHandle                   _placeholderTexture;
-    std::string                     _resource;
-    std::string                     _placeholderResource;
-    bool                            _fromURL = false;
-    Color                           _color = Color::kWhite;
-    scraps::stdts::optional<double> _distanceFieldEdge;
-    TextureDrawMode                 _drawMode = TextureDrawMode::kFit;
+    TextureHandle           _texture;
+    TextureHandle           _placeholderTexture;
+    std::string             _resource;
+    std::string             _placeholderResource;
+    bool                    _fromURL = false;
+    Color                   _color = Color::kWhite;
+    stdts::optional<double> _distanceFieldEdge;
+    TextureDrawMode         _drawMode = TextureDrawMode::kFit;
 };
 
 }}}

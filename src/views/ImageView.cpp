@@ -5,27 +5,23 @@ namespace okui {
 namespace views {
 
 void ImageView::clearTexture() {
-    _texture = nullptr;
+    unload();
     _resource.clear();
-    _placeholderTexture = nullptr;
     _placeholderResource.clear();
+    _distanceFieldEdge = stdts::nullopt;
 }
 
 void ImageView::setTextureResource(std::string resource) {
-    _texture = loadTextureResource(resource);
+    clearTexture();
     _resource = std::move(resource);
     _fromURL = false;
 }
 
 void ImageView::setTextureFromURL(std::string url, std::string placeholderResource) {
-    _texture = loadTextureFromURL(url);
+    clearTexture();
     _resource = std::move(url);
     _fromURL = true;
-
-    if (!placeholderResource.empty()) {
-        _placeholderTexture = loadTextureResource(placeholderResource);
-        _placeholderResource = std::move(placeholderResource);
-    }
+    _placeholderResource = std::move(placeholderResource);
 }
 
 void ImageView::setTextureColor(Color color) {
@@ -39,8 +35,8 @@ void ImageView::setTextureDistanceField(double edge) {
 }
 
 void ImageView::render() {
-    TextureHandle* texture = _texture.isLoaded()            ? &_texture :
-                             _placeholderTexture.isLoaded() ? &_placeholderTexture :
+    TextureHandle* texture = (_texture && _texture.isLoaded())                       ? &_texture :
+                             (_placeholderTexture && _placeholderTexture.isLoaded()) ? &_placeholderTexture :
                              nullptr;
 
     if (texture) {
@@ -64,13 +60,27 @@ void ImageView::render() {
 }
 
 void ImageView::windowChanged() {
-    if (!_resource.empty()) {
+    unload();
+    load();
+}
+
+void ImageView::willAppear() {
+    load();
+}
+
+void ImageView::load() {
+    if (!_resource.empty() && !_texture) {
         _texture = _fromURL ? loadTextureFromURL(_resource) : loadTextureResource(_resource);
     }
 
-    if (!_placeholderResource.empty()) {
+    if (!_placeholderResource.empty() && !_placeholderTexture) {
         _placeholderTexture = loadTextureResource(_placeholderResource);
     }
+}
+
+void ImageView::unload() {
+    _texture = nullptr;
+    _placeholderTexture = nullptr;
 }
 
 }}}

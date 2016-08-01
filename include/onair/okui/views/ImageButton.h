@@ -22,6 +22,9 @@ public:
     void setTextureColor(Color color, State state = State::kNormal);
     void setTextureDistanceField(double edge = 0.5, State state = State::kNormal);
 
+    void load();
+    void unload();
+
     virtual void layout() override;
     virtual void stateChanged() override;
 

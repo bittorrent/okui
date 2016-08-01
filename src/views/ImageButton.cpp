@@ -38,6 +38,18 @@ void ImageButton::setTextureDistanceField(double edge, State state) {
     _stateImageView(state).setTextureDistanceField(edge);
 }
 
+void ImageButton::load() {
+    for (auto& i : _imageViews) {
+        i.second.load();
+    }
+}
+
+void ImageButton::unload() {
+    for (auto& i : _imageViews) {
+        i.second.unload();
+    }
+}
+
 void ImageButton::layout() {
     for (auto& i : _imageViews) {
         i.second.setBoundsRelative(0, 0, 1, 1);

@@ -18,7 +18,7 @@
 #include "onair/okui/TouchpadFocus.h"
 #include "onair/okui/WeakTexture.h"
 
-#include "scraps/stdts/optional.h"
+#include "stdts/optional.h"
 
 #include "scraps/AbstractTaskScheduler.h"
 #include "scraps/TreeNode.h"
@@ -350,7 +350,7 @@ public:
     template <typename T>
     auto set(T&& object, Relation relation = Relation::kHierarchy) {
         _provisions.emplace_front(std::forward<T>(object), relation);
-        return scraps::stdts::any_cast<std::decay_t<T>>(&_provisions.front().object);
+        return stdts::any_cast<std::decay_t<T>>(&_provisions.front().object);
     }
 
     /**
@@ -500,7 +500,7 @@ public:
     * @param area the area within the target to render to. the view will fill this area
     * @param clipBounds the bounds within the target to clip rendering of the view and its children to
     */
-    void renderAndRenderSubviews(const RenderTarget* target, const Rectangle<int>& area, scraps::stdts::optional<Rectangle<int>> clipBounds = scraps::stdts::nullopt);
+    void renderAndRenderSubviews(const RenderTarget* target, const Rectangle<int>& area, stdts::optional<Rectangle<int>> clipBounds = stdts::nullopt);
 
     bool dispatchMouseDown(MouseButton button, double x, double y);
     bool dispatchMouseUp(MouseButton button, double startX, double startY, double x, double y);
@@ -529,10 +529,10 @@ private:
     };
 
     struct Provision {
-        Provision(scraps::stdts::any object, Relation relation)
+        Provision(stdts::any object, Relation relation)
             : object{std::move(object)}, relation{relation} {}
 
-        scraps::stdts::any object;
+        stdts::any object;
         Relation relation;
     };
 
@@ -556,7 +556,7 @@ private:
     void _updateFocusableRegions(std::vector<std::tuple<View*, Rectangle<double>>>& regions);
 
     bool _requiresTextureRendering();
-    void _renderAndRenderSubviews(const RenderTarget* target, const Rectangle<int>& area, bool shouldClear = false, scraps::stdts::optional<Rectangle<int>> clipBounds = scraps::stdts::nullopt);
+    void _renderAndRenderSubviews(const RenderTarget* target, const Rectangle<int>& area, bool shouldClear = false, stdts::optional<Rectangle<int>> clipBounds = stdts::nullopt);
 
     void _post(std::type_index index, const void* ptr, Relation relation);
     void _listen(std::type_index index, std::function<void(const void*, View*)> action, Relation relation);
@@ -634,12 +634,12 @@ T* View::find(Relation relation) {
     _traverseRelation(relation, [&](View* view, bool* shouldContinue) {
         for (auto& provision : view->_provisions) {
             if (!hasRelation(provision.relation, view)) { continue; }
-            if (auto object = scraps::stdts::any_cast<T>(&provision.object)) {
+            if (auto object = stdts::any_cast<T>(&provision.object)) {
                 ret = object;
                 *shouldContinue = false;
                 return 1;
             }
-            if (auto pointer = scraps::stdts::any_cast<T*>(&provision.object)) {
+            if (auto pointer = stdts::any_cast<T*>(&provision.object)) {
                 ret = *pointer;
                 *shouldContinue = false;
                 return 1;

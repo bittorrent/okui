@@ -7,7 +7,7 @@
 #include "onair/okui/shapes/Rectangle.h"
 #include "onair/okui/Window.h"
 
-#include "scraps/stdts/optional.h"
+#include "stdts/optional.h"
 #include "scraps/Reverse.h"
 
 using namespace onair::okui;
@@ -436,7 +436,7 @@ void View::dispatchUpdate(std::chrono::high_resolution_clock::duration elapsed) 
     }
 }
 
-void View::renderAndRenderSubviews(const RenderTarget* target, const Rectangle<int>& area, scraps::stdts::optional<Rectangle<int>> clipBounds) {
+void View::renderAndRenderSubviews(const RenderTarget* target, const Rectangle<int>& area, stdts::optional<Rectangle<int>> clipBounds) {
     if (!isVisible() || !area.width || !area.height) { return; }
 
     if (!_requiresTextureRendering() && !_cachesRender) {
@@ -757,7 +757,7 @@ bool View::_requiresTextureRendering() {
     return _rendersToTexture || _tintColor != Color::kWhite;
 }
 
-void View::_renderAndRenderSubviews(const RenderTarget* target, const Rectangle<int>& area, bool shouldClear, scraps::stdts::optional<Rectangle<int>> clipBounds) {
+void View::_renderAndRenderSubviews(const RenderTarget* target, const Rectangle<int>& area, bool shouldClear, stdts::optional<Rectangle<int>> clipBounds) {
     auto xScale = (_bounds.width != 0.0 ? area.width / _bounds.width : 1.0);
     auto yScale = (_bounds.height != 0.0 ? area.height / _bounds.height : 1.0);
 

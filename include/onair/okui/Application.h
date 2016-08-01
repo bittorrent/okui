@@ -329,8 +329,8 @@ private:
     };
 
     struct Provision {
-        Provision(scraps::stdts::any object) : object{std::move(object)} {}
-        scraps::stdts::any object;
+        Provision(stdts::any object) : object{std::move(object)} {}
+        stdts::any object;
     };
 
     struct Listener {
@@ -360,7 +360,7 @@ private:
 template <typename T>
 auto Application::set(T&& object) {
     _provisions.emplace_front(std::forward<T>(object));
-    return scraps::stdts::any_cast<std::decay_t<T>>(&_provisions.front().object);
+    return stdts::any_cast<std::decay_t<T>>(&_provisions.front().object);
 }
 
 /**
@@ -369,9 +369,9 @@ auto Application::set(T&& object) {
 template <typename T>
 T* Application::get() {
     for (auto& provision : _provisions) {
-        if (auto object = scraps::stdts::any_cast<T>(&provision.object)) {
+        if (auto object = stdts::any_cast<T>(&provision.object)) {
             return object;
-        } else if (auto pointer = scraps::stdts::any_cast<T*>(&provision.object)) {
+        } else if (auto pointer = stdts::any_cast<T*>(&provision.object)) {
             return *pointer;
         }
     }
