@@ -10,13 +10,14 @@
 #include "stdts/optional.h"
 #include "scraps/Reverse.h"
 
-using namespace onair::okui;
-
 namespace {
     View* PreferredFocusLeaf(View* focus) {
         return (!focus || !focus->preferredFocus()) ? focus : PreferredFocusLeaf(focus->preferredFocus());
     }
 }
+
+namespace onair {
+namespace okui {
 
 View::~View() {
     if (application()) {
@@ -856,3 +857,5 @@ void View::_checkUpdateSubscription() {
 bool View::_shouldSubscribeToUpdates() {
     return (!_updateHooks.empty() || _touchpadFocus.needsUpdates()) && isVisibleInOpenWindow();
 }
+
+} } // namespace onair::okui

@@ -184,5 +184,4 @@ void Application::_post(std::type_index index, const void* message) {
     }
 }
 
-} // namespace okui
-} // namespace onair
+} } // namespace onair::okui

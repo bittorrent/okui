@@ -416,4 +416,4 @@ void Window::_updateContentLayout() {
     layout();
 }
 
-}}
+} } // namespace onair::okui
