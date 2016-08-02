@@ -12,6 +12,11 @@ libraries:
             build-steps:
                 - ./bootstrap.sh
                 - ./b2 install --prefix={build_directory}
+    jshackle:
+        repository: git@github.com:bittorrent/jshackle.git
+        commit: d9f1450a35f166048bb90505f33be82bab28bacb
+        project:
+            header-directory: include
     gas-preprocessor:
         repository: https://github.com/libjpeg-turbo/gas-preprocessor.git
         commit: 4338df436a20ad4d28c7cd37852323e902f1144c

@@ -1,5 +1,7 @@
 project okui ;
 
+path-constant NEEDS_PATH : needs ;
+
 lib libpng       : needs//libpng        : <name>png <link>static ;
 lib libturbojpeg : needs//libjpeg-turbo : <name>turbojpeg ;
 lib libiconv     :                      : <name>iconv ;
