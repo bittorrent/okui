@@ -99,3 +99,47 @@ lib okui :
     <conditional>@okui-frameworks
     <target-os>android:<source>GLESv2
 ;
+
+import package ;
+
+package.install install-lib : <install-source-root>include : : okui : [ glob-tree-ex include : *.h ] ;
+
+path-constant PREFIX : [ option.get prefix : "/usr/local" ] ;
+path-constant LIB : [ option.get libdir : $(PREFIX)/lib ] ;
+path-constant PKG_CONFIG : $(LIB)/pkgconfig ;
+
+make okui.pc : Jamroot : @pkgconfig ;
+rule pkgconfig ( targets * : sources * : properties * ) {
+    if <toolset>darwin in $(properties) {
+        PRIVATE_LIBS on $(targets) = -framework Foundation -framework OpenGL ;
+    }
+}
+actions pkgconfig {
+cat > $(<) <<- EOM
+prefix=\${pcfiledir}/../..
+exec_prefix=\${prefix}
+libdir=\${exec_prefix}/lib
+includedir=\${exec_prefix}/include
+
+Name: okui
+Version: 0
+Description: Okay UI library
+Requires: scraps libpng libturbojpeg sdl2 utf8
+Libs: -L\${libdir} -lokui
+Libs.private: $(PRIVATE_LIBS)
+Cflags: -I\${includedir}
+EOM
+}
+
+install install-pkgconfig : okui.pc : <location>$(PKG_CONFIG) ;
+
+alias install :
+    install-lib
+    install-pkgconfig
+    $(NEEDS_PATH)//install-libpng
+    $(NEEDS_PATH)//install-libjpeg-turbo
+    $(NEEDS_PATH)//install-sdl2
+    $(NEEDS_PATH)//install-utf8
+;
+
+explicit install install-lib install-pkgconfig ;
