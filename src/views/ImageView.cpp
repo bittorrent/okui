@@ -15,6 +15,10 @@ void ImageView::setTextureResource(std::string resource) {
     clearTexture();
     _resource = std::move(resource);
     _fromURL = false;
+
+    if (isVisible()) {
+        load();
+    }
 }
 
 void ImageView::setTextureFromURL(std::string url, std::string placeholderResource) {
@@ -22,6 +26,10 @@ void ImageView::setTextureFromURL(std::string url, std::string placeholderResour
     _resource = std::move(url);
     _fromURL = true;
     _placeholderResource = std::move(placeholderResource);
+
+    if (isVisible()) {
+        load();
+    }
 }
 
 void ImageView::setTextureColor(Color color) {
