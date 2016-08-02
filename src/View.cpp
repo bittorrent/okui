@@ -10,14 +10,14 @@
 #include "stdts/optional.h"
 #include "scraps/Reverse.h"
 
+namespace onair {
+namespace okui {
+
 namespace {
     View* PreferredFocusLeaf(View* focus) {
         return (!focus || !focus->preferredFocus()) ? focus : PreferredFocusLeaf(focus->preferredFocus());
     }
-}
-
-namespace onair {
-namespace okui {
+} // anonymous namespace
 
 View::~View() {
     if (application()) {

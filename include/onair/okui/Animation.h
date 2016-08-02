@@ -70,6 +70,8 @@ T Animation<T, Clock>::current() const {
     auto t = std::chrono::duration<double>(elapsed).count(),
          d = std::chrono::duration<double>(_duration).count();
 
+    SCRAPS_ASSERT(_interpolator);
+
     return _interpolator(_initial, _target-_initial, t/d);
 }
 
