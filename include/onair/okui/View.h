@@ -18,17 +18,17 @@
 #include "onair/okui/TouchpadFocus.h"
 #include "onair/okui/WeakTexture.h"
 
-#include "stdts/optional.h"
-
 #include "scraps/AbstractTaskScheduler.h"
 #include "scraps/TreeNode.h"
 #include "scraps/utility.h"
 
+#include "stdts/optional.h"
+
+#include <gsl.h>
+
 #include <list>
 #include <typeindex>
 #include <unordered_map>
-
-#include <gsl.h>
 
 namespace onair {
 namespace okui {

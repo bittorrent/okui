@@ -7,7 +7,6 @@
 #include "onair/okui/shapes/Rectangle.h"
 #include "onair/okui/Window.h"
 
-#include "stdts/optional.h"
 #include "scraps/Reverse.h"
 
 namespace onair {
