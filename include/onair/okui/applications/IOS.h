@@ -12,6 +12,8 @@
 #import <UIKit/UIKit.h>
 #import <AVFoundation/AVFoundation.h>
 
+#include <sys/utsname.h>
+
 namespace onair {
 namespace okui {
 namespace applications {
@@ -34,6 +36,7 @@ public:
     virtual void hideStatusBar() override;
 
     virtual std::string operatingSystem() const override;
+    virtual std::string deviceModel() const override;
     virtual std::string distinctId() const override;
 };
 
@@ -83,6 +86,13 @@ template <typename Base>
 inline std::string IOS<Base>::operatingSystem() const {
     UIDevice* device = [UIDevice currentDevice];
     return scraps::Format("{} {}", [[device systemName] UTF8String], [[device systemVersion] UTF8String]);
+}
+
+template <typename Base>
+inline std::string IOS<Base>::deviceModel() const {
+    utsname systemInfo;
+    uname(&systemInfo);
+    return systemInfo.machine;
 }
 
 template <typename Base>

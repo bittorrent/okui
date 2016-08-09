@@ -15,6 +15,8 @@
 #import <AppKit/NSMenu.h>
 #import <AppKit/NSOpenPanel.h>
 
+#include <sys/sysctl.h>
+
 @interface MenuTarget : NSObject {
     onair::okui::Application* _application;
     std::vector<const onair::okui::MenuItem*> _menuItems;
@@ -53,6 +55,8 @@ public:
 
     virtual void keyDown(KeyCode key, KeyModifiers mod, bool repeat) override;
 
+    virtual std::string operatingSystem() const override;
+    virtual std::string deviceModel() const override;
     virtual std::string distinctId() const override;
 
 private:
@@ -186,6 +190,29 @@ inline void OSX<Base>::keyDown(KeyCode key, KeyModifiers mod, bool repeat) {
         default:
             NSBeep();
     }
+}
+
+template <typename Base>
+inline std::string OSX<Base>::operatingSystem() const {
+    auto operatingSystemVersion = [NSProcessInfo processInfo].operatingSystemVersion;
+    return scraps::Format("macOS {}.{}.{}", operatingSystemVersion.majorVersion, operatingSystemVersion.minorVersion, operatingSystemVersion.patchVersion);
+}
+
+template <typename Base>
+inline std::string OSX<Base>::deviceModel() const {
+    size_t size = 0;
+    if (sysctlbyname("hw.model", nullptr, &size, nullptr, 0) != 0 || size == 0) {
+        SCRAPS_LOG_WARNING("could not read device model ({})", errno);
+        return "";
+    }
+    std::string model;
+    model.resize(size);
+    if (sysctlbyname("hw.model", &model[0], &size, nullptr, 0) != 0) {
+        SCRAPS_LOG_WARNING("could not read device model ({})", errno);
+        return "";
+    }
+    model.resize(size-1); // chop off null terminator
+    return model;
 }
 
 template <typename Base>

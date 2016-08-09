@@ -10,8 +10,6 @@
 
 #import <Foundation/Foundation.h>
 
-#include <sys/utsname.h>
-
 namespace onair {
 namespace okui {
 namespace applications {
@@ -30,8 +28,6 @@ public:
     virtual std::string userStoragePath() const override;
 
     virtual KeyModifier defaultShortcutModifier() const override { return KeyModifier::kSuper; }
-
-    virtual std::string deviceModel() const override;
 
     virtual UserPreferencesInterface* getUserPreferences() override { return _userPreferences.get(); }
 
@@ -53,13 +49,6 @@ inline std::string Apple<Base>::userStoragePath() const {
     NSArray* paths = NSSearchPathForDirectoriesInDomains(NSApplicationSupportDirectory, NSUserDomainMask, YES);
     NSString* applicationSupportDirectory = [paths firstObject];
     return std::string{[applicationSupportDirectory UTF8String]} + '/' + this->organization() + '/' + this->name();
-}
-
-template <typename Base>
-inline std::string Apple<Base>::deviceModel() const {
-    utsname systemInfo;
-    uname(&systemInfo);
-    return systemInfo.machine;
 }
 
 }}}
