@@ -116,7 +116,7 @@ public:
     * Sets the view's tint. If this is anything but opaque white, this is a post-rendering effect that
     * clips the view's contents.
     */
-    void setTintColor(const Color& color) { _tintColor = color; _invalidateSuperviewRenderCache(); }
+    void setTintColor(const Color& color);
     const Color& tintColor() const        { return _tintColor; }
 
     /**
@@ -174,8 +174,11 @@ public:
     /**
     * If this view would receive focus and has a preferred focus, the preferred focus will become focus instead.
     */
-    View* preferredFocus() const { return _preferredFocus; }
+    View* preferredFocus() const       { return _preferredFocus; }
     void setPreferredFocus(View* view) { _preferredFocus = view; }
+
+    View* nextFocus() const     { return _nextFocus; }
+    View* previousFocus() const { return _previousFocus; }
 
     /**
     * If the view receives an unhandled tab key down, focus will change to the given

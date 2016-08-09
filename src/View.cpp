@@ -148,9 +148,16 @@ ShaderCache* View::shaderCache() {
 }
 
 void View::setScale(double scaleX, double scaleY) {
+    if (_scale.x == scaleX && _scale.y == scaleY) { return; }
     _scale.x = scaleX;
     _scale.y = scaleY;
     invalidateRenderCache();
+}
+
+void View::setTintColor(const Color& color) {
+    if (_tintColor == color) { return; }
+    _tintColor = color;
+    _invalidateSuperviewRenderCache();
 }
 
 void View::sendToBack() {
