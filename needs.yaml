@@ -37,26 +37,12 @@ libraries:
             {% endif %}
         project:
             environment:
-                {% if platform == host_platform %}
-                PATH: '{{ build_directory('gas-preprocessor') }}/bin:{{ build_directory('nasm') }}/bin:{current}'
-                {% else %}
-                PATH: '{{ build_directory('gas-preprocessor') }}/bin:{current}'
-                {% endif %}
-            configure-steps:
-            {% if platform == 'osx' %}
-                - ./configure --host=x86_64-apple-darwin CCAS=nasm
-            {% elif platform == 'ios' or platform == 'tvos' %}
-                - ./configure --host=aarch64-apple-darwin
-            {% elif platform == 'iossimulator' and architecture == 'i386' %}
-                - ./configure --host=i686-apple-darwin
-            {% elif platform == 'android' %}
-                - ./configure --host=arm-linux-androideabi CCAS=arm-linux-androideabi-as
-            {% else %}
-                - ./configure
+                PATH: '{{ build_directory('gas-preprocessor') }}/bin:{{build_directory('nasm') ~ '/bin:' if platform == host_platform}}{current}'
+                CCAS: {{'arm-linux-androideabi-as' if platform == 'android' else 'nasm'}}
+            {% if platform == 'iossimulator' and architecture == 'i386' %}
+            configure-args: --host=i686-apple-darwin
             {% endif %}
-            build-steps:
-                - make -j8
-                - make install prefix={build_directory} libdir={build_directory}/lib
+            post-build:
                 # TODO: either only build the static version or find a way to
                 # specify static in the b2 files.
                 - rm -f {build_directory}/lib/*.dylib
