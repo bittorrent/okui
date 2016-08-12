@@ -135,6 +135,8 @@ EOM
 
 install install-pkgconfig : okui.pc : <location>$(PKG_CONFIG) ;
 
+install install-android : [ glob-tree-ex android : *.java *.gradle ] : <location>$(PREFIX)/share/okui <install-source-root>android ;
+
 alias install :
     install-lib
     install-pkgconfig
@@ -142,6 +144,8 @@ alias install :
     $(NEEDS_PATH)//install-libjpeg-turbo
     $(NEEDS_PATH)//install-sdl2
     $(NEEDS_PATH)//install-utf8
+:
+    <target-os>android:<source>:install-android
 ;
 
-explicit install install-lib install-pkgconfig ;
+explicit install install-lib install-pkgconfig install-android ;

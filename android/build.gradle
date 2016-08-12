@@ -13,7 +13,7 @@ allprojects {
     sourceSets {
         main {
             java {
-                srcDir '../java'
+                srcDir './java'
             }
             compileClasspath = files(System.getenv('ANDROID_HOME') + "/platforms/android-${androidApiLevel}/android.jar")
         }
