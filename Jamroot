@@ -145,7 +145,7 @@ alias install :
     $(NEEDS_PATH)//install-sdl2
     $(NEEDS_PATH)//install-utf8
 :
-    <target-os>android:<source>:install-android
+    <target-os>android:<source>install-android
 ;
 
 explicit install install-lib install-pkgconfig install-android ;
