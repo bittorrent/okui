@@ -118,7 +118,7 @@ private:
         }
     };
 
-    struct Controller : onair::okui::Controller {
+    struct Controller final : onair::okui::Controller {
         explicit Controller(SDL_Joystick* joystick);
         ~Controller();
 
