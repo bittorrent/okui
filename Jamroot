@@ -112,8 +112,10 @@ path-constant PKG_CONFIG : $(LIB)/pkgconfig ;
 
 make okui.pc : Jamroot : @pkgconfig ;
 rule pkgconfig ( targets * : sources * : properties * ) {
-    if <toolset>darwin in $(properties) {
+    if <target-os>darwin in $(properties) {
         PRIVATE_LIBS on $(targets) = -framework Foundation -framework OpenGL ;
+    } else if <toolset>darwin in $(properties) {
+        PRIVATE_LIBS on $(targets) = -framework Foundation ;
     }
 }
 actions pkgconfig {
