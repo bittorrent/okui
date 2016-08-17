@@ -69,20 +69,29 @@ public:
     void removeSubviews(View* view, Views&&... views) { _removeSubviews(view, std::forward<Views>(views)...); }
     void removeSubviews();
 
-    Window* window() const                   { return _window; }
+    Window* window() const                    { return _window; }
     Application* application() const;
 
-    const View* superview() const            { return parent(); }
-    View* superview()                        { return parent(); }
-    const std::list<View*>& subviews() const { return children(); }
+    const View* superview() const             { return parent(); }
+    View* superview()                         { return parent(); }
+    const std::list<View*>& subviews() const  { return children(); }
 
-    const Rectangle<double>& bounds() const  { return _bounds; }
+    const Rectangle<double>& bounds() const   { return _bounds; }
+    math::Vector<double, 2> size() const      { return _bounds.size(); }
+    Point<double> position() const            { return _bounds.position(); }
 
-    double width() const { return _bounds.width; }
-    double height() const { return _bounds.height; }
+    double width() const                      { return _bounds.width; }
+    double height() const                     { return _bounds.height; }
 
     template <typename... Args>
-    void setBounds(Args&&... args)           { _setBounds(Rectangle<double>(std::forward<Args>(args)...)); }
+    void setBounds(Args&&... args)            { _setBounds(Rectangle<double>(std::forward<Args>(args)...)); }
+
+    void setPosition(double x, double y)      { _setBounds({x, y, _bounds.width, _bounds.height}); }
+    void setPosition(const Point<double>& p)  { setPosition(p.x, p.y); }
+
+    void setSize(double width, double height) { _setBounds({_bounds.x, _bounds.y, width, height}); }
+    void setSize(const math::Vector<double, 2>& s) { setSize(s.x, s.y); }
+
     Rectangle<double> windowBounds() const;
 
     /**
