@@ -141,24 +141,18 @@ void Window::setFocus(View* focus) {
 
     auto previousFocus = _focus;
     _focus = focus;
-    if (previousFocus) {
-        auto view = previousFocus;
-        while (view) {
-            if (!focus || (focus != view && !focus->isDescendantOf(view))) {
-                view->focusLost();
-            }
-            view->focusChanged();
-            view = view->superview();
+
+    for (auto view = previousFocus; view; view = view->superview()) {
+        if (!focus || (focus != view && !focus->isDescendantOf(view))) {
+            view->focusLost();
         }
+        view->focusChanged();
     }
-    if (_focus) {
-        auto view = _focus;
-        while (view) {
-            if (!previousFocus || (previousFocus != view && !previousFocus->isDescendantOf(view))) {
-                view->focusGained();
-                view->focusChanged();
-            }
-            view = view->superview();
+
+    for (auto view = _focus; view; view = view->superview()) {
+        if (!previousFocus || (previousFocus != view && !previousFocus->isDescendantOf(view))) {
+            view->focusGained();
+            view->focusChanged();
         }
     }
 }

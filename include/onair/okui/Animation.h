@@ -54,7 +54,7 @@ template<typename T, typename Clock>
 void Animation<T, Clock>::reset(T value) {
     _initial      = std::move(value);
     _target       = _initial;
-    _start        = typename Clock::time_point{};
+    _start        = {};
     _duration     = Clock::duration::zero();
     _interpolator = nullptr;
 }
