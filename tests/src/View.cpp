@@ -522,3 +522,26 @@ TEST(View, mouseMovement) {
     EXPECT_FALSE(b.mouseMoveHandled);
     EXPECT_TRUE(c.mouseMoveHandled);
 }
+
+TEST(View, focusOnRemoval) {
+    struct FocusView : okui::View {
+        virtual bool canBecomeFocus() override { return true; }
+    };
+
+    View a, b;
+    FocusView c;
+
+    TestApplication application;
+    okui::Window window(&application);
+    window.open();
+    window.contentView()->addSubview(&a);
+
+    a.addSubview(&b);
+    a.setPreferredFocus(&b);
+    b.addSubview(&c);
+    c.focus();
+
+    b.removeSubviews();
+
+    EXPECT_EQ(window.focus(), nullptr);
+}

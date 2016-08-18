@@ -182,10 +182,14 @@ void View::focus() {
 
 void View::focusAncestor() {
     for (auto nextFocus = superview(); nextFocus; nextFocus = nextFocus->superview()) {
-        if (!nextFocus->canBecomeFocus() || !nextFocus->isVisible() || !nextFocus->ancestorsAreVisible()) {
-            continue;
-        }
-        if (PreferredFocusLeaf(nextFocus) != this) {
+        auto leaf = PreferredFocusLeaf(nextFocus);
+        if (leaf &&
+            leaf != this &&
+            !leaf->isDescendantOf(this) &&
+            leaf->canBecomeFocus() &&
+            leaf->isVisible() &&
+            leaf->ancestorsAreVisible())
+        {
             nextFocus->focus();
             return;
         }
