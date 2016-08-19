@@ -16,7 +16,7 @@ void ImageView::setTextureResource(std::string resource) {
     _resource = std::move(resource);
     _fromURL = false;
 
-    if (isVisible()) {
+    if (isVisibleInOpenWindow()) {
         load();
     }
 }
@@ -27,7 +27,7 @@ void ImageView::setTextureFromURL(std::string url, std::string placeholderResour
     _fromURL = true;
     _placeholderResource = std::move(placeholderResource);
 
-    if (isVisible()) {
+    if (isVisibleInOpenWindow()) {
         load();
     }
 }
@@ -69,7 +69,10 @@ void ImageView::render() {
 
 void ImageView::windowChanged() {
     unload();
-    load();
+
+    if (isVisibleInOpenWindow()) {
+        load();
+    }
 }
 
 void ImageView::willAppear() {
@@ -77,12 +80,12 @@ void ImageView::willAppear() {
 }
 
 void ImageView::load() {
-    if (!_resource.empty() && !_texture) {
-        _texture = _fromURL ? loadTextureFromURL(_resource) : loadTextureResource(_resource);
-    }
-
     if (!_placeholderResource.empty() && !_placeholderTexture) {
         _placeholderTexture = loadTextureResource(_placeholderResource);
+    }
+
+    if (!_resource.empty() && !_texture) {
+        _texture = _fromURL ? loadTextureFromURL(_resource) : loadTextureResource(_resource);
     }
 }
 
