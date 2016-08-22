@@ -1,8 +1,12 @@
 #!/usr/bin/env python
 
 import argparse
+import distutils.spawn
 import os
+import shutil
+import stat
 import subprocess
+import sys
 import multiprocessing
 
 project_root = os.path.dirname(os.path.abspath(__file__))
@@ -10,20 +14,57 @@ os.chdir(project_root)
 
 needy = os.path.join(project_root, 'needy', 'scripts', 'needy')
 
-parser = argparse.ArgumentParser(description='Builds user-supplied dependencies.')
+
+def bootstrap_b2():
+    subprocess.check_call([needy, 'satisfy', 'boost-build'])
+
+    b2 = os.path.join(project_root, 'b2')
+    b2_bin = os.path.join(subprocess.check_output([needy, 'builddir', 'boost-build']).decode(), 'bin')
+
+    with open(b2, 'w') as f:
+        f.write('#!/bin/sh\n{} "$@"'.format(os.path.join(b2_bin, 'b2')))
+    os.chmod(b2, os.stat(b2).st_mode | stat.S_IEXEC)
+
+    bootstrap_dir = os.path.join(project_root, 'bootstrap')
+    try:
+        os.mkdir(bootstrap_dir)
+    except OSError:
+        pass
+
+    copy_path = os.path.join(bootstrap_dir, 'b2')
+    shutil.copyfile(b2, copy_path)
+    os.chmod(copy_path, os.stat(copy_path).st_mode | stat.S_IEXEC)
+    os.environ['PATH'] = '{}:{}'.format(bootstrap_dir, os.environ['PATH'])
+
+
+def pkg_is_present(pkg):
+    env = os.environ.copy()
+    env['PKG_CONFIG_LIBDIR'] = ''
+    return subprocess.call(['pkg-config', pkg, '--exists'], env=env) == 0
+
+parser = argparse.ArgumentParser(description='Builds non-user-supplied dependencies.')
+parser.add_argument('--bootstrap-b2', default=distutils.spawn.find_executable('b2') is None, action='store_true', help='bootstrap b2')
 parser.add_argument('--needy-target-args', default='', help='arguments to select the needy target with')
 parser.add_argument('--needy-satisfy-args', default='', help='the arguments to use with needy satisfy')
 parser.add_argument('--configure', action='store_true', help='if true, configure will also be invoked')
 parser.add_argument('-j', '--concurrency', default=multiprocessing.cpu_count(), type=int, help='build concurrency')
 args = parser.parse_args()
 
-libraries = ['scraps']
-needy_args = ' '.join([arg for arg in (libraries + [args.needy_target_args]) if arg])
+if args.bootstrap_b2:
+    bootstrap_b2()
+
+dependencies = [dep for dep in ['scraps', 'libpng', 'sdl2', 'utf8'] if not pkg_is_present(dep)]
+if not pkg_is_present('libturbojpeg'):
+    dependencies.append('libjpeg-turbo')
+if 'android' in args.needy_target_args and not pkg_is_present('jshackle'):
+    dependencies.append('jshackle')
+
+needy_args = ' '.join([arg for arg in (dependencies + [args.needy_target_args]) if arg])
 needy_satisfy_args = (args.needy_target_args + ' ' + args.needy_satisfy_args + ' -j ' + str(args.concurrency)).strip()
 
-subprocess.check_call('{} satisfy {} {}'.format(needy, ' '.join(libraries), needy_satisfy_args), shell=True)
+subprocess.check_call('{} satisfy {} {}'.format(needy, ' '.join(dependencies), needy_satisfy_args), shell=True)
 
-configure_command = 'PKG_CONFIG_PATH=`{} pkg-config-path {}` ./configure --needy-satisfy-args="{}"'.format(needy, needy_args, needy_satisfy_args)
+configure_command = 'PKG_CONFIG_PATH=`{} pkg-config-path {}`:$PKG_CONFIG_PATH ./configure --needy-satisfy-args="{}"'.format(needy, needy_args, needy_satisfy_args)
 
 if args.configure:
     subprocess.check_call(configure_command, shell=True)

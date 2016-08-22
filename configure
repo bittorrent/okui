@@ -1,45 +1,62 @@
 #!/usr/bin/env python
 
 import argparse
+import logging
 import os
-import stat
 import subprocess
-import sys
+import textwrap
 
 project_root = os.path.dirname(os.path.abspath(__file__))
 os.chdir(project_root)
 
+dependencies = ['scraps', 'libpng', 'libturbojpeg', 'sdl2', 'utf8', 'jshackle']
+
 needy = os.path.join(project_root, 'needy', 'scripts', 'needy')
-
-
-def bootstrap_b2():
-    subprocess.check_call([needy, 'satisfy', 'boost-build'])
-
-    b2 = os.path.join(project_root, 'b2')
-    b2_bin = os.path.join(subprocess.check_output([needy, 'builddir', 'boost-build']).decode(), 'bin')
-
-    with open(b2, 'w') as f:
-        f.write('#!/bin/sh\n{} "$@"'.format(os.path.join(b2_bin, 'b2')))
-    os.chmod(b2, os.stat(b2).st_mode | stat.S_IEXEC)
 
 
 def generate_needs_jamfile(satisfy_args):
     subprocess.check_call('{} generate jamfile --satisfy-args="{}"'.format(needy, satisfy_args), shell=True)
 
 
+def pkg_is_present(pkg):
+    env = os.environ.copy()
+    env['PKG_CONFIG_LIBDIR'] = ''
+    return subprocess.call(['pkg-config', pkg, '--exists'], env=env) == 0
+
+
 def generate_project_config():
     with open('project-config.jam', 'w') as f:
-        f.write('PKG_CONFIG_PATH = "{}" ;\n'.format(os.environ['PKG_CONFIG_PATH'] if 'PKG_CONFIG_PATH' in os.environ else ''))
+        pkg_config_dependencies = []
+        owned_dependencies = []
+        for dep in dependencies:
+            if not pkg_is_present(dep):
+                logging.info('Dependency {} not present'.format(dep))
+                continue
+            pkg_config_dependencies.append(dep)
+            location = os.path.realpath(subprocess.check_output(['pkg-config', dep, '--variable=pcfiledir']).decode().strip())
+            if not os.path.relpath(location, os.path.realpath('needs')).startswith('..'):
+                logging.info('Dependency {} built with Needy'.format(dep))
+                owned_dependencies.append(dep)
+            else:
+                logging.info('Dependency {} provided by {}'.format(dep, location))
+
+        f.write(textwrap.dedent("""\
+            PKG_CONFIG_PATH = "{}" ;
+            PKG_CONFIG_DEPENDENCIES = {} ;
+            OWNED_DEPENDENCIES = {} ;
+        """).format(
+            os.environ['PKG_CONFIG_PATH'] if 'PKG_CONFIG_PATH' in os.environ else '',
+            ' '.join(pkg_config_dependencies),
+            ' '.join(owned_dependencies)
+        ))
 
 parser = argparse.ArgumentParser(description='Configures the library.')
-parser.add_argument('--bootstrap-b2', action='store_true', help='bootstrap b2')
 parser.add_argument('--needy-satisfy-args', default='', help='the arguments to pass on to needy satisfy')
 args = parser.parse_args()
 
-if args.bootstrap_b2:
-    bootstrap_b2()
+logging.basicConfig(format='[%(levelname)s] %(message)s', level=logging.INFO)
 
 generate_needs_jamfile(args.needy_satisfy_args)
 generate_project_config()
 
-print('Configuration complete. You may now build via ' + ('./b2' if args.bootstrap_b2 else 'b2') + '.')
+print('Configuration complete. You may now build via {}.'.format('./b2' if os.path.exists('b2') else 'b2'))

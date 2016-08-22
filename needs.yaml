@@ -1,10 +1,10 @@
 libraries:
     scraps:
         repository: git@github.com:bittorrent/scraps.git
-        commit: 464d12ceb5bea58065da3ebec4f78661860fd0f9
+        commit: 506b74ac7ebfe233255cf3165717a552c1da8331
         project:
             type: boostbuild
-            pre-build: ./configure
+            pre-build: ./build-deps --needy-target-args='-t {{ platform }}:{{ architecture }}' --needy-satisfy-args='--android-toolchain={{ env['ANDROID_TOOLCHAIN'] }}' --configure
     boost-build:
         download: https://github.com/boostorg/build/archive/2016.03.tar.gz
         checksum: 0e6936337c25fc87d2aff8ea6c63019e9c1e319a
@@ -107,21 +107,3 @@ libraries:
         project:
             post-build:
                 - xxd -i LICENSE {build_directory}/include/utf8/license.c
-universal-binaries:
-    macosx:
-        osx:
-            - x86_64
-    iphoneos:
-        ios:
-            - armv7
-            - arm64
-    iphonesimulator:
-        iossimulator:
-            - i386
-            - x86_64
-    appletvos:
-        tvos:
-            - arm64
-    appletvsimulator:
-        tvossimulator:
-            - x86_64

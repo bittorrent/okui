@@ -2,10 +2,7 @@ project okui ;
 
 path-constant NEEDS_PATH : needs ;
 
-lib libpng       : needs//libpng        : <name>png <link>static ;
-lib libturbojpeg : needs//libjpeg-turbo : <name>turbojpeg ;
-lib libiconv     :                      : <name>iconv ;
-alias utf8       : needs//utf8 ;
+lib libiconv : : <name>iconv ;
 
 rule okui-frameworks ( properties * ) {
     if <target-os>iphone in $(properties) || <target-os>appletv in $(properties) || <target-os>darwin in $(properties) {
@@ -34,57 +31,40 @@ alias objc : : : :
     <target-os>appletv:<cflags>-fobjc-arc
 ;
 
-alias jshackle  : $(NEEDS_PATH)//jshackle ;
-
 local PKG_CONFIG_PATH = [ modules.peek project-config : PKG_CONFIG_PATH ] ;
-if ($(PKG_CONFIG_PATH)) {
-    local cflags = [ SHELL "PKG_CONFIG_PATH=$(PKG_CONFIG_PATH) pkg-config scraps --cflags" : strip-eol ] ;
-    local ldflags = [ SHELL "PKG_CONFIG_PATH=$(PKG_CONFIG_PATH) pkg-config scraps --libs --static" : strip-eol ] ;
-    alias scraps : : : : <cflags>$(cflags) <linkflags>$(ldflags) ;
-} else {
-    alias scraps : ../scraps//scraps ;
+local PKG_CONFIG_DEPENDENCIES = [ modules.peek project-config : PKG_CONFIG_DEPENDENCIES ] ;
+local OWNED_DEPENDENCIES = [ modules.peek project-config : OWNED_DEPENDENCIES ] ;
+
+rule dep ( name : packages * ) {
+    if ! $(packages) {
+        packages = $(name) ;
+    }
+    if $(packages) in $(PKG_CONFIG_DEPENDENCIES) {
+        local cflags = [ SHELL "PKG_CONFIG_PATH=$(PKG_CONFIG_PATH) pkg-config $(packages:J= ) --cflags | tr -d '\n'" ] ;
+        local ldflags = [ SHELL "PKG_CONFIG_PATH=$(PKG_CONFIG_PATH) pkg-config $(packages:J= ) --libs --static | tr -d '\n'" ] ;
+        alias $(name) : : : : <cflags>$(cflags) <linkflags>$(ldflags) ;
+    }
+    if $(packages) in $(OWNED_DEPENDENCIES) {
+        alias install-$(name)-if-owned : $(NEEDS_PATH)//install-$(name) ;
+    } else {
+        alias install-$(name)-if-owned ;
+    }
+    explicit install-$(name)-if-owned ;
 }
 
-lib libSDL2 : needs//sdl2
-:
-    <name>SDL2
-: :
-    [ conditional <target-os>darwin :
-        <framework>AudioUnit
-        <framework>Carbon
-        <framework>Cocoa
-        <framework>CoreAudio
-        <framework>ForceFeedback
-        <framework>Foundation
-        <framework>IOKit
-        <source>libiconv
-    ]
-
-    [ conditional <target-os>appletv :
-        <framework>CoreAudio
-        <framework>CoreGraphics
-        <framework>GameController
-        <framework>QuartzCore
-        <framework>UIKit
-    ]
-
-    [ conditional <target-os>iphone :
-        <framework>CoreAudio
-        <framework>CoreGraphics
-        <framework>CoreMotion
-        <framework>GameController
-        <framework>QuartzCore
-        <framework>UIKit
-    ]
-;
+dep scraps ;
+dep jshackle ;
+dep sdl2 ;
+dep utf8 ;
+dep libjpeg-turbo : libturbojpeg ;
+dep libpng ;
 
 lib okui :
     [ glob-tree-ex src : *.cpp ]
     scraps
     libpng
-    libturbojpeg
-    libSDL2
-    jshackle
+    libjpeg-turbo
+    sdl2
     objc
     utf8
 :
@@ -95,6 +75,7 @@ lib okui :
         <source>GL
         <source>m
     ]
+    <target-os>android:<source>jshackle
 : :
     <include>include
     <cxxflags>"-std=c++1y"
@@ -142,10 +123,12 @@ install install-android : [ glob-tree-ex android : *.java *.gradle ] : <location
 alias install :
     install-lib
     install-pkgconfig
-    $(NEEDS_PATH)//install-libpng
-    $(NEEDS_PATH)//install-libjpeg-turbo
-    $(NEEDS_PATH)//install-sdl2
-    $(NEEDS_PATH)//install-utf8
+    install-scraps-if-owned
+    install-jshackle-if-owned
+    install-libpng-if-owned
+    install-libjpeg-turbo-if-owned
+    install-sdl2-if-owned
+    install-utf8-if-owned
 :
     <target-os>android:<source>install-android
 ;

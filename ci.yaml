@@ -2,13 +2,12 @@ script:
     {% if target == 'linux' %}
     - export CXXFLAGS=-stdlib=libc++; export LDFLAGS=-stdlib=libc++;
     {% endif %}
-    - mkdir -p ./ci-bin
-    - export PATH=`pwd`/ci-bin:$PATH
-    - ./configure --bootstrap-b2 && cp ./b2 ./ci-bin
-    - ./build-deps --needy-target-args="{{ '-t android' if target == 'android' else ('' if target == 'linux' else ('-u '+target)) }}" --needy-satisfy-args="-j{{ cpu_count }} --android-toolchain=$ANDROID_TOOLCHAIN" --configure
+    {% set needy_targets = {'iphoneos': 'ios', 'appletvos': 'tvos', 'android': 'android'} %}
+    - ./build-deps --bootstrap-b2 --needy-target-args="{{ '-t ' ~ needy_targets[target] if target in needy_targets }}" --needy-satisfy-args="--android-toolchain=$ANDROID_TOOLCHAIN" --configure
+    - export PATH=`pwd`/bootstrap:$PATH
     - live b2-config --target={{ target }} --android-toolchain=$ANDROID_TOOLCHAIN >> project-config.jam
     - b2 -j{{ cpu_count }} -d+2
-    {% if target in ['macosx'] %}
+    {% if target in ['macosx', 'linux'] %}
     - b2 -j{{ cpu_count }} tests//run
     {% endif %}
     - live c++-analysis b2 -j{{ cpu_count }} --build-dir=./bin/analysis
