@@ -68,15 +68,10 @@ libraries:
         {% if platform in ['ios', 'tvos', 'iossimulator', 'tvossimulator'] %}
             xcode-project: Xcode-iOS/SDL/SDL.xcodeproj
             xcode-target: {{'libSDL-tv' if platform in ['tvos', 'tvossimulator'] else 'libSDL' }}
-            # When installed from xcode, the headers are in `include` when we
-            # want them to match the other builds: `include/SDL2`
             post-build:
-                - mv {build_directory}/include {build_directory}/SDL2
-                - mkdir {build_directory}/include
-                - mv {build_directory}/SDL2 {build_directory}/include/SDL2
-                # private SDL headers used by the viewer
-                - mkdir {build_directory}/include/SDL2/private-headers
-                - cp src/video/uikit/SDL_uikitappdelegate.h {build_directory}/include/SDL2/private-headers/
+                - mkdir -p {build_directory}/include/private-headers
+                - cp src/video/uikit/SDL_uikitappdelegate.h {build_directory}/include/private-headers
+                - xxd -i COPYING.txt {build_directory}/include/SDL_license.c
         {% else %}
             configure-args:
                 - --disable-shared
@@ -86,8 +81,8 @@ libraries:
                 - --host=arm-linux-androideabi
                 {% endif %}
             post-build:
-        {% endif %}
                 - xxd -i COPYING.txt {build_directory}/include/SDL2/SDL_license.c
+        {% endif %}
         {% if platform == 'android' %}
                 - mkdir -p {build_directory}/share/sdl2
                 - cp -R android-project {build_directory}/share/sdl2
