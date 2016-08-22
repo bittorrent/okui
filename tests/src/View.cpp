@@ -523,6 +523,7 @@ TEST(View, mouseMovement) {
     EXPECT_TRUE(c.mouseMoveHandled);
 }
 
+#if ONAIR_OKUI_HAS_NATIVE_APPLICATION
 TEST(View, focusOnRemoval) {
     struct FocusView : okui::View {
         virtual bool canBecomeFocus() override { return true; }
@@ -545,3 +546,4 @@ TEST(View, focusOnRemoval) {
 
     EXPECT_EQ(window.focus(), nullptr);
 }
+#endif
