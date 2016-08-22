@@ -10,8 +10,6 @@
 
 #ifndef SCRAPS_ANDROID
 
-#include <boost/filesystem.hpp>
-
 using testing::internal::FilePath;
 
 std::string TestApplication::ResourceManagerPath() {

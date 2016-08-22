@@ -14,12 +14,12 @@
 
 #include <unordered_map>
 
-#include <SDL2/SDL.h>
+#include <SDL.h>
 
 #if SCRAPS_MAC_OS_X
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Wextern-c-compat"
-#include <SDL2/SDL_syswm.h>
+#include <SDL_syswm.h>
 #pragma clang diagnostic pop
 
 @interface OKUISDLApplication : NSApplication

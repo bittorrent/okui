@@ -13,7 +13,7 @@ namespace {
         #include <pnglicense.c>
     }
     namespace sdl2 {
-        #include <SDL2/license.c>
+        #include <SDL_license.c>
     }
     namespace utf8 {
         #include <utf8/license.c>

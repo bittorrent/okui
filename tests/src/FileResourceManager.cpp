@@ -2,15 +2,13 @@
 
 #include "onair/okui/FileResourceManager.h"
 
-#include <boost/filesystem.hpp>
-
 using namespace onair::okui;
 
 TEST(FileResourceManager, loading) {
 #ifdef SCRAPS_ANDROID
-    std::string path{"/sdcard/Download/FileResourceManager.loading"};
+    std::string path{"/sdcard/Download/FileResourceManager_loading"};
 #else
-    std::string path = (boost::filesystem::temp_directory_path() / "FileResourceManager.loading").string();
+    std::string path = "./FileResourceManager_loading";
 #endif
 
     FILE* f = fopen(path.c_str(), "w");

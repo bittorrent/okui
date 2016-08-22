@@ -60,7 +60,7 @@ libraries:
                 - --enable-arm-neon=yes
         {% endif %}
             post-build:
-                - xxd -i LICENSE {build_directory}/include/pnglicense.c
+                - xxd -i LICENSE {build_directory}/include/libpng16/pnglicense.c
     sdl2:
         repository: git@github.com:bittorrent/SDL.git
         commit: e6c442fb49dfc16979a31d6e947b57e47705bb5f
@@ -87,7 +87,7 @@ libraries:
                 {% endif %}
             post-build:
         {% endif %}
-                - xxd -i COPYING.txt {build_directory}/include/SDL2/license.c
+                - xxd -i COPYING.txt {build_directory}/include/SDL2/SDL_license.c
         {% if platform == 'android' %}
                 - mkdir -p {build_directory}/share/sdl2
                 - cp -R android-project {build_directory}/share/sdl2

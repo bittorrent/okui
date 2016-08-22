@@ -4,7 +4,7 @@
 
 #if SCRAPS_ANDROID
 
-#include <SDL2/SDL_main.h>
+#include <SDL_main.h>
 
 #include <jni.h>
 

@@ -2,7 +2,7 @@
 #include "onair/okui/config.h"
 #include "onair/okui/KeyCode.h"
 
-#include <SDL2/SDL.h>
+#include <SDL.h>
 #include <cstdint>
 
 namespace onair {
