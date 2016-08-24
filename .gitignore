@@ -1,22 +1,14 @@
 .DS_Store
+/android/build
 /b2
 /bin
+/bootstrap
 /ci-bin
 /dist
+/needs
+/project-config.jam
 /tests/android/src/main/assets
 /tests/android/src/main/libs
 /tests/bin
 /tests/dist
-/needs
-/android/build
 /third-party/utf8/needy-wrappers
-
-# tacklebox
-/.configure/
-/build
-/configure.tackle
-/dependencies/
-/include/onair/okui/version-config.h
-/okui.xcconfig
-/project-config.jam
-/tests/okui-tests.xcconfig
