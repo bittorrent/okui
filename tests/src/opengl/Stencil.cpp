@@ -3,13 +3,13 @@
 #include "../RenderOnce.h"
 #include "../TestFramebuffer.h"
 
-#include "onair/okui/Rectangle.h"
-#include "onair/okui/opengl/Framebuffer.h"
-#include "onair/okui/opengl/Stencil.h"
-#include "onair/okui/shapes/Rectangle.h"
+#include "okui/Rectangle.h"
+#include "okui/opengl/Framebuffer.h"
+#include "okui/opengl/Stencil.h"
+#include "okui/shapes/Rectangle.h"
 
-using namespace onair::okui;
-using namespace onair::okui::opengl;
+using namespace okui;
+using namespace okui::opengl;
 
 #if ONAIR_OKUI_HAS_NATIVE_APPLICATION && !OPENGL_ES // TODO: fix for OpenGL ES
 

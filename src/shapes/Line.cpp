@@ -1,10 +1,9 @@
-#include "onair/okui/shapes/Line.h"
+#include "okui/shapes/Line.h"
 
-#include "onair/okui/Shader.h"
+#include "okui/Shader.h"
 
 #include <cmath>
 
-namespace onair {
 namespace okui {
 namespace shapes {
 
@@ -20,4 +19,4 @@ void Line::draw(Shader* shader) {
     shader->drawTriangle(c2.x, c2.y, c3.x, c3.y, c4.x, c4.y);
 }
 
-}}}
+} } // namespace okui::shapes

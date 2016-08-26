@@ -1,6 +1,5 @@
-#include "onair/okui/Color.h"
+#include "okui/Color.h"
 
-namespace onair {
 namespace okui {
 
 const Color Color::kWhite            = 0xFFFFFF_rgb;
@@ -21,4 +20,4 @@ const Color Color::kNavy             = 0x000080_rgb;
 const Color Color::kFuchsia          = 0xFF00FF_rgb;
 const Color Color::kPurple           = 0x800080_rgb;
 
-} } // namespace onair::okui
+} // namespace okui

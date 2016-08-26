@@ -1,6 +1,5 @@
-#include "onair/okui/opengl/Stencil.h"
+#include "okui/opengl/Stencil.h"
 
-namespace onair {
 namespace okui {
 namespace opengl {
 
@@ -14,7 +13,7 @@ Stencil::Stencil(const void* context) : _context(context) {
     auto mask = (1 << state.count);
     ++state.count;
     assert(state.count <= 8);
-    
+
     _stencilTestEnabled = glIsEnabled(GL_STENCIL_TEST);
     if (_stencilTestEnabled) {
         glGetIntegerv(GL_STENCIL_WRITEMASK, &_stencilWritemask);
@@ -25,7 +24,7 @@ Stencil::Stencil(const void* context) : _context(context) {
         glGetIntegerv(GL_STENCIL_PASS_DEPTH_PASS, &_stencilPassDepthPass);
         glGetIntegerv(GL_STENCIL_PASS_DEPTH_FAIL, &_stencilPassDepthFail);
     }
-    
+
     glEnable(GL_STENCIL_TEST);
 
     glStencilMask(mask);
@@ -59,7 +58,7 @@ Stencil::~Stencil() {
     if (_isActivated) {
         state.funcRef = (state.funcRef >> 1);
     }
-    
+
     if (!state.count) {
         auto& contextState = _sStencilState[_context];
         contextState.erase(_framebuffer);
@@ -73,7 +72,7 @@ void Stencil::activate(bool invert) {
     auto& state = _state();
 
     _isActivated = true;
-    
+
     glColorMask(_colorMask[0], _colorMask[1], _colorMask[2], _colorMask[3]);
     glDepthMask(_depthMask);
 
@@ -87,4 +86,4 @@ Stencil::State& Stencil::_state() {
     return _sStencilState[_context][_framebuffer];
 }
 
-}}}
+} } // namespace okui::opengl

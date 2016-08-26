@@ -1,9 +1,9 @@
 #include "gtest/gtest.h"
 
-#include "onair/okui/Rectangle.h"
-#include "onair/okui/interpolation.h"
+#include "okui/Rectangle.h"
+#include "okui/interpolation.h"
 
-using namespace onair::okui;
+using namespace okui;
 
 TEST(Rectangle, construction) {
     Rectangle<int> r(1, 2, 3, 4);

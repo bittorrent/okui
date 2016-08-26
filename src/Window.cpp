@@ -1,7 +1,6 @@
-#include "onair/okui/Window.h"
-#include "onair/okui/Application.h"
+#include "okui/Window.h"
+#include "okui/Application.h"
 
-namespace onair {
 namespace okui {
 
 Window::Window(Application* application)
@@ -69,7 +68,7 @@ void Window::setMenu(const Menu& menu) {
 }
 
 TextureHandle Window::loadTextureResource(const std::string& name) {
-    auto hashable = std::string("resource:") + name;
+    auto hashable = std::string("resource: ") + name;
 
     if (auto hit = _textureCache.get(hashable)) {
         return hit;
@@ -77,41 +76,38 @@ TextureHandle Window::loadTextureResource(const std::string& name) {
 
     auto resource = application()->loadResource(name.c_str());
     if (!resource) {
+        SCRAPS_LOG_ERROR("could not load texture resource {}", name);
         return nullptr;
     }
 
-    auto handle = _textureCache.add(TextureHandle{std::make_shared<FileTexture>(resource, name.c_str())}, hashable);
-    _texturesToLoad.emplace_back(handle.newHandle());
-    return handle;
+    _decompressTexture(hashable);
+    return _textureCache.add(TextureHandle{std::make_shared<FileTexture>(resource, hashable)}, hashable);
 }
 
 TextureHandle Window::loadTextureFromMemory(std::shared_ptr<const std::string> data) {
-    auto hashable = std::string("memory:") + std::to_string(reinterpret_cast<uintptr_t>(data->data())) + ":" + std::to_string(data->size());
+    auto hashable = std::string("memory: ") + std::to_string(reinterpret_cast<uintptr_t>(data->data())) + ":" + std::to_string(data->size());
 
     if (auto hit = _textureCache.get(hashable)) {
         return hit;
     }
 
-    auto handle = _textureCache.add(TextureHandle{std::make_shared<FileTexture>(data)}, hashable);
-    _texturesToLoad.emplace_back(handle.newHandle());
-    return handle;
+    _decompressTexture(hashable);
+    return _textureCache.add(TextureHandle{std::make_shared<FileTexture>(data, hashable)}, hashable);
 }
 
 TextureHandle Window::loadTextureFromURL(const std::string& url) {
-    auto it = _textureDownloads.find(url);
-    if (it != _textureDownloads.end()) {
-        if (auto texture = it->second.texture.lock()) {
-            return TextureHandle{texture, it->second.handle};
-        }
+    if (auto hit = _textureCache.get(url)) {
+        return hit;
     }
 
-    auto texture = std::make_shared<FileTexture>();
-    auto& download = _textureDownloads[url];
-    download.texture = texture;
-    download.handle = TextureHandle{};
-    download.download = application()->download(url);
-    download.isComplete = false;
-    return TextureHandle{texture, download.handle};
+    auto it = _textureDownloads.find(url);
+    if (it == _textureDownloads.end()) {
+        auto handle = _textureCache.add(TextureHandle{std::make_shared<FileTexture>(url)}, url);
+        _textureDownloads[url] = { application()->download(url), handle.newHandle() };
+        return handle;
+    }
+
+    return it->second.handle.newHandle();
 }
 
 std::shared_ptr<BitmapFont> Window::loadBitmapFontResource(const char* textureName, const char* metadataName) {
@@ -328,32 +324,35 @@ void Window::keyDown(KeyCode key, KeyModifiers mod, bool repeat) {
 void Window::ensureTextures() {
     for (auto it = _textureDownloads.begin(); it != _textureDownloads.end();) {
         auto& download = it->second;
-        auto texture = download.texture.lock();
-        if (!texture) {
+
+        auto status = download.download.wait_for(0ms);
+        if (status == std::future_status::ready) {
+            if (auto data = download.download.get()) {
+                std::static_pointer_cast<FileTexture>(download.handle.texture())->setData(data);
+                _decompressTexture(it->first);
+            }
+
             it = _textureDownloads.erase(it);
-            continue;
+        } else {
+            ++it;
         }
-        if (!download.isComplete) {
-            auto status = download.download.wait_for(0ms);
-            if (status == std::future_status::ready) {
-                if (auto data = download.download.get()) {
-                    texture->setData(data);
-                    if (texture->load(&_openGLTextureCache)) {
-                        download.handle.invokeLoadCallbacks();
-                    } else {
-                        SCRAPS_LOG_ERROR("error loading texture: {}", it->first);
-                    }
-                }
-                download.isComplete = true;
+    }
+
+    std::vector<std::string> texturesToLoad;
+
+    {
+        std::lock_guard<std::mutex> lock{_texturesToLoadMutex};
+        _texturesToLoad.swap(texturesToLoad);
+    }
+
+    for (auto& textureToLoad : texturesToLoad) {
+        if (auto handle = _textureCache.get(textureToLoad)) {
+            handle->load();
+            if (handle.isLoaded()) {
+                handle.invokeLoadCallbacks();
             }
         }
-        ++it;
     }
-    for (auto& texture : _texturesToLoad) {
-        texture->load(&_openGLTextureCache);
-        texture.invokeLoadCallbacks();
-    }
-    _texturesToLoad.clear();
 }
 
 void Window::_update() {
@@ -410,4 +409,13 @@ void Window::_updateContentLayout() {
     layout();
 }
 
-} } // namespace onair::okui
+void Window::_decompressTexture(const std::string& hashable) {
+    if (auto hit = _textureCache.get(hashable)) {
+        std::static_pointer_cast<FileTexture>(hit.texture())->decompress();
+
+        std::lock_guard<std::mutex> lock{_texturesToLoadMutex};
+        _texturesToLoad.push_back(hashable);
+    }
+}
+
+} // namespace okui

@@ -1,6 +1,6 @@
 #include "gtest/gtest.h"
 
-#include "onair/okui/config.h"
+#include "okui/config.h"
 
 #include "scraps/net/HTTPConnection.h"
 #include "scraps/net/TCPAcceptor.h"
@@ -9,7 +9,7 @@
 
 using namespace scraps;
 using namespace scraps::net;
-using namespace onair::okui;
+using namespace okui;
 
 namespace {
     std::string gTestServerResponse;

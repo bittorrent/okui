@@ -2,10 +2,10 @@
 
 #include "TestApplication.h"
 
-#include "onair/okui/View.h"
+#include "okui/View.h"
 
 using namespace onair;
-using namespace onair::okui;
+using namespace okui;
 
 TEST(View, localToSuperview) {
     View a, b;

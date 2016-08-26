@@ -1,8 +1,8 @@
 #include "gtest/gtest.h"
 
-#include "onair/okui/AffineTransformation.h"
+#include "okui/AffineTransformation.h"
 
-using namespace onair::okui;
+using namespace okui;
 
 TEST(AffineTransformation, translation) {
     double x, y;

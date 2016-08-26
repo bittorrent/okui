@@ -2,9 +2,9 @@
 
 #include "TestClock.h"
 
-#include "onair/okui/AnimationChain.h"
+#include "okui/AnimationChain.h"
 
-using namespace onair::okui;
+using namespace okui;
 
 TEST(AnimationChain, basic) {
     TestClock::set(11s);

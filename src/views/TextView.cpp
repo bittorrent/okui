@@ -1,12 +1,11 @@
-#include "onair/okui/views/TextView.h"
-#include "onair/okui/shapes/Rectangle.h"
-#include "onair/okui/Window.h"
+#include "okui/views/TextView.h"
+#include "okui/shapes/Rectangle.h"
+#include "okui/Window.h"
 
 #include "utf8/utf8.h"
 
 #include <cmath>
 
-namespace onair {
 namespace okui {
 namespace views {
 
@@ -303,4 +302,4 @@ double TextView::_lineWidth(const std::basic_string<BitmapFont::GlyphId>& line, 
     return _font->width(line.data(), line.size()) * fontScale + letterSpacing;
 }
 
-}}}
+} } // namespace okui::views

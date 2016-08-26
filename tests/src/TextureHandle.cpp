@@ -1,9 +1,9 @@
 #include "gtest/gtest.h"
 
-#include "onair/okui/FileTexture.h"
-#include "onair/okui/TextureHandle.h"
+#include "okui/FileTexture.h"
+#include "okui/TextureHandle.h"
 
-using namespace onair::okui;
+using namespace okui;
 
 TEST(TextureHandle, callback) {
     TextureHandle handle;

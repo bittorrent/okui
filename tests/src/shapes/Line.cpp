@@ -3,11 +3,11 @@
 #include "../RenderOnce.h"
 #include "../TestFramebuffer.h"
 
-#include "onair/okui/shapes/Line.h"
+#include "okui/shapes/Line.h"
 
 #if ONAIR_OKUI_HAS_NATIVE_APPLICATION && !OPENGL_ES // TODO: fix for OpenGL ES
 
-using namespace onair::okui;
+using namespace okui;
 
 TEST(LineShape, normal) {
     RenderOnce([&] (View* view) {

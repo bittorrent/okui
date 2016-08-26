@@ -1,9 +1,9 @@
 #include "gtest/gtest.h"
 
-#include "onair/okui/math/Matrix.h"
+#include "okui/math/Matrix.h"
 
-using namespace onair::okui;
-using namespace onair::okui::math;
+using namespace okui;
+using namespace okui::math;
 
 TEST(Matrix, translation) {
     auto matrix = Matrix<int, 4, 4>::Translation(2, 3, 4);

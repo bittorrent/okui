@@ -1,6 +1,5 @@
-#include "onair/okui/opengl/Framebuffer.h"
+#include "okui/opengl/Framebuffer.h"
 
-namespace onair {
 namespace okui {
 namespace opengl {
 
@@ -99,4 +98,4 @@ GLuint Framebuffer::Attachment::relinquishTexture() {
     return ret;
 }
 
-}}}
+} } // namespace okui::opengl

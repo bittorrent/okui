@@ -1,17 +1,17 @@
 #pragma once
 
 #include "TestApplication.h"
-#include "onair/okui/Window.h"
+#include "okui/Window.h"
 
 #if ONAIR_OKUI_HAS_NATIVE_APPLICATION
 
-inline void RenderOnce(std::function<void(onair::okui::View* view)> init, std::function<void(onair::okui::View* view)> render) {
+inline void RenderOnce(std::function<void(okui::View* view)> init, std::function<void(okui::View* view)> render) {
     TestApplication application;
 
     bool didRender = false;
 
-    struct RenderView : onair::okui::View {
-        RenderView(bool* didRender, std::function<void(onair::okui::View* view)> init, std::function<void(onair::okui::View* view)> render)
+    struct RenderView : okui::View {
+        RenderView(bool* didRender, std::function<void(okui::View* view)> init, std::function<void(okui::View* view)> render)
             : didRender(didRender), initFunction(init), renderFunction(render) {}
 
         virtual void render() override {
@@ -32,12 +32,12 @@ inline void RenderOnce(std::function<void(onair::okui::View* view)> init, std::f
         }
 
         bool* didRender = nullptr;
-        std::function<void(onair::okui::View* view)> initFunction;
-        std::function<void(onair::okui::View* view)> renderFunction;
+        std::function<void(okui::View* view)> initFunction;
+        std::function<void(okui::View* view)> renderFunction;
     };
 
-    struct RenderWindow : onair::okui::Window {
-        RenderWindow(onair::okui::Application* application, bool* didRender, std::function<void(onair::okui::View* view)> init, std::function<void(onair::okui::View* view)> render)
+    struct RenderWindow : okui::Window {
+        RenderWindow(okui::Application* application, bool* didRender, std::function<void(okui::View* view)> init, std::function<void(okui::View* view)> render)
             : Window(application), view(didRender, init, render)
         {}
 
@@ -56,8 +56,8 @@ inline void RenderOnce(std::function<void(onair::okui::View* view)> init, std::f
     EXPECT_TRUE(didRender);
 }
 
-inline void RenderOnce(std::function<void(onair::okui::View* view)> render) {
-    return RenderOnce(std::function<void(onair::okui::View* view)>(), render);
+inline void RenderOnce(std::function<void(okui::View* view)> render) {
+    return RenderOnce(std::function<void(okui::View* view)>(), render);
 }
 
 #endif // ONAIR_OKUI_HAS_NATIVE_APPLICATION

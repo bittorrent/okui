@@ -1,8 +1,7 @@
-#include "onair/okui/licenses.h"
+#include "okui/licenses.h"
 
 #include "scraps/licenses.h"
 
-namespace onair {
 namespace okui {
 
 namespace {
@@ -35,4 +34,4 @@ std::unordered_map<std::string, std::string> ThirdPartyLicenses() {
     return ret;
 }
 
-}} // namespace onair::okui
+} // namespace okui

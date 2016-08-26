@@ -1,9 +1,8 @@
-#include "onair/okui/shaders/TextureShader.h"
+#include "okui/shaders/TextureShader.h"
 
-#include "onair/okui/Texture.h"
-#include "onair/okui/shapes/Rectangle.h"
+#include "okui/TextureInterface.h"
+#include "okui/shapes/Rectangle.h"
 
-namespace onair {
 namespace okui {
 namespace shaders {
 
@@ -93,7 +92,7 @@ void TextureShader::setColor(const Color& color) {
     _triangle.a.a = _triangle.b.a = _triangle.c.a = color.alphaF();
 }
 
-void TextureShader::setTexture(const Texture& texture, double x, double y, double w, double h, const AffineTransformation& texCoordTransform) {
+void TextureShader::setTexture(const TextureInterface& texture, double x, double y, double w, double h, const AffineTransformation& texCoordTransform) {
     if (_texture != texture.id()) {
         flush();
     }
@@ -112,12 +111,12 @@ void TextureShader::setTexture(const Texture& texture, double x, double y, doubl
     _texCoordTransform = texCoordTransform;
 }
 
-void TextureShader::drawScaledFill(const Texture& texture, Rectangle<double> area, double r) {
+void TextureShader::drawScaledFill(const TextureInterface& texture, Rectangle<double> area, double r) {
     setTexture(texture, area.scaledFill(texture.aspectRatio()), AffineTransformation{0.5, 0.5, -0.5, -0.5, 1.0, 1.0, -r});
     okui::shapes::Rectangle(area).rotate(r).draw(this);
 }
 
-void TextureShader::drawScaledFit(const Texture& texture, Rectangle<double> area, double r) {
+void TextureShader::drawScaledFit(const TextureInterface& texture, Rectangle<double> area, double r) {
     auto fit = area.scaledFit(texture.aspectRatio());
     setTexture(texture, fit, AffineTransformation{0.5, 0.5, -0.5, -0.5, 1.0, 1.0, -r});
     okui::shapes::Rectangle(fit).rotate(r).draw(this);
@@ -145,4 +144,4 @@ void TextureShader::flush() {
     ShaderBase<Vertex>::_flush(_textureHasPremultipliedAlpha);
 }
 
-}}}
+} } // namespace okui::shaders

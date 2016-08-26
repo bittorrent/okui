@@ -1,12 +1,11 @@
-#include "onair/okui/shapes/Rectangle.h"
+#include "okui/shapes/Rectangle.h"
 
-#include "onair/okui/Shader.h"
+#include "okui/Shader.h"
 
-#include "onair/okui/shapes/Arc.h"
+#include "okui/shapes/Arc.h"
 
 #include <cmath>
 
-namespace onair {
 namespace okui {
 namespace shapes {
 
@@ -85,4 +84,4 @@ void Rectangle::draw(Shader* shader) {
     }
 }
 
-}}}
+} } // namespace okui::shapes

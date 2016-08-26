@@ -1,4 +1,4 @@
-#include "onair/okui/config.h"
+#include "okui/config.h"
 
 #if SCRAPS_ANDROID
 

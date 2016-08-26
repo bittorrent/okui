@@ -1,9 +1,8 @@
-#include "onair/okui/views/TextField.h"
-#include "onair/okui/Application.h"
-#include "onair/okui/shapes/Rectangle.h"
+#include "okui/views/TextField.h"
+#include "okui/Application.h"
+#include "okui/shapes/Rectangle.h"
 #include <algorithm>
 
-namespace onair {
 namespace okui {
 namespace views {
 
@@ -328,4 +327,4 @@ void TextField::Cursor::render() {
     colorShader->flush();
 }
 
-}}}
+} } // namespace okui::views

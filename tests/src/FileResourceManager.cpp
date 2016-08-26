@@ -1,8 +1,8 @@
 #include "gtest/gtest.h"
 
-#include "onair/okui/FileResourceManager.h"
+#include "okui/FileResourceManager.h"
 
-using namespace onair::okui;
+using namespace okui;
 
 TEST(FileResourceManager, loading) {
 #ifdef SCRAPS_ANDROID

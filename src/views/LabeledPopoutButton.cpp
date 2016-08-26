@@ -1,11 +1,10 @@
-#include "onair/okui/views/LabeledPopoutButton.h"
+#include "okui/views/LabeledPopoutButton.h"
 
-#include "onair/okui/Application.h"
-#include "onair/okui/shapes/Rectangle.h"
+#include "okui/Application.h"
+#include "okui/shapes/Rectangle.h"
 
 using namespace std::literals;
 
-namespace onair {
 namespace okui {
 namespace views {
 
@@ -86,4 +85,4 @@ void LabeledPopoutButton::Body::layout() {
     _iconView.setBounds(0, 0, bounds().width, bounds().height);
 }
 
-}}}
+} } // namespace okui::views

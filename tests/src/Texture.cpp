@@ -1,11 +1,11 @@
 #include "gtest/gtest.h"
 
 #include "RenderOnce.h"
-#include "onair/okui/Texture.h"
+#include "okui/TextureInterface.h"
 
 #if ONAIR_OKUI_HAS_NATIVE_APPLICATION && !OPENGL_ES // TODO: fix for OpenGL ES
 
-using namespace onair::okui;
+using namespace okui;
 
 struct Pixel {
     uint8_t r{0}, g{0}, b{0}, a{255};
@@ -17,7 +17,7 @@ struct Pixel {
 #include "TexturePixels.h"
 
 static void TextureTest(const unsigned char* imageData, size_t imageDataSize, int width, int height, const Pixel* expectedPixels, int tolerance = 0) {
-    std::shared_ptr<Texture> texture;
+    std::shared_ptr<TextureInterface> texture;
 
     RenderOnce([&](View* view) {
         texture = view->loadTextureFromMemory(std::make_shared<std::string>((const char*)imageData, imageDataSize));

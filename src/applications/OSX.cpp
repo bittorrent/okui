@@ -1,17 +1,17 @@
-#include "onair/okui/applications/OSX.h"
+#include "okui/applications/OSX.h"
 
 #if SCRAPS_MAC_OS_X
 
 @implementation MenuTarget
 
-- (id)initWithApplication:(onair::okui::Application*)application {
+- (id)initWithApplication:(okui::Application*)application {
     if (self = [super init]) {
         _application = application;
     }
     return self;
 }
 
-- (NSInteger)addMenuItem:(const onair::okui::MenuItem*)item {
+- (NSInteger)addMenuItem:(const okui::MenuItem*)item {
     _menuItems.push_back(item);
     return _menuItems.size() - 1;
 }
@@ -28,16 +28,16 @@
     auto command = menuItem->command();
 
      switch (menuItem->state()) {
-         case onair::okui::MenuItem::State::kOff:   [(id)item setState: NSOffState]; break;
-         case onair::okui::MenuItem::State::kMixed: [(id)item setState: NSMixedState]; break;
-         case onair::okui::MenuItem::State::kOn:    [(id)item setState: NSOnState]; break;
+         case okui::MenuItem::State::kOff:   [(id)item setState: NSOffState]; break;
+         case okui::MenuItem::State::kMixed: [(id)item setState: NSMixedState]; break;
+         case okui::MenuItem::State::kOn:    [(id)item setState: NSOnState]; break;
          default: break;
      }
 
     return !command || _application->firstResponder()->chainCanHandleCommand(command);
 }
 
-- (const onair::okui::MenuItem*)itemForObject:(id)object {
+- (const okui::MenuItem*)itemForObject:(id)object {
     return _menuItems[[object tag]];
 }
 

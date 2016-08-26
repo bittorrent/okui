@@ -1,10 +1,9 @@
-#include "onair/okui/FileTexture.h"
+#include "okui/FileTexture.h"
 
 #include <gsl.h>
 #include <png.h>
 #include <turbojpeg.h>
 
-namespace onair {
 namespace okui {
 
 namespace {
@@ -54,30 +53,75 @@ namespace {
 
 } // anonymous namespace
 
-void FileTexture::setData(std::shared_ptr<const std::string> data, const char* name) {
-    _data = data;
-    _cacheEntry = nullptr;
+FileTexture::~FileTexture() {
+    if (_id) {
+        glDeleteTextures(1, &_id);
+    }
+}
+
+void FileTexture::setData(std::shared_ptr<const std::string> data, std::string name) {
+    _name = std::move(name);
+    _data = std::move(data);
 
     if (_readPNGMetadata()) {
         _type = Type::kPNG;
     } else if (_readJPEGMetadata()) {
         _type = Type::kJPEG;
     } else {
-        SCRAPS_LOG_ERROR("unknown file type {}", name ? name : "");
+        SCRAPS_LOG_ERROR("unknown file type for {}", name);
         _type = Type::kUnknown;
         _data = nullptr;
     }
 }
 
-GLuint FileTexture::load(opengl::TextureCache* textureCache) {
+bool FileTexture::decompress() {
     switch (_type) {
-        case Type::kPNG:
-            return _loadPNG(textureCache);
-        case Type::kJPEG:
-            return _loadJPEG(textureCache);
-        default:
-            return 0;
+        case Type::kPNG:  return _loadPNG();
+        case Type::kJPEG: return _loadJPEG();
+        default:          return false;
     }
+}
+
+void FileTexture::load() {
+    if (_decompressedData.empty()) { return; }
+
+    glGenTextures(1, &_id);
+    glBindTexture(GL_TEXTURE_2D, _id);
+
+    glPixelStorei(GL_UNPACK_ALIGNMENT, 4);
+
+    glTexImage2D(GL_TEXTURE_2D, 0, _textureType.format, _allocatedWidth, _allocatedHeight, 0, _textureType.format, _textureType.type, _decompressedData.data());
+
+#if OPENGL_ES
+    bool useMipmaps = IsPowerOfTwo(_allocatedWidth) && IsPowerOfTwo(_allocatedHeight);
+#else
+    constexpr bool useMipmaps = true;
+#endif
+
+    if (useMipmaps) {
+        glGenerateMipmap(GL_TEXTURE_2D);
+        glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+    } else {
+        glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+    }
+    glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+
+#if GL_RED && GL_RG
+    if (_textureType.format == GL_RED || _textureType.format == GL_RG) {
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_SWIZZLE_G, GL_RED);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_SWIZZLE_B, GL_RED);
+
+        if (_textureType.format == GL_RG) {
+            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_SWIZZLE_A, GL_GREEN);
+        }
+    }
+#endif
+
+    SCRAPS_GL_ERROR_CHECK();
+
+    _decompressedData.clear();
 }
 
 bool FileTexture::_readPNGMetadata() {
@@ -115,7 +159,7 @@ bool FileTexture::_readJPEGMetadata() {
     return false;
 }
 
-GLuint FileTexture::_loadPNG(opengl::TextureCache* textureCache) {
+bool FileTexture::_loadPNG() {
     PNGInput input(_data->data(), _data->size());
 
     png_structp png = png_create_read_struct(PNG_LIBPNG_VER_STRING, nullptr, PNGError, PNGWarning);
@@ -123,8 +167,8 @@ GLuint FileTexture::_loadPNG(opengl::TextureCache* textureCache) {
     auto _ = gsl::finally([&]{ png_destroy_read_struct(&png, &info, nullptr); });
 
     if (setjmp(png_jmpbuf(png))) {
-        SCRAPS_LOGF_ERROR("error reading png data");
-        return 0;
+        SCRAPS_LOG_ERROR("png decompression error for {}: error reading png data", _name);
+        return false;
     }
 
     png_set_read_fn(png, &input, &PNGRead);
@@ -145,23 +189,23 @@ GLuint FileTexture::_loadPNG(opengl::TextureCache* textureCache) {
     0;
 
     if (!glFormat) {
-        SCRAPS_LOGF_ERROR("unsupported color type (%d)", static_cast<int>(colorType));
-        return 0;
+        SCRAPS_LOG_ERROR("png decompression error for {}: unsupported color type ({})", _name, static_cast<int>(colorType));
+        return false;
     }
 
     int bytesPerRow = png_get_rowbytes(png, info);
 
     int bitDepth = png_get_bit_depth(png, info);
     if (bitDepth != 8 && bitDepth != 16) {
-        SCRAPS_LOGF_ERROR("unsupported bit depth");
-        return 0;
+        SCRAPS_LOG_ERROR("png decompression error for {}: unsupported bit depth", _name);
+        return false;
     }
 
     const auto components = ((colorType & PNG_COLOR_MASK_COLOR) ? 3 : 1) + ((colorType & PNG_COLOR_MASK_ALPHA) ? 1 : 0);
     if (bytesPerRow != components * (bitDepth >> 3) * _width) {
         assert(false);
-        SCRAPS_LOGF_ERROR("unknown error");
-        return 0;
+        SCRAPS_LOG_ERROR("png decompression error for {}: unknown error", _name);
+        return false;
     }
 
 #if OPENGL_ES
@@ -201,46 +245,31 @@ GLuint FileTexture::_loadPNG(opengl::TextureCache* textureCache) {
         bytesPerRow += 4 - (bytesPerRow % 4);
     }
 
-    std::vector<png_byte> image;
-    image.resize(bytesPerRow * _allocatedHeight);
+    _decompressedData.resize(bytesPerRow * _allocatedHeight);
 
     std::vector<png_byte*> rowPointers;
     for (int i = 0; i < _allocatedHeight; ++i) {
-        rowPointers.emplace_back(image.data() + i * bytesPerRow);
+        rowPointers.emplace_back(_decompressedData.data() + i * bytesPerRow);
     }
 
     png_read_image(png, rowPointers.data());
 
-    // image now contains our raw bytes. send it to the gpu
+    static_assert(sizeof(png_byte) == sizeof(uint8_t), "sizeof(png_byte) must be sizeof(char)");
 
-    auto texture = _generateTexture(glFormat, glFormat, bitDepth == 8 ? GL_UNSIGNED_BYTE : GL_UNSIGNED_SHORT, image.data());
+    _textureType.type = bitDepth == 8 ? GL_UNSIGNED_BYTE : GL_UNSIGNED_SHORT;
+    _textureType.format = glFormat;
 
-#if GL_RED && GL_RG
-    if (colorType == PNG_COLOR_TYPE_GRAY || colorType == PNG_COLOR_TYPE_GRAY_ALPHA) {
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_SWIZZLE_G, GL_RED);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_SWIZZLE_B, GL_RED);
-
-        if (colorType == PNG_COLOR_TYPE_GRAY_ALPHA) {
-            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_SWIZZLE_A, GL_GREEN);
-        }
-    }
-#endif
-
-    SCRAPS_GL_ERROR_CHECK();
-
-    _cacheEntry = textureCache->add(texture, texture);
-
-    return _cacheEntry->id;
+    return true;
 }
 
-GLuint FileTexture::_loadJPEG(opengl::TextureCache* textureCache) {
+bool FileTexture::_loadJPEG() {
     auto decompressor = tjInitDecompress();
     auto _ = gsl::finally([&]{ tjDestroy(decompressor); });
 
     int width{0}, height{0}, jpegSubsamp{0}, jpegColorspace{0};
     if (tjDecompressHeader3(decompressor, reinterpret_cast<const unsigned char*>(_data->data()), _data->size(), &width, &height, &jpegSubsamp, &jpegColorspace)) {
         SCRAPS_LOG_ERROR("error reading jpeg header: {}", tjGetErrorStr());
-        return 0;
+        return false;
     }
 
 #if OPENGL_ES
@@ -255,64 +284,22 @@ GLuint FileTexture::_loadJPEG(opengl::TextureCache* textureCache) {
     auto pixelFormat = jpegColorspace == TJCS_GRAY ? TJPF_GRAY : TJPF_RGB;
     auto bytesPerRow = TJPAD(_allocatedWidth * tjPixelSize[pixelFormat]);
 
-    std::vector<uint8_t> image;
-    image.resize(bytesPerRow * _allocatedHeight);
+    _decompressedData.resize(bytesPerRow * _allocatedHeight);
 
-    if (tjDecompress2(decompressor, reinterpret_cast<const unsigned char*>(_data->data()), _data->size(), image.data(), width, bytesPerRow, height, pixelFormat, 0)) {
-        SCRAPS_LOG_ERROR("error decompressing jpeg: {}", tjGetErrorStr());
-        return 0;
+    if (tjDecompress2(decompressor, reinterpret_cast<const unsigned char*>(_data->data()), _data->size(), _decompressedData.data(), width, bytesPerRow, height, pixelFormat, 0)) {
+        SCRAPS_LOG_ERROR("jpeg decompression error for {}: {}", _name, tjGetErrorStr());
+        return false;
     }
 
-    // image now contains our raw bytes. send it to the gpu
+    _textureType.type = GL_UNSIGNED_BYTE;
 
 #if GL_RED && GL_RG
-    auto glFormat = jpegColorspace == TJCS_GRAY ? GL_RED : GL_RGB;
+    _textureType.format = jpegColorspace == TJCS_GRAY ? GL_RED : GL_RGB;
 #else
-    auto glFormat = jpegColorspace == TJCS_GRAY ? GL_LUMINANCE : GL_RGB;
+    _textureType.format = jpegColorspace == TJCS_GRAY ? GL_LUMINANCE : GL_RGB;
 #endif
 
-    auto texture = _generateTexture(glFormat, glFormat, GL_UNSIGNED_BYTE, image.data());
-
-#if GL_RED && GL_RG
-    if (jpegColorspace == TJCS_GRAY) {
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_SWIZZLE_G, GL_RED);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_SWIZZLE_B, GL_RED);
-    }
-#endif
-
-    SCRAPS_GL_ERROR_CHECK();
-
-    _cacheEntry = textureCache->add(texture, texture);
-
-    return _cacheEntry->id;
+    return true;
 }
 
-GLuint FileTexture::_generateTexture(GLint internalformat, GLenum format, GLenum type, const GLvoid* data) {
-    GLuint texture;
-    glGenTextures(1, &texture);
-    glBindTexture(GL_TEXTURE_2D, texture);
-
-    glPixelStorei(GL_UNPACK_ALIGNMENT, 4);
-
-    glTexImage2D(GL_TEXTURE_2D, 0, internalformat, _allocatedWidth, _allocatedHeight, 0, format, type, data);
-
-#if OPENGL_ES
-    bool useMipmaps = IsPowerOfTwo(_allocatedWidth) && IsPowerOfTwo(_allocatedHeight);
-#else
-    constexpr bool useMipmaps = true;
-#endif
-
-    if (useMipmaps) {
-        glGenerateMipmap(GL_TEXTURE_2D);
-        glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
-    } else {
-        glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-    }
-    glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-
-    return texture;
-}
-
-}}
+} // namespace okui

@@ -2,10 +2,10 @@
 
 #include "TestApplication.h"
 
-#include "onair/okui/Window.h"
+#include "okui/Window.h"
 
 using namespace onair;
-using namespace onair::okui;
+using namespace okui;
 
 #if ONAIR_OKUI_HAS_NATIVE_APPLICATION
 TEST(Window, setFocus) {

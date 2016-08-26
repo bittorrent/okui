@@ -1,8 +1,8 @@
 #include "gtest/gtest.h"
 
-#include "onair/okui/Color.h"
+#include "okui/Color.h"
 
-using namespace onair::okui;
+using namespace okui;
 
 // construction
 static_assert(RGBAF(1.0, 1.0, 1.0, 1.0) == RGBA(255, 255, 255, 255), "test failed");

@@ -1,6 +1,5 @@
-#include "onair/okui/opengl/ShaderProgram.h"
+#include "okui/opengl/ShaderProgram.h"
 
-namespace onair {
 namespace okui {
 namespace opengl {
 
@@ -29,7 +28,7 @@ GLint ShaderProgram::attribute(const char* name) {
 
 void ShaderProgram::link() {
 	if (!_error.empty()) { return; }
-		
+
 	glLinkProgram(_program);
 
 	GLint linkStatus = GL_FALSE;
@@ -44,4 +43,4 @@ void ShaderProgram::link() {
 	}
 }
 
-}}}
+} } // namespace okui::opengl

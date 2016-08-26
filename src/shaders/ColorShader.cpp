@@ -1,6 +1,5 @@
-#include "onair/okui/shaders/ColorShader.h"
+#include "okui/shaders/ColorShader.h"
 
-namespace onair {
 namespace okui {
 namespace shaders {
 
@@ -146,4 +145,4 @@ void ColorShader::flush() {
     ShaderBase<Vertex>::_flush(false);
 }
 
-}}}
+} } // namespace okui::shaders

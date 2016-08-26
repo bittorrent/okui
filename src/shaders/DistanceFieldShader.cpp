@@ -1,6 +1,5 @@
-#include "onair/okui/shaders/DistanceFieldShader.h"
+#include "okui/shaders/DistanceFieldShader.h"
 
-namespace onair {
 namespace okui {
 namespace shaders {
 
@@ -65,4 +64,4 @@ void DistanceFieldShader::flush() {
     TextureShader::flush();
 }
 
-}}}
+} } // namespace okui::shaders

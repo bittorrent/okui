@@ -1,8 +1,7 @@
-#include "onair/okui/views/ImageButton.h"
+#include "okui/views/ImageButton.h"
 
-#include "onair/okui/Application.h"
+#include "okui/Application.h"
 
-namespace onair {
 namespace okui {
 namespace views {
 
@@ -97,4 +96,4 @@ void ImageButton::stateChanged() {
     }
 }
 
-}}}
+} } // namespace okui::views

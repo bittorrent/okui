@@ -1,13 +1,13 @@
 #pragma once
-#include "onair/okui/opengl/Framebuffer.h"
-#include "onair/okui/Color.h"
-#include "onair/okui/AffineTransformation.h"
+#include "okui/opengl/Framebuffer.h"
+#include "okui/Color.h"
+#include "okui/AffineTransformation.h"
 
 #include <vector>
 
 #if !OPENGL_ES // TODO: fix for OpenGL ES
 
-using namespace onair::okui;
+using namespace okui;
 
 struct TestFramebuffer {
     TestFramebuffer(int width, int height) {
@@ -29,7 +29,7 @@ struct TestFramebuffer {
         glGetTexImage(GL_TEXTURE_2D, 0, GL_RGBA, GL_UNSIGNED_BYTE, pixels.data());
     }
 
-    onair::okui::Color getPixel(size_t x, size_t y) {
+    okui::Color getPixel(size_t x, size_t y) {
         auto* p = &pixels[((colorAttachment->height()-y-1)*colorAttachment->width() + x)*4];
         return RGBA(p[0], p[1], p[2], p[3]);
     }
@@ -43,12 +43,12 @@ struct TestFramebuffer {
         }
     }
 
-    onair::okui::AffineTransformation transformation() const {
+    okui::AffineTransformation transformation() const {
         return {-1, 1, 0, 0, 2.0 / colorAttachment->width(), -2.0 / colorAttachment->height()};
     }
 
-    onair::okui::opengl::Framebuffer framebuffer;
-    onair::okui::opengl::Framebuffer::Attachment* colorAttachment = nullptr;
+    okui::opengl::Framebuffer framebuffer;
+    okui::opengl::Framebuffer::Attachment* colorAttachment = nullptr;
     std::vector<uint8_t> pixels;
 };
 

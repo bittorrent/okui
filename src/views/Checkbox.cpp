@@ -1,6 +1,5 @@
-#include "onair/okui/views/Checkbox.h"
+#include "okui/views/Checkbox.h"
 
-namespace onair {
 namespace okui {
 namespace views {
 
@@ -21,7 +20,7 @@ void Checkbox::keyDown(KeyCode key, KeyModifiers mod, bool repeat) {
         return;
     }
 
-    onair::okui::View::keyDown(key, mod, repeat);
+    okui::View::keyDown(key, mod, repeat);
 }
 
-}}}
+} } // namespace okui::views

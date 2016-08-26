@@ -1,12 +1,11 @@
-#include "onair/okui/Application.h"
+#include "okui/Application.h"
 
-#include "onair/okui/Window.h"
+#include "okui/Window.h"
 
 #include "scraps/thread.h"
 #include "scraps/net/curl.h"
 #include "scraps/net/HTTPRequest.h"
 
-namespace onair {
 namespace okui {
 
 Application::Application() {
@@ -184,4 +183,4 @@ void Application::_post(std::type_index index, const void* message) {
     }
 }
 
-} } // namespace onair::okui
+} // namespace okui

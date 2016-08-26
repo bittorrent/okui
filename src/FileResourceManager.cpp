@@ -1,8 +1,7 @@
-#include "onair/okui/FileResourceManager.h"
+#include "okui/FileResourceManager.h"
 
 #include <fstream>
 
-namespace onair {
 namespace okui {
 
 std::shared_ptr<std::string> FileResourceManager::load(const char* name) {
@@ -29,4 +28,4 @@ std::shared_ptr<std::string> FileResourceManager::load(const char* name) {
     return _cache.add(std::move(buffer), hashable);
 }
 
-}}
+} // namespace okui

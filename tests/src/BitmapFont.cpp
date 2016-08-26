@@ -1,13 +1,13 @@
 #include "gtest/gtest.h"
 
-#include "onair/okui/BitmapFont.h"
+#include "okui/BitmapFont.h"
 #include "RenderOnce.h"
 
 #include <iostream>
 
 #if ONAIR_OKUI_HAS_NATIVE_APPLICATION
 
-using namespace onair::okui;
+using namespace okui;
 
 void CheckGlyph(const BitmapFont::Glyph& glyph, double x, double y, double width, double height, double xoffset, double yoffset, double xadvance) {
     EXPECT_EQ(glyph.textureX, x);

@@ -1,6 +1,5 @@
-#include "onair/okui/views/ImageView.h"
+#include "okui/views/ImageView.h"
 
-namespace onair {
 namespace okui {
 namespace views {
 
@@ -94,4 +93,4 @@ void ImageView::unload() {
     _placeholderTexture = nullptr;
 }
 
-}}}
+} } // namespace okui::views

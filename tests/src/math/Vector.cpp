@@ -1,9 +1,9 @@
 #include "gtest/gtest.h"
 
-#include "onair/okui/math/Vector.h"
+#include "okui/math/Vector.h"
 
-using namespace onair::okui;
-using namespace onair::okui::math;
+using namespace okui;
+using namespace okui::math;
 
 TEST(Vector, twoComponent) {
     Vector<int8_t, 2> v;

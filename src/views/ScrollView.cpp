@@ -1,6 +1,5 @@
-#include "onair/okui/views/ScrollView.h"
+#include "okui/views/ScrollView.h"
 
-namespace onair {
 namespace okui {
 namespace views {
 
@@ -132,4 +131,4 @@ void ScrollView::_scroll(okui::Rectangle<double> newBounds) {
     scrolled();
 }
 
-}}}
+} } // namespace okui::views

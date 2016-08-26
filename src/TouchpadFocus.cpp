@@ -1,9 +1,8 @@
-#include "onair/okui/TouchpadFocus.h"
+#include "okui/TouchpadFocus.h"
 
-#include "onair/okui/View.h"
-#include "onair/okui/Window.h"
+#include "okui/View.h"
+#include "okui/Window.h"
 
-namespace onair {
 namespace okui {
 
 constexpr auto kNavThreshold            =  0.2;
@@ -80,7 +79,7 @@ void TouchpadFocus::update(std::chrono::high_resolution_clock::duration elapsed,
             moved = window->moveFocus(Direction::kUp);
         }
     }
-    
+
     if (moved) {
         if (auto focus = window->focus()) {
             auto& touchpadFocus = focus->touchpadFocus();
@@ -143,4 +142,4 @@ void TouchpadFocus::touchMovement(Point<double> position, Point<double> distance
     }
 }
 
-}}
+} // namespace okui

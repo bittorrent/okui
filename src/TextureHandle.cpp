@@ -1,14 +1,11 @@
-#include "onair/okui/TextureHandle.h"
+#include "okui/TextureHandle.h"
 
-namespace onair {
 namespace okui {
 
-TextureHandle::TextureHandle(std::shared_ptr<Texture> texture, TextureHandle& other)
-    : _texture{texture}, _sharedCallbacks{other._sharedCallbacks}
-{}
-
 TextureHandle TextureHandle::newHandle() {
-    return TextureHandle{_texture, *this};
+    TextureHandle handle{_texture};
+    handle._sharedCallbacks = _sharedCallbacks;
+    return handle;
 }
 
 void TextureHandle::onLoad(std::function<void()> callback) {
@@ -27,4 +24,4 @@ void TextureHandle::invokeLoadCallbacks() {
     }
 }
 
-}}
+} // namespace okui

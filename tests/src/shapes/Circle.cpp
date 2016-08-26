@@ -3,9 +3,9 @@
 #include "../RenderOnce.h"
 #include "../TestFramebuffer.h"
 
-#include "onair/okui/shapes/Circle.h"
+#include "okui/shapes/Circle.h"
 
-using namespace onair::okui;
+using namespace okui;
 
 #if ONAIR_OKUI_HAS_NATIVE_APPLICATION && !OPENGL_ES // TODO: fix for OpenGL ES
 

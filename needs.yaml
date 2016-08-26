@@ -1,7 +1,7 @@
 libraries:
     scraps:
         repository: git@github.com:bittorrent/scraps.git
-        commit: 506b74ac7ebfe233255cf3165717a552c1da8331
+        commit: caf43c726c72c9ecf040df8d53b6963b99a8e6a3
         project:
             type: boostbuild
             pre-build: ./build-deps --needy-target-args='-t {{ platform }}:{{ architecture }}' --needy-satisfy-args='--android-toolchain={{ env['ANDROID_TOOLCHAIN'] }}' --configure

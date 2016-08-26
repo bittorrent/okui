@@ -1,9 +1,8 @@
-#include "onair/okui/BitmapFont.h"
+#include "okui/BitmapFont.h"
 
 #include <cstdlib>
 #include <cstring>
 
-namespace onair {
 namespace okui {
 
 namespace {
@@ -96,6 +95,4 @@ void BitmapFont::_parseMetadataLine(const char* line) {
     }
 }
 
-
-
-}}
+} // namespace okui

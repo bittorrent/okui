@@ -1,13 +1,13 @@
 #pragma once
 
-#include "onair/okui/FileResourceManager.h"
-#include "onair/okui/applications/Native.h"
+#include "okui/FileResourceManager.h"
+#include "okui/applications/Native.h"
 
 #if ONAIR_OKUI_HAS_NATIVE_APPLICATION
 
-#include "onair/okui/applications/SDL.h"
+#include "okui/applications/SDL.h"
 
-class TestApplicationBase : public onair::okui::applications::Native<onair::okui::applications::SDL> {
+class TestApplicationBase : public okui::applications::Native<okui::applications::SDL> {
 public:
     virtual std::string name() const override { return "Test Application"; }
     virtual std::string organization() const override { return "BitTorrent Inc."; }
@@ -30,7 +30,7 @@ public:
 private:
     static std::string ResourceManagerPath();
 
-    onair::okui::FileResourceManager _resourceManager{ResourceManagerPath().c_str()};
+    okui::FileResourceManager _resourceManager{ResourceManagerPath().c_str()};
 };
 
 #endif // SCRAPS_ANDROID

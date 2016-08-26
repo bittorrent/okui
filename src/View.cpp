@@ -1,15 +1,14 @@
-#include "onair/okui/View.h"
+#include "okui/View.h"
 
-#include "onair/okui/Application.h"
-#include "onair/okui/BitmapFont.h"
-#include "onair/okui/blending.h"
-#include "onair/okui/opengl/OpenGL.h"
-#include "onair/okui/shapes/Rectangle.h"
-#include "onair/okui/Window.h"
+#include "okui/Application.h"
+#include "okui/BitmapFont.h"
+#include "okui/blending.h"
+#include "okui/opengl/OpenGL.h"
+#include "okui/shapes/Rectangle.h"
+#include "okui/Window.h"
 
 #include "scraps/Reverse.h"
 
-namespace onair {
 namespace okui {
 
 namespace {
@@ -251,7 +250,7 @@ bool View::hasMouse() const {
     return superview() && superview()->_subviewWithMouse == this;
 }
 
-std::shared_ptr<Texture> View::renderTexture() const {
+std::shared_ptr<TextureInterface> View::renderTexture() const {
     return _renderCacheTexture;
 }
 
@@ -512,7 +511,7 @@ void View::removeUpdateHook(const std::string& handle) {
     _checkUpdateSubscription();
 }
 
-void View::postRender(std::shared_ptr<Texture> texture, const AffineTransformation& transformation) {
+void View::postRender(std::shared_ptr<TextureInterface> texture, const AffineTransformation& transformation) {
     auto shader = textureShader();
     shader->setTransformation(transformation);
     shader->setColor(_tintColor);
@@ -868,4 +867,4 @@ bool View::_shouldSubscribeToUpdates() {
     return (!_updateHooks.empty() || _touchpadFocus.needsUpdates()) && isVisibleInOpenWindow();
 }
 
-} } // namespace onair::okui
+} // namespace okui

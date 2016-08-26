@@ -1,13 +1,13 @@
-#include "onair/okui/config.h"
+#include "okui/config.h"
 
-#include "onair/okui/Application.h"
+#include "okui/Application.h"
 
 #if SCRAPS_MAC_OS_X
 
 #import <AppKit/AppKit.h>
 
 @interface OKUISDLApplication : NSApplication
-@property onair::okui::Application* application;
+@property okui::Application* application;
 @end
 
 @implementation OKUISDLApplication

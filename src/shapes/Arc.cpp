@@ -1,21 +1,20 @@
-#include "onair/okui/shapes/Arc.h"
+#include "okui/shapes/Arc.h"
 
-#include "onair/okui/Shader.h"
+#include "okui/Shader.h"
 
 #include <cmath>
 
-namespace onair {
 namespace okui {
 namespace shapes {
 
 void Arc::draw(Shader* shader) {
 	int segments = ceil(angle / (2.0 * M_PI / 4.0));
-	
+
 	auto segmentAngle = angle / segments;
 	auto outerRadius = 2.0 * r;
-	
+
 	auto a = orientation;
-	
+
 	auto pX = x + outerRadius * cos(a);
 	auto pY = y + outerRadius * sin(a);
 
@@ -29,4 +28,4 @@ void Arc::draw(Shader* shader) {
 	}
 }
 
-}}}
+} } // namespace okui::shapes

@@ -1,6 +1,5 @@
-#include "onair/okui/blending.h"
+#include "okui/blending.h"
 
-namespace onair {
 namespace okui {
 
 BlendFunction BlendFunction::kDefault{BlendFactor::kOne, BlendFactor::kOneMinusSourceAlpha, BlendFactor::kOne, BlendFactor::kOneMinusSourceAlpha, true};
@@ -37,5 +36,4 @@ void Blending::SetBlendFunction(const BlendFunction& function, BlendFunction* pr
     opengl::SetBlendFunction(function.sourceRGB, function.destinationRGB, function.sourceAlpha, function.destinationAlpha);
 }
 
-
-}}
+} // namespace okui

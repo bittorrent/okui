@@ -1,6 +1,5 @@
-#include "onair/okui/opengl/Shader.h"
+#include "okui/opengl/Shader.h"
 
-namespace onair {
 namespace okui {
 namespace opengl {
 
@@ -28,4 +27,4 @@ Shader::~Shader() {
     glDeleteShader(_shader);
 }
 
-}}}
+} } // namespace okui::opengl

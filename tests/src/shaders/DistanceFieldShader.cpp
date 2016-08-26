@@ -5,7 +5,7 @@
 
 #if ONAIR_OKUI_HAS_NATIVE_APPLICATION && !OPENGL_ES // TODO: fix for OpenGL ES
 
-using namespace onair::okui;
+using namespace okui;
 
 
 TEST(DistanceFieldShader, edgeZero) {

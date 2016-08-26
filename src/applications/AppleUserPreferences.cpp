@@ -1,8 +1,7 @@
-#include "onair/okui/applications/AppleUserPreferences.h"
+#include "okui/applications/AppleUserPreferences.h"
 
 #if SCRAPS_APPLE
 
-namespace onair {
 namespace okui {
 
 AppleUserPreferences::AppleUserPreferences() : _userDefaults{[NSUserDefaults standardUserDefaults]} {}
@@ -79,6 +78,6 @@ void AppleUserPreferences::setString(const std::string& key, const std::string& 
     [_userDefaults setObject:nsValue forKey:nsKey];
 }
 
-}}
+} // namespace okui
 
 #endif
