@@ -4,7 +4,6 @@
 
 #include "okui/Window.h"
 
-using namespace onair;
 using namespace okui;
 
 #if ONAIR_OKUI_HAS_NATIVE_APPLICATION

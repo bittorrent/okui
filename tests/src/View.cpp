@@ -4,7 +4,6 @@
 
 #include "okui/View.h"
 
-using namespace onair;
 using namespace okui;
 
 TEST(View, localToSuperview) {
