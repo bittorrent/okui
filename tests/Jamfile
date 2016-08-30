@@ -14,22 +14,16 @@ alias okui-tests-common :
     <target-os>darwin:<framework>CoreVideo
 ;
 
-lib okui-gtests : okui-tests-common :
-    <target-os>iphone:<build>no
-    <target-os>appletv:<build>no
-    <link>static
-;
-
 exe okui-tests :
     gtest_main
-    okui-gtests
+    okui-tests-common
 :
     <target-os>iphone:<build>no
     <target-os>appletv:<build>no
 ;
 
 import testing ;
-unit-test run : okui-tests-common gtest_main ;
+unit-test run : okui-tests ;
 explicit run ;
 
 lib okui-tests-android :
