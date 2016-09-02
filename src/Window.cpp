@@ -80,8 +80,9 @@ TextureHandle Window::loadTextureResource(const std::string& name) {
         return nullptr;
     }
 
+    auto handle = _textureCache.add(TextureHandle{std::make_shared<FileTexture>(resource, hashable)}, hashable);
     _decompressTexture(hashable);
-    return _textureCache.add(TextureHandle{std::make_shared<FileTexture>(resource, hashable)}, hashable);
+    return handle;
 }
 
 TextureHandle Window::loadTextureFromMemory(std::shared_ptr<const std::string> data) {
@@ -91,8 +92,9 @@ TextureHandle Window::loadTextureFromMemory(std::shared_ptr<const std::string> d
         return hit;
     }
 
+    auto handle = _textureCache.add(TextureHandle{std::make_shared<FileTexture>(data, hashable)}, hashable);
     _decompressTexture(hashable);
-    return _textureCache.add(TextureHandle{std::make_shared<FileTexture>(data, hashable)}, hashable);
+    return handle;
 }
 
 TextureHandle Window::loadTextureFromURL(const std::string& url) {
