@@ -13,6 +13,8 @@
 #include "okui/View.h"
 #include "okui/TextureCache.h"
 
+#include "scraps/TaskThread.h"
+
 #include <future>
 #include <unordered_map>
 #include <unordered_set>
@@ -246,9 +248,11 @@ private:
     std::unordered_set<View*>    _viewsToSubscribeToUpdates;
     std::unordered_set<View*>    _viewsToUnsubscribeFromUpdates;
 
-    double _framesPerSecond = 0.0;
+    double                       _framesPerSecond = 0.0;
     std::chrono::high_resolution_clock::time_point _lastRenderTime = std::chrono::high_resolution_clock::now();
     std::chrono::high_resolution_clock::time_point _lastUpdateTime = std::chrono::high_resolution_clock::now();
+
+    scraps::TaskThread           _decompressionThread;
 };
 
 } // namespace okui

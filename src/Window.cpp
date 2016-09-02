@@ -11,6 +11,8 @@ Window::Window(Application* application)
 }
 
 Window::~Window() {
+    _decompressionThread.cancelAndJoin();
+
     // the content view should be destroyed before the window's other members
     _contentView.reset();
 
@@ -412,12 +414,14 @@ void Window::_updateContentLayout() {
 }
 
 void Window::_decompressTexture(const std::string& hashable) {
-    if (auto hit = _textureCache.get(hashable)) {
-        std::static_pointer_cast<FileTexture>(hit.texture())->decompress();
+    _decompressionThread.async([=] {
+        if (auto hit = _textureCache.get(hashable)) {
+            std::static_pointer_cast<FileTexture>(hit.texture())->decompress();
 
-        std::lock_guard<std::mutex> lock{_texturesToLoadMutex};
-        _texturesToLoad.push_back(hashable);
-    }
+            std::lock_guard<std::mutex> lock{_texturesToLoadMutex};
+            _texturesToLoad.push_back(hashable);
+        }
+    });
 }
 
 } // namespace okui
