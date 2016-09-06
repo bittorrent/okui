@@ -55,7 +55,7 @@ static void TextureTest(const unsigned char* imageData, size_t imageDataSize, in
     });
 }
 
-TEST(Texture, png16BitRGB) {
+TEST(FileTexture, png16BitRGB) {
     // basn2c16 from http://www.schaik.com/pngsuite/pngsuite_bas_png.html
     static const unsigned char imageData[] = {
         0x89, 0x50, 0x4E, 0x47, 0x0D, 0x0A, 0x1A, 0x0A, 0x00, 0x00, 0x00, 0x0D, 0x49, 0x48, 0x44, 0x52,
@@ -82,7 +82,7 @@ TEST(Texture, png16BitRGB) {
     TextureTest(imageData, sizeof(imageData), 32, 32, png16BitRGBPixels);
 }
 
-TEST(Texture, png8BitRGBA) {
+TEST(FileTexture, png8BitRGBA) {
     // basn6a08 from http://www.schaik.com/pngsuite/pngsuite_bas_png.html
     static const unsigned char imageData[] = {
         0x89, 0x50, 0x4E, 0x47, 0x0D, 0x0A, 0x1A, 0x0A, 0x00, 0x00, 0x00, 0x0D, 0x49, 0x48, 0x44, 0x52,
@@ -102,7 +102,7 @@ TEST(Texture, png8BitRGBA) {
     TextureTest(imageData, sizeof(imageData), 32, 32, png8BitRGBAPixels);
 }
 
-TEST(Texture, jpgWater) {
+TEST(FileTexture, jpgWater) {
     // cropped from http://www.imagemagick.org/Usage/images/tile_water.jpg
     static const unsigned char imageData[] = {
         0xFF, 0xD8, 0xFF, 0xE0, 0x00, 0x10, 0x4A, 0x46, 0x49, 0x46, 0x00, 0x01, 0x01, 0x00, 0x00, 0x48,

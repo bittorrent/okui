@@ -2,7 +2,7 @@
 
 #include "okui/Application.h"
 
-#if SCRAPS_MAC_OS_X
+#if SCRAPS_MACOS
 
 #import <AppKit/AppKit.h>
 

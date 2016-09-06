@@ -1,6 +1,6 @@
 #include "okui/applications/OSX.h"
 
-#if SCRAPS_MAC_OS_X
+#if SCRAPS_MACOS
 
 @implementation MenuTarget
 

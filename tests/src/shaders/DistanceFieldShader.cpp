@@ -9,7 +9,7 @@ using namespace okui;
 
 
 TEST(DistanceFieldShader, edgeZero) {
-    std::shared_ptr<Texture> texture;
+    std::shared_ptr<TextureInterface> texture;
 
     RenderOnce([&](View* view) {
         texture = view->loadTextureResource("PlayIcon.png");
@@ -53,7 +53,7 @@ TEST(DistanceFieldShader, edgeZero) {
 }
 
 TEST(DistanceFieldShader, edgeHalf) {
-    std::shared_ptr<Texture> texture;
+    std::shared_ptr<TextureInterface> texture;
 
     RenderOnce([&](View* view) {
         texture = view->loadTextureResource("PlayIcon.png");

@@ -16,7 +16,7 @@
 
 #include <SDL.h>
 
-#if SCRAPS_MAC_OS_X
+#if SCRAPS_MACOS
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Wextern-c-compat"
 #include <SDL_syswm.h>
@@ -25,7 +25,7 @@
 @interface OKUISDLApplication : NSApplication
 @property okui::Application* application;
 @end
-#endif // SCRAPS_MAC_OS_X
+#endif // SCRAPS_MACOS
 
 using namespace std::literals;
 
@@ -81,7 +81,7 @@ public:
     virtual void showCursor(bool visible = true) override;
     virtual bool isCursorVisible() const override;
 
-#if SCRAPS_MAC_OS_X
+#if SCRAPS_MACOS
     virtual NSWindow* nativeWindow(Window* window) const override;
 #endif
 
@@ -163,7 +163,7 @@ private:
 };
 
 inline SDL::SDL() {
-#if SCRAPS_MAC_OS_X
+#if SCRAPS_MACOS
     // make sure we use our application class instead of sdl's
     ((OKUISDLApplication*)[OKUISDLApplication sharedApplication]).application = this;
     [NSApp finishLaunching];
@@ -454,7 +454,7 @@ inline std::string SDL::operatingSystem() const {
     return SDL_GetPlatform();
 }
 
-#if SCRAPS_MAC_OS_X
+#if SCRAPS_MACOS
 inline NSWindow* SDL::nativeWindow(Window* window) const {
     if (auto w = _sdlWindow(window)) {
         // XXX: SDL_SysWMinfo's default constructor and destructor are deleted...

@@ -12,7 +12,7 @@
 
 #include "scraps/TaskQueue.h"
 
-#if SCRAPS_MAC_OS_X
+#if SCRAPS_MACOS
 #import <AppKit/NSWindow.h>
 #endif
 
@@ -289,7 +289,7 @@ public:
     void addListener(View* view, std::type_index index, std::function<void(const void*, View*)>* action, Relation relation);
     void removeListeners(View* view);
 
-#if SCRAPS_MAC_OS_X
+#if SCRAPS_MACOS
     virtual NSWindow* nativeWindow(Window* window) const = 0;
 #endif
 

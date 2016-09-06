@@ -37,7 +37,7 @@ namespace {
 
 
 TEST(TextureShader, scaledFill) {
-    std::shared_ptr<Texture> texture;
+    std::shared_ptr<TextureInterface> texture;
 
     RenderOnce([&](View* view) {
         texture = view->loadTextureFromMemory(std::make_shared<std::string>((const char*)kImageData, sizeof(kImageData)));
@@ -93,7 +93,7 @@ TEST(TextureShader, scaledFill) {
 }
 
 TEST(TextureShader, scaledFit) {
-    std::shared_ptr<Texture> texture;
+    std::shared_ptr<TextureInterface> texture;
 
     RenderOnce([&](View* view) {
         texture = view->loadTextureFromMemory(std::make_shared<std::string>((const char*)kImageData, sizeof(kImageData)));
@@ -122,7 +122,7 @@ TEST(TextureShader, scaledFit) {
 }
 
 TEST(TextureShader, color) {
-    std::shared_ptr<Texture> texture;
+    std::shared_ptr<TextureInterface> texture;
 
     RenderOnce([&](View* view) {
         texture = view->loadTextureFromMemory(std::make_shared<std::string>((const char*)kImageData, sizeof(kImageData)));

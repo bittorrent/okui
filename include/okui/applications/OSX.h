@@ -2,7 +2,7 @@
 
 #include "okui/config.h"
 
-#if SCRAPS_MAC_OS_X
+#if SCRAPS_MACOS
 
 #include "okui/applications/Apple.h"
 #include "okui/Application.h"

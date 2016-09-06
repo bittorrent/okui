@@ -3,7 +3,7 @@
 #include "okui/config.h"
 #include "okui/Application.h"
 
-#if SCRAPS_MAC_OS_X
+#if SCRAPS_MACOS
 #include "okui/applications/OSX.h"
 #elif SCRAPS_IOS
 #include "okui/applications/IOS.h"
@@ -21,7 +21,7 @@ namespace applications {
 #define ONAIR_OKUI_HAS_NATIVE_APPLICATION 1
 
 template <typename Base>
-#if SCRAPS_OS_X
+#if SCRAPS_MACOS
 using Native = OSX<Base>;
 #elif SCRAPS_IOS
 using Native = IOS<Base>;
