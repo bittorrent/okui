@@ -268,7 +268,7 @@ bool FileTexture::_loadJPEG() {
 
     int width{0}, height{0}, jpegSubsamp{0}, jpegColorspace{0};
     if (tjDecompressHeader3(decompressor, reinterpret_cast<const unsigned char*>(_data->data()), _data->size(), &width, &height, &jpegSubsamp, &jpegColorspace)) {
-        SCRAPS_LOG_ERROR("error reading jpeg header: {}", tjGetErrorStr());
+        SCRAPS_LOG_ERROR("error reading jpeg header {}: {}", _name, tjGetErrorStr());
         return false;
     }
 
@@ -287,8 +287,9 @@ bool FileTexture::_loadJPEG() {
     _decompressedData.resize(bytesPerRow * _allocatedHeight);
 
     if (tjDecompress2(decompressor, reinterpret_cast<const unsigned char*>(_data->data()), _data->size(), _decompressedData.data(), width, bytesPerRow, height, pixelFormat, 0)) {
-        SCRAPS_LOG_ERROR("jpeg decompression error for {}: {}", _name, tjGetErrorStr());
-        return false;
+        SCRAPS_LOG_ERROR("jpeg decompression error {}: {}", _name, tjGetErrorStr());
+        // If there's an error loading the header it's unrecoverable, but an error here, decompressing
+        // the body, should just show whatever data was successfully decompressed.
     }
 
     _textureType.type = GL_UNSIGNED_BYTE;
