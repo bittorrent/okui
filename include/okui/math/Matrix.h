@@ -89,8 +89,8 @@ struct Matrix<T, 4, 4> : MatrixBase<T, 4, 4> {
 
     static Matrix Perspective(T fovy, T aspect, T near, T far) {
         auto top = near * tan(fovy / 360.0 * M_PI);
-        auto right = top * aspect;
-        return Frustum(-right, right, -top, top, near, far);
+        auto right = static_cast<T>(top * aspect);
+        return Frustum(-right, right, static_cast<T>(-top), static_cast<T>(top), near, far);
     }
 
     static Matrix Translation(T x, T y, T z) {

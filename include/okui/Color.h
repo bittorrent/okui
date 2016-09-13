@@ -17,13 +17,13 @@ public:
     friend constexpr Color RGBF(double r, double g, double b) noexcept;
     friend constexpr Color RGBAF(double r, double g, double b, double a) noexcept;
 
-    constexpr uint8_t red() const noexcept                              { return r*255.0; }
+    constexpr uint8_t red() const noexcept                              { return static_cast<uint8_t>(r * 255.0); }
     constexpr double  redF() const noexcept                             { return r; }
-    constexpr uint8_t green() const noexcept                            { return g*255.0; }
+    constexpr uint8_t green() const noexcept                            { return static_cast<uint8_t>(g * 255.0); }
     constexpr double  greenF() const noexcept                           { return g; }
-    constexpr uint8_t blue() const noexcept                             { return b*255.0; }
+    constexpr uint8_t blue() const noexcept                             { return static_cast<uint8_t>(b * 255.0); }
     constexpr double  blueF() const noexcept                            { return b; }
-    constexpr uint8_t alpha() const noexcept                            { return a*255.0; }
+    constexpr uint8_t alpha() const noexcept                            { return static_cast<uint8_t>(a * 255.0); }
     constexpr double  alphaF() const noexcept                           { return a; }
 
     constexpr void setRed(uint8_t r) noexcept                           { this->r = r/255.0; }

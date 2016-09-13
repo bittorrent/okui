@@ -128,7 +128,7 @@ inline void OSX<Base>::openDialog(Window* window, const char* title, const char*
     }
     [alert beginSheetModalForWindow:(window ? Base::nativeWindow(window) : [NSApp keyWindow]) completionHandler:^(NSModalResponse returnCode) {
         if (action) {
-            action(returnCode - NSAlertFirstButtonReturn);
+            action(static_cast<int>(returnCode - NSAlertFirstButtonReturn));
         }
     }];
 }
