@@ -71,8 +71,13 @@ void Application::handleCommand(Command command, CommandContext context) {
 }
 
 std::future<std::shared_ptr<const std::string>> Application::download(const std::string& url, bool useCache) {
-    auto it = _downloads.find(url);
-    auto download = it == _downloads.end() ? (_downloads[url] = std::make_shared<DownloadInfo>()) : _downloads[url];
+    purgeDownloadCache(_maxDownloadCacheSize);
+
+    auto it = _downloads.emplace(url, std::make_shared<DownloadInfo>()).first;
+    _downloadUseOrder.remove(it);
+    _downloadUseOrder.push_back(it);
+
+    auto download = it->second;
     std::lock_guard<std::mutex> lock(download->mutex);
 
     if (useCache) {
@@ -153,9 +158,27 @@ void Application::removeListeners(View* view) {
 size_t Application::downloadCacheSize() const {
     size_t ret = 0;
     for (auto& kv : _downloads) {
-        ret += sizeof(kv) + (kv.second->result ? kv.second->result->size() : 0);
+        ret += kv.second->size();
     }
     return ret;
+}
+
+void Application::purgeDownloadCache(size_t maxSize) {
+    size_t remainingSize = downloadCacheSize();
+    if (remainingSize <= maxSize) { return; }
+
+    for (auto it = _downloadUseOrder.begin(); it != _downloadUseOrder.end();) {
+        auto dlIt = *it;
+        std::lock_guard<std::mutex> lock(dlIt->second->mutex);
+        if (!dlIt->second->inProgress) {
+            remainingSize -= dlIt->second->size();
+            _downloads.erase(dlIt);
+            it = _downloadUseOrder.erase(it);
+        } else {
+            ++it;
+        }
+        if (remainingSize <= maxSize) { return; }
+    }
 }
 
 void Application::_update(Window* window) {

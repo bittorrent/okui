@@ -47,7 +47,7 @@ public:
     /**
     * iOS: applicationDidReceiveMemoryWarning(), Android: onLowMemory()
     */
-    virtual void lowMemory() {}
+    virtual void lowMemory() { purgeDownloadCache(0); }
 
     /**
     * iOS: applicationWillResignActive(), Android: onPause()
@@ -298,7 +298,23 @@ public:
 #endif
 
     size_t cachedDownloads() const { return _downloads.size(); }
+
+    /**
+    * @return the current size in bytes of the cache
+    */
     size_t downloadCacheSize() const;
+
+    /**
+    * By default, downloads are cached, so that subsequent requests for the same url return a
+    * cached result. The application will attempt to keep the cache below this size in bytes.
+    */
+    void setMaxDownloadCacheSize(size_t size) { _maxDownloadCacheSize = size; }
+
+    /**
+    * Purges the least recently used items from the download cache until the size is under maxSize
+    * in bytes.
+    */
+    void purgeDownloadCache(size_t maxSize);
 
     /**
     * Makes the given object available via get(). This can be used to store or make available arbitrary
@@ -321,6 +337,11 @@ protected:
 
 private:
     struct DownloadInfo {
+        size_t size() const {
+            auto r = result;
+            return sizeof(*this) + (r ? r->size() : 0);
+        }
+
         std::mutex mutex;
         std::shared_ptr<const std::string> result = nullptr;
         int inProgress                            = 0;
@@ -354,6 +375,9 @@ private:
     std::vector<std::future<void>>              _backgroundTasks;
     scraps::TaskQueue                           _taskQueue;
     std::unordered_map<std::string, std::shared_ptr<DownloadInfo>> _downloads;
+    std::list<decltype(_downloads.begin())> _downloadUseOrder;
+
+    size_t _maxDownloadCacheSize = 100 * 1024 * 1024;
 };
 
 template <typename T>
