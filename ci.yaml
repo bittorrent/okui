@@ -3,11 +3,11 @@ script:
     - export CXXFLAGS=-stdlib=libc++; export LDFLAGS=-stdlib=libc++;
     {% endif %}
     {% set needy_targets = {'iphoneos': 'ios', 'appletvos': 'tvos', 'android': 'android'} %}
-    - ./build-deps --bootstrap-b2 --needy-target-args="{{ '-t ' ~ needy_targets[target] if target in needy_targets }}" --needy-satisfy-args="--android-toolchain=$ANDROID_TOOLCHAIN" --configure
+    - ./build-deps --bootstrap-b2 --needy-target-args="{{ '-t ' ~ needy_targets[target] if target in needy_targets }}" --needy-satisfy-args="--android-toolchain=$ANDROID_TOOLCHAIN" --configure --variant=release
     - export PATH=`pwd`/bootstrap:$PATH
     - live b2-config --target={{ target }} --android-toolchain=$ANDROID_TOOLCHAIN >> project-config.jam
-    - b2 -j{{ cpu_count }} -d+2
+    - b2 -j{{ cpu_count }} -d+2 variant=release
     {% if target in ['macosx', 'linux'] %}
-    - b2 -j{{ cpu_count }} tests//run
+    - b2 -j{{ cpu_count }} -d+2 variant=release tests//run
     {% endif %}
-    - live c++-analysis b2 -j{{ cpu_count }} --build-dir=./bin/analysis
+    - live c++-analysis b2 -j{{ cpu_count }} variant=release --build-dir=./bin/analysis
