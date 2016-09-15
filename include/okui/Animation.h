@@ -60,6 +60,10 @@ void Animation<T, Clock>::reset(T value) {
 
 template<typename T, typename Clock>
 T Animation<T, Clock>::current() const {
+    if (!_interpolator) {
+        return _target;
+    }
+
     auto elapsed = Clock::now() - _start;
 
     if (elapsed >= _duration) {
@@ -68,8 +72,6 @@ T Animation<T, Clock>::current() const {
 
     auto t = std::chrono::duration<double>(elapsed).count(),
          d = std::chrono::duration<double>(_duration).count();
-
-    SCRAPS_ASSERT(_interpolator);
 
     return _interpolator(_initial, _target-_initial, t/d);
 }

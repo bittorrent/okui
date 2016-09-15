@@ -37,6 +37,12 @@ TEST(Animation, basics) {
     EXPECT_EQ(animation.current(), 15);
     TestClock::set(100s);
     EXPECT_EQ(animation.current(), 15);
+
+    // this tests a specific potential crash bug we had where calling current() after a reset()
+    // could attempt to use a null interpolator if clock::now() was before the time_point default
+    // construction (epoch of the clock)
+    TestClock::set(-1s);
+    EXPECT_EQ(animation.current(), 15);
 }
 
 TEST(Animation, interpolation) {
