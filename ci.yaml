@@ -10,4 +10,4 @@ script:
     {% if target in ['macosx', 'linux'] %}
     - b2 -j{{ cpu_count }} -d+2 variant=release tests//run
     {% endif %}
-    - live c++-analysis b2 -j{{ cpu_count }} variant=release --build-dir=./bin/analysis
+    - live c++-analysis b2 -j{{ cpu_count }} --build-dir=./bin/analysis
