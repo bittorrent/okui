@@ -60,7 +60,7 @@ if not pkg_is_present('libturbojpeg'):
 if 'android' in args.needy_target_args and not pkg_is_present('jshackle'):
     dependencies.append('jshackle')
 
-needy_common_args = filter(None, ['-Dvariant={}'.format(args.variant), args.needy_target_args])
+needy_common_args = filter(None, ['-Dvariant={}'.format(args.variant)] + args.needy_target_args.split())
 needy_pkgconfig_args = needy_common_args + filter(None, dependencies)
 needy_satisfy_args = needy_common_args + filter(None, ['-j', str(args.concurrency), args.needy_satisfy_args])
 
