@@ -11,7 +11,7 @@ script:
     {% if target == 'linux' %}
     - export CXXFLAGS=-stdlib=libc++; export LDFLAGS=-stdlib=libc++;
     {% endif %}
-    - ./build-deps --bootstrap-b2 --configure --variant=release {{ needy_targets_args }} {{ needy_satisfy_args }}
+    - ./build-deps --bootstrap-b2 --configure --variant=release {{ needy_target_args }} {{ needy_satisfy_args }}
     - export PATH=`pwd`/bootstrap:$PATH
     - live b2-config --target={{ target }} {{ b2_config_args }} >> project-config.jam
     - b2 {{ b2_args }} variant=release
