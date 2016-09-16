@@ -60,12 +60,13 @@ if not pkg_is_present('libturbojpeg'):
 if 'android' in args.needy_target_args and not pkg_is_present('jshackle'):
     dependencies.append('jshackle')
 
-needy_args = ' '.join([arg for arg in (dependencies + [args.needy_target_args]) if arg])
-needy_satisfy_args = '{} {} -j {} -Dvariant={}'.format(args.needy_target_args, args.needy_satisfy_args, args.concurrency, args.variant).strip()
+needy_common_args = filter(None, ['-Dvariant={}'.format(args.variant), args.needy_target_args])
+needy_pkgconfig_args = needy_common_args + filter(None, dependencies)
+needy_satisfy_args = needy_common_args + filter(None, ['-j', str(args.concurrency), args.needy_satisfy_args])
 
-subprocess.check_call('{} satisfy {} {}'.format(needy, ' '.join(dependencies), needy_satisfy_args), shell=True)
+subprocess.check_call([needy, 'satisfy'] + needy_satisfy_args + dependencies)
 
-configure_command = 'PKG_CONFIG_PATH=`{} pkg-config-path {}`:$PKG_CONFIG_PATH ./configure --needy-satisfy-args="{}"'.format(needy, needy_args, needy_satisfy_args)
+configure_command = 'PKG_CONFIG_PATH=`{} pkg-config-path {}`:$PKG_CONFIG_PATH ./configure --needy-satisfy-args="{}"'.format(needy, ' '.join(needy_pkgconfig_args), ' '.join(needy_satisfy_args))
 
 if args.configure:
     subprocess.check_call(configure_command, shell=True)

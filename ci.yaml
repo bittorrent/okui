@@ -1,13 +1,21 @@
+{% set needy_targets = {'iphoneos': 'ios', 'appletvos': 'tvos', 'android': 'android'} %}
+{% if target in needy_targets %}
+    {% set needy_target_args = '--needy-target-args="-t ' ~ needy_targets[target] ~ '"' %}
+{% endif %}
+{% if target == 'android' %}
+    {% set needy_satisfy_args = '--needy-satisfy-args="--android-toolchain=$ANDROID_TOOLCHAIN"' %}
+    {% set b2_config_args = '--android-toolchain=$ANDROID_TOOLCHAIN' %}
+{% endif %}
+{% set b2_args = '-j' ~ cpu_count ~ ' -d+2' %}
 script:
     {% if target == 'linux' %}
     - export CXXFLAGS=-stdlib=libc++; export LDFLAGS=-stdlib=libc++;
     {% endif %}
-    {% set needy_targets = {'iphoneos': 'ios', 'appletvos': 'tvos', 'android': 'android'} %}
-    - ./build-deps --bootstrap-b2 --needy-target-args="{{ '-t ' ~ needy_targets[target] if target in needy_targets }}" --needy-satisfy-args="--android-toolchain=$ANDROID_TOOLCHAIN" --configure --variant=release
+    - ./build-deps --bootstrap-b2 --configure --variant=release {{ needy_targets_args }} {{ needy_satisfy_args }}
     - export PATH=`pwd`/bootstrap:$PATH
-    - live b2-config --target={{ target }} --android-toolchain=$ANDROID_TOOLCHAIN >> project-config.jam
-    - b2 -j{{ cpu_count }} -d+2 variant=release
+    - live b2-config --target={{ target }} {{ b2_config_args }} >> project-config.jam
+    - b2 {{ b2_args }} variant=release
     {% if target in ['macosx', 'linux'] %}
-    - b2 -j{{ cpu_count }} -d+2 variant=release tests//run
+    - b2 {{ b2_args }} variant=release tests//run
     {% endif %}
-    - live c++-analysis b2 -j{{ cpu_count }} --build-dir=./bin/analysis
+    - live c++-analysis b2 {{ b2_args }} --build-dir=./bin/analysis
