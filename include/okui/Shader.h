@@ -147,9 +147,12 @@ protected:
     }
 };
 
-} // namespace okui
+inline std::string CommonOKUIFragmentShaderHeader(std::vector<std::string> extensions = {}) {
+    return scraps::opengl::CommonFragmentShaderHeader(extensions) + R"(
+    uniform int blendingFlags;
+    vec4 unmultipliedInput(vec4 c) { return vec4((blendingFlags == 1 || blendingFlags == 3) ? (c.a > 0.0 ? c.rgb / c.a : vec3(0.0)) : c.rgb, c.a); }
+    vec4 multipliedOutput(vec4 c) { return vec4(c.rgb * (blendingFlags >= 2 ? c.a : 1.0), c.a); }
+    )";
+}
 
-#define ONAIR_OKUI_SHADER_FRAGMENT_SHADER_HEADER SCRAPS_FRAGMENT_SHADER_HEADER \
-    "uniform int blendingFlags;\n" \
-    "vec4 unmultipliedInput(vec4 c) { return vec4((blendingFlags == 1 || blendingFlags == 3) ? (c.a > 0.0 ? c.rgb / c.a : vec3(0.0)) : c.rgb, c.a); }" \
-    "vec4 multipliedOutput(vec4 c) { return vec4(c.rgb * (blendingFlags >= 2 ? c.a : 1.0), c.a); }" \
+} // namespace okui

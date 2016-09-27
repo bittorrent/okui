@@ -2,7 +2,7 @@
 
 #include "okui/config.h"
 
-#include "okui/opengl/OpenGL.h"
+#include "okui/opengl/opengl.h"
 
 #include <string>
 
@@ -17,6 +17,7 @@ public:
 	};
 
 	Shader(const char* source, Type type);
+	Shader(const std::string& source, Type type) : Shader(source.c_str(), type) {}
 	~Shader();
 
 	const std::string& error() const { return _error; }

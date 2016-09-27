@@ -7,7 +7,7 @@ namespace okui {
 namespace shaders {
 
 TextureShader::TextureShader(const char* fragmentShader) {
-    opengl::Shader vsh(SCRAPS_VERTEX_SHADER_HEADER R"(
+    opengl::Shader vsh(scraps::opengl::CommonVertexShaderHeader() + R"(
         ATTRIBUTE_IN vec2 positionAttrib;
         ATTRIBUTE_IN vec4 colorAttrib;
         ATTRIBUTE_IN vec4 curveAttrib;
@@ -25,7 +25,7 @@ TextureShader::TextureShader(const char* fragmentShader) {
         }
     )", opengl::Shader::kVertexShader);
 
-    opengl::Shader fsh(fragmentShader ? fragmentShader : ONAIR_OKUI_SHADER_FRAGMENT_SHADER_HEADER R"(
+    opengl::Shader fsh(fragmentShader ? std::string(fragmentShader) : CommonOKUIFragmentShaderHeader() + R"(
         VARYING_IN vec4 color;
         VARYING_IN vec4 curve;
         VARYING_IN vec2 textureCoord;

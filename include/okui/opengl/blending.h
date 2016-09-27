@@ -2,7 +2,7 @@
 
 #include "okui/config.h"
 
-#include "okui/opengl/OpenGL.h"
+#include "okui/opengl/opengl.h"
 
 namespace okui {
 namespace opengl {

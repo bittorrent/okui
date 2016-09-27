@@ -176,17 +176,24 @@ bool FileTexture::_loadPNG() {
     png_read_info(png, info);
 
     auto colorType = png_get_color_type(png, info);
-    auto glFormat =
+    GLenum glFormat = GL_INVALID_VALUE;
+
 #if GL_RED && GL_RG
-        colorType == PNG_COLOR_TYPE_GRAY ? GL_RED :
-        colorType == PNG_COLOR_TYPE_GRAY_ALPHA ? GL_RG :
-#else
-        colorType == PNG_COLOR_TYPE_GRAY ? GL_LUMINANCE :
-        colorType == PNG_COLOR_TYPE_GRAY_ALPHA ? GL_LUMINANCE_ALPHA :
+    if (!scraps::opengl::kIsOpenGLES || scraps::opengl::MajorVersion() >= 3) {
+        if (colorType == PNG_COLOR_TYPE_GRAY) { glFormat = GL_RED; }
+        else if (colorType == PNG_COLOR_TYPE_GRAY_ALPHA) { glFormat = GL_RG; }
+    }
 #endif
-        colorType == PNG_COLOR_TYPE_RGB ? GL_RGB :
-        colorType == PNG_COLOR_TYPE_RGB_ALPHA ? GL_RGBA :
-    0;
+
+#if GL_LUMINANCE && GL_LUMINANCE_ALPHA
+    if (glFormat == GL_INVALID_VALUE) {
+        if (colorType == PNG_COLOR_TYPE_GRAY) { glFormat = GL_LUMINANCE; }
+        else if (colorType == PNG_COLOR_TYPE_GRAY_ALPHA) { glFormat = GL_LUMINANCE_ALPHA; }
+    }
+#endif
+
+    if (colorType == PNG_COLOR_TYPE_RGB) { glFormat = GL_RGB; }
+    else if (colorType == PNG_COLOR_TYPE_RGB_ALPHA) { glFormat = GL_RGBA; }
 
     if (!glFormat) {
         SCRAPS_LOG_ERROR("png decompression error for {}: unsupported color type ({})", _name, static_cast<int>(colorType));
@@ -293,12 +300,22 @@ bool FileTexture::_loadJPEG() {
     }
 
     _textureType.type = GL_UNSIGNED_BYTE;
+    _textureType.format = GL_INVALID_VALUE;
 
-#if GL_RED && GL_RG
-    _textureType.format = jpegColorspace == TJCS_GRAY ? GL_RED : GL_RGB;
-#else
-    _textureType.format = jpegColorspace == TJCS_GRAY ? GL_LUMINANCE : GL_RGB;
+    if (jpegColorspace == TJCS_GRAY) {
+#if GL_RED
+        if (!scraps::opengl::kIsOpenGLES || scraps::opengl::MajorVersion() >= 3) {
+            _textureType.format = GL_RED;
+        }
 #endif
+#if GL_LUMINANCE
+        if (_textureType.format == GL_INVALID_VALUE) {
+            _textureType.format = GL_LUMINANCE;
+        }
+#endif
+    } else {
+        _textureType.format = GL_RGB;
+    }
 
     return true;
 }

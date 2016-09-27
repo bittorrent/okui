@@ -1,7 +1,7 @@
 libraries:
     scraps:
         repository: git@github.com:bittorrent/scraps.git
-        commit: 8cc727dfb6712c49e8dee96d5eed6b11f8fda66a
+        commit: 1f9190a5309293d19ee20b450ee21f53f6a3a0a1
         build-directory-suffix: {{variant|default('release')}}
         project:
             type: boostbuild

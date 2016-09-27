@@ -22,6 +22,8 @@ private:
     opengl::ShaderProgram::Uniform _edgeUniform;
     bool _supersample = false;
     opengl::ShaderProgram::Uniform _supersampleUniform;
+
+    std::string FragmentShader();
 };
 
 } } // namespace okui::shaders

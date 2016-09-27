@@ -21,7 +21,8 @@ struct TextureVertex {
 
 class TextureShader : public ShaderBase<TextureVertex> {
 public:
-    TextureShader(const char* fragmentShader = nullptr);
+    explicit TextureShader(const char* fragmentShader = nullptr);
+    explicit TextureShader(const std::string& fragmentShader) : TextureShader(fragmentShader.c_str()) {}
     virtual ~TextureShader() {}
 
     void setColor(const Color& color);

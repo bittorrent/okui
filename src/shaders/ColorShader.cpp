@@ -4,7 +4,7 @@ namespace okui {
 namespace shaders {
 
 ColorShader::ColorShader() {
-    opengl::Shader vsh(SCRAPS_VERTEX_SHADER_HEADER R"(
+    opengl::Shader vsh(scraps::opengl::CommonVertexShaderHeader() + R"(
         ATTRIBUTE_IN vec2 positionAttrib;
         ATTRIBUTE_IN vec4 colorAttrib;
         ATTRIBUTE_IN vec4 curveAttrib;
@@ -19,7 +19,7 @@ ColorShader::ColorShader() {
         }
     )", opengl::Shader::kVertexShader);
 
-    opengl::Shader fsh(ONAIR_OKUI_SHADER_FRAGMENT_SHADER_HEADER R"(
+    opengl::Shader fsh(CommonOKUIFragmentShaderHeader() + R"(
         VARYING_IN vec4 color;
         VARYING_IN vec4 curve;
 

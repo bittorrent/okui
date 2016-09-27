@@ -3,7 +3,7 @@
 #include "okui/Application.h"
 #include "okui/BitmapFont.h"
 #include "okui/blending.h"
-#include "okui/opengl/OpenGL.h"
+#include "okui/opengl/opengl.h"
 #include "okui/shapes/Rectangle.h"
 #include "okui/Window.h"
 

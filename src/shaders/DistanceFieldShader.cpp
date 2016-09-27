@@ -3,11 +3,14 @@
 namespace okui {
 namespace shaders {
 
-DistanceFieldShader::DistanceFieldShader() : TextureShader(
-#if OPENGL_ES && GL_OES_standard_derivatives
-        "#extension GL_OES_standard_derivatives : enable\n"
-#endif
-    ONAIR_OKUI_SHADER_FRAGMENT_SHADER_HEADER
+std::string DistanceFieldShader::FragmentShader() {
+    bool useStandardDerivatives = !scraps::opengl::kIsOpenGLES || scraps::opengl::MajorVersion() >= 3;
+    std::vector<std::string> extensions;
+    if (!useStandardDerivatives && scraps::opengl::HasExtension("GL_OES_standard_derivatives")) {
+        useStandardDerivatives = true;
+        extensions.emplace_back("GL_OES_standard_derivatives");
+    }
+    return CommonOKUIFragmentShaderHeader(extensions) +
     R"(
         VARYING_IN vec4 color;
         VARYING_IN vec2 textureCoord;
@@ -18,24 +21,11 @@ DistanceFieldShader::DistanceFieldShader() : TextureShader(
 
         void main() {
             vec4 sample = SAMPLE(textureSampler, textureCoord);
-    )"
-#if !OPENGL_ES || GL_OES_standard_derivatives
-            "float aa = fwidth(sample.a) * 0.75;"
-#else
-            "float aa = 0.03;"
-#endif
-    R"(
+            float aa = )" + (useStandardDerivatives ? "fwidth(sample.a) * 0.75;" : "0.03") + R"(
             float alpha = smoothstep(edge - aa, edge + aa, sample.a);
 
             if (supersample) {
-    )"
-#if !OPENGL_ES || GL_OES_standard_derivatives
-                "float derivScale = 0.35355;" // 1 / sqrt(2) / 2
-                "vec2 derivUV = derivScale * (dFdx(textureCoord) + dFdy(textureCoord));"
-#else
-                "vec2 derivUV = vec2(0.002, 0.0015);"
-#endif
-    R"(
+                vec2 derivUV = )" + (useStandardDerivatives ? "0.35355 * (dFdx(textureCoord) + dFdy(textureCoord));" : "vec2(0.002, 0.0015);") + R"(
                 vec4 box = vec4(textureCoord-derivUV, textureCoord+derivUV);
 
                 float sum = smoothstep(edge - aa, edge + aa, SAMPLE(textureSampler, box.xy).a)
@@ -50,8 +40,10 @@ DistanceFieldShader::DistanceFieldShader() : TextureShader(
 
             COLOR_OUT = multipliedOutput(vec4(color.rgb, color.a * alpha));
         }
-    )"
-) {
+    )";
+}
+
+DistanceFieldShader::DistanceFieldShader() : TextureShader(FragmentShader()) {
     _program.use();
     _edgeUniform = _program.uniform("edge");
     _supersampleUniform = _program.uniform("supersample");
