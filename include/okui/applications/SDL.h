@@ -179,16 +179,6 @@ inline SDL::SDL() {
         SCRAPS_LOG_INFO("Controller {}: {}", i, SDL_JoystickNameForIndex(i));
     }
 
-#if OPENGL_ES
-    SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 2);
-    SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 0);
-    SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_ES);
-#else
-    SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 3);
-    SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 1);
-    SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_CORE);
-#endif
-
     if (auto path = SDL_GetBasePath()) {
         _resourceManager = std::make_unique<FileResourceManager>(path);
         SDL_free(path);
@@ -294,7 +284,34 @@ inline void SDL::openWindow(Window* window, const char* title, const WindowPosit
     SDL_GL_SetAttribute(SDL_GL_STENCIL_SIZE, 8);
     auto pos = SDLWindowPosition{position};
     auto sdlWindow = SDL_CreateWindow(title, pos.x, pos.y, width, height, SDL_WINDOW_OPENGL | SDL_WINDOW_RESIZABLE | SDL_WINDOW_ALLOW_HIGHDPI);
-    auto context = SDL_GL_CreateContext(sdlWindow);
+
+    SDL_GLContext context = nullptr;
+
+    if (!_windows.size()) {
+#if OPENGL_ES
+#if GL_ES_VERSION_3_0
+        SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_ES);
+        SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 3);
+        SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 0);
+        context = SDL_GL_CreateContext(sdlWindow);
+#endif
+        if (!context) {
+            SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 2);
+            SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 0);
+            SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_ES);
+        }
+#else
+        SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 3);
+        SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 1);
+        SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_CORE);
+#endif
+    }
+
+    if (!context) {
+        context = SDL_GL_CreateContext(sdlWindow);
+    }
+    SCRAPS_LOG_INFO("opengl version: {}", glGetString(GL_VERSION));
+
     auto id = SDL_GetWindowID(sdlWindow);
 
     _windowIds[window] = id;
