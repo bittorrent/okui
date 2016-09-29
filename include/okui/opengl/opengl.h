@@ -1,3 +1,3 @@
 #pragma once
 
-#include "scraps/opengl/OpenGL.h"
+#include "scraps/opengl/opengl.h"
