@@ -1,0 +1,26 @@
+#!/bin/bash -e
+
+script_dir="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+
+cd $script_dir/../..
+
+# required in needs.yaml
+export ANDROID_TOOLCHAIN=$script_dir/../../toolchains/android/$NDK_VERSION/android-$API_LEVEL/arm-linux-androideabi-clang3.6
+
+if [[ ! -d $ANDROID_TOOLCHAIN ]] ; then
+    echo "error: android toolchain not present in $ANDROID_TOOLCHAIN"
+    exit 1
+fi
+
+cpu_count=$(nproc)
+
+./build-deps --bootstrap-b2 --needy-target-args="-t android" --needy-satisfy-args="--android-toolchain=$ANDROID_TOOLCHAIN" --configure
+
+cat << PROJECT_CONFIG >> project-config.jam
+using clang-linux : android : $ANDROID_TOOLCHAIN/bin/arm-linux-androideabi-clang++ :
+    <linkflags>-march=armv7-a
+    <linkflags>-latomic
+;
+PROJECT_CONFIG
+
+./b2 -j$cpu_count variant=release target-os=android

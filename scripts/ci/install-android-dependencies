@@ -1,0 +1,45 @@
+#!/bin/bash -e
+
+script_dir="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+$script_dir/install-common-dependencies
+
+cd $script_dir/../..
+
+# makedepend for OpenSSL
+sudo apt-get install -y xutils-dev
+
+####### Android NDK toolchain #######
+
+android_root=$script_dir/../../toolchains/android
+
+toolchain_destination=$android_root/$NDK_VERSION/android-$API_LEVEL/arm-linux-androideabi-clang3.6
+
+if [[ -d $toolchain_destination ]] ; then
+    echo "Android NDK toolchain already present, skipping installation"
+    exit 0
+fi
+
+mkdir -p $android_root
+
+cleanup() {
+    rm -rf $script_dir/../../temp                 2>/dev/null || true
+    rm -rf $android_root/android-ndk-$NDK_VERSION 2>/dev/null || true
+}
+
+trap cleanup EXIT TERM INT
+
+mkdir -p temp
+(
+    cd temp
+    curl -O https://dl-ssl.google.com/android/ndk/android-ndk-$NDK_VERSION-linux-x86_64.bin
+    chmod +x android-ndk-$NDK_VERSION-linux-x86_64.bin
+    echo "Extracting ndk; this may take a while..."
+    ./android-ndk-$NDK_VERSION-linux-x86_64.bin -o$android_root > /dev/null
+)
+
+$android_root/android-ndk-$NDK_VERSION/build/tools/make-standalone-toolchain.sh \
+    --stl=libc++ \
+    --platform=android-$API_LEVEL \
+    --install-dir=$toolchain_destination \
+    --toolchain=arm-linux-androideabi-clang3.6 \
+    --llvm-version=3.6
