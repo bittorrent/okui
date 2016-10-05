@@ -90,7 +90,15 @@ void FileTexture::load() {
 
     glPixelStorei(GL_UNPACK_ALIGNMENT, 4);
 
-    glTexImage2D(GL_TEXTURE_2D, 0, _textureType.format, _allocatedWidth, _allocatedHeight, 0, _textureType.format, _textureType.type, _decompressedData.data());
+    auto internalFormat = _textureType.format;
+#if OPENGL_ES && GL_RED && GL_RG
+    if (_textureType.format == GL_RED) {
+        internalFormat = GL_R8;
+    } else if (_textureType.format == GL_RG) {
+        internalFormat = GL_RG8;
+    }
+#endif
+    glTexImage2D(GL_TEXTURE_2D, 0, internalFormat, _allocatedWidth, _allocatedHeight, 0, _textureType.format, _textureType.type, _decompressedData.data());
 
 #if OPENGL_ES
     bool useMipmaps = IsPowerOfTwo(_allocatedWidth) && IsPowerOfTwo(_allocatedHeight);
