@@ -1,8 +1,32 @@
 project okui ;
 
-path-constant NEEDS_PATH : needs ;
+import needs/pkgconfig.jam ;
+import package ;
+
+path-constant PREFIX : [ option.get prefix : "/usr/local" ] ;
+path-constant LIB : [ option.get libdir : $(PREFIX)/lib ] ;
+path-constant PKG_CONFIG : $(LIB)/pkgconfig ;
 
 lib libiconv : : <name>iconv ;
+lib GL       : : <link>shared ;
+lib m        : : <link>shared ;
+lib GLESv2   : : <link>shared ;
+
+pkgconfig.dependency scraps ;
+pkgconfig.dependency jshackle ;
+pkgconfig.dependency sdl2 ;
+pkgconfig.dependency utf8 ;
+pkgconfig.dependency libjpeg-turbo : libturbojpeg ;
+pkgconfig.dependency libpng ;
+
+alias objc : : : :
+    <target-os>darwin:<cxxflags>"-x objective-c++"
+    <target-os>iphone:<cxxflags>"-x objective-c++"
+    <target-os>appletv:<cxxflags>"-x objective-c++"
+    <target-os>darwin:<cflags>-fobjc-arc
+    <target-os>iphone:<cflags>-fobjc-arc
+    <target-os>appletv:<cflags>-fobjc-arc
+;
 
 rule okui-frameworks ( properties * ) {
     if <target-os>iphone in $(properties) || <target-os>appletv in $(properties) || <target-os>darwin in $(properties) {
@@ -18,54 +42,17 @@ rule okui-frameworks ( properties * ) {
     }
 }
 
-lib GL     : : <link>shared ;
-lib m      : : <link>shared ;
-lib GLESv2 : : <link>shared ;
-
-alias objc : : : :
-    <target-os>darwin:<cxxflags>"-x objective-c++"
-    <target-os>iphone:<cxxflags>"-x objective-c++"
-    <target-os>appletv:<cxxflags>"-x objective-c++"
-    <target-os>darwin:<cflags>-fobjc-arc
-    <target-os>iphone:<cflags>-fobjc-arc
-    <target-os>appletv:<cflags>-fobjc-arc
-;
-
-local PKG_CONFIG_PATH = [ modules.peek project-config : PKG_CONFIG_PATH ] ;
-local PKG_CONFIG_DEPENDENCIES = [ modules.peek project-config : PKG_CONFIG_DEPENDENCIES ] ;
-local OWNED_DEPENDENCIES = [ modules.peek project-config : OWNED_DEPENDENCIES ] ;
-
-rule dep ( name : packages * ) {
-    if ! $(packages) {
-        packages = $(name) ;
-    }
-    if $(packages) in $(PKG_CONFIG_DEPENDENCIES) {
-        local cflags = [ SHELL "PKG_CONFIG_PATH=$(PKG_CONFIG_PATH) pkg-config $(packages:J= ) --cflags | tr -d '\n'" ] ;
-        local ldflags = [ SHELL "PKG_CONFIG_PATH=$(PKG_CONFIG_PATH) pkg-config $(packages:J= ) --libs --static | tr -d '\n'" ] ;
-        alias $(name) : : : : <cflags>$(cflags) <linkflags>$(ldflags) ;
-    }
-    if $(packages) in $(OWNED_DEPENDENCIES) {
-        alias install-$(name)-if-owned : $(NEEDS_PATH)//install-$(name) ;
-    } else {
-        alias install-$(name)-if-owned ;
-    }
-    explicit install-$(name)-if-owned ;
-}
-
-dep scraps ;
-dep jshackle ;
-dep sdl2 ;
-dep utf8 ;
-dep libjpeg-turbo : libturbojpeg ;
-dep libpng ;
+#####################
+## okui
+#####################
 
 lib okui :
     [ glob-tree-ex src : *.cpp ]
+    objc
     scraps
     libpng
     libjpeg-turbo
     sdl2
-    objc
     utf8
 :
     <include>include
@@ -83,13 +70,11 @@ lib okui :
     <target-os>android:<source>GLESv2
 ;
 
-import package ;
+#####################
+## install
+#####################
 
 package.install install-lib : <install-source-root>include : : okui : [ glob-tree-ex include : *.h ] ;
-
-path-constant PREFIX : [ option.get prefix : "/usr/local" ] ;
-path-constant LIB : [ option.get libdir : $(PREFIX)/lib ] ;
-path-constant PKG_CONFIG : $(LIB)/pkgconfig ;
 
 make okui.pc : Jamroot : @pkgconfig ;
 rule pkgconfig ( targets * : sources * : properties * ) {
@@ -126,13 +111,13 @@ alias install :
     install-lib
     install-pkgconfig
     install-scraps-if-owned
-    install-jshackle-if-owned
     install-libpng-if-owned
     install-libjpeg-turbo-if-owned
     install-sdl2-if-owned
     install-utf8-if-owned
 :
     <target-os>android:<source>install-android
+    <target-os>android:<source>install-jshackle-if-owned
 ;
 
 explicit install install-lib install-pkgconfig install-android ;

@@ -13,7 +13,7 @@ script:
     {% endif %}
     - ./build-deps --bootstrap-b2 --configure --variant=release {{ needy_target_args }} {{ needy_satisfy_args }}
     - export PATH=`pwd`/bootstrap:$PATH
-    - live b2-config --target={{ target }} {{ b2_config_args }} >> project-config.jam
+    - live b2-config --target={{ target }} {{ b2_config_args }} > project-config.jam
     - b2 {{ b2_args }} variant=release
     {% if target in ['macosx', 'linux'] %}
     - b2 {{ b2_args }} variant=release tests//run

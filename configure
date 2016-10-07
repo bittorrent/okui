@@ -4,7 +4,10 @@ import argparse
 import logging
 import os
 import subprocess
+import sys
 import textwrap
+import json
+import pipes
 
 project_root = os.path.dirname(os.path.abspath(__file__))
 os.chdir(project_root)
@@ -14,49 +17,32 @@ dependencies = ['scraps', 'libpng', 'libturbojpeg', 'sdl2', 'utf8', 'jshackle']
 needy = os.path.join(project_root, 'needy', 'scripts', 'needy')
 
 
-def generate_needs_jamfile(satisfy_args):
-    subprocess.check_call('{} generate jamfile --satisfy-args="{}"'.format(needy, satisfy_args), shell=True)
+def generate_needy_files(common_args, satisfy_args):
+    subprocess.check_call(
+        '{needy} generate pkgconfig-jam jamfile --satisfy-args="{common_args} {satisfy_args}" {common_args}'.format(
+            needy=needy,
+            common_args=common_args,
+            satisfy_args=satisfy_args
+        ), shell=True)
 
-
-def pkg_is_present(pkg):
-    env = os.environ.copy()
-    env['PKG_CONFIG_LIBDIR'] = ''
-    return subprocess.call(['pkg-config', pkg, '--exists'], env=env) == 0
-
-
-def generate_project_config():
-    with open('project-config.jam', 'w') as f:
-        pkg_config_dependencies = []
-        owned_dependencies = []
-        for dep in dependencies:
-            if not pkg_is_present(dep):
-                logging.info('Dependency {} not present'.format(dep))
-                continue
-            pkg_config_dependencies.append(dep)
-            location = os.path.realpath(subprocess.check_output(['pkg-config', dep, '--variable=pcfiledir']).decode().strip())
-            if not os.path.relpath(location, os.path.realpath('needs')).startswith('..'):
-                logging.info('Dependency {} built with Needy'.format(dep))
-                owned_dependencies.append(dep)
-            else:
-                logging.info('Dependency {} provided by {}'.format(dep, location))
-
-        f.write(textwrap.dedent("""\
-            PKG_CONFIG_PATH = "{}" ;
-            PKG_CONFIG_DEPENDENCIES = {} ;
-            OWNED_DEPENDENCIES = {} ;
-        """).format(
-            os.environ['PKG_CONFIG_PATH'] if 'PKG_CONFIG_PATH' in os.environ else '',
-            ' '.join(pkg_config_dependencies),
-            ' '.join(owned_dependencies)
-        ))
+configuration = {}
+config_file = 'configure.json'
+if os.path.exists(config_file):
+    print('Reading configuration from {}'.format(config_file))
+    with open(config_file, 'r') as configure_json:
+        configuration = json.loads(configure_json.read())
 
 parser = argparse.ArgumentParser(description='Configures the library.')
-parser.add_argument('--needy-satisfy-args', default='', help='the arguments to pass on to needy satisfy')
+parser.add_argument('--needy-satisfy-args',
+                    default=' '.join([pipes.quote(s) for s in configuration.get('needy', {}).get('satisfy-args', [])]),
+                    help='the arguments to pass on to needy satisfy')
+parser.add_argument('--needy-common-args',
+                    default=' '.join([pipes.quote(s) for s in configuration.get('needy', {}).get('common-args', [])]),
+                    help='the common arguments to pass to needy (including satisfy)')
 args = parser.parse_args()
 
-logging.basicConfig(format='[%(levelname)s] %(message)s', level=logging.INFO)
+os.environ.update(configuration.get('env', {}))
 
-generate_needs_jamfile(args.needy_satisfy_args)
-generate_project_config()
+generate_needy_files(args.needy_common_args, args.needy_satisfy_args)
 
 print('Configuration complete. You may now build via {}.'.format('./b2' if os.path.exists('b2') else 'b2'))
