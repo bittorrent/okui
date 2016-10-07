@@ -12,8 +12,6 @@ import pipes
 project_root = os.path.dirname(os.path.abspath(__file__))
 os.chdir(project_root)
 
-dependencies = ['scraps', 'libpng', 'libturbojpeg', 'sdl2', 'utf8', 'jshackle']
-
 needy = os.path.join(project_root, 'needy', 'scripts', 'needy')
 
 
