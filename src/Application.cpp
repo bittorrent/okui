@@ -29,9 +29,7 @@ Responder* Application::firstResponder() {
 }
 
 void Application::command(Command command, CommandContext context) {
-    if (firstResponder()->chainCanHandleCommand(command)) {
-        firstResponder()->handleCommand(command, context);
-    }
+    firstResponder()->chainHandleCommand(command, context);
 }
 
 bool Application::canHandleCommand(Command command) {

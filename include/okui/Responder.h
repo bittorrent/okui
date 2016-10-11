@@ -75,6 +75,14 @@ public:
         if (auto next = nextResponder()) { next->handleCommand(command, context); }
     }
 
+    void chainHandleCommand(Command command, CommandContext context = {}) {
+        if (canHandleCommand(command)) {
+            handleCommand(command, context);
+        } else if (auto next = nextResponder()) {
+            next->chainHandleCommand(command, context);
+        }
+    }
+
     bool chainCanHandleCommand(Command command) {
         return canHandleCommand(command) || (nextResponder() && nextResponder()->chainCanHandleCommand(command));
     }
