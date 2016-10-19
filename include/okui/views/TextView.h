@@ -66,8 +66,6 @@ public:
         double              _weight = 100.0;
     };
 
-    TextView();
-
     const Style& style() const { return _style; }
     double lineHeight() const;
     size_t lineCount() const { return _lines.size(); }
@@ -78,8 +76,7 @@ public:
     Point<int> lineColumnPosition(size_t line, size_t column) const;
     std::pair<size_t, size_t> lineColumnAtPosition(int x, int y) const;
 
-    void setText(const char* text);
-    void setText(const std::string& text) { setText(text.c_str()); }
+    void setText(std::string text);
     void setStyle(Style style);
     void setFont(std::string texture, std::string metadata);
     void setTextSize(double size);
