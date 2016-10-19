@@ -9,6 +9,10 @@
 namespace okui {
 namespace views {
 
+TextView::TextView() {
+    setCachesRender();
+}
+
 double TextView::lineHeight() const {
     return _font ? _font->lineSpacing() * _fontScale() : 0;
 }
@@ -55,6 +59,11 @@ std::pair<size_t, size_t> TextView::lineColumnAtPosition(int mouseX, int mouseY)
 }
 
 void TextView::setText(const char* text) {
+    if (_text == text) {
+        return;
+    }
+    _text = text;
+
     _glyphs.clear();
 
     uint32_t codePoint;

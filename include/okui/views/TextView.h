@@ -66,6 +66,8 @@ public:
         double              _weight = 100.0;
     };
 
+    TextView();
+
     const Style& style() const { return _style; }
     double lineHeight() const;
     size_t lineCount() const { return _lines.size(); }
@@ -106,6 +108,7 @@ private:
     Style                                               _style;
     std::shared_ptr<BitmapFont>                         _font;
     std::basic_string<BitmapFont::GlyphId>              _glyphs;
+    std::string                                         _text;
     std::vector<std::basic_string<BitmapFont::GlyphId>> _lines;
     double                                              _textWidth = 0;
 };
