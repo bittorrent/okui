@@ -369,6 +369,14 @@ void View::mouseWheel(double xPos, double yPos, int xWheel, int yWheel) {
     }
 }
 
+void View::mouseDrag(double startX, double startY, double x, double y) {
+    if (superview() && superview()->_interceptsInteractions) {
+        auto startPoint = localToSuperview(startX, startY);
+        auto point = localToSuperview(x, y);
+        superview()->mouseDrag(startPoint.x, startPoint.y, point.x, point.y);
+    }
+}
+
 void View::mouseMovement(double x, double y) {
     if (superview() && superview()->_interceptsInteractions) {
         auto point = localToSuperview(x, y);

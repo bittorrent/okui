@@ -465,7 +465,7 @@ public:
     virtual void mouseDown(MouseButton button, double x, double y);
     virtual void mouseUp(MouseButton button, double startX, double startY, double x, double y);
     virtual void mouseWheel(double xPos, double yPos, int xWheel, int yWheel);
-    virtual void mouseDrag(double startX, double startY, double x, double y) {}
+    virtual void mouseDrag(double startX, double startY, double x, double y);
     virtual void mouseMovement(double x, double y);
     virtual void mouseEnter() {}
     virtual void mouseExit() {}
