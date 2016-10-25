@@ -29,6 +29,7 @@ public:
 
     virtual void mouseDown(MouseButton button, double x, double y) override;
     virtual void mouseUp(MouseButton button, double startX, double startY, double x, double y) override;
+    virtual void mouseDrag(double startX, double startY, double x, double y) override;
     virtual void mouseExit() override;
     virtual void keyDown(KeyCode key, KeyModifiers mod, bool repeat) override;
 
@@ -39,15 +40,17 @@ protected:
     virtual void stateChanged() {}
 
 private:
-    std::function<void()> _action;
-    bool                  _mouseDown = false;
-    State                 _state = State::kNormal;
-    bool                  _canBecomeFocused = true;
-
     void _changeState(State state) {
         _state = state;
         stateChanged();
     }
+
+    static constexpr auto kMouseThreshold = 10;
+
+    std::function<void()> _action;
+    bool                  _mouseDown = false;
+    State                 _state = State::kNormal;
+    bool                  _canBecomeFocused = true;
 };
 
 template <typename BaseView>
@@ -58,16 +61,32 @@ void Button<BaseView>::mouseDown(MouseButton button, double x, double y) {
 
 template <typename BaseView>
 void Button<BaseView>::mouseUp(MouseButton button, double startX, double startY, double x, double y) {
-    auto dx = std::abs(x - startX);
-    auto dy = std::abs(y - startY);
-
-    if (_mouseDown && dx < this->size().x/2 && dy < this->size().y/2) {
-        _mouseDown = false;
+    if (_state != State::kNormal) {
         _changeState(State::kNormal);
+    }
+
+    if (_mouseDown) {
+        _mouseDown = false;
         if (_action) { _action(); }
     } else {
         BaseView::mouseUp(button, startX, startY, x, y);
     }
+}
+
+template <typename BaseView>
+void Button<BaseView>::mouseDrag(double startX, double startY, double x, double y) {
+    auto dx = std::abs(x - startX);
+    auto dy = std::abs(y - startY);
+
+    if (dx > kMouseThreshold || dy > kMouseThreshold) {
+        _mouseDown = false;
+
+        if (_state != State::kNormal) {
+            _changeState(State::kNormal);
+        }
+    }
+
+    BaseView::mouseDrag(startX, startY, x, y);
 }
 
 template <typename BaseView>
