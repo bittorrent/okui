@@ -66,10 +66,10 @@ void TextView::setText(std::string text) {
     uint32_t state = 0;
 
     for (auto c : _text) {
-        if (utf8::Decode(&state, &codePoint, c)) {
+        if (utf8::Decode(&state, &codePoint, static_cast<unsigned char>(c))) {
             continue;
         }
-        _glyphs += c;
+        _glyphs += codePoint;
     }
 
     _updateLines();
