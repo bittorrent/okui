@@ -42,9 +42,24 @@ constexpr uint8_t utf8d[] = {
 } // namespace detail
 
 constexpr uint32_t Decode(uint32_t* state, uint32_t* codep, uint32_t byte) {
+    if (byte >= sizeof(detail::utf8d)) {
+        *state = 0;
+        *codep = 0;
+        return 0;
+    }
+
     uint32_t type = detail::utf8d[byte];
     *codep = (*state != detail::kUTF8Accept) ? (byte & 0x3fu) | (*codep << 6) : (0xff >> type) & (byte);
-    *state = detail::utf8d[256 + *state + type];
+
+    auto index = 256 + *state + type;
+
+    if (index >= sizeof(detail::utf8d)) {
+        *state = 0;
+        *codep = 0;
+        return 0;
+    }
+
+    *state = detail::utf8d[index];
     return *state;
 }
 
