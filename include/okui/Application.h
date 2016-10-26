@@ -172,6 +172,17 @@ public:
     virtual bool openURL(const char* url) { return false; }
 
     /**
+     * Handle a URL with the application.
+     */
+    virtual void handleURL(std::string url);
+
+    /**
+     * For platforms that don't have automatic URL scheme registration, this function can be called.
+     * to register a scheme.
+     */
+    virtual void registerURLScheme(const char* scheme) {}
+
+    /**
     * Opens up a dialog.
     *
     * @param action the action to be taken once a choice is made
@@ -400,5 +411,7 @@ T* Application::get() {
     }
     return nullptr;
 }
+
+Application* DefaultApplication();
 
 } // namespace okui

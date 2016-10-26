@@ -3,16 +3,29 @@
 #include "okui/Window.h"
 
 #include "scraps/thread.h"
+#include <scraps/URL.h>
 #include "scraps/net/curl.h"
 #include "scraps/net/HTTPRequest.h"
 
 namespace okui {
 
+Application* gDefaultApplication = nullptr;
+
+Application* DefaultApplication() {
+    return gDefaultApplication;
+}
+
 Application::Application() {
     scraps::net::InitCURLThreadSafety();
+
+    gDefaultApplication = this;
 }
 
 Application::~Application() {
+    if (gDefaultApplication == this) {
+        gDefaultApplication = nullptr;
+    }
+
     for (auto& task : _backgroundTasks) {
         task.wait();
     }
@@ -202,6 +215,11 @@ void Application::_post(std::type_index index, const void* message) {
             (*it->second.action)(message, nullptr);
         }
     }
+}
+
+void Application::handleURL(std::string url) {
+   SCRAPS_LOG_INFO("attempting to handle url: {}", url);
+   post(scraps::URL{std::move(url)});
 }
 
 } // namespace okui

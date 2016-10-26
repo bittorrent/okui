@@ -6,6 +6,7 @@
 
 #include "okui/applications/Apple.h"
 #include "okui/Application.h"
+#include "okui/apple/AppleEventHandler.h"
 
 #include <IOKit/IOKitLib.h>
 #include <CoreFoundation/CFString.h>
@@ -46,6 +47,7 @@ public:
 
     virtual bool canOpenURL(const char* url) const override;
     virtual bool openURL(const char* url) override;
+    virtual void registerURLScheme(const char* scheme) override;
 
     virtual void openDialog(Window* window, const char* title, const char* message, const std::vector<DialogButton>& buttons, std::function<void(int)> action = std::function<void(int)>()) override;
 
@@ -66,6 +68,8 @@ private:
 
     id _applicationMenuTarget = nil;
     Menu _applicationMenu;
+
+    AppleEventHandler* _urlEventHandler = nil;
 };
 
 template <typename Base>
@@ -78,6 +82,13 @@ inline OSX<Base>::OSX() {
             MenuItem("Select All", kCommandSelectAll, KeyCode::kA, this->defaultShortcutModifier()),
         })),
     }));
+
+    NSAppleEventManager* appleEventManager = [NSAppleEventManager sharedAppleEventManager];
+    _urlEventHandler = [AppleEventHandler new];
+    _urlEventHandler.handler = [this](NSAppleEventDescriptor* event, NSAppleEventDescriptor* replyEvent) {
+        this->handleURL([[[event paramDescriptorForKeyword:keyDirectObject] stringValue] UTF8String]);
+    };
+    [appleEventManager setEventHandler:_urlEventHandler andSelector:@selector(handleAppleEvent:withReplyEvent:) forEventClass:kInternetEventClass andEventID:kAEGetURL];
 }
 
 template <typename Base>
@@ -115,6 +126,15 @@ inline bool OSX<Base>::canOpenURL(const char* url) const {
 template <typename Base>
 inline bool OSX<Base>::openURL(const char* url) {
     return [[NSWorkspace sharedWorkspace] openURL:[NSURL URLWithString:[NSString stringWithUTF8String:url]]];
+}
+
+template <typename Base>
+inline void OSX<Base>::registerURLScheme(const char* scheme) {
+    NSString* bundleId = [[NSBundle mainBundle] bundleIdentifier];
+    auto str = CFStringCreateWithCString(kCFAllocatorDefault, scheme, kCFStringEncodingUTF8);
+    // the call to LSSetDefaultHandlerForURLScheme fails in the sandbox with no alternative. may as well try though
+    LSSetDefaultHandlerForURLScheme(str, (__bridge CFStringRef)bundleId);
+    CFRelease(str);
 }
 
 template <typename Base>
