@@ -54,11 +54,11 @@ std::pair<size_t, size_t> TextView::lineColumnAtPosition(int mouseX, int mouseY)
     return {lineNum, line.size()};
 }
 
-void TextView::setText(std::string text) {
+void TextView::setText(stdts::string_view text) {
     if (_text == text) {
         return;
     }
-    _text = std::move(text);
+    _text = text.to_string();
 
     _glyphs.clear();
 

@@ -54,7 +54,7 @@ args = parser.parse_args()
 if args.bootstrap_b2:
     bootstrap_b2()
 
-dependencies = [dep for dep in ['scraps', 'libpng', 'sdl2', 'utf8'] if not pkg_is_present(dep)]
+dependencies = [dep for dep in ['scraps', 'libpng', 'pugixml', 'sdl2', 'utf8'] if not pkg_is_present(dep)]
 if not pkg_is_present('libturbojpeg'):
     dependencies.append('libjpeg-turbo')
 if 'android' in args.needy_target_args and not pkg_is_present('jshackle'):

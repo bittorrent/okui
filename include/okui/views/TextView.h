@@ -6,6 +6,8 @@
 #include "okui/BitmapFont.h"
 #include "okui/View.h"
 
+#include "stdts/string_view.h"
+
 namespace okui {
 namespace views {
 
@@ -76,7 +78,7 @@ public:
     Point<int> lineColumnPosition(size_t line, size_t column) const;
     std::pair<size_t, size_t> lineColumnAtPosition(int x, int y) const;
 
-    void setText(std::string text);
+    void setText(stdts::string_view text);
     void setStyle(Style style);
     void setFont(std::string texture, std::string metadata);
     void setTextSize(double size);

@@ -14,6 +14,7 @@ lib GLESv2   : : <link>shared ;
 
 pkgconfig.dependency scraps ;
 pkgconfig.dependency jshackle ;
+pkgconfig.dependency pugixml ;
 pkgconfig.dependency sdl2 ;
 pkgconfig.dependency utf8 ;
 pkgconfig.dependency libjpeg-turbo : libturbojpeg ;
@@ -49,6 +50,7 @@ rule okui-frameworks ( properties * ) {
 lib okui :
     [ glob-tree-ex src : *.cpp ]
     objc
+    pugixml
     scraps
     libpng
     libjpeg-turbo
@@ -113,6 +115,7 @@ alias install :
     install-scraps-if-owned
     install-libpng-if-owned
     install-libjpeg-turbo-if-owned
+    install-pugixml-if-owned
     install-sdl2-if-owned
     install-utf8-if-owned
 :

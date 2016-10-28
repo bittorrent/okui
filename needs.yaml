@@ -1,7 +1,7 @@
 libraries:
     scraps:
         repository: git@github.com:bittorrent/scraps.git
-        commit: cf00b65872c23d6aadeff952140782fc54503066
+        commit: 2c2bf3e71cbb56d39ca7b0add34231fb3bbbe062
         build-directory-suffix: {{variant|default('release')}}
         project:
             type: boostbuild
@@ -104,3 +104,8 @@ libraries:
         project:
             post-build:
                 - xxd -i LICENSE {build_directory}/include/utf8/license.c
+    pugixml:
+        repository: git@github.com:zeux/pugixml.git
+        commit: v1.7
+        project:
+            type: source
