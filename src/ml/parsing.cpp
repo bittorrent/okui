@@ -27,11 +27,95 @@ stdts::optional<Color> ParseColor(stdts::string_view str) {
     return {};
 }
 
-stdts::optional<double> ParseNumber(stdts::string_view str, double oneHundredPercent) {
-    if (!str.empty() && str.back() == '%') {
-        return std::strtod(str.substr(0, str.size() - 1).to_string().c_str(), nullptr) / 100.0 * oneHundredPercent;
+namespace {
+
+stdts::optional<double> EvaluateNumber(const char* str, const char** end, const std::unordered_map<std::string, double>& units) {
+    double n = 0.0;
+    int numberLength = 0;
+    if (sscanf(str, "%lf%n", &n, &numberLength) != 1) {
+        SCRAPS_LOG_WARNING("unable to parse number from expression: {}", str);
+        return {};
     }
-    return std::strtod(str.to_string().c_str(), nullptr);
+    str += numberLength;
+
+    auto suffix = stdts::string_view(str, strspn(str, "abcdefghijklmnopqrstuvwxyz%"));
+    if (!suffix.empty()) {
+        auto it = units.find(suffix.to_string());
+        if (it == units.end()) {
+            SCRAPS_LOG_WARNING("invalid suffix: {}", suffix);
+            return {};
+        }
+        n *= it->second;
+        str += suffix.size();
+    }
+    *end = str;
+    return n;
+}
+
+stdts::optional<double> EvaluateNumberExpression(const char* str, const char** end, const std::unordered_map<std::string, double>& units, int minBinding = 0) {
+    stdts::optional<double> result;
+
+    while (true) {
+        while (str && *str == ' ') {
+            ++str;
+        }
+
+        if (!*str) { break; }
+
+        if (result) {
+            if (*str == '+' || *str == '-' || *str == '*' || *str == '/') {
+                auto op = *str;
+                auto binding = (op == '+' || op == '-') ? 10 : 20;
+                if (binding < minBinding) {
+                    break;
+                }
+                ++str;
+                auto right = EvaluateNumberExpression(str, &str, units, binding);
+                if (!right) { return {}; }
+                switch (op) {
+                    case '+': result = *result + *right; break;
+                    case '-': result = *result - *right; break;
+                    case '*': result = *result * *right; break;
+                    case '/': result = *result / *right; break;
+                }
+            } else if (*str == ')') {
+                break;
+            } else {
+                SCRAPS_LOG_WARNING("unexpected token: {}", str);
+                return {};
+            }
+        } else if (*str == '(') {
+            ++str;
+            result = EvaluateNumberExpression(str, &str, units);
+            if (!result) { return {}; }
+            if (*str != ')') {
+                SCRAPS_LOG_WARNING("expected closing parenthesis: {}", str);
+                return {};
+            }
+            ++str;
+        } else {
+            result = EvaluateNumber(str, &str, units);
+            if (!result) { return {}; }
+        }
+    }
+
+    if (end) { *end = str; }
+    return result;
+}
+
+}
+
+stdts::optional<double> ParseNumber(stdts::string_view str, const std::unordered_map<std::string, double>& units) {
+    auto string = str.to_string();
+    const char* end = nullptr;
+    if (auto n = EvaluateNumberExpression(string.c_str(), &end, units)) {
+        if (end != string.c_str() + string.size()) {
+            SCRAPS_LOG_WARNING("unexpected token: {}", end);
+            return {};
+        }
+        return n;
+    }
+    return {};
 }
 
 }} // namespace okui::ml
