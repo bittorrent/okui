@@ -2,8 +2,12 @@
 
 #include <okui/ml/parsing.h>
 
+using namespace okui::literals;
+
 TEST(ml_parsing, colors) {
     EXPECT_EQ(okui::ml::ParseColor("green"), okui::Color::kGreen);
+    EXPECT_EQ(okui::ml::ParseColor("#c7b299"), 0xc7b299_rgb);
+    EXPECT_EQ(okui::ml::ParseColor("#c7b29970"), 0xc7b29970_rgba);
 }
 
 TEST(ml_parsing, numbers) {

@@ -3,28 +3,23 @@
 namespace okui {
 namespace views {
 
-void ImageView::clearTexture() {
-    unload();
-    _resource.clear();
-    _placeholderResource.clear();
-    _distanceFieldEdge = stdts::nullopt;
-}
+void ImageView::setTexture(std::string texture) {
+    if (texture == _resource) { return; }
 
-void ImageView::setTextureResource(std::string resource) {
-    clearTexture();
-    _resource = std::move(resource);
-    _fromURL = false;
+    _texture = nullptr;
+    _fromURL = texture.find("://") != std::string::npos;
+    _resource = std::move(texture);
 
     if (isVisibleInOpenWindow()) {
         load();
     }
 }
 
-void ImageView::setTextureFromURL(std::string url, std::string placeholderResource) {
-    clearTexture();
-    _resource = std::move(url);
-    _fromURL = true;
-    _placeholderResource = std::move(placeholderResource);
+void ImageView::setTexturePlaceholder(std::string placeholder) {
+    if (_placeholderResource == placeholder) { return; }
+
+    _placeholderTexture = nullptr;
+    _placeholderResource = std::move(placeholder);
 
     if (isVisibleInOpenWindow()) {
         load();

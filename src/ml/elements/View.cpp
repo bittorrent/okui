@@ -18,7 +18,9 @@ void View::ElementBase::initialize(const Context& context, const pugi::xml_node&
     for (auto& child : xml.children()) {
         if (child.type() == pugi::node_element) {
             auto element = context.load(child);
-            view()->addSubview(element->view());
+            if (view() && element->view()) {
+                view()->addSubview(element->view());
+            }
             _children.emplace_back(std::move(element));
         }
     }

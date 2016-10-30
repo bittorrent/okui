@@ -16,16 +16,12 @@ constexpr auto DepressedColor(Color c) {
 
 }
 
-void ImageButton::setTextureResource(std::string resource, State state) {
-    _stateImageView(state).setTextureResource(std::move(resource));
+void ImageButton::setTexture(std::string texture, State state) {
+    _stateImageView(state).setTexture(std::move(texture));
 }
 
-void ImageButton::setTextureFromURL(std::string url, State state) {
-    _stateImageView(state).setTextureFromURL(std::move(url));
-}
-
-void ImageButton::setTextureFromURL(std::string url, std::string placeholderResource, State state) {
-    _stateImageView(state).setTextureFromURL(std::move(url), std::move(placeholderResource));
+void ImageButton::setTexturePlaceholder(std::string placeholder, State state) {
+    _stateImageView(state).setTexturePlaceholder(std::move(placeholder));
 }
 
 void ImageButton::setTextureColor(Color color, State state) {

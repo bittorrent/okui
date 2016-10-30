@@ -24,6 +24,15 @@ stdts::optional<Color> ParseColor(stdts::string_view str) {
     if (scraps::CaseInsensitiveEquals(str, "fuchsia")) { return Color::kFuchsia; }
     if (scraps::CaseInsensitiveEquals(str, "purple")) { return Color::kPurple; }
 
+    if ((str.size() == 7 || str.size() == 9) && str[0] == '#' && str.find_first_not_of("0123456789abcdef", 1) == stdts::string_view::npos) {
+        return RGBA(
+            scraps::HexToDec(str[1]) << 4 | scraps::HexToDec(str[2]),
+            scraps::HexToDec(str[3]) << 4 | scraps::HexToDec(str[4]),
+            scraps::HexToDec(str[5]) << 4 | scraps::HexToDec(str[6]),
+            str.size() == 9 ? scraps::HexToDec(str[7]) << 4 | scraps::HexToDec(str[8]) : 255
+        );
+    }
+
     return {};
 }
 

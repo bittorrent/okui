@@ -60,13 +60,14 @@ void LabeledPopoutButton::Body::setBackgroundColor(Color backgroundColor) {
 }
 
 void LabeledPopoutButton::Body::setImageURL(std::string url, std::string placeholder) {
-    _imageView.setTextureFromURL(std::move(url), std::move(placeholder));
+    _imageView.setTexture(std::move(url));
+    _imageView.setTexturePlaceholder(std::move(placeholder));
     addSubview(&_imageView);
     _imageView.sendToBack();
 }
 
 void LabeledPopoutButton::Body::setIcon(std::string sdf) {
-    _iconView.setTextureResource(std::move(sdf));
+    _iconView.setTexture(std::move(sdf));
     _iconView.setTextureDistanceField();
     _iconView.setTextureColor(Color::kWhite.withAlphaF(0.8));
     addSubview(&_iconView);

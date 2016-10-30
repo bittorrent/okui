@@ -15,9 +15,8 @@ public:
     TextureHandle& texture(State state = State::kNormal) { return _imageViews[state].texture(); }
     ImageView& image(State state = State::kNormal) { return _imageViews[state]; }
 
-    void setTextureResource(std::string resource, State state = State::kNormal);
-    void setTextureFromURL(std::string url, State state = State::kNormal);
-    void setTextureFromURL(std::string url, std::string placeholderResource, State state = State::kNormal);
+    void setTexture(std::string texture, State state = State::kNormal);
+    void setTexturePlaceholder(std::string placeholder, State state = State::kNormal);
     void setTextureColor(Color color, State state = State::kNormal);
     void setTextureDistanceField(double edge = 0.5, State state = State::kNormal);
 

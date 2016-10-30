@@ -64,11 +64,9 @@ protected:
         public:
             virtual void layout() override {
                 if (this->superview()) {
-                    std::unordered_map<std::string, double> xUnits;
-                    xUnits["%"] = this->superview()->bounds().width / 100.0;
-
-                    std::unordered_map<std::string, double> yUnits;
-                    yUnits["%"] = this->superview()->bounds().height / 100.0;
+                    std::unordered_map<std::string, double> xUnits, yUnits;
+                    xUnits["sw%"] = yUnits["sw%"] = xUnits["%"] = this->superview()->bounds().width / 100.0;
+                    xUnits["sh%"] = yUnits["sh%"] = yUnits["%"] = this->superview()->bounds().height / 100.0;
 
                     this->setBounds(
                         attributes.x ? ParseNumber(*attributes.x, xUnits).value_or(0.0) : this->bounds().x,

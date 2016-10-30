@@ -17,14 +17,20 @@ public:
         kFit
     };
 
-    void setTextureResource(std::string resource);
-    void setTextureFromURL(std::string url, std::string placeholderResource = "");
+    /**
+    * Sets the texture to the given URL or resource.
+    */
+    void setTexture(std::string texture);
+
+    /**
+    * If the texture was set to a URL, a placeholder resource may be displayed until the texture is loaded.
+    */
+    void setTexturePlaceholder(std::string placeholder);
+
     void setTextureColor(Color color);
     void setTextureDistanceField(double edge = 0.5);
 
     void setDrawMode(TextureDrawMode drawMode) { _drawMode = drawMode; }
-
-    void clearTexture();
 
     TextureHandle& texture() { return _texture; }
     const Color& textureColor() const { return _color; }
