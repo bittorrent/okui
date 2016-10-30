@@ -63,7 +63,7 @@ void MarkupView::_streamUpdateHook() {
     if (_pendingStreamResponse.wait_for(0s) == std::future_status::ready) {
         auto response = _pendingStreamResponse.get();
         if (response.markup) {
-            if (!_lastStreamResponse || response.markup != _lastStreamResponse->markup) {
+            if (!_lastStreamResponse || !(response.markup == _lastStreamResponse->markup)) {
                 load(*response.markup);
                 if (response.etag) {
                     // we want to reconnect immediately
