@@ -44,12 +44,16 @@ protected:
                 _view.setBackgroundColor(ParseColor(value).value_or(Color::kTransparentBlack));
             } else if (name == "x") {
                 _view.attributes.x = value.to_string();
+                _view.layout();
             } else if (name == "y") {
                 _view.attributes.y = value.to_string();
+                _view.layout();
             } else if (name == "width") {
                 _view.attributes.width = value.to_string();
+                _view.layout();
             } else if (name == "height") {
                 _view.attributes.height = value.to_string();
+                _view.layout();
             }
         }
 
@@ -59,14 +63,16 @@ protected:
         class View : public ViewType {
         public:
             virtual void layout() override {
-                this->setBounds(
-                    attributes.x ? ParseNumber(*attributes.x, this->superview()->bounds().width).value_or(0.0) : this->bounds().x,
-                    attributes.y ? ParseNumber(*attributes.y, this->superview()->bounds().height).value_or(0.0) : this->bounds().y,
-                    attributes.width ? ParseNumber(*attributes.width, this->superview()->bounds().width).value_or(0.0) : this->bounds().width,
-                    attributes.height ? ParseNumber(*attributes.height, this->superview()->bounds().height).value_or(0.0) : this->bounds().height
-                );
-                for (auto& subview : this->subviews()) {
-                    subview->layout();
+                if (this->superview()) {
+                    this->setBounds(
+                        attributes.x ? ParseNumber(*attributes.x, this->superview()->bounds().width).value_or(0.0) : this->bounds().x,
+                        attributes.y ? ParseNumber(*attributes.y, this->superview()->bounds().height).value_or(0.0) : this->bounds().y,
+                        attributes.width ? ParseNumber(*attributes.width, this->superview()->bounds().width).value_or(0.0) : this->bounds().width,
+                        attributes.height ? ParseNumber(*attributes.height, this->superview()->bounds().height).value_or(0.0) : this->bounds().height
+                    );
+                    for (auto& subview : this->subviews()) {
+                        subview->layout();
+                    }
                 }
                 ViewType::layout();
             }

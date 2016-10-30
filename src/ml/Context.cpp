@@ -29,29 +29,35 @@ std::string Context::render(stdts::string_view str) const {
 
     uint32_t i = 0;
     for (const auto& item : _fmtArgs) {
-        av.emplace_back(item.second);
+        // intentional pointer comparison - the FormatArgStorage objects can't be allowed to move around in memory after arg has been created
+        SCRAPS_ASSERT(item.second->name.data() == item.second->arg.name.data());
+        av.emplace_back(item.second->arg);
         if (i < fmt::ArgList::MAX_PACKED_ARGS) {
             types |= static_cast<uint64_t>(fmt::internal::Arg::NAMED_ARG) << (i * 4);
         }
         ++i;
     }
 
-    if (_fmtArgs.size() >= fmt::ArgList::MAX_PACKED_ARGS) {
-        std::vector<fmt::internal::Arg> avdata;
-        avdata.resize(_fmtArgs.size() + 1);
+    try {
+        if (_fmtArgs.size() >= fmt::ArgList::MAX_PACKED_ARGS) {
+            std::vector<fmt::internal::Arg> avdata;
+            avdata.resize(_fmtArgs.size() + 1);
+            for (size_t i = 0; i < av.size(); ++i) {
+                avdata[i].type = fmt::internal::Arg::NAMED_ARG;
+                avdata[i].pointer = &av[i];
+            }
+            return fmt::format(str.data(), fmt::ArgList(types, &avdata[0]));
+        }
+
+        std::vector<fmt::internal::Value> avdata;
+        avdata.resize(_fmtArgs.size());
         for (size_t i = 0; i < av.size(); ++i) {
-            avdata[i].type = fmt::internal::Arg::NAMED_ARG;
             avdata[i].pointer = &av[i];
         }
-        return fmt::format(str.data(), fmt::ArgList(types, &avdata[0]));
+        return fmt::format(str.data(), fmt::ArgList(types, avdata.data()));
+    } catch (const fmt::FormatError& error) {
+        return str.to_string();
     }
-
-    std::vector<fmt::internal::Value> avdata;
-    avdata.resize(_fmtArgs.size());
-    for (size_t i = 0; i < av.size(); ++i) {
-        avdata[i].pointer = &av[i];
-    }
-    return fmt::format(str.data(), fmt::ArgList(types, avdata.data()));
 }
 
 }} // namespace okui::ml

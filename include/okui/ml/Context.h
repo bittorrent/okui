@@ -4,6 +4,7 @@
 
 #include <okui/ml/Environment.h>
 
+#include <stdts/any.h>
 #include <stdts/string_view.h>
 
 #include <unordered_map>
@@ -33,13 +34,8 @@ public:
     * Defines a variable. Variables can be used in attribute values and text via named fmtlib arguments.
     */
     template <typename T>
-    void define(std::string name, T value) {
-        auto it = _fmtArgs.find(name);
-        if (it != _fmtArgs.end()) {
-            it->second = fmt::internal::NamedArg<char>(fmt::BasicStringRef<char>(name.data(), name.size()), value);
-            return;
-        }
-        _fmtArgs.emplace(name, fmt::internal::NamedArg<char>(fmt::BasicStringRef<char>(name.data(), name.size()), value));
+    void define(std::string name, T&& value) {
+        _fmtArgs[name] = std::make_unique<FormatArgStorage>(std::move(name), std::forward<T>(value));
     }
 
     /**
@@ -49,7 +45,18 @@ public:
 
 private:
     Environment* const _environment;
-    std::unordered_map<std::string, fmt::internal::NamedArg<char>> _fmtArgs;
+
+    struct FormatArgStorage {
+        template <typename T>
+        FormatArgStorage(std::string name, T value)
+            : name(std::move(name)), value(std::move(value)), arg(fmt::BasicStringRef<char>(this->name.data(), this->name.size()), stdts::any_cast<T>(this->value)) {}
+
+        std::string name;
+        stdts::any value;
+        fmt::internal::NamedArg<char> arg;
+    };
+
+    std::unordered_map<std::string, std::unique_ptr<FormatArgStorage>> _fmtArgs;
 };
 
 }} // namespace okui::ml
