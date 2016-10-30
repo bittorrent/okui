@@ -18,6 +18,9 @@ TEST(ml_Context, load) {
     auto view = element->view();
     ASSERT_TRUE(view);
 
+    okui::View root;
+    root.addSubview(view);
+
     EXPECT_EQ(view->backgroundColor(), okui::Color::kGreen);
     EXPECT_EQ(view->subviews().size(), 1);
     view->layout();

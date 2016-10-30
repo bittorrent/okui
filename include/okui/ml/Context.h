@@ -47,9 +47,12 @@ private:
     Environment* const _environment;
 
     struct FormatArgStorage {
+        FormatArgStorage(std::string name, const char* value)
+            : name(std::move(name)), value(std::string(value)), arg(fmt::BasicStringRef<char>(this->name.data(), this->name.size()), *stdts::any_cast<std::string>(&this->value)) {}
+
         template <typename T>
-        FormatArgStorage(std::string name, T value)
-            : name(std::move(name)), value(std::move(value)), arg(fmt::BasicStringRef<char>(this->name.data(), this->name.size()), stdts::any_cast<T>(this->value)) {}
+        FormatArgStorage(std::string name, T&& value)
+            : name(std::move(name)), value(std::forward<T>(value)), arg(fmt::BasicStringRef<char>(this->name.data(), this->name.size()), *stdts::any_cast<std::decay_t<T>>(&this->value)) {}
 
         std::string name;
         stdts::any value;
