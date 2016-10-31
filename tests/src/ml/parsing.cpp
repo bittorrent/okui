@@ -14,6 +14,7 @@ TEST(ml_parsing, numbers) {
     std::unordered_map<std::string, double> units;
     units["%"] = 4.0 / 100.0;
 
+    EXPECT_EQ(okui::ml::ParseNumber("50%"), 0.5);
     EXPECT_EQ(okui::ml::ParseNumber("1"), 1.0);
     EXPECT_EQ(okui::ml::ParseNumber("50%", units), 2.0);
     EXPECT_EQ(okui::ml::ParseNumber("50% + 1", units), 3.0);

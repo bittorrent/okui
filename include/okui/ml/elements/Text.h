@@ -19,7 +19,7 @@ public:
 protected:
     class Element : public View::Element<views::TextView> {
     public:
-        virtual void setAttribute(stdts::string_view name, stdts::string_view value) override {
+        virtual void setAttribute(const Context& context, stdts::string_view name, stdts::string_view value) override {
             if (name == "font") {
                 _view.setFont(value.to_string() + ".png", value.to_string() + ".fnt");
             } else if (name == "horizontal-alignment") {
@@ -55,11 +55,11 @@ protected:
             } else if (name == "text-color") {
                 _view.setTextColor(ParseColor(value).value_or(Color::kBlack));
             } else {
-                elements::View::Element<views::TextView>::setAttribute(name, value);
+                elements::View::Element<views::TextView>::setAttribute(context, name, value);
             }
         }
 
-        virtual void setText(stdts::string_view text) override {
+        virtual void setText(const Context& context, stdts::string_view text) override {
             _view.setText(text);
         }
     };

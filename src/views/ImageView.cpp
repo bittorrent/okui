@@ -31,7 +31,8 @@ void ImageView::setTextureColor(Color color) {
     invalidateRenderCache();
 }
 
-void ImageView::setTextureDistanceField(double edge) {
+void ImageView::setTextureDistanceField(stdts::optional<double> edge) {
+    if (edge == _distanceFieldEdge) { return; }
     _distanceFieldEdge = edge;
     invalidateRenderCache();
 }

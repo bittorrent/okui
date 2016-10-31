@@ -50,11 +50,14 @@ stdts::optional<double> EvaluateNumber(const char* str, const char** end, const 
     auto suffix = stdts::string_view(str, strspn(str, "abcdefghijklmnopqrstuvwxyz%"));
     if (!suffix.empty()) {
         auto it = units.find(suffix.to_string());
-        if (it == units.end()) {
+        if (it != units.end()) {
+            n *= it->second;
+        } else if (suffix == "%") {
+            n *= 0.01;
+        } else {
             SCRAPS_LOG_WARNING("invalid suffix: {}", suffix);
             return {};
         }
-        n *= it->second;
         str += suffix.size();
     }
     *end = str;

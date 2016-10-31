@@ -28,7 +28,7 @@ public:
     void setTexturePlaceholder(std::string placeholder);
 
     void setTextureColor(Color color);
-    void setTextureDistanceField(double edge = 0.5);
+    void setTextureDistanceField(stdts::optional<double> edge = 0.5);
 
     void setDrawMode(TextureDrawMode drawMode) { _drawMode = drawMode; }
 

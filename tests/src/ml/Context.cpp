@@ -50,3 +50,13 @@ TEST(ml_Context, render) {
     EXPECT_EQ(context.render("{n:.2}"), "1.2");
 }
 
+TEST(ml_Context, defineAndGet) {
+    okui::ml::Environment ml;
+    okui::ml::Context context(&ml);
+
+    using Foo = uint64_t;
+    context.define("foo", Foo{});
+    auto foo = context.get("foo");
+    EXPECT_TRUE(stdts::any_cast<Foo>(foo));
+}
+

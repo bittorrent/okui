@@ -18,6 +18,7 @@ void View::ElementBase::initialize(const Context& context, const pugi::xml_node&
     for (auto& child : xml.children()) {
         if (child.type() == pugi::node_element) {
             auto element = context.load(child);
+            if (!element) { continue; }
             if (view() && element->view()) {
                 view()->addSubview(element->view());
             }
@@ -28,10 +29,10 @@ void View::ElementBase::initialize(const Context& context, const pugi::xml_node&
 
 void View::ElementBase::update(const Context& context) {
     for (auto& kv : _attributes) {
-        setAttribute(kv.first, context.render(kv.second));
+        setAttribute(context, kv.first, context.render(kv.second));
     }
 
-    setText(context.render(_text));
+    setText(context, context.render(_text));
 
     for (auto& child : _children) {
         child->update(context);

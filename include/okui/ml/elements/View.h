@@ -27,8 +27,8 @@ protected:
         virtual void initialize(const Context& context, const pugi::xml_node& xml) override;
         virtual void update(const Context& context) override;
 
-        virtual void setAttribute(stdts::string_view name, stdts::string_view value) {}
-        virtual void setText(stdts::string_view text) {}
+        virtual void setAttribute(const Context& context, stdts::string_view name, stdts::string_view value) {}
+        virtual void setText(const Context& context, stdts::string_view text) {}
 
     private:
         std::unordered_map<std::string, std::string> _attributes;
@@ -39,7 +39,7 @@ protected:
     template <typename ViewType>
     class Element : public ElementBase {
     public:
-        virtual void setAttribute(stdts::string_view name, stdts::string_view value) override {
+        virtual void setAttribute(const Context& context, stdts::string_view name, stdts::string_view value) override {
             if (name == "background-color") {
                 _view.setBackgroundColor(ParseColor(value).value_or(Color::kTransparentBlack));
             } else if (name == "x") {
@@ -64,20 +64,24 @@ protected:
         public:
             virtual void layout() override {
                 if (this->superview()) {
-                    std::unordered_map<std::string, double> xUnits, yUnits;
-                    xUnits["sw%"] = yUnits["sw%"] = xUnits["%"] = this->superview()->bounds().width / 100.0;
-                    xUnits["sh%"] = yUnits["sh%"] = yUnits["%"] = this->superview()->bounds().height / 100.0;
+                    if (attributes.x || attributes.y || attributes.width || attributes.height) {
+                        std::unordered_map<std::string, double> xUnits, yUnits;
+                        xUnits["%pw"] = yUnits["%pw"] = xUnits["%"] = this->superview()->bounds().width / 100.0;
+                        xUnits["%ph"] = yUnits["%ph"] = yUnits["%"] = this->superview()->bounds().height / 100.0;
 
-                    this->setBounds(
-                        attributes.x ? ParseNumber(*attributes.x, xUnits).value_or(0.0) : this->bounds().x,
-                        attributes.y ? ParseNumber(*attributes.y, yUnits).value_or(0.0) : this->bounds().y,
-                        attributes.width ? ParseNumber(*attributes.width, xUnits).value_or(0.0) : this->bounds().width,
-                        attributes.height ? ParseNumber(*attributes.height, yUnits).value_or(0.0) : this->bounds().height
-                    );
+                        this->setBounds(
+                            attributes.x ? ParseNumber(*attributes.x, xUnits).value_or(0.0) : this->bounds().x,
+                            attributes.y ? ParseNumber(*attributes.y, yUnits).value_or(0.0) : this->bounds().y,
+                            attributes.width ? ParseNumber(*attributes.width, xUnits).value_or(0.0) : this->bounds().width,
+                            attributes.height ? ParseNumber(*attributes.height, yUnits).value_or(0.0) : this->bounds().height
+                        );
+                    }
+
                     for (auto& subview : this->subviews()) {
                         subview->layout();
                     }
                 }
+
                 ViewType::layout();
             }
 

@@ -5,6 +5,7 @@
 #include <okui/ml/Environment.h>
 
 #include <stdts/any.h>
+#include <stdts/optional.h>
 #include <stdts/string_view.h>
 
 #include <unordered_map>
@@ -36,6 +37,12 @@ public:
     template <typename T>
     void define(std::string name, T&& value) {
         _fmtArgs[name] = std::make_unique<FormatArgStorage>(std::move(name), std::forward<T>(value));
+    }
+
+    const stdts::any* get(const std::string& name) const {
+        auto it = _fmtArgs.find(name);
+        if (it == _fmtArgs.end()) { return nullptr; }
+        return &it->second->value;
     }
 
     /**

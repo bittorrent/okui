@@ -32,6 +32,8 @@ public:
     void setSize(double width, double height) { setSize({width, height}); }
     void setSize(Point<double> size);
 
+    const Point<double>& size() const { return _size; }
+
     const Animation<double>& popoutAnimation() const { return _popoutAnimation; }
 
 private:
@@ -79,6 +81,7 @@ void PopoutFocus<BaseView>::setScaling(Point<double> scaling) {
 
 template <typename BaseView>
 void PopoutFocus<BaseView>::setAnchor(Point<double> parentPosition, Point<double> selfPercentage) {
+    if (_parentAnchorPosition == parentPosition && _selfAnchorPercentage == selfPercentage) { return; }
     _parentAnchorPosition = parentPosition;
     _selfAnchorPercentage = selfPercentage;
     _updateBounds();
@@ -86,6 +89,7 @@ void PopoutFocus<BaseView>::setAnchor(Point<double> parentPosition, Point<double
 
 template <typename BaseView>
 void PopoutFocus<BaseView>::setSize(Point<double> size) {
+    if (_size == size) { return; }
     _size = size;
     _updateBounds();
 }
