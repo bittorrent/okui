@@ -79,6 +79,7 @@ libraries:
                 - --disable-shared
                 - --disable-video-x11
                 - --disable-video-opengles1
+                - --disable-video_wayland
                 {% if platform == 'android' %}
                 - --host=arm-linux-androideabi
                 {% endif %}
