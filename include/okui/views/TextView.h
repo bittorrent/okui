@@ -30,7 +30,6 @@ public:
         enum class OverflowBehavior {
             kNone,
             kWrap,
-            kEllipses,
             kShrink,
         };
 
@@ -45,6 +44,7 @@ public:
                                                                { _horizontalAlignment = horizontal; _verticalAlignment = vertical; return *this; }
         Style& overflowBehavior(OverflowBehavior overflow)     { _overflowBehavior = overflow; return *this; }
         Style& weight(double weight)                           { _weight = weight; return *this; }
+        Style& setEllipsesEnabled(bool enabled)                { _ellipsesEnabled = enabled; return *this; }
 
         const std::string& fontTexture() const                 { return _texture; }
         const std::string& fontMetadata() const                { return _metadata; }
@@ -55,6 +55,7 @@ public:
         VerticalAlignment verticalAlignment() const            { return _verticalAlignment; }
         OverflowBehavior overflowBehavior() const              { return _overflowBehavior; }
         double weight() const                                  { return _weight; }
+        bool ellipsesEnabled() const                           { return _ellipsesEnabled; }
 
     private:
         std::string         _texture;
@@ -64,14 +65,15 @@ public:
         double              _letterSpacing = 0.0;
         HorizontalAlignment _horizontalAlignment = HorizontalAlignment::kLeft;
         VerticalAlignment   _verticalAlignment = VerticalAlignment::kCenter;
-        OverflowBehavior    _overflowBehavior = OverflowBehavior::kEllipses;
+        OverflowBehavior    _overflowBehavior = OverflowBehavior::kWrap;
         double              _weight = 100.0;
+        bool                _ellipsesEnabled = true;
     };
 
     const Style& style() const { return _style; }
     double lineHeight() const;
     size_t lineCount() const { return _lines.size(); }
-    size_t lineCountForWidth(double width) const { return _computeLinesForWidth(width).size(); }
+    size_t lineCountForWidth(double width) const { return _computeLines(width, std::numeric_limits<double>::infinity()).size(); }
     double textWidth() const { return _textWidth; }
     double textHeight() const { return lineHeight() * std::max<double>(lineCount(), 1); }
     double textHeightForWidth(double width) const { return lineHeight() * std::max<double>(lineCountForWidth(width), 1); }
@@ -90,19 +92,20 @@ public:
     void setAlignment(Style::HorizontalAlignment horizontal, Style::VerticalAlignment vertical);
     void setOverflowBehavior(Style::OverflowBehavior overflowBehavior);
     void setWeight(double weight);
+    void setEllipsesEnabled(bool enabled);
 
     virtual void render(const RenderTarget* renderTarget, const Rectangle<int>& area) override;
     virtual void layout() override;
     virtual void windowChanged() override;
 
 private:
-    std::vector<std::basic_string<BitmapFont::GlyphId>> _computeLinesForWidth(double width) const;
+    std::vector<std::basic_string<BitmapFont::GlyphId>> _computeLines(double width, double height) const;
     void _updateLines();
     void _renderBitmapText(shaders::DistanceFieldShader* shader);
     double _calcXOffset(const std::basic_string<BitmapFont::GlyphId>& line) const;
     double _calcYOffset() const;
     double _fontScale() const;
-    double _lineWidth(const std::basic_string<BitmapFont::GlyphId>& line, double scale) const;
+    double _lineWidth(stdts::basic_string_view<BitmapFont::GlyphId> line, double scale) const;
 
     Style                                               _style;
     std::shared_ptr<BitmapFont>                         _font;

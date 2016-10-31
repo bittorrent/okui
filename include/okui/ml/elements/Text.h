@@ -38,16 +38,6 @@ protected:
                 } else if (value == "top") {
                     _view.setAlignment(views::TextView::Style::VerticalAlignment::kTop);
                 }
-            } else if (name == "overflow-behavior") {
-                if (value == "none") {
-                    _view.setOverflowBehavior(views::TextView::Style::OverflowBehavior::kNone);
-                } else if (value == "wrap") {
-                    _view.setOverflowBehavior(views::TextView::Style::OverflowBehavior::kWrap);
-                } else if (value == "ellipses") {
-                    _view.setOverflowBehavior(views::TextView::Style::OverflowBehavior::kEllipses);
-                } else if (value == "shrink") {
-                    _view.setOverflowBehavior(views::TextView::Style::OverflowBehavior::kShrink);
-                }
             } else if (name == "letter-spacing") {
                 _view.setLetterSpacing(ParseNumber(value).value_or(0.0));
             } else if (name == "text-size") {

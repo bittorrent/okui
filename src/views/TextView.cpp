@@ -20,7 +20,7 @@ Point<int> TextView::lineColumnPosition(size_t lineNum, size_t col) const {
     auto lineSpacing = _font->lineSpacing() * fontScale;
 
     auto& line = _lines[lineNum];
-    auto textWidth = _font->width(line.data(), std::min(col, line.size())) * fontScale + (_style.letterSpacing() * col);
+    auto textWidth = _lineWidth({line.data(), std::min(col, line.size())}, fontScale);
 
     return {static_cast<int>(round(_calcXOffset(line) + textWidth)),
             static_cast<int>(round(_calcYOffset() + (lineNum * lineSpacing)))};
@@ -131,6 +131,11 @@ void TextView::setWeight(double weight) {
     invalidateRenderCache();
 }
 
+void TextView::setEllipsesEnabled(bool enabled) {
+    _style.setEllipsesEnabled(enabled);
+    invalidateRenderCache();
+}
+
 void TextView::setTextColor(const Color& color) {
     _style.textColor(color);
     invalidateRenderCache();
@@ -160,7 +165,7 @@ void TextView::windowChanged() {
     }
 }
 
-std::vector<std::basic_string<BitmapFont::GlyphId>> TextView::_computeLinesForWidth(double width) const {
+std::vector<std::basic_string<BitmapFont::GlyphId>> TextView::_computeLines(double width, double height) const {
     std::vector<std::basic_string<BitmapFont::GlyphId>> lines;
     if (!_font) { return lines; }
 
@@ -169,48 +174,82 @@ std::vector<std::basic_string<BitmapFont::GlyphId>> TextView::_computeLinesForWi
     std::basic_string<BitmapFont::GlyphId> line;
 
     static constexpr std::array<BitmapFont::GlyphId, 3> ellipses{{ 0x2e, 0x2e, 0x2e }};
-    auto ellipsesWidth = _font->width(ellipses.data(), ellipses.size()) * fontScale;
+    auto ellipsesWidth = _lineWidth({ellipses.data(), ellipses.size()}, fontScale);
     bool skipUntilNewLine = false;
+    auto linesToShow = std::max<size_t>(1, floor(height / lineHeight()));
+    auto useEllipses = _style.ellipsesEnabled() && _style.overflowBehavior() != Style::OverflowBehavior::kShrink;
 
     for (auto& glyph : _glyphs) {
+        bool needsEllipses = false;
+
         if (glyph == '\n') {
-            lines.emplace_back(std::move(line));
-            line.clear();
-            skipUntilNewLine = false;
-            continue;
+            if (lines.size() + 1 >= linesToShow && useEllipses) {
+                needsEllipses = true;
+            } else {
+                lines.emplace_back(std::move(line));
+                line.clear();
+                skipUntilNewLine = false;
+                continue;
+            }
         } else if (skipUntilNewLine) {
             continue;
-        }
+        } else {
+            line.push_back(glyph);
 
-        line.push_back(glyph);
-
-        if (_lineWidth(line, fontScale) > width) {
-            if (_style.overflowBehavior() == Style::OverflowBehavior::kEllipses) {
-                // rewind, insert the ellipses, and skip until a new line
-                do {
-                    line.pop_back();
-                } while (!line.empty() && _font->width(line.data(), line.size()) * fontScale + ellipsesWidth > width);
-                line.insert(line.end(), ellipses.begin(), ellipses.end());
-                skipUntilNewLine = true;
-            } else if (_style.overflowBehavior() == Style::OverflowBehavior::kWrap) {
-                // try to break
-                for (size_t i = line.size(); i > 0; --i) {
-                    auto& candidate = line[i - 1];
-                    auto glyph = _font->glyph(candidate);
-                    if (glyph && !glyph->width) {
-                        // whitespace
-                        if (i > 0) {
-                            lines.emplace_back(&line[0], i - 1);
+            if (_lineWidth(line, fontScale) > width) {
+                if (_style.overflowBehavior() == Style::OverflowBehavior::kWrap && lines.size() + 1 < linesToShow) {
+                    bool didBreak = false;
+                    // try to break
+                    for (size_t i = line.size(); i > 0; --i) {
+                        auto& candidate = line[i - 1];
+                        auto glyph = _font->glyph(candidate);
+                        if (glyph && !glyph->width) {
+                            // whitespace
+                            if (i > 0) {
+                                lines.emplace_back(&line[0], i - 1);
+                            }
+                            if (i < line.size()) {
+                                line = line.substr(i);
+                            } else {
+                                line.clear();
+                            }
+                            didBreak = true;
+                            break;
                         }
-                        if (i < line.size()) {
-                            line = line.substr(i);
-                        } else {
-                            line.clear();
-                        }
-                        break;
                     }
+                    if (!didBreak && !line.empty()) {
+                        // just put this character on a new line
+                        auto& last = line.back();
+                        line.pop_back();
+                        lines.emplace_back(std::move(line));
+                        line.clear();
+                        line += last;
+                    }
+                } else if (useEllipses) {
+                    needsEllipses = true;
                 }
             }
+        }
+
+        if (needsEllipses) {
+            // rewind until the ellipses fit
+            do {
+                line.pop_back();
+            } while (!line.empty() && _lineWidth({line.data(), line.size()}, fontScale) + ellipsesWidth > width);
+            // trim whitespace
+            while (!line.empty()) {
+                auto glyph = _font->glyph(line.back());
+                if (!glyph || glyph->width) {
+                    break;
+                }
+                line.pop_back();
+            }
+            // add the ellipses
+            line.insert(line.end(), ellipses.begin(), ellipses.end());
+            if (lines.size() >= linesToShow) {
+                break;
+            }
+            skipUntilNewLine = true;
         }
     }
 
@@ -224,13 +263,12 @@ std::vector<std::basic_string<BitmapFont::GlyphId>> TextView::_computeLinesForWi
 void TextView::_updateLines() {
     if (!_font) { return; }
 
-    _lines = _computeLinesForWidth(bounds().width);
+    _lines = _computeLines(bounds().width, bounds().height);
 
     _textWidth = 0.0;
     auto fontScale = _style.textSize() / _font->size();
     for (auto& line : _lines) {
-        auto letterSpacing = line.empty() ? 0 : ((line.size() - 1) * _style.letterSpacing());
-        _textWidth = std::max(_textWidth, _font->width(line.data(), line.size()) * fontScale + letterSpacing);
+        _textWidth = std::max(_textWidth, _lineWidth({line.data(), line.size()}, fontScale));
     }
 
     invalidateRenderCache();
@@ -302,7 +340,7 @@ double TextView::_fontScale() const {
     return _style.textSize() / _font->size();
 }
 
-double TextView::_lineWidth(const std::basic_string<BitmapFont::GlyphId>& line, double fontScale) const {
+double TextView::_lineWidth(stdts::basic_string_view<BitmapFont::GlyphId> line, double fontScale) const {
     auto letterSpacing = line.empty() ? 0 : (line.size()-1) * _style.letterSpacing();
     return _font->width(line.data(), line.size()) * fontScale + letterSpacing;
 }
