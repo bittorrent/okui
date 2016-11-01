@@ -21,7 +21,7 @@ protected:
     public:
         virtual void setAttribute(const Context& context, stdts::string_view name, stdts::string_view value) override {
             if (scraps::CaseInsensitiveEquals(name, "font")) {
-                _view.setFont(std::string{value} + ".png", std::string{value} + ".fnt");
+                _view.setFont(std::string(value) + ".png", std::string(value) + ".fnt");
             } else if (scraps::CaseInsensitiveEquals(name, "horizontal-alignment")) {
                 if (scraps::CaseInsensitiveEquals(value, "center")) {
                     _view.setAlignment(views::TextView::Style::HorizontalAlignment::kCenter);

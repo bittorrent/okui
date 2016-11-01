@@ -46,16 +46,16 @@ protected:
             if (scraps::CaseInsensitiveEquals(name, "background-color")) {
                 _view.setBackgroundColor(ParseColor(value).value_or(Color::kTransparentBlack));
             } else if (scraps::CaseInsensitiveEquals(name, "x")) {
-                _view.attributes.x = std::string{value};
+                _view.attributes.x = std::string(value);
                 _view.layout();
             } else if (scraps::CaseInsensitiveEquals(name, "y")) {
-                _view.attributes.y = std::string{value};
+                _view.attributes.y = std::string(value);
                 _view.layout();
             } else if (scraps::CaseInsensitiveEquals(name, "width")) {
-                _view.attributes.width = std::string{value};
+                _view.attributes.width = std::string(value);
                 _view.layout();
             } else if (scraps::CaseInsensitiveEquals(name, "height")) {
-                _view.attributes.height = std::string{value};
+                _view.attributes.height = std::string(value);
                 _view.layout();
             } else if (scraps::CaseInsensitiveEquals(name, "visible")) {
                 _view.setIsVisible(ParseBoolean(value).value_or(true));

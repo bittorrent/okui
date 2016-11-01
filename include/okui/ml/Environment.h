@@ -18,11 +18,11 @@ public:
 
     template <typename Interface>
     void defineElementType(stdts::string_view tag) {
-        _elementTypes[std::string{tag}] = std::make_unique<Interface>();
+        _elementTypes[std::string(tag)] = std::make_unique<Interface>();
     }
 
     std::unique_ptr<ElementInterface> createElement(stdts::string_view tag) {
-        auto it = _elementTypes.find(std::string{tag});
+        auto it = _elementTypes.find(std::string(tag));
         return it == _elementTypes.end() ? nullptr : it->second->create();
     }
 

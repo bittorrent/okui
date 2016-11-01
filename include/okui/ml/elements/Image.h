@@ -20,9 +20,9 @@ protected:
     public:
         virtual void setAttribute(const Context& context, stdts::string_view name, stdts::string_view value) override {
             if (scraps::CaseInsensitiveEquals(name, "texture")) {
-                _view.setTexture(std::string{value});
+                _view.setTexture(std::string(value));
             } else if (scraps::CaseInsensitiveEquals(name, "texture-placeholder")) {
-                _view.setTexturePlaceholder(std::string{value});
+                _view.setTexturePlaceholder(std::string(value));
             } else if (scraps::CaseInsensitiveEquals(name, "texture-distance-field")) {
                 _view.setTextureDistanceField(ParseNumber(value));
             } else {

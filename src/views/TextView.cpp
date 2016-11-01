@@ -58,7 +58,7 @@ void TextView::setText(stdts::string_view text) {
     if (_text == text) {
         return;
     }
-    _text = std::string{text};
+    _text = std::string(text);
 
     _glyphs.clear();
 

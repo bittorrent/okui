@@ -17,7 +17,7 @@ void MarkupView::load(stdts::string_view markup) {
 
 void MarkupView::stream(stdts::string_view uri) {
     _lastStreamResponse = {};
-    _streamURI = std::string{uri};
+    _streamURI = std::string(uri);
     _sendStreamRequest();
     addUpdateHook("MarkupView::_streamUpdateHook", [&] { _streamUpdateHook(); });
 }

@@ -217,7 +217,7 @@ inline bool Android<Base>::isMobileConnection() const {
 template <typename Base>
 inline std::shared_ptr<std::string> Android<Base>::AssetResourceManager::load(stdts::string_view name) {
     auto ret = std::make_shared<std::string>();
-    auto a = AAssetManager_open(_assetManager, std::string{name}.c_str(), AASSET_MODE_BUFFER);
+    auto a = AAssetManager_open(_assetManager, std::string(name).c_str(), AASSET_MODE_BUFFER);
     if (!a) {
         return ret;
     }
