@@ -130,14 +130,12 @@ std::shared_ptr<BitmapFont> Window::loadBitmapFontResource(const char* textureNa
 }
 
 void Window::setFocus(View* focus) {
-    if (focus && focus->preferredFocus()) {
-        focus->preferredFocus()->focus();
-        return;
+    if (focus) {
+        focus = focus->expectedFocus();
+        if (!focus) { return; }
     }
 
-    if (_focus == focus || (focus && !focus->canBecomeFocus())) {
-        return;
-    }
+    if (_focus == focus) { return; }
 
     auto previousFocus = _focus;
     _focus = focus;
@@ -159,7 +157,7 @@ void Window::setFocus(View* focus) {
 
 bool Window::moveFocus(Direction direction) {
     if (!focus()) {
-        if (initialFocus() && initialFocus()->isVisible() && initialFocus()->canBecomeFocus()) {
+        if (initialFocus() && initialFocus()->isVisible() && initialFocus()->canBecomeDirectFocus()) {
             initialFocus()->focus();
             return true;
         }
@@ -313,7 +311,7 @@ void Window::keyDown(KeyCode key, KeyModifiers mod, bool repeat) {
                 return;
             }
         }
-        if (initialFocus()->isVisible() && initialFocus()->canBecomeFocus()) {
+        if (initialFocus()->isVisible() && initialFocus()->canBecomeDirectFocus()) {
             initialFocus()->focus();
             return;
         } else if (auto view = initialFocus()->nextAvailableFocus()) {

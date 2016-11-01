@@ -44,6 +44,7 @@ private:
         void setIcon(std::string sdf);
         void setImageURL(std::string url, std::string placeholder);
 
+        virtual bool canBecomeDirectFocus() override { return true; }
         virtual void render() override;
         virtual void layout() override;
 

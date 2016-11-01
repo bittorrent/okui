@@ -21,4 +21,6 @@ stdts::optional<Color> ParseColor(stdts::string_view str);
 */
 stdts::optional<double> ParseNumber(stdts::string_view str, const std::unordered_map<std::string, double>& units = {});
 
+stdts::optional<bool> ParseBoolean(stdts::string_view str);
+
 }} // namespace okui::ml

@@ -29,3 +29,9 @@ TEST(ml_parsing, numbers) {
     EXPECT_FALSE(okui::ml::ParseNumber("2 * 3 + 4)"));
 }
 
+TEST(ml_parsing, boolean) {
+    EXPECT_FALSE(okui::ml::ParseBoolean("0").value_or(true));
+    EXPECT_FALSE(okui::ml::ParseBoolean("false").value_or(true));
+    EXPECT_TRUE(okui::ml::ParseBoolean("1").value_or(false));
+    EXPECT_TRUE(okui::ml::ParseBoolean("true").value_or(false));
+}

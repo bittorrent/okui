@@ -56,7 +56,7 @@ std::string Context::render(stdts::string_view str) const {
         }
         return fmt::format(str.data(), fmt::ArgList(types, avdata.data()));
     } catch (const fmt::FormatError& error) {
-        return str.to_string();
+        return std::string{str};
     }
 }
 

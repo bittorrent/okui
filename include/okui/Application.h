@@ -11,6 +11,7 @@
 #include "okui/UserPreferencesInterface.h"
 
 #include "scraps/TaskQueue.h"
+#include "stdts/string_view.h"
 
 #if SCRAPS_MACOS
 #import <AppKit/NSWindow.h>
@@ -256,7 +257,7 @@ public:
 
     virtual void handleCommand(Command command, CommandContext context) override;
 
-    std::shared_ptr<std::string> loadResource(const char* name) { return resourceManager()->load(name); }
+    std::shared_ptr<std::string> loadResource(stdts::string_view name) { return resourceManager()->load(name); }
 
     /**
     * Asynchronously downloads from the given URL.

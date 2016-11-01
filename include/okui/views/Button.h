@@ -24,8 +24,8 @@ public:
 
     void press()                                                 { if (_action) { _action(); } }
 
-    void setCanBecomeFocused(bool canBecomeFocused)              { _canBecomeFocused = canBecomeFocused; }
-    virtual bool canBecomeFocus() override                       { return _canBecomeFocused; }
+    void setCanBecomeDirectFocus(bool canBecomeDirectFocus)              { _canBecomeDirectFocus = canBecomeDirectFocus; }
+    virtual bool canBecomeDirectFocus() override                       { return _canBecomeDirectFocus; }
 
     virtual void mouseDown(MouseButton button, double x, double y) override;
     virtual void mouseUp(MouseButton button, double startX, double startY, double x, double y) override;
@@ -50,7 +50,7 @@ private:
     std::function<void()> _action;
     bool                  _mouseDown = false;
     State                 _state = State::kNormal;
-    bool                  _canBecomeFocused = true;
+    bool                  _canBecomeDirectFocus = true;
 };
 
 template <typename BaseView>

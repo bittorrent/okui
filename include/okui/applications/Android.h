@@ -11,6 +11,8 @@
 #include "jshackle/JNIContext.h"
 #include "jshackle/android/app/Activity.h"
 
+#include "stdts/string_view.h"
+
 #include <android/asset_manager_jni.h>
 
 namespace okui {
@@ -94,7 +96,7 @@ public:
             _env->DeleteGlobalRef(_assetManagerReference);
         }
 
-        virtual std::shared_ptr<std::string> load(const char* name) override;
+        virtual std::shared_ptr<std::string> load(stdts::string_view name) override;
 
     private:
         JNIEnv* _env;
@@ -213,9 +215,9 @@ inline bool Android<Base>::isMobileConnection() const {
 }
 
 template <typename Base>
-inline std::shared_ptr<std::string> Android<Base>::AssetResourceManager::load(const char* name) {
+inline std::shared_ptr<std::string> Android<Base>::AssetResourceManager::load(stdts::string_view name) {
     auto ret = std::make_shared<std::string>();
-    auto a = AAssetManager_open(_assetManager, name, AASSET_MODE_BUFFER);
+    auto a = AAssetManager_open(_assetManager, std::string{name}.c_str(), AASSET_MODE_BUFFER);
     if (!a) {
         return ret;
     }

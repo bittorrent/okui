@@ -72,7 +72,7 @@ public:
 
     virtual void layout() override;
 
-    virtual bool canBecomeFocus() override { return _isEnabled; }
+    virtual bool canBecomeDirectFocus() override { return _isEnabled; }
 
     virtual void focusGained() override;
     virtual void focusLost() override;

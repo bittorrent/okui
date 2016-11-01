@@ -27,6 +27,9 @@ protected:
         virtual void initialize(const Context& context, const pugi::xml_node& xml) override;
         virtual void update(const Context& context) override;
 
+        virtual const char* id() const override;
+        virtual ElementInterface* descendantWithId(stdts::string_view id) const override;
+
         virtual void setAttribute(const Context& context, stdts::string_view name, stdts::string_view value) {}
         virtual void setText(const Context& context, stdts::string_view text) {}
 
@@ -40,20 +43,28 @@ protected:
     class Element : public ElementBase {
     public:
         virtual void setAttribute(const Context& context, stdts::string_view name, stdts::string_view value) override {
-            if (name == "background-color") {
+            if (scraps::CaseInsensitiveEquals(name, "background-color")) {
                 _view.setBackgroundColor(ParseColor(value).value_or(Color::kTransparentBlack));
-            } else if (name == "x") {
-                _view.attributes.x = value.to_string();
+            } else if (scraps::CaseInsensitiveEquals(name, "x")) {
+                _view.attributes.x = std::string{value};
                 _view.layout();
-            } else if (name == "y") {
-                _view.attributes.y = value.to_string();
+            } else if (scraps::CaseInsensitiveEquals(name, "y")) {
+                _view.attributes.y = std::string{value};
                 _view.layout();
-            } else if (name == "width") {
-                _view.attributes.width = value.to_string();
+            } else if (scraps::CaseInsensitiveEquals(name, "width")) {
+                _view.attributes.width = std::string{value};
                 _view.layout();
-            } else if (name == "height") {
-                _view.attributes.height = value.to_string();
+            } else if (scraps::CaseInsensitiveEquals(name, "height")) {
+                _view.attributes.height = std::string{value};
                 _view.layout();
+            } else if (scraps::CaseInsensitiveEquals(name, "visible")) {
+                _view.setIsVisible(ParseBoolean(value).value_or(true));
+            } else if (scraps::CaseInsensitiveEquals(name, "preferred-focus")) {
+                if (auto element = descendantWithId(value)) {
+                    _view.setPreferredFocus(element->view());
+                }
+            } else if (scraps::CaseInsensitiveEquals(name, "opacity")) {
+                _view.setOpacity(ParseNumber(value).value_or(1.0));
             }
         }
 

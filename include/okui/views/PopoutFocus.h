@@ -9,7 +9,8 @@ namespace okui {
 namespace views {
 
 /**
-* PopoutFocus implements a focusable view that pops out towards the viewer.
+* PopoutFocus implements a view that pops out towards the viewer when focused. PopoutFocus must
+* either derive from or be ancestor of a view that can receive focus.
 */
 template <typename BaseView>
 class PopoutFocus : public BaseView {
@@ -17,7 +18,6 @@ public:
     template <typename... Args>
     PopoutFocus(Args&&... args) : BaseView{std::forward<Args>(args)...} {}
 
-    virtual bool canBecomeFocus() override { return true; }
     virtual void focusGained() override;
     virtual void focusLost() override;
     virtual void disappeared() override;

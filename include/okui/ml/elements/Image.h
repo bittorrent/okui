@@ -19,12 +19,12 @@ protected:
     class Element : public View::Element<views::ImageView> {
     public:
         virtual void setAttribute(const Context& context, stdts::string_view name, stdts::string_view value) override {
-            if (name == "texture") {
-                _view.setTexture(value.to_string());
-            } else if (name == "texture-placeholder") {
-                _view.setTexturePlaceholder(value.to_string());
-            } else if (name == "texture-distance-field") {
-                _view.setTextureDistanceField(ParseNumber(value.to_string()));
+            if (scraps::CaseInsensitiveEquals(name, "texture")) {
+                _view.setTexture(std::string{value});
+            } else if (scraps::CaseInsensitiveEquals(name, "texture-placeholder")) {
+                _view.setTexturePlaceholder(std::string{value});
+            } else if (scraps::CaseInsensitiveEquals(name, "texture-distance-field")) {
+                _view.setTextureDistanceField(ParseNumber(value));
             } else {
                 elements::View::Element<views::ImageView>::setAttribute(context, name, value);
             }

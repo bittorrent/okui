@@ -4,14 +4,15 @@
 
 namespace okui {
 
-std::shared_ptr<std::string> FileResourceManager::load(const char* name) {
+std::shared_ptr<std::string> FileResourceManager::load(stdts::string_view name) {
     auto hashable = std::string(name);
 
     if (auto hit = _cache.get(hashable)) {
         return hit;
     }
 
-    const auto path = _directory + "/" + name;
+    auto path = _directory + "/";
+    path.append(name.data(), name.size());
     std::ifstream f(path);
 
     if (!f.is_open()) {

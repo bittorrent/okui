@@ -20,29 +20,29 @@ protected:
     class Element : public View::Element<views::TextView> {
     public:
         virtual void setAttribute(const Context& context, stdts::string_view name, stdts::string_view value) override {
-            if (name == "font") {
-                _view.setFont(value.to_string() + ".png", value.to_string() + ".fnt");
-            } else if (name == "horizontal-alignment") {
-                if (value == "center") {
+            if (scraps::CaseInsensitiveEquals(name, "font")) {
+                _view.setFont(std::string{value} + ".png", std::string{value} + ".fnt");
+            } else if (scraps::CaseInsensitiveEquals(name, "horizontal-alignment")) {
+                if (scraps::CaseInsensitiveEquals(value, "center")) {
                     _view.setAlignment(views::TextView::Style::HorizontalAlignment::kCenter);
-                } else if (value == "left") {
+                } else if (scraps::CaseInsensitiveEquals(value, "left")) {
                     _view.setAlignment(views::TextView::Style::HorizontalAlignment::kLeft);
-                } else if (value == "right") {
+                } else if (scraps::CaseInsensitiveEquals(value, "right")) {
                     _view.setAlignment(views::TextView::Style::HorizontalAlignment::kRight);
                 }
-            } else if (name == "vertical-alignment") {
-                if (value == "center") {
+            } else if (scraps::CaseInsensitiveEquals(name, "vertical-alignment")) {
+                if (scraps::CaseInsensitiveEquals(value, "center")) {
                     _view.setAlignment(views::TextView::Style::VerticalAlignment::kCenter);
-                } else if (value == "bottom") {
+                } else if (scraps::CaseInsensitiveEquals(value, "bottom")) {
                     _view.setAlignment(views::TextView::Style::VerticalAlignment::kBottom);
-                } else if (value == "top") {
+                } else if (scraps::CaseInsensitiveEquals(value, "top")) {
                     _view.setAlignment(views::TextView::Style::VerticalAlignment::kTop);
                 }
-            } else if (name == "letter-spacing") {
+            } else if (scraps::CaseInsensitiveEquals(name, "letter-spacing")) {
                 _view.setLetterSpacing(ParseNumber(value).value_or(0.0));
-            } else if (name == "text-size") {
+            } else if (scraps::CaseInsensitiveEquals(name, "text-size")) {
                 _view.setTextSize(ParseNumber(value).value_or(0.0));
-            } else if (name == "text-color") {
+            } else if (scraps::CaseInsensitiveEquals(name, "text-color")) {
                 _view.setTextColor(ParseColor(value).value_or(Color::kBlack));
             } else {
                 elements::View::Element<views::TextView>::setAttribute(context, name, value);

@@ -88,7 +88,7 @@ TEST(View, isVisibleInOpenWindow) {
 #if ONAIR_OKUI_HAS_NATIVE_APPLICATION
 TEST(View, focus) {
     struct FocusableView : View {
-        virtual bool canBecomeFocus() override { return true; }
+        virtual bool canBecomeDirectFocus() override { return true; }
     };
 
     View a;
@@ -135,7 +135,7 @@ TEST(View, focus) {
 
 TEST(View, removeSubviewRefocuses) {
     struct FocusableView : View {
-        virtual bool canBecomeFocus() override { return true; }
+        virtual bool canBecomeDirectFocus() override { return true; }
     };
 
     TestApplication application;
@@ -180,7 +180,7 @@ TEST(View, removeSubviews) {
 
 TEST(View, destructionRefocuses) {
     struct FocusableView : View {
-        virtual bool canBecomeFocus() override { return true; }
+        virtual bool canBecomeDirectFocus() override { return true; }
     };
 
     TestApplication application;
@@ -201,7 +201,7 @@ TEST(View, destructionRefocuses) {
 
 TEST(View, focusAncestor) {
     struct FocusableView : View {
-        virtual bool canBecomeFocus() override { return true; }
+        virtual bool canBecomeDirectFocus() override { return true; }
     };
 
     TestApplication application;
@@ -228,7 +228,7 @@ TEST(View, focusAncestor) {
 
 TEST(View, focusCycle) {
     struct FocusableView : View {
-        virtual bool canBecomeFocus() override { return enabled; }
+        virtual bool canBecomeDirectFocus() override { return enabled; }
         bool enabled = false;
     };
 
@@ -525,7 +525,7 @@ TEST(View, mouseMovement) {
 #if ONAIR_OKUI_HAS_NATIVE_APPLICATION
 TEST(View, focusOnRemoval) {
     struct FocusView : okui::View {
-        virtual bool canBecomeFocus() override { return true; }
+        virtual bool canBecomeDirectFocus() override { return true; }
     };
 
     View a, b;

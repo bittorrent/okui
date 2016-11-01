@@ -7,13 +7,9 @@
 using namespace okui;
 
 #if ONAIR_OKUI_HAS_NATIVE_APPLICATION
-TEST(Window, setFocus) {
-    TestApplication application;
-    okui::Window window(&application);
-    window.open();
-
+namespace {
     struct FocusableView : public View {
-        virtual bool canBecomeFocus() override { return true; }
+        virtual bool canBecomeDirectFocus() override { return true; }
         virtual void focusGained() override {
             EXPECT_TRUE(isFocus());
             gained = true;
@@ -26,30 +22,60 @@ TEST(Window, setFocus) {
         bool gained = false;
         bool lost = false;
     };
+}
 
-    {
-        FocusableView a, b, c;
-        a.addSubview(&b);
-        b.addSubview(&c);
-        window.contentView()->addSubview(&a);
+TEST(Window, setFocus) {
+    TestApplication application;
+    okui::Window window(&application);
+    window.open();
 
-        b.focus();
+    FocusableView a, b, c;
+    a.addSubview(&b);
+    b.addSubview(&c);
+    window.contentView()->addSubview(&a);
 
-        EXPECT_TRUE(a.gained);
-        EXPECT_FALSE(a.lost);
-        EXPECT_TRUE(b.gained);
-        EXPECT_FALSE(b.lost);
-        EXPECT_FALSE(c.gained);
-        EXPECT_FALSE(c.lost);
+    b.focus();
 
-        c.focus();
+    EXPECT_TRUE(a.gained);
+    EXPECT_FALSE(a.lost);
+    EXPECT_TRUE(b.gained);
+    EXPECT_FALSE(b.lost);
+    EXPECT_FALSE(c.gained);
+    EXPECT_FALSE(c.lost);
 
-        EXPECT_TRUE(c.gained);
+    c.focus();
 
-        a.focus();
+    EXPECT_TRUE(c.gained);
 
-        EXPECT_TRUE(b.lost);
-        EXPECT_TRUE(c.lost);
-    }
+    a.focus();
+
+    EXPECT_TRUE(b.lost);
+    EXPECT_TRUE(c.lost);
+}
+
+TEST(Window, disabledPreferredFocus) {
+    TestApplication application;
+    okui::Window window(&application);
+    window.open();
+
+    FocusableView a, b;
+    a.addSubview(&b);
+    window.contentView()->addSubview(&a);
+    a.setPreferredFocus(&b);
+
+    a.focus();
+    EXPECT_TRUE(b.isFocus());
+
+    b.hide();
+    EXPECT_FALSE(b.isFocus());
+    EXPECT_TRUE(a.isFocus());
+
+    a.unfocus();
+    EXPECT_FALSE(a.isFocus());
+    EXPECT_FALSE(b.isFocus());
+
+    a.focus();
+    EXPECT_TRUE(a.isFocus());
+    EXPECT_FALSE(b.isFocus());
 }
 #endif

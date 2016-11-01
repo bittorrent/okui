@@ -6,16 +6,18 @@ namespace okui {
 namespace views {
 
 void MarkupView::load(stdts::string_view markup) {
+    setPreferredFocus(nullptr);
     _element = _context.load(markup);
     if (_element && _element->view()) {
         addSubview(_element->view());
+        setPreferredFocus(_element->view());
         layout();
     }
 }
 
 void MarkupView::stream(stdts::string_view uri) {
     _lastStreamResponse = {};
-    _streamURI = uri.to_string();
+    _streamURI = std::string{uri};
     _sendStreamRequest();
     addUpdateHook("MarkupView::_streamUpdateHook", [&] { _streamUpdateHook(); });
 }

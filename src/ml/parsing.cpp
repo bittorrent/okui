@@ -49,7 +49,7 @@ stdts::optional<double> EvaluateNumber(const char* str, const char** end, const 
 
     auto suffix = stdts::string_view(str, strspn(str, "abcdefghijklmnopqrstuvwxyz%"));
     if (!suffix.empty()) {
-        auto it = units.find(suffix.to_string());
+        auto it = units.find(std::string{suffix});
         if (it != units.end()) {
             n *= it->second;
         } else if (suffix == "%") {
@@ -118,7 +118,7 @@ stdts::optional<double> EvaluateNumberExpression(const char* str, const char** e
 }
 
 stdts::optional<double> ParseNumber(stdts::string_view str, const std::unordered_map<std::string, double>& units) {
-    auto string = str.to_string();
+    std::string string{str};
     const char* end = nullptr;
     if (auto n = EvaluateNumberExpression(string.c_str(), &end, units)) {
         if (end != string.c_str() + string.size()) {
@@ -126,6 +126,15 @@ stdts::optional<double> ParseNumber(stdts::string_view str, const std::unordered
             return {};
         }
         return n;
+    }
+    return {};
+}
+
+stdts::optional<bool> ParseBoolean(stdts::string_view str) {
+    if (scraps::CaseInsensitiveEquals(str, "true") || str == "1") {
+        return true;
+    } else if (scraps::CaseInsensitiveEquals(str, "false") || str == "0") {
+        return false;
     }
     return {};
 }

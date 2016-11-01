@@ -60,25 +60,25 @@ protected:
     public:
         virtual void setAttribute(const Context& context, stdts::string_view name, stdts::string_view value) override {
             if (name == "x") {
-                _view.popoutAttributes.x = value.to_string();
+                _view.popoutAttributes.x = std::string{value};
                 _view.popoutAttributes.anchorParentX = {};
             } else if (name == "y") {
-                _view.popoutAttributes.y = value.to_string();
+                _view.popoutAttributes.y = std::string{value};
                 _view.popoutAttributes.anchorParentY = {};
             } else if (name == "width") {
-                _view.popoutAttributes.width = value.to_string();
+                _view.popoutAttributes.width = std::string{value};
             } else if (name == "height") {
-                _view.popoutAttributes.height = value.to_string();
+                _view.popoutAttributes.height = std::string{value};
             } else if (name == "anchor-x") {
-                _view.popoutAttributes.anchorX = value.to_string();
+                _view.popoutAttributes.anchorX = std::string{value};
             } else if (name == "anchor-y") {
-                _view.popoutAttributes.anchorY = value.to_string();
+                _view.popoutAttributes.anchorY = std::string{value};
             } else if (name == "anchor-parent-x") {
                 _view.popoutAttributes.x = {};
-                _view.popoutAttributes.anchorParentX = value.to_string();
+                _view.popoutAttributes.anchorParentX = std::string{value};
             } else if (name == "anchor-parent-y") {
                 _view.popoutAttributes.y = {};
-                _view.popoutAttributes.anchorParentY = value.to_string();
+                _view.popoutAttributes.anchorParentY = std::string{value};
             } else {
                 if (name == "scaling") {
                     if (auto scaling = ParseNumber(value)) {

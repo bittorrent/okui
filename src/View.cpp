@@ -11,12 +11,6 @@
 
 namespace okui {
 
-namespace {
-    View* PreferredFocusLeaf(View* focus) {
-        return (!focus || !focus->preferredFocus()) ? focus : PreferredFocusLeaf(focus->preferredFocus());
-    }
-} // anonymous namespace
-
 View::~View() {
     if (application()) {
         application()->removeListeners(this);
@@ -179,17 +173,23 @@ void View::focus() {
     }
 }
 
+View* View::expectedFocus() {
+    auto view = this;
+    View* ret = nullptr;
+    while (view) {
+        if (view->canBecomeDirectFocus() && view->isVisibleInOpenWindow()) {
+            ret = view;
+        }
+        view = view->preferredFocus();
+    }
+    return ret;
+}
+
 void View::focusAncestor() {
-    for (auto nextFocus = superview(); nextFocus; nextFocus = nextFocus->superview()) {
-        auto leaf = PreferredFocusLeaf(nextFocus);
-        if (leaf &&
-            leaf != this &&
-            !leaf->isDescendantOf(this) &&
-            leaf->canBecomeFocus() &&
-            leaf->isVisible() &&
-            leaf->ancestorsAreVisible())
-        {
-            nextFocus->focus();
+    for (auto ancestor = superview(); ancestor; ancestor = ancestor->superview()) {
+        auto focus = ancestor->expectedFocus();
+        if (focus && focus != this && !focus->isDescendantOf(this)) {
+            focus->focus();
             return;
         }
     }
@@ -223,7 +223,7 @@ void View::setNextFocus(View* view) {
 View* View::nextAvailableFocus() {
     auto view = _nextFocus;
     while (view && view != this) {
-        if (view->isVisible() && view->canBecomeFocus()) {
+        if (view->isVisible() && view->canBecomeDirectFocus()) {
             return view;
         }
         view = view->_nextFocus;
@@ -234,7 +234,7 @@ View* View::nextAvailableFocus() {
 View* View::previousAvailableFocus() {
     auto view = _previousFocus;
     while (view && view != this) {
-        if (view->isVisible() && view->canBecomeFocus()) {
+        if (view->isVisible() && view->canBecomeDirectFocus()) {
             return view;
         }
         view = view->_previousFocus;
@@ -438,7 +438,7 @@ void View::dispatchUpdate(std::chrono::high_resolution_clock::duration elapsed) 
         return;
     }
 
-    if (scraps::platform::kIsTVOS && canBecomeFocus()) {
+    if (scraps::platform::kIsTVOS && canBecomeDirectFocus()) {
         View* newFocus = nullptr;
         _touchpadFocus.update(elapsed, this, &newFocus);
         if (newFocus) {
@@ -756,7 +756,7 @@ void View::_updateFocusableRegions(std::vector<std::tuple<View*, Rectangle<doubl
             }
         }
         auto focus = window()->focus();
-        if (canBecomeFocus() && (!focus || (focus != this && !isDescendantOf(focus) && !isAncestorOf(focus)))) {
+        if (canBecomeDirectFocus() && (!focus || (focus != this && !isDescendantOf(focus) && !isAncestorOf(focus)))) {
             regions.emplace_back(this, windowBounds);
             if (clipsToBounds()) {
                 return;

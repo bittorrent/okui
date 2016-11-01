@@ -157,10 +157,9 @@ public:
     void bringToFront();
 
     /**
-    * Override this if the view can become focused. By default, the view can only become focus
-    * if a preferred focus is set.
+    * Override this if the view can become focused.
     */
-    virtual bool canBecomeFocus() { return _preferredFocus; }
+    virtual bool canBecomeDirectFocus() { return false; }
 
     /**
     * Makes the view the current focus. If the view has a preferred focus, the preferred focus will
@@ -169,9 +168,14 @@ public:
     void focus();
 
     /**
-     * Sets the focus to the next ancestor that can be focused which doesn't result in this view
-     * retaining focus (which would otherwise happen if your ancestor's preferred focus was you)
-     */
+    * Returns the view that would become focused if an attempt to give focus to this view is made.
+    */
+    View* expectedFocus();
+
+    /**
+    * Sets the focus to the next ancestor that can be focused which doesn't result in this view
+    * retaining focus (which would otherwise happen if your ancestor's preferred focus was you)
+    */
     void focusAncestor();
 
     /**

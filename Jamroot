@@ -98,7 +98,7 @@ includedir=\${exec_prefix}/include
 Name: okui
 Version: 0
 Description: Okay UI library
-Requires: scraps libpng libturbojpeg sdl2 utf8
+Requires: scraps libpng libturbojpeg sdl2 utf8 pugixml
 Libs: -L\${libdir} -lokui
 Libs.private: $(PRIVATE_LIBS)
 Cflags: -I\${includedir}
