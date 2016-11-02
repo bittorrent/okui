@@ -21,7 +21,7 @@ std::string DistanceFieldShader::FragmentShader() {
 
         void main() {
             vec4 sample = SAMPLE(textureSampler, textureCoord);
-            float aa = )" + (useStandardDerivatives ? "fwidth(sample.a) * 0.75;" : "0.03") + R"(
+            float aa = )" + (useStandardDerivatives ? "fwidth(sample.a) * 0.75" : "0.03") + R"(;
             float alpha = smoothstep(edge - aa, edge + aa, sample.a);
 
             if (supersample) {
