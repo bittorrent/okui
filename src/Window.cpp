@@ -174,8 +174,16 @@ bool Window::moveFocus(Direction direction) {
     double nextPerpendicular = 0.0;
     for (auto& region : focusableRegions) {
         auto r = std::get<Rectangle<double>>(region);
-        auto xOverlap = std::max<double>(previousFocusWindowBounds.width - std::max<double>(previousFocusWindowBounds.maxX() - r.maxX(), 0) - std::max<double>(r.minX() - previousFocusWindowBounds.minX(), 0), 0);
-        auto yOverlap = std::max<double>(previousFocusWindowBounds.height - std::max<double>(previousFocusWindowBounds.maxY() - r.maxY(), 0) - std::max<double>(r.minY() - previousFocusWindowBounds.minY(), 0), 0);
+        auto xOverlap = std::max<double>(
+            previousFocusWindowBounds.width
+                - std::max<double>(previousFocusWindowBounds.maxX() - r.maxX(), 0)
+                - std::max<double>(r.minX() - previousFocusWindowBounds.minX(), 0),
+            0);
+        auto yOverlap = std::max<double>(
+            previousFocusWindowBounds.height
+                - std::max<double>(previousFocusWindowBounds.maxY() - r.maxY(), 0)
+                - std::max<double>(r.minY() - previousFocusWindowBounds.minY(), 0),
+            0);
         double overlap = 0.0;
         double perpendicular = 0.0;
         switch (direction) {

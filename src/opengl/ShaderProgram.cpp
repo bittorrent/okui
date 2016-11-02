@@ -4,22 +4,22 @@ namespace okui {
 namespace opengl {
 
 ShaderProgram::ShaderProgram() {
-	_program = glCreateProgram();
+    _program = glCreateProgram();
 }
 
 ShaderProgram::~ShaderProgram() {
-	glDeleteProgram(_program);
+    glDeleteProgram(_program);
 }
 
 void ShaderProgram::attachShader(const Shader& shader) {
-	if (!_error.empty()) { return; }
-	if (!(_error = shader.error()).empty()) { return; }
+    if (!_error.empty()) { return; }
+    if (!(_error = shader.error()).empty()) { return; }
 
-	glAttachShader(_program, shader.id());
+    glAttachShader(_program, shader.id());
 }
 
 void ShaderProgram::bindAttribute(GLuint id, const char* name) {
-	glBindAttribLocation(_program, id, name);
+    glBindAttribLocation(_program, id, name);
 }
 
 GLint ShaderProgram::attribute(const char* name) {
@@ -27,20 +27,20 @@ GLint ShaderProgram::attribute(const char* name) {
 }
 
 void ShaderProgram::link() {
-	if (!_error.empty()) { return; }
+    if (!_error.empty()) { return; }
 
-	glLinkProgram(_program);
+    glLinkProgram(_program);
 
-	GLint linkStatus = GL_FALSE;
-	glGetProgramiv(_program, GL_LINK_STATUS, &linkStatus);
+    GLint linkStatus = GL_FALSE;
+    glGetProgramiv(_program, GL_LINK_STATUS, &linkStatus);
 
-	if (!linkStatus) {
-		char buf[200];
-		glGetProgramInfoLog(_program, sizeof(buf), nullptr, buf);
-		_error = buf;
-		glDeleteProgram(_program);
-		_program = 0;
-	}
+    if (!linkStatus) {
+        char buf[200];
+        glGetProgramInfoLog(_program, sizeof(buf), nullptr, buf);
+        _error = buf;
+        glDeleteProgram(_program);
+        _program = 0;
+    }
 }
 
 } } // namespace okui::opengl

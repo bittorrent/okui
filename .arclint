@@ -1,0 +1,71 @@
+{
+  "linters": {
+    "cppcheck": {
+      "type": "cppcheck",
+      "include": "(\\.(cpp|c|h)$)",
+      "exclude": [
+        "(.*Apple.*\\.(h|cpp)$)",
+        "(.*IOS.*\\.(h|cpp)$)",
+        "(.*OSX.*\\.(h|cpp)$)",
+        "(.*AppDelegate.*\\.(h|cpp)$)",
+        "(.*/applications/OSX\\.(h|cpp)$)",
+        "(.*/applications/SDL\\.(h|cpp)$)",
+        "(.*/applications/ios/.*$)"
+      ],
+      "flags": [
+        "--suppress=useInitializationList",
+        "--suppress=unmatchedSuppression"
+      ]
+    },
+    "cppcheck-mixed-objc": {
+      "type": "cppcheck",
+      "include": [
+        "(.*Apple.*\\.(h|cpp)$)",
+        "(.*IOS.*\\.(h|cpp)$)",
+        "(.*OSX.*\\.(h|cpp)$)",
+        "(.*AppDelegate.*\\.(h|cpp)$)",
+        "(.*/applications/OSX\\.(h|cpp)$)",
+        "(.*/applications/SDL\\.(h|cpp)$)",
+        "(.*/applications/ios/.*$)"
+      ],
+      "flags": [
+        "--suppress=syntaxError",
+        "--suppress=uninitvar"
+      ]
+    },
+    "pep8": {
+      "type": "pep8",
+      "include": "((\\.py|build-deps|configure|scripts/build)$)",
+      "flags": [
+        "--max-line-length=120"
+      ],
+      "severity": {
+        "E501": "warning"
+      }
+    },
+    "text": {
+      "type": "text",
+      "include": [
+        "(\\.(cpp|c|h|json|yaml)$)",
+        "((build-deps|configure|Jamroot|Jamfile|scripts/.*)$)"
+      ],
+      "exclude": [
+        "(^tests/src/views/TextView\\.cpp$)",
+        "(tools/sdf-generator/nanosvg\\.h)"
+      ],
+      "text.max-line-length": 200
+    },
+    "text-allow-utf8": {
+      "type": "text",
+      "include": "(^tests/src/views/TextView\\.cpp$)",
+      "severity": {
+        "5": "disabled"
+      },
+      "text.max-line-length": 200
+    },
+    "merge-conflict": {
+      "type": "merge-conflict",
+      "include": "(.*)"
+    }
+  }
+}

@@ -348,13 +348,21 @@ public:
     template <typename Action>
     auto listen(Action&& action, Relation relation = Relation::kHierarchy) -> typename std::enable_if<ListenerAction<Action>::ArgumentCount::value == 1, void>::type {
         using MessageType = typename ListenerAction<Action>::MessageType;
-        _listen(std::type_index(typeid(MessageType)), [action = std::forward<Action>(action)](const void* message, View* sender) { action(*reinterpret_cast<const MessageType*>(message)); }, relation);
+        _listen(std::type_index(typeid(MessageType)),
+            [action = std::forward<Action>(action)](const void* message, View* sender) {
+                action(*reinterpret_cast<const MessageType*>(message));
+            }, relation
+        );
     }
 
     template <typename Action>
     auto listen(Action&& action, Relation relation = Relation::kHierarchy) -> typename std::enable_if<ListenerAction<Action>::ArgumentCount::value == 2, void>::type {
         using MessageType = typename ListenerAction<Action>::MessageType;
-        _listen(std::type_index(typeid(MessageType)), [action = std::forward<Action>(action)](const void* message, View* sender) { action(*reinterpret_cast<const MessageType*>(message), sender); }, relation);
+        _listen(std::type_index(typeid(MessageType)),
+            [action = std::forward<Action>(action)](const void* message, View* sender) {
+                action(*reinterpret_cast<const MessageType*>(message), sender);
+            }, relation
+        );
     }
 
     /**

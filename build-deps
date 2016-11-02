@@ -43,7 +43,10 @@ def pkg_is_present(pkg):
     return subprocess.call(['pkg-config', pkg, '--exists'], env=env) == 0
 
 parser = argparse.ArgumentParser(description='Builds non-user-supplied dependencies.')
-parser.add_argument('--bootstrap-b2', default=distutils.spawn.find_executable('b2') is None, action='store_true', help='bootstrap b2')
+parser.add_argument('--bootstrap-b2',
+                    default=distutils.spawn.find_executable('b2') is None,
+                    action='store_true',
+                    help='bootstrap b2')
 parser.add_argument('--needy-target-args', default='', help='arguments to select the needy target with')
 parser.add_argument('--needy-satisfy-args', default='', help='the arguments to use with needy satisfy')
 parser.add_argument('--configure', action='store_true', help='if true, configure will also be invoked')

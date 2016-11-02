@@ -1,4 +1,3 @@
-
 #include <gtest/gtest.h>
 
 #include <okui/View.h>
@@ -91,4 +90,3 @@ TEST(ml_Context, defineAndGet) {
     auto foo = context.get("foo");
     EXPECT_TRUE(stdts::any_cast<Foo>(foo));
 }
-
