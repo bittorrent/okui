@@ -2,6 +2,8 @@
 
 #include <scraps/utility.h>
 
+#include <cassert>
+
 namespace okui {
 namespace ml {
 
@@ -65,7 +67,7 @@ stdts::optional<double> EvaluateNumber(const char* str, const char** end, const 
 }
 
 stdts::optional<double> EvaluateNumberExpression(const char* str, const char** end, const std::unordered_map<std::string, double>& units, int minBinding = 0) {
-    SCRAPS_ASSERT(str);
+    assert(str);
     stdts::optional<double> result;
 
     while (true) {

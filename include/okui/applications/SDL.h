@@ -12,8 +12,6 @@
 
 #include "scraps/Timer.h"
 
-#include <unordered_map>
-
 #include <SDL.h>
 
 #if SCRAPS_MACOS
@@ -21,6 +19,9 @@
 #pragma clang diagnostic ignored "-Wextern-c-compat"
 #include <SDL_syswm.h>
 #pragma clang diagnostic pop
+
+#include <cassert>
+#include <unordered_map>
 
 @interface OKUISDLApplication : NSApplication
 @property okui::Application* application;
@@ -486,7 +487,7 @@ inline NSWindow* SDL::nativeWindow(Window* window) const {
         if (SDL_GetWindowWMInfo(w, &info) != SDL_TRUE) {
             return nil;
         }
-        SCRAPS_ASSERT(info.subsystem == SDL_SYSWM_COCOA);
+        assert(info.subsystem == SDL_SYSWM_COCOA);
         if (info.subsystem != SDL_SYSWM_COCOA) {
             return nil;
         }

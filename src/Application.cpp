@@ -16,7 +16,7 @@ Application* DefaultApplication() {
 }
 
 Application::Application() {
-    scraps::net::InitCURLThreadSafety();
+    scraps::net::InitializeCURL();
 
     gDefaultApplication = this;
 }

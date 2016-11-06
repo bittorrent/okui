@@ -1,5 +1,7 @@
 #include "okui/opengl/Framebuffer.h"
 
+#include <cassert>
+
 namespace okui {
 namespace opengl {
 
@@ -70,7 +72,7 @@ Framebuffer::Attachment::Attachment(int width, int height, bool isDepthStencil) 
 #if !OPENGL_ES
         glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH24_STENCIL8, width, height, 0, GL_DEPTH_STENCIL, GL_UNSIGNED_INT_24_8, nullptr);
 #else
-        SCRAPS_ASSERT(false);
+        assert(false);
 #endif
     } else {
         glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, nullptr);

@@ -2,6 +2,8 @@
 
 #include <scraps/net/HTTPRequest.h>
 
+#include <cassert>
+
 namespace okui {
 namespace views {
 
@@ -29,7 +31,7 @@ void MarkupView::layout() {
 }
 
 void MarkupView::_sendStreamRequest() {
-    SCRAPS_ASSERT(_streamURI);
+    assert(_streamURI);
     _lastStreamRequestTime = std::chrono::steady_clock::now();
     _pendingStreamResponse = std::async(std::launch::async, [=, uri = _streamURI, lastStreamResponse = _lastStreamResponse] {
         std::vector<std::string> headers;

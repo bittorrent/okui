@@ -8,6 +8,7 @@
 #include <gtest/gtest.h>
 #include <android/log.h>
 
+#include <cassert>
 #include <thread>
 
 namespace {
@@ -48,7 +49,7 @@ extern "C" int SDL_main(int argc, char* argv[]) {
     logFD(stdout, 1, ANDROID_LOG_INFO);
     logFD(stderr, 2, ANDROID_LOG_ERROR);
 
-    SCRAPS_ASSERT(g_jvm);
+    assert(g_jvm);
     JavaVM* jvm = g_jvm;
 
     JNIEnv* env = nullptr;

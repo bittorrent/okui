@@ -21,6 +21,7 @@
 #include <jni.h>
 #endif
 
+#include <cassert>
 #include <list>
 #include <unordered_map>
 #include <map>
@@ -159,7 +160,7 @@ public:
                              bool allowDirectories,
                              bool allowMultiple,
                              std::function<void(std::vector<std::string>)> action) {
-        SCRAPS_ASSERT(false);
+        assert(false);
     }
 
     /**

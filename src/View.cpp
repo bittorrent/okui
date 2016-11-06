@@ -9,6 +9,8 @@
 
 #include "scraps/Reverse.h"
 
+#include <cassert>
+
 namespace okui {
 
 View::~View() {
@@ -32,7 +34,7 @@ View::~View() {
 }
 
 void View::addSubview(View* view) {
-    SCRAPS_ASSERT(view != this);
+    assert(view != this);
 
     if (view->_name.empty()) {
         view->setName(view->name()); // name() returns typeid if _name is empty
@@ -50,7 +52,7 @@ void View::addSubview(View* view) {
 
     addChildToFront(view);
 
-    SCRAPS_ASSERT(view->window() == nullptr);
+    assert(view->window() == nullptr);
     if (_window && _window->isOpen()) {
         view->_dispatchWindowChange(_window);
     }
@@ -68,7 +70,7 @@ void View::addHiddenSubview(View* view) {
 }
 
 void View::removeSubview(View* view) {
-    SCRAPS_ASSERT(view != this);
+    assert(view != this);
 
     if (view->isFocus()) {
         view->focusAncestor();
@@ -298,7 +300,7 @@ void View::setBoundsRelative(double x, double y, double width, double height) {
 }
 
 Point<double> View::localToAncestor(double x, double y, const View* ancestor) const {
-    SCRAPS_ASSERT(!ancestor || ancestor->isAncestorOf(this));
+    assert(!ancestor || ancestor->isAncestorOf(this));
     const auto xSuper = bounds().x + x;
     const auto ySuper = bounds().y + y;
     return ancestor && ancestor != superview() ? superview()->localToAncestor(xSuper, ySuper, ancestor) : Point<double>(xSuper, ySuper);
@@ -480,7 +482,7 @@ void View::renderAndRenderSubviews(const RenderTarget* target, const Rectangle<i
         _renderCache = std::make_unique<opengl::Framebuffer>();
         _renderCacheColorAttachment = _renderCache->addColorAttachment(area.width, area.height);
         // TODO: stencil attachment
-        SCRAPS_ASSERT(_renderCache->isComplete());
+        assert(_renderCache->isComplete());
         _hasCachedRender = false;
     }
     _renderCacheTexture->set(_renderCacheColorAttachment->texture(), area.width, area.height, true);
@@ -712,7 +714,7 @@ void View::_dispatchWindowChange(Window* window) {
         _window->unsubscribeFromUpdates(this);
     }
 
-    SCRAPS_ASSERT(_window != window);
+    assert(_window != window);
     _window = window;
 
     if (application()) {
@@ -858,7 +860,7 @@ std::vector<View*> View::_topViewsForRelation(Relation relation) {
 }
 
 scraps::AbstractTaskScheduler* View::_taskScheduler() const {
-    SCRAPS_ASSERT(application());
+    assert(application());
     return application()->taskScheduler();
 }
 

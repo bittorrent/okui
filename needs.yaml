@@ -1,7 +1,7 @@
 libraries:
     scraps:
         repository: git@github.com:bittorrent/scraps.git
-        commit: f5782bc02301485a26328e03ecd0401309b71091
+        commit: d5d9dacbc43137f4cc600b34a099a058f8140cd0
         build-directory-suffix: {{variant|default('release')}}
         project:
             type: boostbuild
@@ -16,9 +16,7 @@ libraries:
                 - ./b2 install --prefix={build_directory}
     jshackle:
         repository: git@github.com:bittorrent/jshackle.git
-        commit: d9f1450a35f166048bb90505f33be82bab28bacb
-        project:
-            header-directory: include
+        commit: adbc9a5be65e8efcef619081332efcd5aa0060d1
     gas-preprocessor:
         repository: https://github.com/libjpeg-turbo/gas-preprocessor.git
         commit: 4338df436a20ad4d28c7cd37852323e902f1144c
@@ -58,9 +56,9 @@ libraries:
         project:
             configure-args:
                 - --disable-shared
-        {% if architecture == 'armv7' or architecture == 'arm64' %}
+                {% if architecture == 'armv7' or architecture == 'arm64' %}
                 - --enable-arm-neon=yes
-        {% endif %}
+                {% endif %}
             post-build:
                 - xxd -i LICENSE {build_directory}/include/libpng16/pnglicense.c
     sdl2:

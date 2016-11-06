@@ -1,6 +1,8 @@
 #include <okui/ml/Context.h>
 #include <okui/ml/Environment.h>
 
+#include <cassert>
+
 namespace okui {
 namespace ml {
 
@@ -30,7 +32,7 @@ std::string Context::render(stdts::string_view str) const {
     uint32_t i = 0;
     for (const auto& item : _fmtArgs) {
         // intentional pointer comparison - the FormatArgStorage objects can't be allowed to move around in memory after arg has been created
-        SCRAPS_ASSERT(item.second->name.data() == item.second->arg.name.data());
+        assert(item.second->name.data() == item.second->arg.name.data());
         av.emplace_back(item.second->arg);
         if (i < fmt::ArgList::MAX_PACKED_ARGS) {
             types |= static_cast<uint64_t>(fmt::internal::Arg::NAMED_ARG) << (i * 4);

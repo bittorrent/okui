@@ -1,6 +1,8 @@
 #include "okui/Window.h"
 #include "okui/Application.h"
 
+#include <cassert>
+
 namespace okui {
 
 Window::Window(Application* application)
@@ -251,7 +253,7 @@ Point<double> Window::windowToView(View* view, double x, double y) {
 }
 
 void Window::beginDragging(View* view) {
-    SCRAPS_ASSERT(view != nullptr);
+    assert(view != nullptr);
     _draggedViews.insert(view);
 }
 
@@ -260,13 +262,13 @@ void Window::endDragging(View* view) {
 }
 
 void Window::subscribeToUpdates(View* view) {
-    SCRAPS_ASSERT(view != nullptr);
+    assert(view != nullptr);
     _viewsToSubscribeToUpdates.insert(view);
     _viewsToUnsubscribeFromUpdates.erase(view);
 }
 
 void Window::unsubscribeFromUpdates(View* view) {
-    SCRAPS_ASSERT(view != nullptr);
+    assert(view != nullptr);
     _viewsToSubscribeToUpdates.erase(view);
     _viewsToUnsubscribeFromUpdates.insert(view);
 }
@@ -293,7 +295,7 @@ void Window::dispatchMouseMovement(double x, double y) {
     y *= scale;
     _contentView->dispatchMouseMovement(x, y);
     for (auto& observer : _draggedViews) {
-        SCRAPS_ASSERT(observer != nullptr);
+        assert(observer != nullptr);
         auto startPoint = windowToView(observer, _lastMouseDown.x, _lastMouseDown.y);
         auto point = windowToView(observer, x, y);
         observer->mouseDrag(startPoint.x, startPoint.y, point.x, point.y);
