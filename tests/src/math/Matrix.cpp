@@ -1,6 +1,6 @@
-#include "gtest/gtest.h"
+#include <okui/math/Matrix.h>
 
-#include "okui/math/Matrix.h"
+#include <gtest/gtest.h>
 
 using namespace okui;
 using namespace okui::math;

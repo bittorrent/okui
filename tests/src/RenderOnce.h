@@ -1,7 +1,12 @@
 #pragma once
 
+#include <okui/config.h>
+
 #include "TestApplication.h"
-#include "okui/Window.h"
+
+#include <okui/Window.h>
+
+#include <gtest/gtest.h>
 
 #if ONAIR_OKUI_HAS_NATIVE_APPLICATION
 

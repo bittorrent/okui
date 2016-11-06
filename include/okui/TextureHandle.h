@@ -1,8 +1,8 @@
 #pragma once
 
-#include "okui/config.h"
+#include <okui/config.h>
 
-#include "okui/TextureInterface.h"
+#include <okui/TextureInterface.h>
 
 #include <vector>
 

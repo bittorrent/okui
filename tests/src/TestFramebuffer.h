@@ -1,7 +1,12 @@
 #pragma once
-#include "okui/opengl/Framebuffer.h"
-#include "okui/Color.h"
-#include "okui/AffineTransformation.h"
+
+#include <okui/config.h>
+
+#include <okui/opengl/Framebuffer.h>
+#include <okui/Color.h>
+#include <okui/AffineTransformation.h>
+
+#include <gtest/gtest.h>
 
 #include <vector>
 

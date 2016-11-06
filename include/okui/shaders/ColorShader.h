@@ -1,9 +1,9 @@
 #pragma once
 
-#include "okui/config.h"
+#include <okui/config.h>
 
-#include "okui/Color.h"
-#include "okui/Shader.h"
+#include <okui/Color.h>
+#include <okui/Shader.h>
 
 namespace okui {
 namespace shaders {

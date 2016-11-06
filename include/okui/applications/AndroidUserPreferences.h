@@ -1,12 +1,12 @@
 #pragma once
 
-#include "okui/config.h"
+#include <okui/config.h>
 
 #if SCRAPS_ANDROID
 
-#include "okui/UserPreferencesInterface.h"
+#include <okui/UserPreferencesInterface.h>
 
-#include "jshackle/android/app/Activity.h"
+#include <jshackle/android/app/Activity.h>
 
 namespace okui {
 

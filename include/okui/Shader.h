@@ -1,14 +1,13 @@
 #pragma once
 
-#include "okui/config.h"
+#include <okui/config.h>
 
-#include "okui/blending.h"
-#include "okui/Point.h"
+#include <okui/blending.h>
+#include <okui/Point.h>
+#include <okui/opengl/ShaderProgram.h>
+#include <okui/AffineTransformation.h>
 
-#include "okui/opengl/ShaderProgram.h"
-#include "okui/AffineTransformation.h"
-
-#include "scraps/opengl/VertexArrayBuffer.h"
+#include <scraps/opengl/VertexArrayBuffer.h>
 
 namespace okui {
 

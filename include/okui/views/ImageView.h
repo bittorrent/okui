@@ -1,11 +1,11 @@
 #pragma once
 
-#include "okui/config.h"
+#include <okui/config.h>
 
-#include "okui/Color.h"
-#include "okui/View.h"
+#include <okui/Color.h>
+#include <okui/View.h>
 
-#include "stdts/optional.h"
+#include <stdts/optional.h>
 
 namespace okui {
 namespace views {

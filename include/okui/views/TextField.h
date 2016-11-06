@@ -1,14 +1,14 @@
 #pragma once
 
-#include "okui/config.h"
+#include <okui/config.h>
 
-#include "okui/views/TextView.h"
-#include "okui/views/ScrollView.h"
-#include "okui/View.h"
-#include "okui/Application.h"
-#include "okui/Color.h"
+#include <okui/views/TextView.h>
+#include <okui/views/ScrollView.h>
+#include <okui/View.h>
+#include <okui/Application.h>
+#include <okui/Color.h>
 
-#include "scraps/Timer.h"
+#include <scraps/Timer.h>
 
 namespace okui {
 namespace views {

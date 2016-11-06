@@ -1,9 +1,9 @@
-#include "gtest/gtest.h"
-
 #include "../RenderOnce.h"
 #include "../TestFramebuffer.h"
 
-#include "okui/shapes/Line.h"
+#include <okui/shapes/Line.h>
+
+#include <gtest/gtest.h>
 
 #if ONAIR_OKUI_HAS_NATIVE_APPLICATION && !OPENGL_ES // TODO: fix for OpenGL ES
 

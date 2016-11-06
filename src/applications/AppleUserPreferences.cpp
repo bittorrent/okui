@@ -1,4 +1,4 @@
-#include "okui/applications/AppleUserPreferences.h"
+#include <okui/applications/AppleUserPreferences.h>
 
 #if SCRAPS_APPLE
 

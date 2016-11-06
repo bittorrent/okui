@@ -1,8 +1,8 @@
 #pragma once
 
-#include "okui/config.h"
+#include <okui/config.h>
 
-#include "okui/math/Vector.h"
+#include <okui/math/Vector.h>
 
 namespace okui {
 

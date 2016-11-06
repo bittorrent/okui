@@ -1,11 +1,12 @@
 #pragma once
 
-#include "okui/config.h"
+#include <okui/config.h>
 
-#include "okui/ResourceManager.h"
+#include <okui/ResourceManager.h>
 
-#include "scraps/Cache.h"
-#include "stdts/string_view.h"
+#include <scraps/Cache.h>
+
+#include <stdts/string_view.h>
 
 namespace okui {
 

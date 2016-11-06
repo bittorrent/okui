@@ -1,6 +1,6 @@
-#include "okui/views/TextView.h"
-
 #include "../TestApplication.h"
+
+#include <okui/views/TextView.h>
 
 #include <gtest/gtest.h>
 

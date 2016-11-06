@@ -1,6 +1,6 @@
-#include <gtest/gtest.h>
-
 #include <okui/ml/parsing.h>
+
+#include <gtest/gtest.h>
 
 using namespace okui::literals;
 

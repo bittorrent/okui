@@ -1,13 +1,13 @@
-#include "okui/View.h"
+#include <okui/View.h>
 
-#include "okui/Application.h"
-#include "okui/BitmapFont.h"
-#include "okui/blending.h"
-#include "okui/opengl/opengl.h"
-#include "okui/shapes/Rectangle.h"
-#include "okui/Window.h"
+#include <okui/Application.h>
+#include <okui/BitmapFont.h>
+#include <okui/blending.h>
+#include <okui/opengl/opengl.h>
+#include <okui/shapes/Rectangle.h>
+#include <okui/Window.h>
 
-#include "scraps/Reverse.h"
+#include <scraps/Reverse.h>
 
 #include <cassert>
 

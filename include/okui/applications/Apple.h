@@ -1,12 +1,12 @@
 #pragma once
 
-#include "okui/config.h"
+#include <okui/config.h>
 
 #if SCRAPS_APPLE
 
-#include "okui/applications/AppleUserPreferences.h"
-#include "okui/FileResourceManager.h"
-#include "okui/KeyCode.h"
+#include <okui/applications/AppleUserPreferences.h>
+#include <okui/FileResourceManager.h>
+#include <okui/KeyCode.h>
 
 #import <Foundation/Foundation.h>
 

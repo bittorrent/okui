@@ -1,8 +1,8 @@
 #pragma once
 
-#include "okui/config.h"
+#include <okui/config.h>
 
-#include "okui/shaders/TextureShader.h"
+#include <okui/shaders/TextureShader.h>
 
 namespace okui {
 namespace shaders {

@@ -1,9 +1,9 @@
 #pragma once
 
-#include "okui/config.h"
+#include <okui/config.h>
 
-#include "okui/Command.h"
-#include "okui/KeyCode.h"
+#include <okui/Command.h>
+#include <okui/KeyCode.h>
 
 #include <string>
 #include <vector>

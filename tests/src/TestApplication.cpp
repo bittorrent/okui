@@ -1,6 +1,6 @@
-#include <gtest/gtest.h>
-
 #include "TestApplication.h"
+
+#include <gtest/gtest.h>
 
 #if ONAIR_OKUI_HAS_NATIVE_APPLICATION
 

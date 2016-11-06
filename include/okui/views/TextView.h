@@ -1,12 +1,12 @@
 #pragma once
 
-#include "okui/config.h"
+#include <okui/config.h>
 
-#include "okui/Color.h"
-#include "okui/BitmapFont.h"
-#include "okui/View.h"
+#include <okui/Color.h>
+#include <okui/BitmapFont.h>
+#include <okui/View.h>
 
-#include "stdts/string_view.h"
+#include <stdts/string_view.h>
 
 namespace okui {
 namespace views {

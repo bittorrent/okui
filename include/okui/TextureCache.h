@@ -1,10 +1,10 @@
 #pragma once
 
-#include "okui/config.h"
+#include <okui/config.h>
 
-#include "okui/TextureHandle.h"
+#include <okui/TextureHandle.h>
 
-#include "scraps/Cache.h"
+#include <scraps/Cache.h>
 
 namespace scraps {
 

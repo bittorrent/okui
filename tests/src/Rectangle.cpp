@@ -1,7 +1,7 @@
-#include "gtest/gtest.h"
+#include <okui/Rectangle.h>
+#include <okui/interpolation.h>
 
-#include "okui/Rectangle.h"
-#include "okui/interpolation.h"
+#include <gtest/gtest.h>
 
 using namespace okui;
 

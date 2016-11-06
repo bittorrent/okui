@@ -1,17 +1,17 @@
 #pragma once
 
-#include "okui/config.h"
+#include <okui/config.h>
 
-#include "okui/CursorTypes.h"
-#include "okui/DialogButton.h"
-#include "okui/Menu.h"
-#include "okui/Relation.h"
-#include "okui/ResourceManager.h"
-#include "okui/Responder.h"
-#include "okui/UserPreferencesInterface.h"
+#include <okui/CursorTypes.h>
+#include <okui/DialogButton.h>
+#include <okui/Menu.h>
+#include <okui/Relation.h>
+#include <okui/ResourceManager.h>
+#include <okui/Responder.h>
+#include <okui/UserPreferencesInterface.h>
 
-#include "scraps/TaskQueue.h"
-#include "stdts/string_view.h"
+#include <scraps/TaskQueue.h>
+#include <stdts/string_view.h>
 
 #if SCRAPS_MACOS
 #import <AppKit/NSWindow.h>

@@ -1,11 +1,11 @@
-#include "okui/Application.h"
+#include <okui/Application.h>
 
-#include "okui/Window.h"
+#include <okui/Window.h>
 
-#include "scraps/thread.h"
+#include <scraps/thread.h>
 #include <scraps/URL.h>
-#include "scraps/net/curl.h"
-#include "scraps/net/HTTPRequest.h"
+#include <scraps/net/curl.h>
+#include <scraps/net/HTTPRequest.h>
 
 namespace okui {
 

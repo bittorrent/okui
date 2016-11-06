@@ -1,7 +1,7 @@
-#include "okui/shaders/TextureShader.h"
+#include <okui/shaders/TextureShader.h>
 
-#include "okui/TextureInterface.h"
-#include "okui/shapes/Rectangle.h"
+#include <okui/TextureInterface.h>
+#include <okui/shapes/Rectangle.h>
 
 namespace okui {
 namespace shaders {

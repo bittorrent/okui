@@ -1,11 +1,11 @@
 #pragma once
 
-#include "okui/config.h"
+#include <okui/config.h>
 
 #if SCRAPS_IOS || SCRAPS_TVOS
 
-#include "okui/applications/Apple.h"
-#include "okui/Window.h"
+#include <okui/applications/Apple.h>
+#include <okui/Window.h>
 
 #import <UIKit/UIAlertView.h>
 #import <UIKit/UIApplication.h>

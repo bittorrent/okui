@@ -1,5 +1,7 @@
 #pragma once
 
+#include <okui/config.h>
+
 #include <chrono>
 
 struct TestClock {

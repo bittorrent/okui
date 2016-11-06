@@ -1,10 +1,10 @@
-#include "gtest/gtest.h"
-
 #include "RenderOnce.h"
 #include "TestFramebuffer.h"
 
-#include "okui/blending.h"
-#include "okui/shapes/Rectangle.h"
+#include <okui/blending.h>
+#include <okui/shapes/Rectangle.h>
+
+#include <gtest/gtest.h>
 
 #if ONAIR_OKUI_HAS_NATIVE_APPLICATION && !OPENGL_ES // TODO: fix for OpenGL ES
 

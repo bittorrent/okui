@@ -1,9 +1,9 @@
 #pragma once
 
-#include "okui/config.h"
+#include <okui/config.h>
 
-#include "okui/views/Button.h"
-#include "okui/views/ImageView.h"
+#include <okui/views/Button.h>
+#include <okui/views/ImageView.h>
 
 #include <unordered_map>
 

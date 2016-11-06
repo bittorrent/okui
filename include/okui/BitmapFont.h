@@ -1,8 +1,8 @@
 #pragma once
 
-#include "okui/config.h"
+#include <okui/config.h>
 
-#include "okui/TextureHandle.h"
+#include <okui/TextureHandle.h>
 
 #include <string>
 #include <unordered_map>

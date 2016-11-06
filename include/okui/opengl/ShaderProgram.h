@@ -1,8 +1,8 @@
 #pragma once
 
-#include "okui/config.h"
+#include <okui/config.h>
 
-#include "okui/opengl/Shader.h"
+#include <okui/opengl/Shader.h>
 
 namespace okui {
 namespace opengl {

@@ -1,10 +1,12 @@
 #pragma once
 
-#include "okui/View.h"
-#include "okui/views/Button.h"
-#include "okui/views/ImageView.h"
-#include "okui/views/PopoutFocus.h"
-#include "okui/views/TextView.h"
+#include <okui/config.h>
+
+#include <okui/View.h>
+#include <okui/views/Button.h>
+#include <okui/views/ImageView.h>
+#include <okui/views/PopoutFocus.h>
+#include <okui/views/TextView.h>
 
 namespace okui {
 namespace views {

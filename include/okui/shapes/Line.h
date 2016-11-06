@@ -1,7 +1,8 @@
 #pragma once
 
-#include "okui/config.h"
-#include "okui/Point.h"
+#include <okui/config.h>
+
+#include <okui/Point.h>
 
 namespace okui {
 

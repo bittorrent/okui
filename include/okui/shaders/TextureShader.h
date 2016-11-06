@@ -1,10 +1,10 @@
 #pragma once
 
-#include "okui/config.h"
+#include <okui/config.h>
 
-#include "okui/Color.h"
-#include "okui/Rectangle.h"
-#include "okui/Shader.h"
+#include <okui/Color.h>
+#include <okui/Rectangle.h>
+#include <okui/Shader.h>
 
 namespace okui {
 

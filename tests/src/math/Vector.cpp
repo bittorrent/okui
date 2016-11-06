@@ -1,6 +1,6 @@
-#include "gtest/gtest.h"
+#include <okui/math/Vector.h>
 
-#include "okui/math/Vector.h"
+#include <gtest/gtest.h>
 
 using namespace okui;
 using namespace okui::math;

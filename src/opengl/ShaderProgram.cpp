@@ -1,4 +1,4 @@
-#include "okui/opengl/ShaderProgram.h"
+#include <okui/opengl/ShaderProgram.h>
 
 namespace okui {
 namespace opengl {

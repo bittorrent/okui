@@ -1,10 +1,10 @@
 #pragma once
 
-#include "okui/config.h"
+#include <okui/config.h>
 
-#include "okui/opengl/opengl.h"
+#include <okui/opengl/opengl.h>
 
-#include "scraps/Cache.h"
+#include <scraps/Cache.h>
 
 namespace okui {
 namespace opengl {

@@ -1,8 +1,7 @@
-#include "okui/shapes/Rectangle.h"
+#include <okui/shapes/Rectangle.h>
 
-#include "okui/Shader.h"
-
-#include "okui/shapes/Arc.h"
+#include <okui/Shader.h>
+#include <okui/shapes/Arc.h>
 
 #include <cmath>
 

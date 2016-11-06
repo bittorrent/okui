@@ -1,12 +1,12 @@
 #pragma once
 
-#include "okui/config.h"
+#include <okui/config.h>
 
-#include "okui/Command.h"
-#include "okui/Controller.h"
-#include "okui/KeyCode.h"
-#include "okui/MouseButton.h"
-#include "okui/Point.h"
+#include <okui/Command.h>
+#include <okui/Controller.h>
+#include <okui/KeyCode.h>
+#include <okui/MouseButton.h>
+#include <okui/Point.h>
 
 namespace okui {
 

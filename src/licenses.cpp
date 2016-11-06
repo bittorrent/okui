@@ -1,6 +1,6 @@
-#include "okui/licenses.h"
+#include <okui/licenses.h>
 
-#include "scraps/licenses.h"
+#include <scraps/licenses.h>
 
 namespace okui {
 

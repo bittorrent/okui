@@ -1,7 +1,7 @@
-#include "okui/views/LabeledPopoutButton.h"
+#include <okui/views/LabeledPopoutButton.h>
 
-#include "okui/Application.h"
-#include "okui/shapes/Rectangle.h"
+#include <okui/Application.h>
+#include <okui/shapes/Rectangle.h>
 
 using namespace std::literals;
 

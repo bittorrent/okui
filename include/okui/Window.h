@@ -1,19 +1,19 @@
 #pragma once
 
-#include "okui/config.h"
+#include <okui/config.h>
 
-#include "okui/DialogButton.h"
-#include "okui/Direction.h"
-#include "okui/Menu.h"
-#include "okui/Point.h"
-#include "okui/Responder.h"
-#include "okui/ShaderCache.h"
-#include "okui/BitmapFont.h"
-#include "okui/FileTexture.h"
-#include "okui/View.h"
-#include "okui/TextureCache.h"
+#include <okui/DialogButton.h>
+#include <okui/Direction.h>
+#include <okui/Menu.h>
+#include <okui/Point.h>
+#include <okui/Responder.h>
+#include <okui/ShaderCache.h>
+#include <okui/BitmapFont.h>
+#include <okui/FileTexture.h>
+#include <okui/View.h>
+#include <okui/TextureCache.h>
 
-#include "scraps/TaskThread.h"
+#include <scraps/TaskThread.h>
 
 #include <future>
 #include <unordered_map>

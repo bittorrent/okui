@@ -1,8 +1,9 @@
 #pragma once
 
-#include "okui/config.h"
+#include <okui/config.h>
 
 #include <stdts/string_view.h>
+
 #include <string>
 
 namespace okui {

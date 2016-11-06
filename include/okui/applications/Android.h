@@ -1,17 +1,17 @@
 #pragma once
 
-#include "okui/config.h"
+#include <okui/config.h>
 
 #if SCRAPS_ANDROID
 
-#include "okui/applications/AndroidUserPreferences.h"
+#include <okui/applications/AndroidUserPreferences.h>
 
-#include "jshackle/JavaClass.h"
-#include "jshackle/NativeClass.h"
-#include "jshackle/JNIContext.h"
-#include "jshackle/android/app/Activity.h"
+#include <jshackle/JavaClass.h>
+#include <jshackle/NativeClass.h>
+#include <jshackle/JNIContext.h>
+#include <jshackle/android/app/Activity.h>
 
-#include "stdts/string_view.h"
+#include <stdts/string_view.h>
 
 #include <android/asset_manager_jni.h>
 

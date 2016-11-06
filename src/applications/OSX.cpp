@@ -1,4 +1,4 @@
-#include "okui/applications/OSX.h"
+#include <okui/applications/OSX.h>
 
 #if SCRAPS_MACOS
 

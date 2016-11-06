@@ -1,18 +1,18 @@
 #pragma once
 
-#include "okui/config.h"
-#include "okui/Application.h"
+#include <okui/config.h>
+#include <okui/Application.h>
 
 #if SCRAPS_MACOS
-#include "okui/applications/OSX.h"
+#include <okui/applications/OSX.h>
 #elif SCRAPS_IOS
-#include "okui/applications/IOS.h"
+#include <okui/applications/IOS.h>
 #elif SCRAPS_TVOS
-#include "okui/applications/TvOS.h"
+#include <okui/applications/TvOS.h>
 #elif SCRAPS_ANDROID
-#include "okui/applications/Android.h"
+#include <okui/applications/Android.h>
 #else
-#include "okui/Application.h"
+#include <okui/Application.h>
 #endif
 
 namespace okui {

@@ -1,8 +1,9 @@
-#include "okui/views/TextView.h"
-#include "okui/shapes/Rectangle.h"
-#include "okui/Window.h"
+#include <okui/views/TextView.h>
 
-#include "utf8/utf8.h"
+#include <okui/shapes/Rectangle.h>
+#include <okui/Window.h>
+
+#include <utf8/utf8.h>
 
 #include <cmath>
 

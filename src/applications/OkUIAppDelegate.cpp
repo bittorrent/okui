@@ -1,6 +1,6 @@
-#include "okui/applications/ios/OkUIAppDelegate.h"
+#include <okui/applications/ios/OkUIAppDelegate.h>
 
-#include "okui/Application.h"
+#include <okui/Application.h>
 
 #if SCRAPS_IOS
 

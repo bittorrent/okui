@@ -1,6 +1,6 @@
-#include "gtest/gtest.h"
+#include <okui/Color.h>
 
-#include "okui/Color.h"
+#include <gtest/gtest.h>
 
 using namespace okui;
 

@@ -1,9 +1,9 @@
 #pragma once
 
-#include "okui/config.h"
+#include <okui/config.h>
 
-#include "okui/opengl/opengl.h"
-#include "okui/opengl/TextureCache.h"
+#include <okui/opengl/opengl.h>
+#include <okui/opengl/TextureCache.h>
 
 namespace okui {
 

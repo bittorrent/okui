@@ -1,8 +1,9 @@
 #pragma once
 
-#include "okui/config.h"
-#include "okui/Rectangle.h"
-#include "okui/AffineTransformation.h"
+#include <okui/config.h>
+
+#include <okui/Rectangle.h>
+#include <okui/AffineTransformation.h>
 
 namespace okui {
 

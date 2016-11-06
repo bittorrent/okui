@@ -1,8 +1,8 @@
 #pragma once
 
-#include "okui/config.h"
+#include <okui/config.h>
 
-#include "okui/shapes/Arc.h"
+#include <okui/shapes/Arc.h>
 
 namespace okui {
 

@@ -1,8 +1,8 @@
 #pragma once
 
-#include "okui/config.h"
+#include <okui/config.h>
 
-#include "okui/opengl/Stencil.h"
+#include <okui/opengl/Stencil.h>
 
 namespace okui {
 

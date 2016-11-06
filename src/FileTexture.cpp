@@ -1,7 +1,9 @@
-#include "okui/FileTexture.h"
+#include <okui/FileTexture.h>
 
 #include <gsl.h>
+
 #include <png.h>
+
 #include <turbojpeg.h>
 
 namespace okui {

@@ -1,28 +1,28 @@
 #pragma once
 
-#include "okui/config.h"
+#include <okui/config.h>
 
-#include "okui/opengl/Framebuffer.h"
-#include "okui/shaders/ColorShader.h"
-#include "okui/shaders/DistanceFieldShader.h"
-#include "okui/shaders/TextureShader.h"
-#include "okui/Application.h"
-#include "okui/Color.h"
-#include "okui/Point.h"
-#include "okui/Rectangle.h"
-#include "okui/RenderTarget.h"
-#include "okui/Relation.h"
-#include "okui/Responder.h"
-#include "okui/ShaderCache.h"
-#include "okui/TextureHandle.h"
-#include "okui/TouchpadFocus.h"
-#include "okui/WeakTexture.h"
+#include <okui/opengl/Framebuffer.h>
+#include <okui/shaders/ColorShader.h>
+#include <okui/shaders/DistanceFieldShader.h>
+#include <okui/shaders/TextureShader.h>
+#include <okui/Application.h>
+#include <okui/Color.h>
+#include <okui/Point.h>
+#include <okui/Rectangle.h>
+#include <okui/RenderTarget.h>
+#include <okui/Relation.h>
+#include <okui/Responder.h>
+#include <okui/ShaderCache.h>
+#include <okui/TextureHandle.h>
+#include <okui/TouchpadFocus.h>
+#include <okui/WeakTexture.h>
 
-#include "scraps/AbstractTaskScheduler.h"
-#include "scraps/TreeNode.h"
-#include "scraps/utility.h"
+#include <scraps/AbstractTaskScheduler.h>
+#include <scraps/TreeNode.h>
+#include <scraps/utility.h>
 
-#include "stdts/optional.h"
+#include <stdts/optional.h>
 
 #include <gsl.h>
 

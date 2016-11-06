@@ -1,11 +1,13 @@
 #pragma once
 
-#include "okui/FileResourceManager.h"
-#include "okui/applications/Native.h"
+#include <okui/config.h>
+
+#include <okui/FileResourceManager.h>
+#include <okui/applications/Native.h>
 
 #if ONAIR_OKUI_HAS_NATIVE_APPLICATION
 
-#include "okui/applications/SDL.h"
+#include <okui/applications/SDL.h>
 
 class TestApplicationBase : public okui::applications::Native<okui::applications::SDL> {
 public:

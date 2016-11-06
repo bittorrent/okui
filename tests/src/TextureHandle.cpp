@@ -1,7 +1,7 @@
-#include "gtest/gtest.h"
+#include <okui/FileTexture.h>
+#include <okui/TextureHandle.h>
 
-#include "okui/FileTexture.h"
-#include "okui/TextureHandle.h"
+#include <gtest/gtest.h>
 
 using namespace okui;
 

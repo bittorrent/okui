@@ -1,16 +1,16 @@
 #pragma once
 
-#include "okui/config.h"
+#include <okui/config.h>
 
-#include "okui/Application.h"
-#include "okui/Command.h"
-#include "okui/Controller.h"
-#include "okui/FileResourceManager.h"
-#include "okui/Rectangle.h"
-#include "okui/applications/SDLKeycode.h"
-#include "okui/Window.h"
+#include <okui/Application.h>
+#include <okui/Command.h>
+#include <okui/Controller.h>
+#include <okui/FileResourceManager.h>
+#include <okui/Rectangle.h>
+#include <okui/applications/SDLKeycode.h>
+#include <okui/Window.h>
 
-#include "scraps/Timer.h"
+#include <scraps/Timer.h>
 
 #include <SDL.h>
 

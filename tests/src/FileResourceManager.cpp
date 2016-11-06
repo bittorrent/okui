@@ -1,6 +1,6 @@
-#include "gtest/gtest.h"
+#include <okui/FileResourceManager.h>
 
-#include "okui/FileResourceManager.h"
+#include <gtest/gtest.h>
 
 using namespace okui;
 

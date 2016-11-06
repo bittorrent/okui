@@ -1,12 +1,12 @@
-#include "gtest/gtest.h"
-
 #include "../RenderOnce.h"
 #include "../TestFramebuffer.h"
 
-#include "okui/Rectangle.h"
-#include "okui/opengl/Framebuffer.h"
-#include "okui/opengl/Stencil.h"
-#include "okui/shapes/Rectangle.h"
+#include <okui/Rectangle.h>
+#include <okui/opengl/Framebuffer.h>
+#include <okui/opengl/Stencil.h>
+#include <okui/shapes/Rectangle.h>
+
+#include <gtest/gtest.h>
 
 using namespace okui;
 using namespace okui::opengl;

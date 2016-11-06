@@ -1,6 +1,6 @@
-#include "okui/config.h"
+#include <okui/config.h>
 
-#include "okui/Application.h"
+#include <okui/Application.h>
 
 #if SCRAPS_MACOS
 

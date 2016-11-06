@@ -1,7 +1,8 @@
-#include "gtest/gtest.h"
-
-#include "okui/BitmapFont.h"
 #include "RenderOnce.h"
+
+#include <okui/BitmapFont.h>
+
+#include <gtest/gtest.h>
 
 #include <iostream>
 

@@ -1,11 +1,11 @@
-#include "gtest/gtest.h"
-
-#include "okui/config.h"
-
-#include "scraps/net/HTTPConnection.h"
-#include "scraps/net/TCPAcceptor.h"
-
 #include "TestApplication.h"
+
+#include <okui/config.h>
+
+#include <scraps/net/HTTPConnection.h>
+#include <scraps/net/TCPAcceptor.h>
+
+#include <gtest/gtest.h>
 
 using namespace scraps;
 using namespace scraps::net;

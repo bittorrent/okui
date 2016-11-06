@@ -1,9 +1,9 @@
-#include "gtest/gtest.h"
-
 #include "../RenderOnce.h"
 #include "../TestFramebuffer.h"
 
-#include "okui/shapes/Circle.h"
+#include <okui/shapes/Circle.h>
+
+#include <gtest/gtest.h>
 
 using namespace okui;
 

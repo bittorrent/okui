@@ -1,6 +1,6 @@
 #pragma once
 
-#include "okui/config.h"
+#include <okui/config.h>
 
 #include <algorithm>
 #include <array>

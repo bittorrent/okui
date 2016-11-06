@@ -1,10 +1,10 @@
 #pragma once
 
-#include "okui/config.h"
+#include <okui/config.h>
 
 #if SCRAPS_TVOS
 
-#include "okui/applications/IOS.h"
+#include <okui/applications/IOS.h>
 
 namespace okui {
 namespace applications {

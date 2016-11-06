@@ -1,7 +1,8 @@
-#include "gtest/gtest.h"
-
 #include "RenderOnce.h"
-#include "okui/TextureInterface.h"
+
+#include <okui/TextureInterface.h>
+
+#include <gtest/gtest.h>
 
 #if ONAIR_OKUI_HAS_NATIVE_APPLICATION && !OPENGL_ES // TODO: fix for OpenGL ES
 

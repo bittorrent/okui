@@ -1,10 +1,10 @@
 #pragma once
 
-#include "okui/config.h"
+#include <okui/config.h>
 
 #if SCRAPS_APPLE
 
-#include "okui/UserPreferencesInterface.h"
+#include <okui/UserPreferencesInterface.h>
 
 #import <Foundation/Foundation.h>
 

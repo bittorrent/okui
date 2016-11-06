@@ -1,4 +1,4 @@
-#include "okui/config.h"
+#include <okui/config.h>
 
 #if SCRAPS_ANDROID
 
@@ -6,6 +6,7 @@
 #include <jshackle/JNIContext.h>
 
 #include <gtest/gtest.h>
+
 #include <android/log.h>
 
 #include <cassert>

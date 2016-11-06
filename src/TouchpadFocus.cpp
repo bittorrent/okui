@@ -1,7 +1,7 @@
-#include "okui/TouchpadFocus.h"
+#include <okui/TouchpadFocus.h>
 
-#include "okui/View.h"
-#include "okui/Window.h"
+#include <okui/View.h>
+#include <okui/Window.h>
 
 namespace okui {
 

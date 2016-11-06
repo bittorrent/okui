@@ -1,9 +1,9 @@
 #pragma once
 
-#include "okui/config.h"
+#include <okui/config.h>
 
-#include "okui/Animation.h"
-#include "okui/Point.h"
+#include <okui/Animation.h>
+#include <okui/Point.h>
 
 namespace okui {
 namespace views {

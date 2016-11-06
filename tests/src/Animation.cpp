@@ -1,8 +1,8 @@
-#include "gtest/gtest.h"
-
 #include "TestClock.h"
 
-#include "okui/Animation.h"
+#include <okui/Animation.h>
+
+#include <gtest/gtest.h>
 
 using namespace okui;
 

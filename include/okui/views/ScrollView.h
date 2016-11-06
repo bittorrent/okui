@@ -1,11 +1,11 @@
 #pragma once
 
-#include "okui/config.h"
+#include <okui/config.h>
 
-#include "okui/View.h"
-#include "okui/Animation.h"
+#include <okui/View.h>
+#include <okui/Animation.h>
 
-#include "scraps/Timer.h"
+#include <scraps/Timer.h>
 
 namespace okui {
 namespace views {

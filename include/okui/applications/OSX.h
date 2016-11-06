@@ -1,12 +1,12 @@
 #pragma once
 
-#include "okui/config.h"
+#include <okui/config.h>
 
 #if SCRAPS_MACOS
 
-#include "okui/applications/Apple.h"
-#include "okui/Application.h"
-#include "okui/apple/AppleEventHandler.h"
+#include <okui/applications/Apple.h>
+#include <okui/Application.h>
+#include <okui/apple/AppleEventHandler.h>
 
 #include <IOKit/IOKitLib.h>
 #include <CoreFoundation/CFString.h>

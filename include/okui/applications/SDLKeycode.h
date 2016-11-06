@@ -1,6 +1,6 @@
 #pragma once
-#include "okui/config.h"
-#include "okui/KeyCode.h"
+#include <okui/config.h>
+#include <okui/KeyCode.h>
 
 #include <SDL.h>
 #include <cstdint>

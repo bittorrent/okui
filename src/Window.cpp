@@ -1,5 +1,5 @@
-#include "okui/Window.h"
-#include "okui/Application.h"
+#include <okui/Window.h>
+#include <okui/Application.h>
 
 #include <cassert>
 

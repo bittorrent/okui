@@ -1,8 +1,8 @@
 #pragma once
 
-#include "okui/config.h"
+#include <okui/config.h>
 
-#include "okui/opengl/blending.h"
+#include <okui/opengl/blending.h>
 
 namespace okui {
 

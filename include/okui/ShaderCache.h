@@ -1,10 +1,10 @@
 #pragma once
 
-#include "okui/config.h"
+#include <okui/config.h>
 
-#include "scraps/Cache.h"
+#include <okui/Shader.h>
 
-#include "okui/Shader.h"
+#include <scraps/Cache.h>
 
 namespace okui {
 

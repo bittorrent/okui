@@ -1,8 +1,8 @@
 #pragma once
 
-#include "okui/config.h"
+#include <okui/config.h>
 
-#include "okui/View.h"
+#include <okui/View.h>
 
 #include <functional>
 

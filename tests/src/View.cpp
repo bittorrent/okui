@@ -1,8 +1,8 @@
-#include "gtest/gtest.h"
-
 #include "TestApplication.h"
 
-#include "okui/View.h"
+#include <okui/View.h>
+
+#include <gtest/gtest.h>
 
 using namespace okui;
 

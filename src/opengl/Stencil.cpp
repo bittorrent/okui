@@ -1,4 +1,4 @@
-#include "okui/opengl/Stencil.h"
+#include <okui/opengl/Stencil.h>
 
 namespace okui {
 namespace opengl {
