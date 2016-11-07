@@ -4,7 +4,7 @@ allprojects {
     sourceCompatibility = '1.6'
     targetCompatibility = '1.6'
 
-    def androidApiLevel = project.hasProperty('androidApiLevel') ? project.androidApiLevel : '17'
+    def androidApiLevel = project.hasProperty('androidApiLevel') ? project.androidApiLevel : '22'
 
     if (System.getenv('ANDROID_HOME') == null) {
         throw new InvalidUserDataException('ANDROID_HOME is not defined')
