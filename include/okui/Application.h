@@ -23,8 +23,9 @@
 
 #include <cassert>
 #include <list>
-#include <unordered_map>
 #include <map>
+#include <typeindex>
+#include <unordered_map>
 
 namespace okui {
 
