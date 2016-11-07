@@ -31,6 +31,7 @@ JSHACKLE_JAVA_CLASS_BEGIN(AndroidJavaHelper);
         JSHACKLE_NATIVE_CLASS_METHOD(void, invoke, int);
     JSHACKLE_NATIVE_CLASS_END();
 
+    JSHACKLE_JAVA_CLASS_METHOD(bool, openURL, const char*);
     JSHACKLE_JAVA_CLASS_METHOD(void, openDialog, const char*, const char*, const std::vector<std::string>&, OpenDialogCallback*);
     JSHACKLE_JAVA_CLASS_METHOD(std::string, distinctId);
     JSHACKLE_JAVA_CLASS_METHOD(std::string, operatingSystem);
@@ -52,6 +53,8 @@ public:
     virtual ~Android();
 
     android::app::Activity* activity() { return _javaActivity.get(); }
+
+    virtual bool openURL(const char* url) override;
 
     virtual void openDialog(Window* window,
                             const char* title,
@@ -162,6 +165,11 @@ inline Android<Base>::~Android() {
     if (_activity) {
         _jniEnv->DeleteGlobalRef(_activity);
     }
+}
+
+template <typename Base>
+inline bool Android<Base>::openURL(const char* url) {
+    return _javaHelper->openURL(url);
 }
 
 template <typename Base>

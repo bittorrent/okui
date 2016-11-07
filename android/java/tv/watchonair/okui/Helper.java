@@ -3,6 +3,7 @@ package tv.watchonair.okui;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.os.Build;
 import android.os.Handler;
 import android.content.Context;
@@ -10,6 +11,7 @@ import android.provider.Settings.Secure;
 import android.util.DisplayMetrics;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.net.Uri;
 
 import java.lang.Runnable;
 import java.lang.String;
@@ -19,6 +21,12 @@ public class Helper {
 
     public Helper(Activity activity) {
         _activity = activity;
+    }
+
+    public boolean openURL(final String url) {
+        Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
+        _activity.startActivity(browserIntent);
+        return true;
     }
 
     static public class OpenDialogCallback {
