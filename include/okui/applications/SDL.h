@@ -235,6 +235,7 @@ inline void SDL::run() {
                     case SDL_JOYAXISMOTION:           { _handleJoystickAxisEvent(e.jaxis); break; }
                     case SDL_JOYBUTTONUP:
                     case SDL_JOYBUTTONDOWN:           { _handleJoystickButtonEvent(e.jbutton); break; }
+                    case SDL_DROPFILE:                { handleURL(e.drop.file); break; }
                     default:                          { break; }
                 }
             } else if ((minFrameInterval - timer.elapsed()) > 2ms) {
