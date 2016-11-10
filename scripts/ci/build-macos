@@ -3,10 +3,6 @@
 script_dir="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 cd $script_dir/../..
 
-cpu_count=$(sysctl -n hw.ncpu)
-
-./build-deps --bootstrap-b2 --configure
-
-echo "using darwin ;" >> project-config.jam
-
-./b2 -j$cpu_count variant=release tests//run
+# the benchmarks built with this would NOT be good with coverage
+./scripts/build --install --enable-coverage
+./tests/dist/okui-tests

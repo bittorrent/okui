@@ -1,3 +1,10 @@
-#!/bin/sh -e
+#!/bin/bash -e
+
+if [[ $AWS_SECRET_ACCESS_KEY ]] && [[ $CACHE_BUCKET ]] ; then
+    echo '{"build-caches": ["s3://'$CACHE_BUCKET'"]}' > ~/.needyconfig
+fi
 
 pip install --user jinja2 pyyaml colorama
+
+# command line utilities aren't available in PATH on macOS with --user
+sudo pip install awscli git+https://github.com/bittorrent/simon.git@master#egg=simon

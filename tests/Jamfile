@@ -2,6 +2,7 @@ path-constant NEEDS_PATH : ../needs ;
 
 lib gtest : $(NEEDS_PATH)//googletest : <name>gtest ;
 lib gtest_main : $(NEEDS_PATH)//googletest : <name>gtest_main ;
+alias jshackle : $(NEEDS_PATH)//jshackle ;
 
 path-constant OKUI_TEST_RESOURCES_PATH : ./resources ;
 
@@ -29,14 +30,17 @@ explicit run ;
 lib okui-tests-android :
     okui-tests-common/<link>static
     src/android.cpp
-    ../../jshackle//jshackle
+    jshackle
 :
     <link>shared
     <build>no
     <target-os>android:<build>yes
 ;
 
-install dist/android : okui-tests-android :
-    <build>no
-    <target-os>android:<build>yes
-;
+path-constant PREFIX : [ option.get prefix : "/usr/local" ] ;
+
+install install : okui-tests : <location>$(PREFIX) ;
+explicit install ;
+
+install install-android : okui-tests-android : <location>$(PREFIX) ;
+explicit install-android ;

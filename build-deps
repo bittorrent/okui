@@ -51,6 +51,7 @@ parser.add_argument('--needy-target-args', default='', help='arguments to select
 parser.add_argument('--needy-satisfy-args', default='', help='the arguments to use with needy satisfy')
 parser.add_argument('--configure', action='store_true', help='if true, configure will also be invoked')
 parser.add_argument('--variant', default='release', help='variant to build (debug or release)')
+parser.add_argument('--clean', action='store_true', help='clean prior to building')
 parser.add_argument('-j', '--concurrency', default=multiprocessing.cpu_count(), type=int, help='build concurrency')
 args = parser.parse_args()
 
@@ -66,7 +67,11 @@ if 'android' in args.needy_target_args and not pkg_is_present('jshackle'):
 needy_common_args = filter(None, ['-Dvariant={}'.format(args.variant)] + args.needy_target_args.split())
 needy_satisfy_args = filter(None, ['-j', str(args.concurrency)] + args.needy_satisfy_args.split())
 
-subprocess.check_call([needy, 'satisfy'] + needy_common_args + needy_satisfy_args + dependencies)
+if args.clean:
+    subprocess.check_call([needy, 'clean'] + needy_common_args + dependencies)
+
+if dependencies:
+    subprocess.check_call([needy, 'satisfy'] + needy_common_args + needy_satisfy_args + dependencies)
 
 pkgconfig_path = subprocess.check_output([needy, 'pkg-config-path'] + needy_common_args + dependencies)
 

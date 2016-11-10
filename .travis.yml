@@ -1,14 +1,4 @@
 sudo: required
-cache:
-    directories:
-        - needs
-        - toolchains
-before_cache:
-    # remove needs/*/download, needs/*/source, and needs/*/needs to speed up
-    # caching. If these libraries are installed correctly, the original source
-    # shouldn't be necessary.
-    - find needs -mindepth 2 -maxdepth 2 -type d \( -name source -or -name download -or -name needs \) -exec rm -rf -- {} +
-
 matrix:
     include:
 
@@ -23,16 +13,16 @@ matrix:
               components:
                   - android-22
                   - build-tools-23.0.1
-          install: [ ./scripts/ci/install-android-dependencies ]
-          script:  [ ./scripts/ci/build-android ]
+          install: ./scripts/ci/install-android-dependencies
+          script:  ./scripts/ci/build-android
 
         # Linux
         - os: linux
           language: cpp
           dist: trusty
           compiler: clang
-          install: [ ./scripts/ci/install-linux-dependencies ]
-          script:  [ ./scripts/ci/build-linux ]
+          install: ./scripts/ci/install-linux-dependencies
+          script:  ./scripts/ci/build-linux
 
         ######### Xcode #########
         # XCODE_TARGET isn't used by any of the scripts, but helps make the
@@ -42,22 +32,22 @@ matrix:
         - os: osx
           language: cpp
           osx_image: xcode8
-          env:     [ XCODE_TARGET=macos ]
-          install: [ ./scripts/ci/install-xcode-dependencies ]
-          script:  [ ./scripts/ci/build-macos ]
+          env:     XCODE_TARGET=macos
+          install: ./scripts/ci/install-xcode-dependencies
+          script:  ./scripts/ci/build-macos
 
         # iPhone
         - os: osx
           language: cpp
           osx_image: xcode8
-          env:     [ XCODE_TARGET=iphoneos ]
-          install: [ ./scripts/ci/install-xcode-dependencies ]
-          script:  [ ./scripts/ci/build-iphoneos ]
+          env:     XCODE_TARGET=iphoneos
+          install: ./scripts/ci/install-xcode-dependencies
+          script:  ./scripts/ci/build-iphoneos
 
         # AppleTV
         - os: osx
           language: cpp
           osx_image: xcode8
-          env:     [ XCODE_TARGET=appletvos ]
-          install: [ ./scripts/ci/install-xcode-dependencies ]
-          script:  [ ./scripts/ci/build-appletvos ]
+          env:     XCODE_TARGET=appletvos
+          install: ./scripts/ci/install-xcode-dependencies
+          script:  ./scripts/ci/build-appletvos

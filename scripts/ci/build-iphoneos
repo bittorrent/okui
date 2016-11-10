@@ -3,28 +3,4 @@
 script_dir="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 cd $script_dir/../..
 
-sysroot=$(xcrun --show-sdk-path --sdk iphoneos)
-platform_root=$(xcrun --show-sdk-platform-path --sdk iphoneos)
-
-cpu_count=$(sysctl -n hw.ncpu)
-
-./build-deps --bootstrap-b2 --configure --needy-target-args="-t ios"
-
-cat << PROJECT_CONFIG >> project-config.jam
-import feature ;
-feature.extend instruction-set : arm64 ;
-feature.set-default target-os : iphone ;
-feature.feature target : iphoneos : composite propagated ;
-feature.compose <target>iphoneos : <architecture>arm <target-os>iphone <instruction-set>arm64 ;
-
-using darwin : iphoneos : clang++ :
-    <striper> <root>"$platform_root/Developer"
-    <compileflags>-fembed-bitcode
-    <compileflags>"-isysroot $sysroot"
-    <linkflags>"-isysroot $sysroot"
-:
-    <target>iphoneos <architecture>arm <target-os>iphone <instruction-set>arm64
-;
-PROJECT_CONFIG
-
-./b2 -j$cpu_count variant=release target-os=iphone
+./scripts/build --target=iphoneos --install

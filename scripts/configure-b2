@@ -1,0 +1,94 @@
+#!/usr/bin/env python
+
+import argparse
+import os
+import platform
+import subprocess
+import textwrap
+
+parser = argparse.ArgumentParser(description='Configures a b2 project for a designated target.')
+default_target = 'macosx' if platform.system() == 'Darwin' else 'linux'
+parser.add_argument('--target',
+                    default=default_target,
+                    choices=['linux', 'macosx', 'iphoneos', 'iphonesimulator', 'appletvos', 'appletvsimulator', 'android'],
+                    help='the target to build for')
+parser.add_argument('--android-toolchain',
+                    default=os.environ.get('ANDROID_TOOLCHAIN', ''),
+                    help='the android toolchain to use')
+args = parser.parse_args()
+
+if args.target in ['linux', 'macosx']:
+    print(textwrap.dedent("""\
+        using {toolset} : : {cxx} :
+            <cflags>"{cflags}"
+            <cxxflags>"{cxxflags}"
+            <linkflags>"{ldflags}"
+        ;""".format(
+            toolset='darwin' if args.target == 'macosx' else 'clang',
+            cxx=os.environ.get('CXX', ''),
+            cflags=os.environ.get('CFLAGS', ''),
+            cxxflags=os.environ.get('CXXFLAGS', ''),
+            ldflags=os.environ.get('LDFLAGS', '')
+        )
+    ))
+elif args.target in ['iphoneos', 'iphonesimulator', 'appletvos', 'appletvsimulator']:
+    print('import feature ;')
+    if 'appletv' in args.target:
+        print('feature.extend target-os : appletv ;')
+    if args.target in ['iphoneos', 'appletvos']:
+        print('feature.extend instruction-set : arm64 ;')
+    print(textwrap.dedent("""\
+        feature.set-default target-os : {target_os} ;
+        feature.feature target : {target} : composite propagated ;
+        feature.compose <target>{target} : <architecture>{architecture} <target-os>{target_os} {additional_requirements} ;
+
+        using darwin : {target} : clang++ :
+            <striper> <root>"{xcode_path}/Platforms/{sdk_path_name}.platform/Developer"
+            <compileflags>-fembed-bitcode
+            <compileflags>"-isysroot {sdk}"
+            <cflags>"{cflags}"
+            <cxxflags>"{cxxflags}"
+            <linkflags>"{ldflags}"
+            <linkflags>"-isysroot {sdk}"
+        :
+            <target>{target} <architecture>{architecture} <target-os>{target_os} {additional_requirements}
+        ;
+        """.format(
+            target=args.target,
+            target_os='iphone' if 'iphone' in args.target else 'appletv',
+            architecture='x86' if 'simulator' in args.target else 'arm',
+            xcode_path=subprocess.check_output(['xcode-select', '--print-path']).decode().strip(),
+            sdk_path_name={
+                'appletvos': 'AppleTVOS',
+                'appletvsimulator': 'AppleTVSimulator',
+                'iphoneos': 'iPhoneOS',
+                'iphonesimulator': 'iPhoneSimulator',
+            }[args.target],
+            sdk=subprocess.check_output(['xcrun', '--sdk', args.target, '--show-sdk-path']).decode().strip(),
+            cflags=os.environ.get('CFLAGS', ''),
+            cxxflags=os.environ.get('CXXFLAGS', ''),
+            ldflags=os.environ.get('LDFLAGS', ''),
+            additional_requirements='<instruction-set>arm64' if args.target in ['iphoneos', 'appletvos'] else ''
+        )
+    ))
+elif args.target == 'android':
+    print(textwrap.dedent("""\
+        import feature ;
+        feature.set-default target-os : android ;
+        feature.feature target : android : composite propagated ;
+        feature.compose <target>android : <architecture>arm <target-os>android ;
+
+        using clang-linux : android : {toolchain}/bin/arm-linux-androideabi-clang++ :
+            <cflags>"{cflags}"
+            <cxxflags>"{cxxflags}"
+            <linkflags>"{ldflags}"
+            <linkflags>-march=armv7-a
+            <linkflags>-latomic
+        ;
+        """.format(
+            cflags=os.environ.get('CFLAGS', ''),
+            cxxflags=os.environ.get('CXXFLAGS', ''),
+            ldflags=os.environ.get('LDFLAGS', ''),
+            toolchain=args.android_toolchain
+        )
+    ))

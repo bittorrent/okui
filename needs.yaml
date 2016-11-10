@@ -1,7 +1,7 @@
 libraries:
     scraps:
         repository: git@github.com:bittorrent/scraps.git
-        commit: d5d9dacbc43137f4cc600b34a099a058f8140cd0
+        commit: 09cf7eb6f4d40f6bb8f261f5b9922c50ccb3d469
         build-directory-suffix: {{variant|default('release')}}
         project:
             type: boostbuild
@@ -25,8 +25,8 @@ libraries:
                 - mkdir -p {build_directory}/bin/
                 - cp gas-preprocessor.pl {build_directory}/bin/
     nasm:
-        download: 'http://www.nasm.us/pub/nasm/releasebuilds/2.11.06/nasm-2.11.06.tar.bz2'
-        checksum: 'eaad6f440d3f8d2172d7fd93bed224d4052b904f'
+        download: https://s3.amazonaws.com/live-dev-deps/nasm-2.11.06.tar.bz2
+        checksum: eaad6f440d3f8d2172d7fd93bed224d4052b904f
     libjpeg-turbo:
         download: https://s3.amazonaws.com/live-dev-deps/libjpeg-turbo-1.4.90.tar.gz
         checksum: 62af89207d08252a1d8c4997ae50e11f4195ed74
