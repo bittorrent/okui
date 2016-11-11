@@ -139,7 +139,7 @@ def build(args):
     if args.cross_target == 'android':
         b2.append('tests//okui-tests-android')
     if args.enable_analysis:
-        b2 = ['simon', 'c++-analysis'] + b2 + ['--build-dir=./bin/analysis']
+        b2 = ['simon', 'c++-analysis', '--report-dir', 'analysis'] + b2 + ['--build-dir=./bin/analysis']
     if args.enable_coverage:
         b2.extend([
             'cxxflags=-coverage',
