@@ -13,9 +13,7 @@ before_deploy:  ./scripts/ci/build-distribution
 addons:
     artifacts:
         bucket: $DEPLOYMENT_BUCKET/travis-artifacts
-        paths:
-          - >
-            $(git ls-files -o analysis dist | tr "\n" ":")
+        paths:  $(git ls-files -o analysis dist | tr "\n" ":")
 
 matrix:
     include:
@@ -28,9 +26,7 @@ matrix:
               - NDK_VERSION=r10e
               - API_LEVEL=17
           android:
-              components:
-                  - android-22
-                  - build-tools-23.0.1
+              components: [ android-22, build-tools-23.0.1 ]
           install: ./scripts/ci/install-android-dependencies
           script:  ./scripts/ci/build-android
 
@@ -41,10 +37,6 @@ matrix:
           compiler: clang
           install: ./scripts/ci/install-linux-dependencies
           script:  ./scripts/ci/build-linux
-
-        ######### Xcode #########
-        # XCODE_TARGET isn't used by any of the scripts, but helps make the
-        # build matrix a little more readable on Travis.
 
         # MacOS
         - os: osx
