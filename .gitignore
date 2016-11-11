@@ -11,3 +11,4 @@ project-config.jam
 /needs
 /tests/android/src/main/assets
 /tests/android/src/main/libs
+/analysis
