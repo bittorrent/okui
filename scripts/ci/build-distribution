@@ -1,0 +1,40 @@
+#!/bin/bash -e
+
+script_dir="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+cd $script_dir/../..
+
+if [[ ! -d dist ]] ; then
+    echo "'dist' does not exist"
+    exit 1
+fi
+
+if [[ -z $TRAVIS_BRANCH ]] ; then
+    echo "TRAVIS_BRANCH is not defined"
+    exit 1
+fi
+
+if [[ -z $TRAVIS_COMMIT ]] && [[ -z $TRAVIS_TAG ]] ; then
+    echo "TRAVIS_COMMIT or TRAVIS_TAG must be defined"
+    exit 1
+fi
+
+destination=dist/$TRAVIS_REPO_SLUG/$TRAVIS_BRANCH
+if [[ -n $TRAVIS_TAG ]] ; then
+    destination+=/$TRAVIS_TAG
+else
+    destination+=/$TRAVIS_COMMIT
+fi
+if [[ -n $XCODE_TARGET ]] ; then
+    destination+=/$XCODE_TARGET
+elif [[ -n $NDK_VERSION ]] ; then
+    destination+=/android
+else
+    destination+=/linux
+fi
+
+pushd dist
+tar --exclude=needy.status -czvf ../dist.tar.gz *
+popd
+rm -rf dist
+mkdir -p $destination
+mv dist.tar.gz $destination
