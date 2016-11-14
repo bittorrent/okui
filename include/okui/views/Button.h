@@ -17,15 +17,15 @@ public:
         kDepressed
     };
 
-    State state() const                                          { return _state; }
+    State state() const;
 
-    void setAction(std::function<void()> action)                 { _action = std::move(action); }
-    void setAction(Command command, CommandContext context = {}) { _action = [=] { this->application()->command(command, context); }; }
+    void setAction(std::function<void()> action);
+    void setAction(Command command, CommandContext context = {});
 
-    void press()                                                 { if (_action) { _action(); } }
+    void press();
 
-    void setCanBecomeDirectFocus(bool canBecomeDirectFocus)              { _canBecomeDirectFocus = canBecomeDirectFocus; }
-    virtual bool canBecomeDirectFocus() override                       { return _canBecomeDirectFocus; }
+    void setCanBecomeDirectFocus(bool canBecomeDirectFocus);
+    virtual bool canBecomeDirectFocus() override;
 
     virtual void mouseDown(MouseButton button, double x, double y) override;
     virtual void mouseUp(MouseButton button, double startX, double startY, double x, double y) override;
@@ -52,6 +52,40 @@ private:
     State                 _state = State::kNormal;
     bool                  _canBecomeDirectFocus = true;
 };
+
+template <typename BaseView>
+typename Button<BaseView>::State Button<BaseView>::state() const {
+    return _state;
+}
+
+template <typename BaseView>
+void Button<BaseView>::setAction(std::function<void()> action) {
+    _action = std::move(action);
+}
+
+template <typename BaseView>
+void Button<BaseView>::setAction(Command command, CommandContext context) {
+    _action = [=] {
+        this->application()->command(command, context);
+    };
+}
+
+template <typename BaseView>
+void Button<BaseView>::press() {
+    if (_action) {
+        _action();
+    }
+}
+
+template <typename BaseView>
+void Button<BaseView>::setCanBecomeDirectFocus(bool canBecomeDirectFocus) {
+    _canBecomeDirectFocus = canBecomeDirectFocus;
+}
+
+template <typename BaseView>
+bool Button<BaseView>::canBecomeDirectFocus() {
+    return _canBecomeDirectFocus;
+}
 
 template <typename BaseView>
 void Button<BaseView>::mouseDown(MouseButton button, double x, double y) {
