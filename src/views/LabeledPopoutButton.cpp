@@ -59,8 +59,8 @@ void LabeledPopoutButton::Body::setBackgroundColor(Color backgroundColor) {
     invalidateRenderCache();
 }
 
-void LabeledPopoutButton::Body::setImageURL(std::string url, std::string placeholder) {
-    _imageView.setTexture(std::move(url));
+void LabeledPopoutButton::Body::setImage(std::string resourceOrURL, std::string placeholder) {
+    _imageView.setTexture(std::move(resourceOrURL));
     _imageView.setTexturePlaceholder(std::move(placeholder));
     addSubview(&_imageView);
     _imageView.sendToBack();

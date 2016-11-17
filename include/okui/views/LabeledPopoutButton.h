@@ -24,7 +24,7 @@ public:
     void setScaling(double scaling) { _scaling = scaling; _body.setScaling(scaling); layout(); }
     void setBackgroundColor(Color backgroundColor) { _body.setBackgroundColor(std::move(backgroundColor)); }
     void setIcon(std::string sdf) { _body.setIcon(std::move(sdf)); }
-    void setImageURL(std::string url, std::string placeholder) { _body.setImageURL(std::move(url), std::move(placeholder)); }
+    void setImage(std::string resourceOrURL, std::string placeholder = {}) { _body.setImage(std::move(resourceOrURL), std::move(placeholder)); }
     void setLabelStyle(TextView::Style focused) { setLabelStyle(focused, focused); }
     void setLabelStyle(TextView::Style focused, TextView::Style unfocused);
     void setLabelText(std::string labelText) { _label.setText(std::move(labelText)); }
@@ -44,7 +44,7 @@ private:
 
         void setBackgroundColor(Color backgroundColor);
         void setIcon(std::string sdf);
-        void setImageURL(std::string url, std::string placeholder);
+        void setImage(std::string resourceOrURL, std::string placeholder);
 
         virtual bool canBecomeDirectFocus() override { return true; }
         virtual void render() override;
