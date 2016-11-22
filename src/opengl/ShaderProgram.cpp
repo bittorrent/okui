@@ -22,10 +22,6 @@ void ShaderProgram::bindAttribute(GLuint id, const char* name) {
     glBindAttribLocation(_program, id, name);
 }
 
-GLint ShaderProgram::attribute(const char* name) {
-    return glGetAttribLocation(_program, name);
-}
-
 void ShaderProgram::link() {
     if (!_error.empty()) { return; }
 

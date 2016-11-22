@@ -24,7 +24,6 @@ public:
     }
 
     void bindAttribute(GLuint id, const char* name);
-    GLint attribute(const char* name);
 
     void link();
 

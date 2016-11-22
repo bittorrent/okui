@@ -55,7 +55,16 @@ ColorShader::ColorShader() {
         }
     )", opengl::Shader::kFragmentShader);
 
+    enum : GLuint {
+        kPositionAttrib,
+        kColorAttrib,
+        kCurveAttrib,
+    };
+
     _program.attachShaders(vsh, fsh);
+    _program.bindAttribute(kPositionAttrib, "positionAttrib");
+    _program.bindAttribute(kColorAttrib, "colorAttrib");
+    _program.bindAttribute(kCurveAttrib, "curveAttrib");
     _program.link();
     _program.use();
 
@@ -67,9 +76,9 @@ ColorShader::ColorShader() {
     }
 
     auto stride = reinterpret_cast<char*>(&_vertices[1]) - reinterpret_cast<char*>(&_vertices[0]);
-    _vertexArrayBuffer.setAttribute(_program.attribute("positionAttrib"), 2, GL_FLOAT, GL_FALSE, stride, offsetof(Vertex, x));
-    _vertexArrayBuffer.setAttribute(_program.attribute("colorAttrib"), 4, GL_FLOAT, GL_FALSE, stride, offsetof(Vertex, r));
-    _vertexArrayBuffer.setAttribute(_program.attribute("curveAttrib"), 4, GL_FLOAT, GL_FALSE, stride, offsetof(Vertex, cu));
+    _vertexArrayBuffer.setAttribute(kPositionAttrib, 2, GL_FLOAT, GL_FALSE, stride, offsetof(Vertex, x));
+    _vertexArrayBuffer.setAttribute(kColorAttrib, 4, GL_FLOAT, GL_FALSE, stride, offsetof(Vertex, r));
+    _vertexArrayBuffer.setAttribute(kCurveAttrib, 4, GL_FLOAT, GL_FALSE, stride, offsetof(Vertex, cu));
 
     SCRAPS_GL_ERROR_CHECK();
 }
