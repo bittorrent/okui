@@ -40,7 +40,16 @@ parser.add_argument('--enable-coverage',
 parser.add_argument('--enable-analysis',
                     action='store_true',
                     help='enables static analysis via simon')
+parser.add_argument('--linkage',
+                    choices=['static', 'shared'],
+                    help='library linkage')
+parser.add_argument('--prefix',
+                    default='dist',
+                    help='installation prefix')
 args = parser.parse_args()
+
+if not args.linkage:
+    args.linkage = 'shared' if args.cross_target == 'android' else 'static'
 
 
 def print_diagnostic(msg):
@@ -51,11 +60,12 @@ def print_error(msg):
     print(Fore.RED + Style.BRIGHT + msg + Style.RESET_ALL, file=sys.stderr)
 
 
+android_path = ''
 if args.cross_target == 'android':
     if 'ANDROID_TOOLCHAIN' not in os.environ:
         print_error('ANDROID_TOOLCHAIN must be defined')
         sys.exit(1)
-    android_path_override = '$ANDROID_TOOLCHAIN/arm-linux-androideabi/bin:$PATH'
+    android_path = '$ANDROID_TOOLCHAIN/arm-linux-androideabi/bin:$PATH'
 
 if not distutils.spawn.find_executable('simon') and args.enable_analysis:
     print_error(textwrap.dedent('''\
@@ -67,87 +77,95 @@ if args.enable_coverage and args.cross_target:
     print_error('coverage is only supported for host')
     sys.exit(1)
 
+variables = {
+    'android_path': android_path,
+    'cpu_count': multiprocessing.cpu_count(),
+    'target_os': {
+        'iphoneos': 'iphone',
+        'appletvos': 'appletv',
+        'android': 'android',
+    }.get(args.cross_target),
+    'needy_target': {
+        'iphoneos': 'ios',
+        'appletvos': 'tvos',
+        'android': 'android',
+    }.get(args.cross_target)
+}
+variables.update(vars(args))
+
 
 def run_command(command):
     if isinstance(command, list):
-        print(Fore.CYAN + Style.BRIGHT + '+ {}'.format(shell_quote(command)) + Style.RESET_ALL)
-        subprocess.check_call(command)
+        run_command(shell_quote([c.format(**variables) for c in command]))
     else:
+        command = command.format(**variables)
         print(Fore.CYAN + Style.BRIGHT + '+ {}'.format(command) + Style.RESET_ALL)
         subprocess.check_call(command, shell=True)
+
+
+def run_commands(commands):
+    for command in commands:
+        run_command(command)
 
 
 def shell_quote(command):
     return ' '.join([pipes.quote(c) for c in command])
 
 
-def rm_rf(d):
-    if os.path.exists(d):
-        shutil.rmtree(d)
-
-
-def b2_target_os_flags(cross_target):
-    return [
-        'target-os={}'.format({
-            'iphoneos': 'iphone',
-            'appletvos': 'appletv',
-            'android': 'android',
-        }[cross_target])
-    ] if cross_target else []
-
-
 def write_b2_project_config(args):
-    b2_config = [os.path.join('scripts', 'configure-b2')]
+    b2_config = ['scripts/configure-b2']
     if args.cross_target:
-        b2_config.append('--target={}'.format(args.cross_target))
+        b2_config.append('--target={cross_target}')
     run_command('{} > project-config.jam'.format(shell_quote(b2_config)))
 
 
 def build_deps(args):
-    build_deps = [
-        './build-deps',
-        '--bootstrap-b2',
-        '--configure',
-        '--variant={}'.format(args.variant),
-    ]
+    build_deps = ['./build-deps', '--bootstrap-b2', '--configure', '--variant={variant}']
     if args.clean:
         build_deps.append('--clean')
     if args.cross_target:
-        build_deps.append('--needy-target-args=--target={}'.format({
-            'iphoneos': 'ios',
-            'appletvos': 'tvos',
-            'android': 'android',
-        }[args.cross_target]))
+        build_deps.append('--needy-target-args=--target={needy_target}')
     if args.cross_target == 'android':
         build_deps.append('--enable-jshackle')
     run_command(build_deps)
 
 
 def build(args):
-    b2 = [
-        './b2',
-        '-j{}'.format(multiprocessing.cpu_count()),
-        'variant={}'.format(args.variant),
-        'link=shared' if args.cross_target == 'android' else 'link=static',
-        'okui',
-    ]
-    b2.extend(b2_target_os_flags(args.cross_target))
-    if args.clean:
-        b2.append('-a')
-    if not args.cross_target:
-        b2.append('tests')
-    if args.cross_target == 'android':
-        b2.extend(['tests//okui-tests', 'tests//okui-tests-android'])
-    if args.enable_analysis:
-        b2 = ['simon', 'c++-analysis', '--report-dir', 'analysis'] + b2 + ['--build-dir=./bin/analysis']
-    if args.enable_coverage:
-        b2.extend([
-            'cxxflags=-coverage',
-            'linkflags={}'.format(coverage_lib(platform.system().lower()))
-        ])
-    if args.cross_target == 'android':
-        b2 = 'PATH={} {}'.format(android_path_override, shell_quote(b2))
-    run_command(b2)
+    def targets():
+        ret = ['okui']
+        if not args.cross_target:
+            ret.append('tests')
+        if args.cross_target == 'android':
+            ret.extend(['tests//okui-tests', 'tests//okui-tests-android'])
+        return shell_quote(ret)
+
+    def common_args():
+        ret = ['-j{cpu_count}', 'link={linkage}', 'variant={variant}']
+        if args.cross_target:
+            ret.append('target-os={target_os}')
+        if args.clean:
+            ret.append('-a')
+        if args.enable_coverage:
+            ret.extend([
+                'cxxflags=-coverage',
+                'linkflags={}'.format(coverage_lib(platform.system().lower()))
+            ])
+        return shell_quote([c.format(**variables) for c in ret])
+
+    def b2():
+        if args.enable_analysis:
+            ret = 'simon c++-analysis --report-dir analysis ./b2 --build-dir=./bin/analysis'
+        else:
+            ret = './b2'
+        if args.cross_target == 'android':
+            ret = 'PATH={android_path} ' + ret
+        return ret.format(**variables)
+
+    run_command('{b2} {common_args} {targets}'.format(
+        b2=b2(),
+        targets=targets(),
+        common_args=common_args()
+    ))
 
 
 def coverage_lib(uname):
@@ -162,26 +180,33 @@ def coverage_lib(uname):
 
 
 def install(args):
-    b2 = [
-        './b2',
-        '-j{}'.format(multiprocessing.cpu_count()),
-        'link=shared' if args.cross_target == 'android' else 'link=static',
-        'variant={}'.format(args.variant),
-        'install',
-        '--prefix=dist',
-    ]
-    b2.extend(b2_target_os_flags(args.cross_target))
-    if args.clean:
-        b2.append('-a')
-    if not args.cross_target:
-        b2.append('tests//install')
-    if args.cross_target == 'android':
-        b2.append('tests//install-android')
-        b2 = 'PATH={} {}'.format(android_path_override, shell_quote(b2))
-    rm_rf('dist')
-    rm_rf(os.path.join('tests', 'dist'))
-    run_command(b2)
-    os.remove(os.path.join('dist', 'needy.status'))
+    def targets():
+        targets = ['install']
+        if not args.cross_target:
+            targets.append('tests//install')
+        if args.cross_target == 'android':
+            targets.append('tests//install-android')
+        return shell_quote(targets)
+
+    def common_args():
+        common_args = ['-j{cpu_count}', 'link={linkage}', 'variant={variant}', '--prefix={prefix}']
+        if args.cross_target:
+            common_args.append('target-os={target_os}')
+        if args.clean:
+            common_args.append('-a')
+        return shell_quote([c.format(**variables) for c in common_args])
+
+    def b2():
+        if args.cross_target == 'android':
+            return 'PATH={android_path} ./b2'
+        return './b2'
+
+    run_commands([
+        'rm -rf {prefix}',
+        'rm -rf tests/{prefix}',
+        '{b2} {common_args} {targets}'.format(b2=b2(), targets=targets(), common_args=common_args()),
+        'rm -rf {prefix}/needy.status',
+    ])
 
 
 try:
