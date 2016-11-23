@@ -3,9 +3,6 @@
 script_dir="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 cd $script_dir/../..
 
-# required in needs.yaml
-export ANDROID_TOOLCHAIN=$script_dir/../../toolchains/android/$NDK_VERSION/android-$API_LEVEL/arm-linux-androideabi-clang3.6
-
 if [[ ! -d $ANDROID_TOOLCHAIN ]] ; then
     echo "error: android toolchain not present in $ANDROID_TOOLCHAIN"
     exit 1

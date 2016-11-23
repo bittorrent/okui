@@ -2,3 +2,8 @@
 
 script_dir="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 $script_dir/install-common-dependencies
+
+pip install --user jinja2 pyyaml colorama
+
+# command line utilities aren't available in PATH on macOS with --user
+sudo pip install awscli git+https://github.com/bittorrent/simon.git@master#egg=simon

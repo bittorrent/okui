@@ -17,8 +17,9 @@ pkgconfig.dependency jshackle ;
 pkgconfig.dependency pugixml ;
 pkgconfig.dependency sdl2 ;
 pkgconfig.dependency utf8 ;
-pkgconfig.dependency libjpeg-turbo : libturbojpeg ;
+pkgconfig.dependency libturbojpeg ;
 pkgconfig.dependency libpng ;
+pkgconfig.dependency googletest ;
 
 alias objc : : : :
     <target-os>darwin:<cxxflags>"-x objective-c++"
@@ -53,7 +54,7 @@ lib okui :
     pugixml
     scraps
     libpng
-    libjpeg-turbo
+    libturbojpeg
     sdl2
     utf8
 :
@@ -114,7 +115,7 @@ alias install :
     install-pkgconfig
     install-scraps-if-owned
     install-libpng-if-owned
-    install-libjpeg-turbo-if-owned
+    install-libturbojpeg-if-owned
     install-pugixml-if-owned
     install-sdl2-if-owned
     install-utf8-if-owned

@@ -1,22 +1,17 @@
 path-constant NEEDS_PATH : ../needs ;
 
-lib gtest : $(NEEDS_PATH)//googletest : <name>gtest ;
-lib gtest_main : $(NEEDS_PATH)//googletest : <name>gtest_main ;
-alias jshackle : $(NEEDS_PATH)//jshackle ;
-
 path-constant OKUI_TEST_RESOURCES_PATH : ./resources ;
 
 alias okui-tests-common :
     [ glob-tree-ex src : *.cpp : android.cpp ]
     ..//okui
-    gtest
+    ..//googletest
 : : :
     <define>OKUI_TEST_RESOURCES_PATH=\\\"$(OKUI_TEST_RESOURCES_PATH)\\\"
     <target-os>darwin:<framework>CoreVideo
 ;
 
 exe okui-tests :
-    gtest_main
     okui-tests-common
 :
     <target-os>iphone:<build>no
@@ -30,7 +25,7 @@ explicit run ;
 lib okui-tests-android :
     okui-tests-common/<link>static
     src/android.cpp
-    jshackle
+    ..//jshackle
 :
     <link>shared
     <build>no

@@ -5,7 +5,7 @@ libraries:
         build-directory-suffix: {{variant|default('release')}}
         project:
             type: boostbuild
-            pre-build: ./build-deps --needy-target-args='-t {{ platform }}:{{ architecture }}' --needy-satisfy-args='--android-toolchain={{ env['ANDROID_TOOLCHAIN'] }}' --configure
+            pre-build: ./build-deps --needy-target-args='-t {{ platform }}:{{ architecture }}' --configure
             b2-args: variant={{variant|default('release')}}
     boost-build:
         download: https://github.com/boostorg/build/archive/boost-1.62.0.tar.gz
@@ -14,9 +14,11 @@ libraries:
             build-steps:
                 - ./bootstrap.sh
                 - ./b2 install --prefix={build_directory}
+    {% if platform == 'android' %}
     jshackle:
         repository: git@github.com:bittorrent/jshackle.git
         commit: adbc9a5be65e8efcef619081332efcd5aa0060d1
+    {% endif %}
     gas-preprocessor:
         repository: https://github.com/libjpeg-turbo/gas-preprocessor.git
         commit: 4338df436a20ad4d28c7cd37852323e902f1144c
@@ -27,7 +29,7 @@ libraries:
     nasm:
         download: https://s3.amazonaws.com/live-dev-deps/nasm-2.11.06.tar.bz2
         checksum: eaad6f440d3f8d2172d7fd93bed224d4052b904f
-    libjpeg-turbo:
+    libjpegturbo:
         download: https://s3.amazonaws.com/live-dev-deps/libjpeg-turbo-1.4.90.tar.gz
         checksum: 62af89207d08252a1d8c4997ae50e11f4195ed74
         dependencies:

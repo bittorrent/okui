@@ -47,22 +47,45 @@ parser.add_argument('--bootstrap-b2',
                     default=distutils.spawn.find_executable('b2') is None,
                     action='store_true',
                     help='bootstrap b2')
-parser.add_argument('--needy-target-args', default='', help='arguments to select the needy target with')
-parser.add_argument('--needy-satisfy-args', default='', help='the arguments to use with needy satisfy')
-parser.add_argument('--configure', action='store_true', help='if true, configure will also be invoked')
-parser.add_argument('--variant', default='release', help='variant to build (debug or release)')
-parser.add_argument('--clean', action='store_true', help='clean prior to building')
-parser.add_argument('-j', '--concurrency', default=multiprocessing.cpu_count(), type=int, help='build concurrency')
+parser.add_argument('--needy-target-args',
+                    default='',
+                    help='arguments to select the needy target with')
+parser.add_argument('--needy-satisfy-args',
+                    default='',
+                    help='the arguments to use with needy satisfy')
+parser.add_argument('--configure',
+                    action='store_true',
+                    help='invoke configure after building dependencies')
+parser.add_argument('--variant',
+                    default='release',
+                    help='variant to build (debug or release)')
+parser.add_argument('--clean',
+                    action='store_true',
+                    help='clean prior to building')
+parser.add_argument('-j', '--concurrency',
+                    default=multiprocessing.cpu_count(),
+                    type=int,
+                    help='build concurrency')
+parser.add_argument('--no-dev',
+                    dest='dev',
+                    action='store_false',
+                    help='disable dev dependencies')
+parser.add_argument('--enable-jshackle',
+                    action='store_true',
+                    help='build jshackle as well (required for Android)')
 args = parser.parse_args()
 
 if args.bootstrap_b2:
     bootstrap_b2()
 
-dependencies = [dep for dep in ['scraps', 'libpng', 'pugixml', 'sdl2', 'utf8'] if not pkg_is_present(dep)]
-if not pkg_is_present('libturbojpeg'):
-    dependencies.append('libjpeg-turbo')
-if 'android' in args.needy_target_args and not pkg_is_present('jshackle'):
+dependencies = ['scraps', 'libpng', 'pugixml', 'sdl2', 'utf8', 'libjpegturbo']
+
+if args.dev:
+    dependencies.append('googletest')
+if args.enable_jshackle:
     dependencies.append('jshackle')
+
+dependencies = [dep for dep in dependencies if not pkg_is_present(dep)]
 
 needy_common_args = filter(None, ['-Dvariant={}'.format(args.variant)] + args.needy_target_args.split())
 needy_satisfy_args = filter(None, ['-j', str(args.concurrency)] + args.needy_satisfy_args.split())

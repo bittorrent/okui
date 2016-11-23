@@ -20,7 +20,7 @@ os.chdir(project_root)
 
 parser = argparse.ArgumentParser(description='Convenience script to build everything on a few select platforms.')
 parser.add_argument('-t', '--target',
-                    default='',
+                    default=os.environ.get('LIVE_CROSS_TARGET'),
                     dest='cross_target',
                     choices=['iphoneos', 'appletvos', 'android'],
                     help='cross-compilation target')
@@ -55,9 +55,7 @@ if args.cross_target == 'android':
     if 'ANDROID_TOOLCHAIN' not in os.environ:
         print_error('ANDROID_TOOLCHAIN must be defined')
         sys.exit(1)
-    android_path_override = '{}/arm-linux-androideabi/bin:{}'.format(
-        os.environ['ANDROID_TOOLCHAIN'],
-        os.environ['PATH'])
+    android_path_override = '$ANDROID_TOOLCHAIN/arm-linux-androideabi/bin:$PATH'
 
 if not distutils.spawn.find_executable('simon') and args.enable_analysis:
     print_error(textwrap.dedent('''\
@@ -120,6 +118,8 @@ def build_deps(args):
             'appletvos': 'tvos',
             'android': 'android',
         }[args.cross_target]))
+    if args.cross_target == 'android':
+        build_deps.append('--enable-jshackle')
     run_command(build_deps)
 
 
@@ -137,7 +137,7 @@ def build(args):
     if not args.cross_target:
         b2.append('tests')
     if args.cross_target == 'android':
-        b2.append('tests//okui-tests-android')
+        b2.extend(['tests//okui-tests', 'tests//okui-tests-android'])
     if args.enable_analysis:
         b2 = ['simon', 'c++-analysis', '--report-dir', 'analysis'] + b2 + ['--build-dir=./bin/analysis']
     if args.enable_coverage:
@@ -146,7 +146,7 @@ def build(args):
             'linkflags={}'.format(coverage_lib(platform.system().lower()))
         ])
     if args.cross_target == 'android':
-        b2 = 'PATH={}:$PATH {}'.format(android_path_override, shell_quote(b2))
+        b2 = 'PATH={} {}'.format(android_path_override, shell_quote(b2))
     run_command(b2)
 
 
@@ -177,7 +177,7 @@ def install(args):
         b2.append('tests//install')
     if args.cross_target == 'android':
         b2.append('tests//install-android')
-        b2 = 'PATH={}:$PATH {}'.format(android_path_override, shell_quote(b2))
+        b2 = 'PATH={} {}'.format(android_path_override, shell_quote(b2))
     rm_rf('dist')
     rm_rf(os.path.join('tests', 'dist'))
     run_command(b2)

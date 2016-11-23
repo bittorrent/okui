@@ -1,0 +1,21 @@
+version: '2'
+services:
+    base:
+        image: dummy
+        working_dir: /mnt/okui
+        volumes:
+            - .:/mnt/okui
+            - ${GITHUB_SSH_KEY}:/root/.ssh/github:ro
+            - ~/.ssh/known_hosts:/root/.ssh/known_hosts:ro
+        environment:
+            - GIT_SSH_COMMAND=ssh -i /root/.ssh/github
+    android-env:
+        extends:
+            service: base
+        image: bittorrent/live-build-environments:android-n17-s25-arm-6a57cdd
+        environment:
+            - LIVE_CROSS_TARGET=android
+    linux-env:
+        extends:
+            service: base
+        image: bittorrent/live-build-environments:linux-7512f1a

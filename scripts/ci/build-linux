@@ -3,12 +3,9 @@
 script_dir="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 cd $script_dir/../..
 
-export CC=clang-3.8
-export CXX=clang++-3.8
-export CXXFLAGS=-stdlib=libc++
-export LDFLAGS=-lc++
-
-./scripts/build --install --enable-coverage
-./tests/dist/okui-tests
-
-./scripts/build --variant=debug --enable-analysis
+if [[ -z $ANALYSIS ]] ; then
+    ./scripts/build --install --enable-coverage
+    ./tests/dist/okui-tests
+else
+    ./scripts/build --variant=debug --enable-analysis
+fi
