@@ -1,7 +1,6 @@
 #include <okui/shaders/DistanceFieldShader.h>
 
-namespace okui {
-namespace shaders {
+namespace okui::shaders {
 
 std::string DistanceFieldShader::FragmentShader() {
     bool useStandardDerivatives = !scraps::opengl::kIsOpenGLES || scraps::opengl::MajorVersion() >= 3;
@@ -56,4 +55,4 @@ void DistanceFieldShader::flush() {
     TextureShader::flush();
 }
 
-} } // namespace okui::shaders
+} // namespace okui::shaders

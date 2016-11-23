@@ -5,8 +5,7 @@
 
 #include <algorithm>
 
-namespace okui {
-namespace views {
+namespace okui::views {
 
 /**
 * Finds the end of the next word. Returns offset from current start.
@@ -329,4 +328,4 @@ void TextField::Cursor::render() {
     colorShader->flush();
 }
 
-} } // namespace okui::views
+} // namespace okui::views

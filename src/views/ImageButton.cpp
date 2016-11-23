@@ -2,8 +2,7 @@
 
 #include <okui/Application.h>
 
-namespace okui {
-namespace views {
+namespace okui::views {
 
 namespace {
 
@@ -14,7 +13,7 @@ constexpr auto DepressedColor(Color c) {
     return color;
 }
 
-}
+} // anonymous namespace
 
 void ImageButton::setTexture(std::string texture, State state) {
     _stateImageView(state).setTexture(std::move(texture));
@@ -92,4 +91,4 @@ void ImageButton::stateChanged() {
     }
 }
 
-} } // namespace okui::views
+} // namespace okui::views

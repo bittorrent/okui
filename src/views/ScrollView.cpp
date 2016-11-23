@@ -1,7 +1,6 @@
 #include <okui/views/ScrollView.h>
 
-namespace okui {
-namespace views {
+namespace okui::views {
 
 namespace {
     constexpr auto kAvgVelocityTime = 0.06;
@@ -131,4 +130,4 @@ void ScrollView::_scroll(okui::Rectangle<double> newBounds) {
     scrolled();
 }
 
-} } // namespace okui::views
+} // namespace okui::views

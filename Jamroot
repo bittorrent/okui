@@ -58,7 +58,7 @@ lib okui :
     utf8
 :
     <include>include
-    <cxxflags>"-std=c++1y"
+    <cxxflags>"-std=c++1z"
     <link>static
     [ conditional <target-os>linux :
         <source>GL
@@ -67,7 +67,7 @@ lib okui :
     <target-os>android:<source>jshackle
 : :
     <include>include
-    <cxxflags>"-std=c++1y"
+    <cxxflags>"-std=c++1z"
     <conditional>@okui-frameworks
     <target-os>android:<source>GLESv2
 ;

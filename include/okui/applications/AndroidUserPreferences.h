@@ -8,7 +8,7 @@
 
 #include <jshackle/android/app/Activity.h>
 
-namespace okui {
+namespace okui::applications {
 
 class AndroidUserPreferences : public UserPreferencesInterface {
 public:
@@ -40,6 +40,6 @@ private:
     android::content::SharedPreferences::Editor* _editor;
 };
 
-} // namespace okui
+} // namespace okui::applications
 
 #endif

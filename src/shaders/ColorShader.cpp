@@ -1,7 +1,6 @@
 #include <okui/shaders/ColorShader.h>
 
-namespace okui {
-namespace shaders {
+namespace okui::shaders {
 
 ColorShader::ColorShader() {
     opengl::Shader vsh(scraps::opengl::CommonVertexShaderHeader() + R"(
@@ -154,4 +153,4 @@ void ColorShader::flush() {
     ShaderBase<Vertex>::_flush(false);
 }
 
-} } // namespace okui::shaders
+} // namespace okui::shaders

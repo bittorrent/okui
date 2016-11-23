@@ -4,8 +4,7 @@
 
 #include <cmath>
 
-namespace okui {
-namespace shapes {
+namespace okui::shapes {
 
 void Arc::draw(Shader* shader) {
     int segments = ceil(angle / (2.0 * M_PI / 4.0));
@@ -28,4 +27,4 @@ void Arc::draw(Shader* shader) {
     }
 }
 
-} } // namespace okui::shapes
+} // namespace okui::shapes

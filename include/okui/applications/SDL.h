@@ -30,8 +30,7 @@
 
 using namespace std::literals;
 
-namespace okui {
-namespace applications {
+namespace okui::applications {
 
 class SDL : public Application {
 public:
@@ -789,4 +788,4 @@ inline void SDL::_checkBackCommand() {
 #endif
 }
 
-} } // namespace okui::applications
+} // namespace okui::applications

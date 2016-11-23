@@ -5,9 +5,7 @@
 #include <okui/ml/elements/View.h>
 #include <okui/views/ImageView.h>
 
-namespace okui {
-namespace ml {
-namespace elements {
+namespace okui::ml::elements {
 
 class Image : public View {
 public:
@@ -32,4 +30,4 @@ protected:
     };
 };
 
-}}} // namespace okui::ml::elements
+} // namespace okui::ml::elements

@@ -1,15 +1,15 @@
 libraries:
     scraps:
         repository: git@github.com:bittorrent/scraps.git
-        commit: 09cf7eb6f4d40f6bb8f261f5b9922c50ccb3d469
+        commit: 9511b4613e6b6ad1892b69958533508c19043cce
         build-directory-suffix: {{variant|default('release')}}
         project:
             type: boostbuild
             pre-build: ./build-deps --needy-target-args='-t {{ platform }}:{{ architecture }}' --needy-satisfy-args='--android-toolchain={{ env['ANDROID_TOOLCHAIN'] }}' --configure
             b2-args: variant={{variant|default('release')}}
     boost-build:
-        download: https://github.com/boostorg/build/archive/2016.03.tar.gz
-        checksum: 0e6936337c25fc87d2aff8ea6c63019e9c1e319a
+        download: https://github.com/boostorg/build/archive/boost-1.62.0.tar.gz
+        checksum: c1788d2671078748976506012e4c9ac9bc429556
         project:
             build-steps:
                 - ./bootstrap.sh

@@ -1,7 +1,6 @@
 #include <okui/views/Checkbox.h>
 
-namespace okui {
-namespace views {
+namespace okui::views {
 
 void Checkbox::setState(State state, bool invokeAction) {
     _state = state;
@@ -23,4 +22,4 @@ void Checkbox::keyDown(KeyCode key, KeyModifiers mod, bool repeat) {
     okui::View::keyDown(key, mod, repeat);
 }
 
-} } // namespace okui::views
+} // namespace okui::views

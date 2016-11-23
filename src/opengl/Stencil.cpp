@@ -1,7 +1,6 @@
 #include <okui/opengl/Stencil.h>
 
-namespace okui {
-namespace opengl {
+namespace okui::opengl {
 
 std::unordered_map<const void*, std::unordered_map<GLint, Stencil::State>> Stencil::_sStencilState;
 
@@ -86,4 +85,4 @@ Stencil::State& Stencil::_state() {
     return _sStencilState[_context][_framebuffer];
 }
 
-} } // namespace okui::opengl
+} // namespace okui::opengl

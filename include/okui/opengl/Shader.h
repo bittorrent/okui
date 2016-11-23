@@ -6,8 +6,7 @@
 
 #include <string>
 
-namespace okui {
-namespace opengl {
+namespace okui::opengl {
 
 class Shader {
 public:
@@ -29,4 +28,4 @@ private:
     GLuint _shader = 0;
 };
 
-} } // namespace okui::opengl
+} // namespace okui::opengl

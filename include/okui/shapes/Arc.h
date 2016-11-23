@@ -3,10 +3,10 @@
 #include <okui/config.h>
 
 namespace okui {
-
 class Shader;
+}
 
-namespace shapes {
+namespace okui::shapes {
 
 class Arc {
 public:
@@ -18,4 +18,4 @@ public:
     double x, y, r, orientation, angle;
 };
 
-} } // namespace okui::shapes
+} // namespace okui::shapes

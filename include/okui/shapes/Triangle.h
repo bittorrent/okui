@@ -3,10 +3,10 @@
 #include <okui/config.h>
 
 namespace okui {
-
 class Shader;
+}
 
-namespace shapes {
+namespace okui::shapes {
 
 class Triangle {
 public:
@@ -18,4 +18,4 @@ public:
     double x1, y1, x2, y2, x3, y3;
 };
 
-} } // namespace okui::shapes
+} // namespace okui::shapes

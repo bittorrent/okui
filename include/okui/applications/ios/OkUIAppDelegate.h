@@ -20,12 +20,10 @@
 - (BOOL)application:(UIApplication*)app openURL:(NSURL*)url options:(NSDictionary<UIApplicationOpenURLOptionsKey,id>*)options;
 @end
 
-namespace okui {
-namespace applications {
-namespace ios {
+namespace okui::applications::ios {
 
 void SetAppDelegateClassName(std::string name);
 
-}}} // namespace okui::applications::iOS
+} // namespace okui::applications::iOS
 
 #endif

@@ -28,8 +28,7 @@
 - (BOOL)validateUserInterfaceItem:(id<NSValidatedUserInterfaceItem>)item;
 @end
 
-namespace okui {
-namespace applications {
+namespace okui::applications {
 
 /**
 * Provides some native Platform overrides for OS X.
@@ -310,6 +309,6 @@ inline NSUInteger OSX<Base>::_convertKeyModifiers(KeyModifiers modifiers) {
     return ret;
 }
 
-} } // namespace okui::applications
+} // namespace okui::applications
 
 #endif

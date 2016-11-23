@@ -1,7 +1,6 @@
 #include <okui/opengl/Shader.h>
 
-namespace okui {
-namespace opengl {
+namespace okui::opengl {
 
 Shader::Shader(const char* source, Shader::Type type) {
     auto shader = glCreateShader(type == kVertexShader ? GL_VERTEX_SHADER : GL_FRAGMENT_SHADER);
@@ -27,4 +26,4 @@ Shader::~Shader() {
     glDeleteShader(_shader);
 }
 
-} } // namespace okui::opengl
+} // namespace okui::opengl

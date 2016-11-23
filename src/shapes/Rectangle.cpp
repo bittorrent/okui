@@ -5,8 +5,7 @@
 
 #include <cmath>
 
-namespace okui {
-namespace shapes {
+namespace okui::shapes {
 
 Rectangle& Rectangle::round(double radius, int corners) {
     cornerRadius = radius;
@@ -83,4 +82,4 @@ void Rectangle::draw(Shader* shader) {
     }
 }
 
-} } // namespace okui::shapes
+} // namespace okui::shapes

@@ -2,9 +2,7 @@
 
 #include <okui/ml/Context.h>
 
-namespace okui {
-namespace ml {
-namespace elements {
+namespace okui::ml::elements {
 
 void View::ElementBase::initialize(const Context& context, const pugi::xml_node& xml) {
     _text = xml.text().get();
@@ -55,4 +53,4 @@ ElementInterface* View::ElementBase::descendantWithId(stdts::string_view id) con
     return nullptr;
 }
 
-}}} // namespace okui::ml::elements
+} // namespace okui::ml::elements

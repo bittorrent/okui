@@ -4,8 +4,7 @@
 
 #include <cassert>
 
-namespace okui {
-namespace views {
+namespace okui::views {
 
 void MarkupView::load(stdts::string_view markup) {
     setPreferredFocus(nullptr);
@@ -79,4 +78,4 @@ void MarkupView::_streamUpdateHook() {
     }
 }
 
-}} // namespace okui::views
+} // namespace okui::views

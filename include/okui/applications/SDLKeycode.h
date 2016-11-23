@@ -5,7 +5,7 @@
 #include <SDL.h>
 #include <cstdint>
 
-namespace okui {
+namespace okui::applications {
 
 constexpr KeyModifiers ConvertKeyModifiers(uint16_t mods) {
     KeyModifiers result = KeyModifier::kNone;
@@ -267,4 +267,4 @@ constexpr KeyCode ConvertKeyCode(SDL_Keycode keyCode) {
     }
 }
 
-} // namespace okui
+} // namespace okui::applications

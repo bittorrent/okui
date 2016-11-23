@@ -6,12 +6,11 @@
 #include <okui/views/ImageButton.h>
 #include <okui/views/PopoutFocus.h>
 
-namespace okui {
-namespace views {
+namespace okui::views {
 
 template <typename BaseView>
 using PopoutButton = PopoutFocus<Button<BaseView>>;
 
 using PopoutImageButton = PopoutFocus<ImageButton>;
 
-} } // namespace okui::views
+} // namespace okui::views

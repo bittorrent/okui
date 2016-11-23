@@ -4,8 +4,7 @@
 
 #include <cassert>
 
-namespace okui {
-namespace ml {
+namespace okui::ml {
 
 stdts::optional<Color> ParseColor(stdts::string_view str) {
     if (scraps::CaseInsensitiveEquals(str, "white")) { return Color::kWhite; }
@@ -142,4 +141,4 @@ stdts::optional<bool> ParseBoolean(stdts::string_view str) {
     return {};
 }
 
-}} // namespace okui::ml
+} // namespace okui::ml

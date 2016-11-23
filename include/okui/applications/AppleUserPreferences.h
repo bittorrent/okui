@@ -8,7 +8,7 @@
 
 #import <Foundation/Foundation.h>
 
-namespace okui {
+namespace okui::applications {
 
 class AppleUserPreferences : public UserPreferencesInterface {
 public:
@@ -37,6 +37,6 @@ private:
     NSUserDefaults* _userDefaults = nil;
 };
 
-} // namespace okui
+} // namespace okui::applications
 
 #endif

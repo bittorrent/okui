@@ -15,8 +15,7 @@
 
 #include <android/asset_manager_jni.h>
 
-namespace okui {
-namespace applications {
+namespace okui::applications {
 
 JSHACKLE_JAVA_CLASS_BEGIN(AndroidJavaHelper);
     JSHACKLE_JAVA_CLASS_CONSTRUCTOR(AndroidJavaHelper, android::app::Activity);
@@ -236,6 +235,6 @@ inline std::shared_ptr<std::string> Android<Base>::AssetResourceManager::load(st
     return ret;
 }
 
-} } // namespace okui::applications
+} // namespace okui::applications
 
 #endif

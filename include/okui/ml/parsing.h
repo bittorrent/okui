@@ -9,8 +9,7 @@
 
 #include <unordered_map>
 
-namespace okui {
-namespace ml {
+namespace okui::ml {
 
 stdts::optional<Color> ParseColor(stdts::string_view str);
 
@@ -23,4 +22,4 @@ stdts::optional<double> ParseNumber(stdts::string_view str, const std::unordered
 
 stdts::optional<bool> ParseBoolean(stdts::string_view str);
 
-}} // namespace okui::ml
+} // namespace okui::ml

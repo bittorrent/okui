@@ -7,8 +7,7 @@
 
 #include <stdts/optional.h>
 
-namespace okui {
-namespace views {
+namespace okui::views {
 
 class ImageView : public View {
 public:
@@ -53,4 +52,4 @@ private:
     TextureDrawMode         _drawMode = TextureDrawMode::kFit;
 };
 
-} } // namespace okui::views
+} // namespace okui::views

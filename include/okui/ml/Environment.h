@@ -9,8 +9,7 @@
 
 #include <unordered_map>
 
-namespace okui {
-namespace ml {
+namespace okui::ml {
 
 class Environment {
 public:
@@ -30,4 +29,4 @@ private:
     std::unordered_map<std::string, std::unique_ptr<ElementTypeInterface>> _elementTypes;
 };
 
-}} // namespace okui::ml
+} // namespace okui::ml

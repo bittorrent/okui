@@ -2,8 +2,7 @@
 
 #include <memory>
 
-namespace okui {
-namespace ml {
+namespace okui::ml {
 
 class ElementInterface;
 
@@ -14,4 +13,4 @@ public:
     virtual std::unique_ptr<ElementInterface> create() const = 0;
 };
 
-}} // namespace okui::ml
+} // namespace okui::ml

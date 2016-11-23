@@ -10,8 +10,7 @@
 
 #include <unordered_map>
 
-namespace okui {
-namespace ml {
+namespace okui::ml {
 
 /**
 * A context contains the essentials for loading and updating views. For example, one of its
@@ -69,4 +68,4 @@ private:
     std::unordered_map<std::string, std::unique_ptr<FormatArgStorage>> _fmtArgs;
 };
 
-}} // namespace okui::ml
+} // namespace okui::ml

@@ -5,8 +5,7 @@
 #include <okui/Color.h>
 #include <okui/Shader.h>
 
-namespace okui {
-namespace shaders {
+namespace okui::shaders {
 
 struct ColorVertex {
     GLfloat x, y;
@@ -47,4 +46,4 @@ private:
     double _calculateGradientPosition(double x, double y);
 };
 
-} } // namespace okui::shaders
+} // namespace okui::shaders

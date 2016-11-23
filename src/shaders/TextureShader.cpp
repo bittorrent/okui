@@ -3,8 +3,7 @@
 #include <okui/TextureInterface.h>
 #include <okui/shapes/Rectangle.h>
 
-namespace okui {
-namespace shaders {
+namespace okui::shaders {
 
 TextureShader::TextureShader(const char* fragmentShader) {
     opengl::Shader vsh(scraps::opengl::CommonVertexShaderHeader() + R"(
@@ -156,4 +155,4 @@ void TextureShader::flush() {
     ShaderBase<Vertex>::_flush(_textureHasPremultipliedAlpha);
 }
 
-} } // namespace okui::shaders
+} // namespace okui::shaders

@@ -10,9 +10,7 @@
 #import <objc/runtime.h>
 #import <objc/message.h>
 
-namespace okui {
-namespace applications {
-namespace ios {
+namespace okui::applications::ios {
 
 namespace detail {
     NSString* gAppDelegateClassName = @"OkUIAppDelegate";
@@ -22,7 +20,7 @@ void SetAppDelegateClassName(std::string name) {
     detail::gAppDelegateClassName = [NSString stringWithUTF8String: name.c_str()];
 }
 
-}}} // namespace okui::applications::iOS
+} // namespace okui::applications::iOS
 
 @implementation SDLUIKitDelegate (MethodSwizzle)
 // In order to avoid the warning "category is implementing a method which will also be implemented by its primary

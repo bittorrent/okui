@@ -4,8 +4,7 @@
 
 #include <okui/shaders/TextureShader.h>
 
-namespace okui {
-namespace shaders {
+namespace okui::shaders {
 
 class DistanceFieldShader : public TextureShader {
 public:
@@ -26,4 +25,4 @@ private:
     std::string FragmentShader();
 };
 
-} } // namespace okui::shaders
+} // namespace okui::shaders

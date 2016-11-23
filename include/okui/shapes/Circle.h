@@ -5,10 +5,10 @@
 #include <okui/shapes/Arc.h>
 
 namespace okui {
-
 class Shader;
+}
 
-namespace shapes {
+namespace okui::shapes {
 
 class Circle {
 public:
@@ -22,4 +22,4 @@ public:
     double x, y, r;
 };
 
-} } // namespace okui::shapes
+} // namespace okui::shapes

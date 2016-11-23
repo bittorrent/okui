@@ -6,8 +6,7 @@
 
 #include <unordered_map>
 
-namespace okui {
-namespace opengl {
+namespace okui::opengl {
 
 /**
 * Stencils allow masking of shapes with other shapes.
@@ -51,4 +50,4 @@ private:
     State& _state();
 };
 
-} } // namespace okui::opengl
+} // namespace okui::opengl

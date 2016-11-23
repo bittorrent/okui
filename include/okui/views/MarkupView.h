@@ -6,8 +6,7 @@
 #include <okui/ml/Context.h>
 #include <okui/ml/Environment.h>
 
-namespace okui {
-namespace views {
+namespace okui::views {
 
 class MarkupView : public View {
 public:
@@ -57,4 +56,4 @@ private:
     void _streamUpdateHook();
 };
 
-} } // namespace okui::views
+} // namespace okui::views

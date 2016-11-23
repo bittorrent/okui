@@ -14,8 +14,7 @@
 
 #include <sys/utsname.h>
 
-namespace okui {
-namespace applications {
+namespace okui::applications {
 
 /**
 * Provides some native Platform overrides for iOS.
@@ -100,6 +99,6 @@ inline std::string IOS<Base>::distinctId() const {
     return std::string([uuid UTF8String]);
 }
 
-} } // namespace okui::applications
+} // namespace okui::applications
 
 #endif

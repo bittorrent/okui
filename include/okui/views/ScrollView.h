@@ -7,8 +7,7 @@
 
 #include <scraps/Timer.h>
 
-namespace okui {
-namespace views {
+namespace okui::views {
 
 class ScrollView : public okui::View {
 public:
@@ -61,4 +60,4 @@ private:
     std::vector<std::tuple<double, double, double>> _velocities;
 };
 
-} } // namespace okui::views
+} // namespace okui::views

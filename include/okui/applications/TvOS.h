@@ -6,8 +6,7 @@
 
 #include <okui/applications/IOS.h>
 
-namespace okui {
-namespace applications {
+namespace okui::applications {
 
 /**
 * Provides some native Platform overrides for TvOS.
@@ -31,6 +30,6 @@ public:
 };
 
 
-} } // namespace okui::applications
+} // namespace okui::applications
 
 #endif

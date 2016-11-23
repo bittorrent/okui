@@ -2,8 +2,7 @@
 
 #include <cassert>
 
-namespace okui {
-namespace opengl {
+namespace okui::opengl {
 
 Framebuffer::Framebuffer() {
     glGenFramebuffers(1, &_framebuffer);
@@ -100,4 +99,4 @@ GLuint Framebuffer::Attachment::relinquishTexture() {
     return ret;
 }
 
-} } // namespace okui::opengl
+} // namespace okui::opengl

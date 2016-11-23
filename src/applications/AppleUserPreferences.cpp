@@ -2,7 +2,7 @@
 
 #if SCRAPS_APPLE
 
-namespace okui {
+namespace okui::applications {
 
 AppleUserPreferences::AppleUserPreferences() : _userDefaults{[NSUserDefaults standardUserDefaults]} {}
 
@@ -78,6 +78,6 @@ void AppleUserPreferences::setString(const std::string& key, const std::string& 
     [_userDefaults setObject:nsValue forKey:nsKey];
 }
 
-} // namespace okui
+} // namespace okui::applications
 
 #endif

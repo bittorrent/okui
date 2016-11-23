@@ -11,7 +11,7 @@
 #include <okui/BitmapFont.h>
 #include <okui/FileTexture.h>
 #include <okui/View.h>
-#include <okui/TextureCache.h>
+#include <okui/TextureHandle.h>
 
 #include <scraps/TaskThread.h>
 

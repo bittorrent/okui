@@ -5,8 +5,7 @@
 #include <algorithm>
 #include <cmath>
 
-namespace okui {
-namespace math {
+namespace okui::math {
 
 template <typename T, size_t R, size_t C> struct Matrix;
 
@@ -106,4 +105,4 @@ struct Matrix<T, 4, 4> : MatrixBase<T, 4, 4> {
     }
 };
 
-} } // namespace okui::math
+} // namespace okui::math

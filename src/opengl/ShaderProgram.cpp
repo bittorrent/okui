@@ -1,7 +1,6 @@
 #include <okui/opengl/ShaderProgram.h>
 
-namespace okui {
-namespace opengl {
+namespace okui::opengl {
 
 ShaderProgram::ShaderProgram() {
     _program = glCreateProgram();
@@ -39,4 +38,4 @@ void ShaderProgram::link() {
     }
 }
 
-} } // namespace okui::opengl
+} // namespace okui::opengl

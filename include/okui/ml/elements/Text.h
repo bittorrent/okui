@@ -6,9 +6,7 @@
 #include <okui/ml/elements/View.h>
 #include <okui/views/TextView.h>
 
-namespace okui {
-namespace ml {
-namespace elements {
+namespace okui::ml::elements {
 
 class Text : public View {
 public:
@@ -55,4 +53,4 @@ protected:
     };
 };
 
-}}} // namespace okui::ml::elements
+} // namespace okui::ml::elements

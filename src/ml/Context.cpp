@@ -3,8 +3,7 @@
 
 #include <cassert>
 
-namespace okui {
-namespace ml {
+namespace okui::ml {
 
 std::unique_ptr<ElementInterface> Context::load(stdts::string_view markup) const {
     pugi::xml_document document;
@@ -62,4 +61,4 @@ std::string Context::render(stdts::string_view str) const {
     }
 }
 
-}} // namespace okui::ml
+} // namespace okui::ml

@@ -1,7 +1,6 @@
 #include <okui/views/ImageView.h>
 
-namespace okui {
-namespace views {
+namespace okui::views {
 
 void ImageView::setTexture(std::string texture) {
     if (texture == _resource) { return; }
@@ -89,4 +88,4 @@ void ImageView::unload() {
     _placeholderTexture = nullptr;
 }
 
-} } // namespace okui::views
+} // namespace okui::views

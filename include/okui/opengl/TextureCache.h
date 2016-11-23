@@ -6,8 +6,7 @@
 
 #include <scraps/Cache.h>
 
-namespace okui {
-namespace opengl {
+namespace okui::opengl {
 
 struct TextureCacheEntry {
     TextureCacheEntry(GLuint id_) : id{id_} {}
@@ -25,4 +24,4 @@ struct TextureCacheEntry {
 
 using TextureCache = scraps::Cache<TextureCacheEntry>;
 
-} } // namespace okui::opengl
+} // namespace okui::opengl

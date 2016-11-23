@@ -4,8 +4,7 @@
 
 #include <cmath>
 
-namespace okui {
-namespace shapes {
+namespace okui::shapes {
 
 void Line::draw(Shader* shader) {
     Point<double> perpendicular{-(p2.y - p1.y), p2.x - p1.x};
@@ -19,4 +18,4 @@ void Line::draw(Shader* shader) {
     shader->drawTriangle(c2.x, c2.y, c3.x, c3.y, c4.x, c4.y);
 }
 
-} } // namespace okui::shapes
+} // namespace okui::shapes

@@ -6,8 +6,7 @@
 #include <okui/ml/elements/Text.h>
 #include <okui/ml/elements/View.h>
 
-namespace okui {
-namespace ml {
+namespace okui::ml {
 
 Environment::Environment() {
     defineElementType<elements::Button>("button");
@@ -17,4 +16,4 @@ Environment::Environment() {
     defineElementType<elements::View>("view");
 }
 
-}} // namespace okui::ml
+} // namespace okui::ml

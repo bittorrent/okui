@@ -6,10 +6,10 @@
 #include <okui/AffineTransformation.h>
 
 namespace okui {
-
 class Shader;
+}
 
-namespace shapes {
+namespace okui::shapes {
 
 class Rectangle {
 public:
@@ -40,4 +40,4 @@ private:
     double _rotation = 0;
 };
 
-} } // namespace okui::shapes
+} // namespace okui::shapes

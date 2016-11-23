@@ -5,8 +5,7 @@
 
 using namespace std::literals;
 
-namespace okui {
-namespace views {
+namespace okui::views {
 
 LabeledPopoutButton::LabeledPopoutButton() {
     // in case the user wants text to extend beyond the bounds
@@ -86,4 +85,4 @@ void LabeledPopoutButton::Body::layout() {
     _iconView.setBounds(0, 0, bounds().width, bounds().height);
 }
 
-} } // namespace okui::views
+} // namespace okui::views

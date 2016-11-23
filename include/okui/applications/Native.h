@@ -15,8 +15,7 @@
 #include <okui/Application.h>
 #endif
 
-namespace okui {
-namespace applications {
+namespace okui::applications {
 
 #define ONAIR_OKUI_HAS_NATIVE_APPLICATION 1
 
@@ -34,4 +33,4 @@ using Native = Android<Base>;
 using Native = Base;
 #endif
 
-} } // namespace okui::applications
+} // namespace okui::applications

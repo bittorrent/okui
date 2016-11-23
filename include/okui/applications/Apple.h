@@ -10,8 +10,7 @@
 
 #import <Foundation/Foundation.h>
 
-namespace okui {
-namespace applications {
+namespace okui::applications {
 
 /**
 * Provides some native Application overrides for iOS and OS X.
@@ -50,6 +49,6 @@ inline std::string Apple<Base>::userStoragePath() const {
     return std::string{[applicationSupportDirectory UTF8String]} + '/' + this->organization() + '/' + this->name();
 }
 
-} } // namespace okui::applications
+} // namespace okui::applications
 
 #endif

@@ -7,8 +7,7 @@
 
 #include <unordered_map>
 
-namespace okui {
-namespace views {
+namespace okui::views {
 
 class ImageButton : public Button<View> {
 public:
@@ -33,4 +32,4 @@ private:
     Color                                _normalColor = Color::kWhite;
 };
 
-} } // namespace okui::views
+} // namespace okui::views

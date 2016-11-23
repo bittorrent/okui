@@ -7,8 +7,7 @@
 
 #include <cmath>
 
-namespace okui {
-namespace views {
+namespace okui::views {
 
 double TextView::lineHeight() const {
     return _font ? _font->lineSpacing() * _fontScale() : 0;
@@ -352,4 +351,4 @@ double TextView::_lineWidth(stdts::basic_string_view<BitmapFont::GlyphId> line, 
     return _font->width(line.data(), line.size()) * fontScale + letterSpacing;
 }
 
-} } // namespace okui::views
+} // namespace okui::views

@@ -6,8 +6,7 @@
 
 #include <functional>
 
-namespace okui {
-namespace views {
+namespace okui::views {
 
 template <typename BaseView>
 class Button : public BaseView {
@@ -139,4 +138,4 @@ void Button<BaseView>::keyDown(KeyCode key, KeyModifiers mod, bool repeat) {
     BaseView::keyDown(key, mod, repeat);
 }
 
-} } // namespace okui::views
+} // namespace okui::views

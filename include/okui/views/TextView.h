@@ -8,8 +8,7 @@
 
 #include <stdts/string_view.h>
 
-namespace okui {
-namespace views {
+namespace okui::views {
 
 class TextView : public View {
 public:
@@ -115,4 +114,4 @@ private:
     double                                              _textWidth = 0;
 };
 
-} } // namespace okui::views
+} // namespace okui::views

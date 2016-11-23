@@ -10,8 +10,7 @@
 
 #include <scraps/Timer.h>
 
-namespace okui {
-namespace views {
+namespace okui::views {
 
 class TextField : public okui::View {
 public:
@@ -120,4 +119,4 @@ private:
     size_t             _selectionStartIndex = 0;
 };
 
-} } // namespace okui::views
+} // namespace okui::views

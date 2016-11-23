@@ -7,10 +7,10 @@
 #include <okui/Shader.h>
 
 namespace okui {
-
 class TextureInterface;
+}
 
-namespace shaders {
+namespace okui::shaders {
 
 struct TextureVertex {
     GLfloat x, y;
@@ -55,4 +55,4 @@ private:
     virtual void _processTriangle(const std::array<Point<double>, 3>& p, const std::array<Point<double>, 3>& pT, Shader::Curve curve) override;
 };
 
-} } // namespace okui::shaders
+} // namespace okui::shaders

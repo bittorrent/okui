@@ -14,8 +14,7 @@
 * s: percent complete (0-1)
 */
 
-namespace okui {
-namespace interpolation {
+namespace okui::interpolation {
 
 template <typename T>
 constexpr T Linear(const T& b, const T& c, double s) {
@@ -194,4 +193,4 @@ struct Back {
     }
 };
 
-} } // okui::interpolation
+} // okui::interpolation

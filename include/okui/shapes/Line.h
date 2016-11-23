@@ -5,10 +5,10 @@
 #include <okui/Point.h>
 
 namespace okui {
-
 class Shader;
+}
 
-namespace shapes {
+namespace okui::shapes {
 
 class Line {
 public:
@@ -24,4 +24,4 @@ public:
     double thickness = 2.0;
 };
 
-} } // namespace okui::shapes
+} // namespace okui::shapes

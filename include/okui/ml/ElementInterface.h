@@ -6,8 +6,9 @@
 
 namespace okui {
 class View;
+} // namespace okui
 
-namespace ml {
+namespace okui::ml {
 class Context;
 
 class ElementInterface {
@@ -33,4 +34,4 @@ public:
     virtual View* view() { return nullptr; }
 };
 
-}} // namespace okui::ml
+} // namespace okui::ml

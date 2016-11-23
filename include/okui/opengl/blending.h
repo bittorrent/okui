@@ -4,8 +4,7 @@
 
 #include <okui/opengl/opengl.h>
 
-namespace okui {
-namespace opengl {
+namespace okui::opengl {
 
 enum class BlendFactor : GLenum {
     kZero = GL_ZERO,
@@ -37,4 +36,4 @@ inline void SetBlendFunction(BlendFactor sourceRGB, BlendFactor destinationRGB, 
     glBlendFuncSeparate(static_cast<GLenum>(sourceRGB), static_cast<GLenum>(destinationRGB), static_cast<GLenum>(sourceAlpha), static_cast<GLenum>(destinationAlpha));
 }
 
-} } // namespace okui::opengl
+} // namespace okui::opengl

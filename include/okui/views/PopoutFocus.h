@@ -5,8 +5,7 @@
 #include <okui/Animation.h>
 #include <okui/Point.h>
 
-namespace okui {
-namespace views {
+namespace okui::views {
 
 /**
 * PopoutFocus implements a view that pops out towards the viewer when focused. PopoutFocus must
@@ -112,4 +111,4 @@ void PopoutFocus<BaseView>::_updateBounds() {
     this->setBounds(x, y, width, height);
 }
 
-} } // namespace okui::views
+} // namespace okui::views

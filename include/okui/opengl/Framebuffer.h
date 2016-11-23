@@ -6,8 +6,7 @@
 
 #include <list>
 
-namespace okui {
-namespace opengl {
+namespace okui::opengl {
 
 class Framebuffer {
 public:
@@ -49,4 +48,4 @@ private:
     std::vector<GLenum> _drawBuffers;
 };
 
-} } // namespace okui::opengl
+} // namespace okui::opengl

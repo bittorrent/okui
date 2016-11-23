@@ -7,8 +7,7 @@
 #include <cmath>
 #include <functional>
 
-namespace okui {
-namespace math {
+namespace okui::math {
 
 template <typename T, size_t N>
 struct VectorComponents {
@@ -123,4 +122,4 @@ struct Vector : VectorComponents<T, N> {
     }
 };
 
-} } // namespace okui::math
+} // namespace okui::math

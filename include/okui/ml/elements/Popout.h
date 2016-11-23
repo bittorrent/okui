@@ -5,9 +5,7 @@
 #include <okui/ml/elements/View.h>
 #include <okui/views/PopoutFocus.h>
 
-namespace okui {
-namespace ml {
-namespace elements {
+namespace okui::ml::elements {
 
 class Popout : public View {
 public:
@@ -94,4 +92,4 @@ protected:
     };
 };
 
-}}} // namespace okui::ml::elements
+} // namespace okui::ml::elements

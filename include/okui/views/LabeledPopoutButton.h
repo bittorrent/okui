@@ -8,8 +8,7 @@
 #include <okui/views/PopoutFocus.h>
 #include <okui/views/TextView.h>
 
-namespace okui {
-namespace views {
+namespace okui::views {
 
 /**
 * A popout button with a graphic and a label underneath.
@@ -61,4 +60,4 @@ private:
     TextView _label;
 };
 
-} } // namespace okui::views
+} // namespace okui::views

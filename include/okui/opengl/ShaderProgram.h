@@ -4,8 +4,7 @@
 
 #include <okui/opengl/Shader.h>
 
-namespace okui {
-namespace opengl {
+namespace okui::opengl {
 
 class ShaderProgram {
 public:
@@ -49,4 +48,4 @@ private:
     GLuint _program = 0;
 };
 
-} } // namespace okui::opengl
+} // namespace okui::opengl

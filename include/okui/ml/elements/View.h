@@ -11,9 +11,7 @@
 #include <unordered_map>
 #include <vector>
 
-namespace okui {
-namespace ml {
-namespace elements {
+namespace okui::ml::elements {
 
 class View : public ElementTypeInterface {
 public:
@@ -103,4 +101,4 @@ protected:
     };
 };
 
-}}} // namespace okui::ml::elements
+} // namespace okui::ml::elements

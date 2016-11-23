@@ -4,8 +4,7 @@
 
 #include <okui/View.h>
 
-namespace okui {
-namespace views {
+namespace okui::views {
 
 class Checkbox : public View {
 public:
@@ -30,4 +29,4 @@ private:
     std::function<void()> _action;
 };
 
-} } // namespace okui::views
+} // namespace okui::views
