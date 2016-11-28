@@ -11,27 +11,29 @@ namespace okui {
 template <typename T, typename Clock = std::chrono::steady_clock>
 class Animation {
 public:
+    using Duration = typename Clock::duration;
     using Interpolator = T(*)(const T&, const T&, double);
+    using TimePoint = typename Clock::time_point;
 
     Animation(T initial = T{});
 
-    void target(T target, typename Clock::duration duration, Interpolator interpolator = interpolation::Linear<T>);
+    void target(T target, Duration duration, Interpolator interpolator = interpolation::Linear<T>);
     void reset(T value);
 
     T current() const;
 
-    const T& initial() const                         { return _initial; }
-    const T& target() const                          { return _target; }
-    const typename Clock::time_point& start() const  { return _start; }
-    typename Clock::time_point end() const           { return _start + _duration; }
-    const typename Clock::duration& duration() const { return _duration; }
+    const T& initial() const         { return _initial; }
+    const T& target() const          { return _target; }
+    const TimePoint& start() const   { return _start; }
+    TimePoint end() const            { return _start + _duration; }
+    const Duration& duration() const { return _duration; }
 
 private:
-    T                          _initial;
-    T                          _target;
-    typename Clock::time_point _start;
-    typename Clock::duration   _duration = Clock::duration::zero();
-    Interpolator               _interpolator = nullptr;
+    T            _initial;
+    T            _target;
+    TimePoint    _start;
+    Duration     _duration = Clock::duration::zero();
+    Interpolator _interpolator = nullptr;
 };
 
 template<typename T, typename Clock>
