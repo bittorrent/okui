@@ -29,8 +29,8 @@ protected:
                     _view.setAlignment(views::TextView::Style::HorizontalAlignment::kRight);
                 }
             } else if (scraps::CaseInsensitiveEquals(name, "vertical-alignment")) {
-                if (scraps::CaseInsensitiveEquals(value, "center")) {
-                    _view.setAlignment(views::TextView::Style::VerticalAlignment::kCenter);
+                if (scraps::CaseInsensitiveEquals(value, "middle")) {
+                    _view.setAlignment(views::TextView::Style::VerticalAlignment::kMiddle);
                 } else if (scraps::CaseInsensitiveEquals(value, "bottom")) {
                     _view.setAlignment(views::TextView::Style::VerticalAlignment::kBottom);
                 } else if (scraps::CaseInsensitiveEquals(value, "top")) {

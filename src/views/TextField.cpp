@@ -25,7 +25,7 @@ size_t endOfWord(Iterator start, Iterator end) {
 }
 
 TextField::TextField() {
-    _textView.setAlignment(TextView::Style::HorizontalAlignment::kLeft, TextView::Style::VerticalAlignment::kCenter);
+    _textView.setAlignment(TextView::Style::HorizontalAlignment::kLeft, TextView::Style::VerticalAlignment::kMiddle);
     _textView.setTextColor(Color::kWhite);
     _textView.setOverflowBehavior(TextView::Style::OverflowBehavior::kNone);
 

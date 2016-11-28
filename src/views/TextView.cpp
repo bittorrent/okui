@@ -330,7 +330,7 @@ double TextView::_calcYOffset() const {
     if (!_font) { return 0; }
 
     auto y = 0.0;
-    if (_style.verticalAlignment() == Style::VerticalAlignment::kCenter) {
+    if (_style.verticalAlignment() == Style::VerticalAlignment::kMiddle) {
         y = (bounds().height - textHeight()) * 0.5;
     } else if (_style.verticalAlignment() == Style::VerticalAlignment::kBottom) {
         y = bounds().height - textHeight();

@@ -22,7 +22,7 @@ public:
 
         enum class VerticalAlignment {
             kBottom,
-            kCenter,
+            kMiddle,
             kTop,
         };
 
@@ -63,7 +63,7 @@ public:
         Color               _textColor = Color::kBlack;
         double              _letterSpacing = 0.0;
         HorizontalAlignment _horizontalAlignment = HorizontalAlignment::kLeft;
-        VerticalAlignment   _verticalAlignment = VerticalAlignment::kCenter;
+        VerticalAlignment   _verticalAlignment = VerticalAlignment::kMiddle;
         OverflowBehavior    _overflowBehavior = OverflowBehavior::kWrap;
         double              _weight = 100.0;
         bool                _ellipsesEnabled = true;
