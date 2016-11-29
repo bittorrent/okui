@@ -13,7 +13,7 @@ struct State {
     constexpr auto members() { return std::tie(x, y, opacity); }
 };
 
-class View : public okui::View, public okui::StateMachine<State> {
+class View final : public okui::View, public okui::StateMachine<State> {
 public:
     View() : okui::StateMachine<State>("Above") {
         addUpdateHook("StateMachine", [&]{ drive(); });
