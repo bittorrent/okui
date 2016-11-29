@@ -23,6 +23,12 @@ protected:
                 _view.setTexturePlaceholder(std::string(value));
             } else if (scraps::CaseInsensitiveEquals(name, "texture-distance-field")) {
                 _view.setTextureDistanceField(ParseNumber(value));
+            } else if (scraps::CaseInsensitiveEquals(name, "draw-mode")) {
+                if (scraps::CaseInsensitiveEquals(value, "fill")) {
+                    _view.setDrawMode(views::ImageView::TextureDrawMode::kFill);
+                } else if (scraps::CaseInsensitiveEquals(value, "fit")) {
+                    _view.setDrawMode(views::ImageView::TextureDrawMode::kFit);
+                }
             } else {
                 elements::View::Element<views::ImageView>::setAttribute(context, name, value);
             }

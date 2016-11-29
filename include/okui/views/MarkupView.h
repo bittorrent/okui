@@ -36,6 +36,10 @@ public:
 
     virtual void layout() override;
 
+    ml::ElementInterface* element() const { return _element.get(); }
+
+    View* descendantViewWithId(stdts::string_view id);
+
 private:
     ml::Environment* const _environment;
     ml::Context _context{_environment};

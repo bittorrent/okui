@@ -42,6 +42,8 @@ protected:
                 _view.setTextSize(ParseNumber(value).value_or(0.0));
             } else if (scraps::CaseInsensitiveEquals(name, "text-color")) {
                 _view.setTextColor(ParseColor(value).value_or(Color::kBlack));
+            } else if (scraps::CaseInsensitiveEquals(name, "weight")) {
+                _view.setWeight(ParseNumber(value).value_or(100.0));
             } else {
                 elements::View::Element<views::TextView>::setAttribute(context, name, value);
             }

@@ -29,6 +29,18 @@ void MarkupView::layout() {
     }
 }
 
+
+View* MarkupView::descendantViewWithId(stdts::string_view id) {
+    if (_element) {
+        auto e = _element->descendantWithId(id);
+        if (e) {
+            return e->view();
+        }
+    }
+
+    return nullptr;
+}
+
 void MarkupView::_sendStreamRequest() {
     assert(_streamURI);
     _lastStreamRequestTime = std::chrono::steady_clock::now();

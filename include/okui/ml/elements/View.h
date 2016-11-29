@@ -63,6 +63,8 @@ protected:
                 }
             } else if (scraps::CaseInsensitiveEquals(name, "opacity")) {
                 _view.setOpacity(ParseNumber(value).value_or(1.0));
+            } else if (scraps::CaseInsensitiveEquals(name, "tint-color")) {
+                _view.setTintColor(ParseColor(value).value_or(Color::kWhite));
             }
         }
 
