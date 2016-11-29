@@ -2,6 +2,7 @@
 
 #include <okui/config.h>
 
+#include <okui/Color.h>
 #include <okui/opengl/Shader.h>
 
 namespace okui::opengl {
@@ -36,6 +37,7 @@ public:
         explicit Uniform(GLint location_) : location{location_} {}
         void operator=(GLint n) { glUniform1i(location, n); }
         void operator=(GLfloat f) { glUniform1f(location, f); }
+        void operator=(Color c) { glUniform4f(location, c.redF(), c.greenF(), c.blueF(), c.alphaF()); }
         void setMatrix4(const GLfloat* m, size_t count = 1) { glUniformMatrix4fv(location, static_cast<GLsizei>(count), GL_FALSE, m); }
 
         GLint location = GL_INVALID_VALUE;

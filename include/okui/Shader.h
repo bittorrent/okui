@@ -128,6 +128,13 @@ protected:
     */
     virtual void _processTriangle(const std::array<Point<double>, 3>& p, const std::array<Point<double>, 3>& pT, Shader::Curve curve) {}
 
+    /**
+    * Override this if you want to do something like draw multiple passes.
+    */
+    virtual void _draw() {
+        glDrawArrays(GL_TRIANGLES, 0, static_cast<GLsizei>(_vertices.size()));
+    }
+
     void _flush(bool inputHasPremultipliedAlpha = false) {
         if (_vertices.empty()) { return; }
 
@@ -139,7 +146,7 @@ protected:
 
         _vertexArrayBuffer.bind();
         _vertexArrayBuffer.stream(_vertices.data(), _vertices.size());
-        glDrawArrays(GL_TRIANGLES, 0, static_cast<GLsizei>(_vertices.size()));
+        _draw();
         _vertexArrayBuffer.unbind();
 
         _vertices.clear();

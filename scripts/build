@@ -137,6 +137,8 @@ def build(args):
             ret.append('tests')
         if args.cross_target == 'android':
             ret.extend(['tests//okui-tests', 'tests//okui-tests-android'])
+        if not args.cross_target and sys.platform == 'darwin':
+            ret.extend(['examples/hello-world', 'examples/StateMachine'])
         return shell_quote(ret)
 
     def common_args():

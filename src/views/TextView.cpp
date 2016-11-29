@@ -132,12 +132,22 @@ void TextView::setWeight(double weight) {
 }
 
 void TextView::setEllipsesEnabled(bool enabled) {
-    _style.setEllipsesEnabled(enabled);
+    _style.ellipsesEnabled(enabled);
     invalidateRenderCache();
 }
 
-void TextView::setTextColor(const Color& color) {
-    _style.textColor(color);
+void TextView::setTextColor(Color color) {
+    _style.textColor(std::move(color));
+    invalidateRenderCache();
+}
+
+void TextView::setOutline(double outline) {
+    _style.outline(outline);
+    invalidateRenderCache();
+}
+
+void TextView::setOutlineColor(Color color) {
+    _style.outlineColor(std::move(color));
     invalidateRenderCache();
 }
 
@@ -146,9 +156,16 @@ void TextView::render(const RenderTarget* renderTarget, const Rectangle<int>& ar
 
     auto distanceFieldShader = this->distanceFieldShader();
     distanceFieldShader->enableSupersampling(true);
-    distanceFieldShader->setEdge(std::min(std::max(1.0 - _style.weight() / 200.0, 0.0), 1.0));
 
-    distanceFieldShader->setColor(_style.textColor());
+    std::vector<shaders::DistanceFieldShader::Region> regions;
+    const auto fillEdge = std::min(std::max(1.0 - _style.weight() / 200.0, 0.0), 1.0);
+    if (_style.outline()) {
+        regions.emplace_back(1.0, _style.outlineColor(), fillEdge - (1.0 - fillEdge) * _style.outline() / 100.0, _style.outlineColor());
+    }
+    regions.emplace_back(1.0, _style.textColor(), fillEdge, _style.textColor());
+    distanceFieldShader->setRegions(std::move(regions));
+
+    distanceFieldShader->setColor(Color::kWhite);
     _renderBitmapText(distanceFieldShader);
 
     distanceFieldShader->flush();

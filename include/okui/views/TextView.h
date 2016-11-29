@@ -34,7 +34,7 @@ public:
 
         Style& font(std::string texture, std::string metadata) { _texture = std::move(texture); _metadata = std::move(metadata); return *this; }
         Style& textSize(double size)                           { _textSize = size; return *this; }
-        Style& textColor(const Color& color)                   { _textColor = color; return *this; }
+        Style& textColor(Color color)                          { _textColor = std::move(color); return *this; }
         Style& letterSpacing(double letterSpacing)             { _letterSpacing = letterSpacing; return *this; }
         Style& letterSpacingFromTracking(double tracking)      { _letterSpacing = _textSize * tracking / 1000; return *this; }
         Style& alignment(HorizontalAlignment alignment)        { _horizontalAlignment = alignment; return *this; }
@@ -43,7 +43,15 @@ public:
                                                                { _horizontalAlignment = horizontal; _verticalAlignment = vertical; return *this; }
         Style& overflowBehavior(OverflowBehavior overflow)     { _overflowBehavior = overflow; return *this; }
         Style& weight(double weight)                           { _weight = weight; return *this; }
-        Style& setEllipsesEnabled(bool enabled)                { _ellipsesEnabled = enabled; return *this; }
+        Style& ellipsesEnabled(bool enabled)                   { _ellipsesEnabled = enabled; return *this; }
+
+        /**
+        * Sets the size of the desired outline. This size should be provided in the range 0 - 100,
+        * where 0 represents no outline, and 100 represents the full extent of the font texture's
+        * capabilities.
+        */
+        Style& outline(double outline)                         { _outline = outline; return *this; }
+        Style& outlineColor(Color color)                       { _outlineColor = std::move(color); return *this; }
 
         const std::string& fontTexture() const                 { return _texture; }
         const std::string& fontMetadata() const                { return _metadata; }
@@ -55,6 +63,8 @@ public:
         OverflowBehavior overflowBehavior() const              { return _overflowBehavior; }
         double weight() const                                  { return _weight; }
         bool ellipsesEnabled() const                           { return _ellipsesEnabled; }
+        double outline() const                                 { return _outline; }
+        const Color& outlineColor() const                      { return _outlineColor; }
 
     private:
         std::string         _texture;
@@ -67,6 +77,8 @@ public:
         OverflowBehavior    _overflowBehavior = OverflowBehavior::kWrap;
         double              _weight = 100.0;
         bool                _ellipsesEnabled = true;
+        double              _outline = 0.0;
+        Color               _outlineColor = Color::kBlack;
     };
 
     const Style& style() const { return _style; }
@@ -83,7 +95,7 @@ public:
     void setStyle(Style style);
     void setFont(std::string texture, std::string metadata);
     void setTextSize(double size);
-    void setTextColor(const Color& color);
+    void setTextColor(Color color);
     void setLetterSpacing(double letterSpacing);
     void setLetterSpacingFromTracking(double tracking);
     void setAlignment(Style::HorizontalAlignment alignment);
@@ -92,6 +104,8 @@ public:
     void setOverflowBehavior(Style::OverflowBehavior overflowBehavior);
     void setWeight(double weight);
     void setEllipsesEnabled(bool enabled);
+    void setOutline(double outline);
+    void setOutlineColor(Color color);
 
     virtual void render(const RenderTarget* renderTarget, const Rectangle<int>& area) override;
     virtual void layout() override;

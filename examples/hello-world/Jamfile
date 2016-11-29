@@ -1,0 +1,2 @@
+path-constant RESOURCE_PATH : ./resources ;
+exe hello-world : ../..//okui main.cpp : <define>RESOURCE_PATH="$(RESOURCE_PATH)" ;
