@@ -148,7 +148,8 @@ bool StateMachine<State>::drive() {
                 state->members() = ScaleTuple(kv.second.state.members(), currentInfluence);
             }
             totalInfluence += currentInfluence;
-        } else if (kv.second.influence.target() != currentInfluence) {
+        }
+        if (kv.second.influence.target() != currentInfluence) {
             needsMoreUpdates = true;
         }
     }

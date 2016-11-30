@@ -16,9 +16,13 @@ struct State {
 class View final : public okui::View, public okui::StateMachine<State> {
 public:
     View() : okui::StateMachine<State>("Above") {
-        addUpdateHook("StateMachine", [&]{ drive(); });
         setTransition("Above", "Normal", 200ms, okui::interpolation::Quadratic::EaseOut);
         setTransition("Normal", "Left", 200ms, okui::interpolation::Quadratic::EaseIn);
+    }
+
+    void setState(std::string state) {
+        okui::StateMachine<State>::setState(std::move(state));
+        addUpdateHook("StateMachine", [this]{ if (!drive()) { removeUpdateHook("StateMachine"); } });
     }
 
 private:
