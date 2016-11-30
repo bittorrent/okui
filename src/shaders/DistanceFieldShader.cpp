@@ -62,9 +62,12 @@ void DistanceFieldShader::flush() {
 
 void DistanceFieldShader::_draw() {
     for (auto& region : _regions) {
-        _innerEdgeUniform = (GLfloat)region.innerEdge;
+        // if this region includes the fully opaque areas of the distance field, set the inner edge
+        // to something high so we don't try to anti-alias it
+        _innerEdgeUniform = static_cast<GLfloat>(region.innerEdge >= 1.0 ? 100.0 : region.innerEdge);
+
         _innerColorUniform = region.innerColor;
-        _outerEdgeUniform = (GLfloat)region.outerEdge;
+        _outerEdgeUniform = static_cast<GLfloat>(region.outerEdge);
         _outerColorUniform = region.outerColor;
         TextureShader::_draw();
     }
