@@ -28,6 +28,7 @@ public:
     void setLabelStyle(TextView::Style focused, TextView::Style unfocused);
     void setLabelText(std::string labelText) { _label.setText(std::move(labelText)); }
     void setBodyAspectRatio(double aspectRatio) { _bodyAspectRatio = aspectRatio; layout(); }
+    void setIconColor(Color c) { _body.setIconColor(std::move(c)); }
 
     virtual void focusGained() override;
     virtual void focusLost() override;
@@ -44,6 +45,7 @@ private:
         void setBackgroundColor(Color backgroundColor);
         void setIcon(std::string sdf);
         void setImage(std::string resourceOrURL, std::string placeholder);
+        void setIconColor(Color c) { _iconView.setTextureColor(std::move(c)); }
 
         virtual bool canBecomeDirectFocus() override { return true; }
         virtual void render() override;

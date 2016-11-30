@@ -32,6 +32,10 @@ void ImageButton::setTextureDistanceField(double edge, State state) {
     _stateImageView(state).setTextureDistanceField(edge);
 }
 
+void ImageButton::setDrawMode(ImageView::TextureDrawMode drawMode, State state) {
+    _stateImageView(state).setDrawMode(drawMode);
+}
+
 void ImageButton::load() {
     for (auto& i : _imageViews) {
         i.second.load();
