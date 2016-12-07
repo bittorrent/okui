@@ -145,11 +145,13 @@ std::future<std::shared_ptr<const std::string>> Application::download(const std:
 
 void Application::post(View* sender, std::type_index index, const void* message, Relation relation) {
     auto range = _listeners.equal_range(index);
+    std::vector<std::function<void(const void*, View*)>*> actions;
     for (auto it = range.first; it != range.second; ++it) {
         if (it->second.view->hasRelation(relation, sender) && sender->hasRelation(it->second.relation, it->second.view)) {
-            (*it->second.action)(message, sender);
+            actions.push_back(it->second.action);
         }
     }
+    _runActions(actions, sender, index, message);
 }
 
 void Application::addListener(View* view, std::type_index index, std::function<void(const void*, View*)>* action, Relation relation) {
@@ -210,9 +212,23 @@ void Application::_assignWindowSize(Window* window) {
 
 void Application::_post(std::type_index index, const void* message) {
     auto range = _listeners.equal_range(index);
+    std::vector<std::function<void(const void*, View*)>*> actions;
     for (auto it = range.first; it != range.second; ++it) {
         if (it->second.relation == Relation::kHierarchy || it->second.relation == Relation::kAny || it->second.relation == Relation::kAncestor) {
-            (*it->second.action)(message, nullptr);
+            actions.push_back(it->second.action);
+        }
+    }
+    _runActions(actions, nullptr, index, message);
+}
+
+void Application::_runActions(std::vector<std::function<void(const void*, View*)>*> actions, View* sender, std::type_index index, const void* message) {
+    for (auto action : actions) {
+        auto range = _listeners.equal_range(index);
+        // check that the action was not removed
+        if (std::find_if(range.first, range.second, [action](auto& listener) {
+                return listener.second.action == action;
+            }) != range.second) {
+            (*action)(message, sender);
         }
     }
 }

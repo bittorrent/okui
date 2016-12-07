@@ -378,6 +378,8 @@ private:
 
     void _post(std::type_index index, const void* message);
 
+    void _runActions(std::vector<std::function<void(const void*, View*)>*> actions, View* sender, std::type_index index, const void* message);
+
     std::list<Window*>                          _windows;
     ResourceManager*                            _resourceManager;
     std::string                                 _caBundlePath;
