@@ -30,7 +30,7 @@ public:
     void define(std::string name, T&& value) {
         _context.define(std::move(name), std::forward<T>(value));
         if (_element) {
-            _element->update(_context);
+            _element->update();
         }
     }
 

@@ -32,7 +32,7 @@ private:
         state.y = id == "Above" ? -100.0 : 300.0;
     }
 
-    virtual void apply(const State& state) override {
+    virtual void apply(State state) override {
         setOpacity(state.opacity);
         setBounds(state.x, state.y, 100.0, 100.0);
     }

@@ -18,7 +18,7 @@ std::unique_ptr<ElementInterface> Context::load(stdts::string_view markup) const
 std::unique_ptr<ElementInterface> Context::load(const pugi::xml_node& xml) const {
     auto element = _environment->createElement(xml.name());
     if (element) {
-        element->initialize(*this, xml);
+        element->initialize(this, xml);
     }
     return element;
 }

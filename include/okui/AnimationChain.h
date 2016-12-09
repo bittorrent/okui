@@ -17,6 +17,8 @@ public:
 
     T current();
 
+    bool isComplete() const { return _chain.empty() && _animation.isComplete(); }
+
     template <typename... Args>
     void target(T target, typename Clock::duration duration, Args&&... args);
     template <typename... Args>

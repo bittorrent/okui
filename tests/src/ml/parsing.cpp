@@ -3,6 +3,7 @@
 #include <gtest/gtest.h>
 
 using namespace okui::literals;
+using namespace std::literals;
 
 TEST(ml_parsing, colors) {
     EXPECT_EQ(okui::ml::ParseColor("green"), okui::Color::kGreen);
@@ -34,4 +35,16 @@ TEST(ml_parsing, boolean) {
     EXPECT_FALSE(okui::ml::ParseBoolean("false").value_or(true));
     EXPECT_TRUE(okui::ml::ParseBoolean("1").value_or(false));
     EXPECT_TRUE(okui::ml::ParseBoolean("true").value_or(false));
+}
+
+TEST(ml_parsing, duration) {
+    EXPECT_EQ(*okui::ml::ParseDuration("300ms"), 300ms);
+    EXPECT_EQ(*okui::ml::ParseDuration("2s + 300ms"), 2300ms);
+    EXPECT_EQ(*okui::ml::ParseDuration("4h"), 4h);
+    EXPECT_EQ(*okui::ml::ParseDuration("5m"), 5min);
+}
+
+TEST(ml_parsing, interpolator) {
+    EXPECT_TRUE(okui::ml::ParseInterpolator<double>("quadratic-ease-in") == okui::interpolation::Quadratic::EaseIn<double>);
+    EXPECT_TRUE(okui::ml::ParseInterpolator<double>("quadratic-ease-out") == okui::interpolation::Quadratic::EaseOut<double>);
 }

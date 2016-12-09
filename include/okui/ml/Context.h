@@ -26,6 +26,8 @@ public:
     * Element construction is extremely permissive, following the HTML spirit of forward-compatibility.
     * If the markup is valid XML, an element is *always* returned, even if there are unrecognized
     * attributes or tags.
+    *
+    * The context must out-live the returned element.
     */
     std::unique_ptr<ElementInterface> load(stdts::string_view markup) const;
     std::unique_ptr<ElementInterface> load(const pugi::xml_node& element) const;

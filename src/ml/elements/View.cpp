@@ -4,7 +4,8 @@
 
 namespace okui::ml::elements {
 
-void View::ElementBase::initialize(const Context& context, const pugi::xml_node& xml) {
+void View::ElementBase::initialize(const Context* context, const pugi::xml_node& xml) {
+    _context = context;
     _text = xml.text().get();
 
     for (auto& attribute : xml.attributes()) {
@@ -13,28 +14,45 @@ void View::ElementBase::initialize(const Context& context, const pugi::xml_node&
 
     for (auto& child : xml.children()) {
         if (child.type() == pugi::node_element) {
-            auto element = context.load(child);
+            auto element = _context->load(child);
             if (!element) { continue; }
             if (view() && element->view()) {
                 view()->addSubview(element->view());
+            } else if (auto stateMachine = element->stateMachine()) {
+                stateMachine->setDelegate(this);
+                _stateMachines.emplace_back(stateMachine);
             }
             _children.emplace_back(std::move(element));
         }
     }
 
-    update(context);
+    update();
 }
 
-void View::ElementBase::update(const Context& context) {
-    for (auto& child : _children) {
-        child->update(context);
-    }
-
+void View::ElementBase::update() {
     for (auto& kv : _attributes) {
-        setAttribute(context, kv.first, context.render(kv.second));
+        setAttribute(kv.first, _context->render(kv.second));
     }
 
-    setText(context, context.render(_text));
+    for (auto& child : _children) {
+        child->update();
+    }
+
+    if (!_stateMachines.empty() && view()) {
+        view()->addUpdateHook("ElementBase", [&]{
+            bool done = true;
+            for (auto& stateMachine : _stateMachines) {
+                if (stateMachine->drive()) {
+                    done = false;
+                }
+            }
+            if (done) {
+                view()->removeUpdateHook("ElementBase");
+            }
+        });
+    }
+
+    setText(_context->render(_text));
 }
 
 const char* View::ElementBase::id() const {
@@ -51,6 +69,60 @@ ElementInterface* View::ElementBase::descendantWithId(stdts::string_view id) con
         }
     }
     return nullptr;
+}
+
+void View::ElementBase::apply(stdts::string_view attribute, std::vector<View::ElementBase::ValueComponent> components) {
+    std::vector<std::string> strings;
+    strings.resize(components.size());
+    size_t i = 0;
+    for (auto& component : components) {
+        component.value = strings[i++] = _context->render(component.value);
+    }
+    if (components.size() == 1) {
+        setAttribute(attribute, std::move(components[0].value));
+    } else {
+        setAttribute(attribute, std::move(components));
+    }
+}
+
+stdts::optional<Color> View::ElementBase::SumColorComponents(const std::vector<ValueComponent>& components) {
+    if (components.size() == 1) { return ParseColor(components[0].value); }
+
+    auto sum = Color::kTransparentBlack;
+    for (auto& c : components) {
+        auto v = ParseColor(c.value);
+        if (!v) { return {}; }
+        sum += *v * c.coefficient;
+    }
+    return sum;
+}
+
+stdts::optional<std::string> View::ElementBase::SumExpressionComponents(const std::vector<ValueComponent>& components) {
+    if (components.size() == 1) { return std::string{components[0].value}; }
+
+    std::string sum = "";
+    for (auto& c : components) {
+        if (!sum.empty()) {
+            sum += '+';
+        }
+        sum += '(';
+        sum.append(c.value.data(), c.value.size());
+        sum += ")*";
+        sum += std::to_string(c.coefficient);
+    }
+    return sum;
+}
+
+stdts::optional<double> View::ElementBase::SumNumberComponents(const std::vector<ValueComponent>& components) {
+    if (components.size() == 1) { return ParseNumber(components[0].value); }
+
+    double sum = 0.0;
+    for (auto& c : components) {
+        auto v = ParseNumber(c.value);
+        if (!v) { return {}; }
+        sum += *v * c.coefficient;
+    }
+    return sum;
 }
 
 } // namespace okui::ml::elements

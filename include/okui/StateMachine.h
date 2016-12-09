@@ -1,5 +1,5 @@
 #include <okui/config.h>
-#include <okui/Animation.h>
+#include <okui/AnimationChain.h>
 
 #include <stdts/optional.h>
 
@@ -45,9 +45,10 @@ public:
         const std::string& fromState,
         const std::string& toState,
         Animation<double>::Duration duration,
-        Animation<double>::Interpolator interpolator = interpolation::Linear<double>
+        Animation<double>::Interpolator interpolator = interpolation::Linear<double>,
+        Animation<double>::Duration delay = 0s
     ) {
-        _stateStates[toState].transitionsIn[fromState] = Transition{duration, interpolator};
+        _stateStates[toState].transitionsIn[fromState] = Transition{duration, interpolator, delay};
     }
 
     const std::string& state() const { return _currentStateId; }
@@ -59,8 +60,9 @@ public:
         if (id == _currentStateId) { return; }
         auto& stateState = _stateStates[id];
         const auto& transition = stateState.transitionsIn[_currentStateId];
-        stateState.influence.target(1.0, transition.duration, transition.interpolator);
-        _stateStates[_currentStateId].influence.target(0.0, transition.duration, transition.interpolator);
+        stateState.influence.target(stateState.influence.current(), transition.delay, 1.0, transition.duration, transition.interpolator);
+        auto& from = _stateStates[_currentStateId];
+        from.influence.target(from.influence.current(), transition.delay, 0.0, transition.duration, transition.interpolator);
         _currentStateId = std::move(id);
     }
 
@@ -87,17 +89,18 @@ protected:
     * would mean invoking methods such as View::setBounds or View::setOpacity based on the state
     * variables.
     */
-    virtual void apply(const State& state) = 0;
+    virtual void apply(State state) = 0;
 
 private:
     struct Transition {
         Animation<double>::Duration duration{0};
         Animation<double>::Interpolator interpolator = interpolation::Linear<double>;
+        Animation<double>::Duration delay{0};
     };
 
     struct StateState {
         State state;
-        Animation<double> influence{0.0};
+        AnimationChain<double> influence{0.0};
         bool needsUpdate{true};
         std::unordered_map<std::string, Transition> transitionsIn;
     };
@@ -149,7 +152,7 @@ bool StateMachine<State>::drive() {
             }
             totalInfluence += currentInfluence;
         }
-        if (kv.second.influence.target() != currentInfluence) {
+        if (!kv.second.influence.isComplete()) {
             needsMoreUpdates = true;
         }
     }
@@ -157,7 +160,7 @@ bool StateMachine<State>::drive() {
         if (totalInfluence) {
             state->members() = ScaleTuple(state->members(), 1.0 / totalInfluence);
         }
-        apply(*state);
+        apply(std::move(*state));
     }
     return needsMoreUpdates;
 }

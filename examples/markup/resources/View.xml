@@ -1,0 +1,69 @@
+<view>
+    <text
+        width="80%"
+        height="1.2 * 22"
+        font="OpenSans-regular"
+        text-color="white"
+        text-size="22"
+        horizontal-alignment="left"
+    ><statemachine state="{state}">
+        <state id="standby" x="10%" y="100%" />
+        <state id="present" x="10%" y="10%" />
+        <state id="gone" x="-80%" y="10%" />
+        <transition from="standby" to="present" duration="300ms" interpolation="quadratic-ease-out" />
+        <transition from="present" to="gone" duration="300ms" interpolation="quadratic-ease-in" />
+    </statemachine>Hello.</text>
+
+    <text
+        width="80%"
+        height="1.2*22"
+        font="OpenSans-regular"
+        text-color="fuchsia"
+        text-size="22"
+        horizontal-alignment="left"
+    ><statemachine state="{state}">
+        <state id="standby" x="10%" y="100% + 30" />
+        <state id="present" x="10%" y="10% + 30" />
+        <state id="gone" x="-80%" y="10% + 30" />
+        <transition from="standby" to="present" duration="400ms" interpolation="quadratic-ease-out" />
+        <transition from="present" to="gone" delay="100ms" duration="400ms" interpolation="quadratic-ease-in" />
+    </statemachine>I'm the example!</text>
+
+    <text
+        x="10%"
+        width="80%"
+        height="1.2*22"
+        font="OpenSans-regular"
+        text-color="white"
+        text-size="22"
+        horizontal-alignment="left"
+    ><statemachine state="{state}">
+        <state id="standby" y="100% + 60" opacity="0%" />
+        <state id="present" y="10% + 60" opacity="100%" />
+        <state id="gone" y="10% + 60" opacity="0%" />
+        <transition from="standby" to="present" duration="500ms" interpolation="quadratic-ease-out" />
+        <transition from="present" to="gone" delay="200ms" duration="500ms" interpolation="quadratic-ease-in" />
+    </statemachine>I'll leave in just a moment. But soon after, I'll come back again.</text>
+
+    <view
+        x="0%"
+        y="100%-16"
+        height="16"
+    ><statemachine state="{state}">
+        <state id="standby" width="0%" background-color="green" />
+        <state id="present" width="100%" background-color="red" />
+        <state id="gone" width="0%" />
+        <transition from="standby" to="present" duration="4s" interpolation="linear" />
+    </statemachine></view>
+
+    <view
+        x="0%"
+        y="100%-16"
+        height="16"
+    ><statemachine state="{state}">
+        <state id="standby" width="0%" />
+        <state id="present" width="0%" background-color="red" />
+        <state id="gone" width="100%" background-color="green" />
+        <transition from="present" to="gone" duration="2s" interpolation="linear" />
+    </statemachine></view>
+</view>

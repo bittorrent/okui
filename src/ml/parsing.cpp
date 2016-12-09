@@ -7,23 +7,23 @@
 namespace okui::ml {
 
 stdts::optional<Color> ParseColor(stdts::string_view str) {
-    if (scraps::CaseInsensitiveEquals(str, "white")) { return Color::kWhite; }
-    if (scraps::CaseInsensitiveEquals(str, "silver")) { return Color::kSilver; }
-    if (scraps::CaseInsensitiveEquals(str, "gray")) { return Color::kGray; }
-    if (scraps::CaseInsensitiveEquals(str, "black")) { return Color::kBlack; }
-    if (scraps::CaseInsensitiveEquals(str, "transparentblack")) { return Color::kTransparentBlack; }
-    if (scraps::CaseInsensitiveEquals(str, "red")) { return Color::kRed; }
-    if (scraps::CaseInsensitiveEquals(str, "maroon")) { return Color::kMaroon; }
-    if (scraps::CaseInsensitiveEquals(str, "yellow")) { return Color::kYellow; }
-    if (scraps::CaseInsensitiveEquals(str, "olive")) { return Color::kOlive; }
-    if (scraps::CaseInsensitiveEquals(str, "lime")) { return Color::kLime; }
-    if (scraps::CaseInsensitiveEquals(str, "green")) { return Color::kGreen; }
-    if (scraps::CaseInsensitiveEquals(str, "aqua")) { return Color::kAqua; }
-    if (scraps::CaseInsensitiveEquals(str, "teal")) { return Color::kTeal; }
-    if (scraps::CaseInsensitiveEquals(str, "blue")) { return Color::kBlue; }
-    if (scraps::CaseInsensitiveEquals(str, "navy")) { return Color::kNavy; }
-    if (scraps::CaseInsensitiveEquals(str, "fuchsia")) { return Color::kFuchsia; }
-    if (scraps::CaseInsensitiveEquals(str, "purple")) { return Color::kPurple; }
+    if (str == "white") { return Color::kWhite; }
+    if (str == "silver") { return Color::kSilver; }
+    if (str == "gray") { return Color::kGray; }
+    if (str == "black") { return Color::kBlack; }
+    if (str == "transparentblack") { return Color::kTransparentBlack; }
+    if (str == "red") { return Color::kRed; }
+    if (str == "maroon") { return Color::kMaroon; }
+    if (str == "yellow") { return Color::kYellow; }
+    if (str == "olive") { return Color::kOlive; }
+    if (str == "lime") { return Color::kLime; }
+    if (str == "green") { return Color::kGreen; }
+    if (str == "aqua") { return Color::kAqua; }
+    if (str == "teal") { return Color::kTeal; }
+    if (str == "blue") { return Color::kBlue; }
+    if (str == "navy") { return Color::kNavy; }
+    if (str == "fuchsia") { return Color::kFuchsia; }
+    if (str == "purple") { return Color::kPurple; }
 
     if ((str.size() == 7 || str.size() == 9) && str[0] == '#' && str.find_first_not_of("0123456789abcdef", 1) == stdts::string_view::npos) {
         return RGBA(
@@ -133,10 +133,24 @@ stdts::optional<double> ParseNumber(stdts::string_view str, const std::unordered
 }
 
 stdts::optional<bool> ParseBoolean(stdts::string_view str) {
-    if (scraps::CaseInsensitiveEquals(str, "true") || str == "1") {
+    if (str == "true" || str == "1") {
         return true;
-    } else if (scraps::CaseInsensitiveEquals(str, "false") || str == "0") {
+    } else if (str == "false" || str == "0") {
         return false;
+    }
+    return {};
+}
+
+stdts::optional<std::chrono::duration<double>> ParseDuration(stdts::string_view str) {
+    static const std::unordered_map<std::string, double> units{
+        {"h", 60 * 60.0},
+        {"m", 60.0},
+        {"s", 1.0},
+        {"ms", 0.001},
+        {"us", 0.000001},
+    };
+    if (auto seconds = ParseNumber(str, units)) {
+        return std::chrono::duration<double>(*seconds);
     }
     return {};
 }

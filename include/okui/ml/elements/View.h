@@ -20,51 +20,85 @@ public:
     }
 
 protected:
-    class ElementBase : public ElementInterface {
+    class ElementBase : public ElementInterface, private ElementInterface::StateMachineDelegate {
     public:
-        virtual void initialize(const Context& context, const pugi::xml_node& xml) override;
-        virtual void update(const Context& context) override;
+        virtual void initialize(const Context* context, const pugi::xml_node& xml) override;
+        virtual void update() override;
+
+        const Context* context() const { return _context; }
 
         virtual const char* id() const override;
         virtual ElementInterface* descendantWithId(stdts::string_view id) const override;
 
-        virtual void setAttribute(const Context& context, stdts::string_view name, stdts::string_view value) {}
-        virtual void setText(const Context& context, stdts::string_view text) {}
+        /**
+        * Override this for attributes that cannot be interpolated.
+        */
+        virtual void setAttribute(stdts::string_view name, stdts::string_view value) {
+            setAttribute(name, {ValueComponent{value, 1.0}});
+        }
+
+        using ElementInterface::StateMachineDelegate::ValueComponent;
+
+        /**
+        * Override this for attributes that can be interpolated.
+        */
+        virtual void setAttribute(stdts::string_view name, std::vector<ValueComponent> components) {}
+
+        virtual void setText(stdts::string_view text) {}
+
+        /**
+        * Utility methods commonly used by subclasses.
+        */
+        stdts::optional<Color> SumColorComponents(const std::vector<ValueComponent>& components);
+        stdts::optional<std::string> SumExpressionComponents(const std::vector<ValueComponent>& components);
+        stdts::optional<double> SumNumberComponents(const std::vector<ValueComponent>& components);
 
     private:
+        const Context* _context = nullptr;
         std::unordered_map<std::string, std::string> _attributes;
         std::string _text;
         std::vector<std::unique_ptr<ElementInterface>> _children;
+        std::vector<StateMachineInterface*> _stateMachines;
+
+        virtual void apply(stdts::string_view attribute, std::vector<ValueComponent> components) override;
     };
 
     template <typename ViewType>
     class Element : public ElementBase {
     public:
-        virtual void setAttribute(const Context& context, stdts::string_view name, stdts::string_view value) override {
-            if (scraps::CaseInsensitiveEquals(name, "background-color")) {
-                _view.setBackgroundColor(ParseColor(value).value_or(Color::kTransparentBlack));
-            } else if (scraps::CaseInsensitiveEquals(name, "x")) {
-                _view.attributes.x = std::string(value);
-                _view.layout();
-            } else if (scraps::CaseInsensitiveEquals(name, "y")) {
-                _view.attributes.y = std::string(value);
-                _view.layout();
-            } else if (scraps::CaseInsensitiveEquals(name, "width")) {
-                _view.attributes.width = std::string(value);
-                _view.layout();
-            } else if (scraps::CaseInsensitiveEquals(name, "height")) {
-                _view.attributes.height = std::string(value);
-                _view.layout();
-            } else if (scraps::CaseInsensitiveEquals(name, "visible")) {
+        virtual void setAttribute(stdts::string_view name, stdts::string_view value) override {
+            if (name == "visible") {
                 _view.setIsVisible(ParseBoolean(value).value_or(true));
-            } else if (scraps::CaseInsensitiveEquals(name, "preferred-focus")) {
+            } else if (name == "preferred-focus") {
                 if (auto element = descendantWithId(value)) {
                     _view.setPreferredFocus(element->view());
                 }
-            } else if (scraps::CaseInsensitiveEquals(name, "opacity")) {
-                _view.setOpacity(ParseNumber(value).value_or(1.0));
-            } else if (scraps::CaseInsensitiveEquals(name, "tint-color")) {
-                _view.setTintColor(ParseColor(value).value_or(Color::kWhite));
+            } else {
+                ElementBase::setAttribute(name, value);
+            }
+        }
+
+        virtual void setAttribute(stdts::string_view name, std::vector<ValueComponent> components) override {
+            if (name == "background-color") {
+                _view.setBackgroundColor(SumColorComponents(components).value_or(Color::kTransparentBlack));
+            } else if (name == "x") {
+                _view.attributes.x = SumExpressionComponents(components);
+                _view.layout();
+            } else if (name == "y") {
+                _view.attributes.y = SumExpressionComponents(components);
+                _view.layout();
+            } else if (name == "width") {
+                _view.attributes.width = SumExpressionComponents(components);
+                _view.layout();
+            } else if (name == "height") {
+                _view.attributes.height = SumExpressionComponents(components);
+                _view.layout();
+            } else if (name == "opacity") {
+                _view.setOpacity(SumNumberComponents(components).value_or(1.0));
+            } else if (name == "tint-color") {
+                _view.setTintColor(SumColorComponents(components).value_or(Color::kWhite));
+            } else {
+                ElementBase::setAttribute(name, std::move(components));
             }
         }
 

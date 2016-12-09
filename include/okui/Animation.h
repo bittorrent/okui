@@ -22,6 +22,8 @@ public:
 
     T current() const;
 
+    bool isComplete() const { return current() == target(); }
+
     const T& initial() const         { return _initial; }
     const T& target() const          { return _target; }
     const TimePoint& start() const   { return _start; }
