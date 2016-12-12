@@ -1,6 +1,7 @@
 #include <okui/ml/Environment.h>
 
 #include <okui/ml/elements/Button.h>
+#include <okui/ml/elements/FocusBorder.h>
 #include <okui/ml/elements/Image.h>
 #include <okui/ml/elements/Popout.h>
 #include <okui/ml/elements/StateMachine.h>
@@ -11,6 +12,7 @@ namespace okui::ml {
 
 Environment::Environment() {
     defineElementType<elements::Button>("button");
+    defineElementType<elements::FocusBorder>("focusborder");
     defineElementType<elements::Image>("image");
     defineElementType<elements::Popout>("popout");
     defineElementType<elements::StateMachine>("statemachine");

@@ -98,7 +98,9 @@ public:
     */
     void setBoundsRelative(double x, double y, double width, double height);
 
+    void setInterceptsInteractions(bool intercepts);
     void setInterceptsInteractions(bool intercepts, bool childrenIntercept);
+    void setChildrenInterceptInteractions(bool childrenIntercept);
 
     ShaderCache* shaderCache();
 

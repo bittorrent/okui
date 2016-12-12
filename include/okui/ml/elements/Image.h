@@ -33,6 +33,14 @@ protected:
                 elements::View::Element<views::ImageView>::setAttribute(name, value);
             }
         }
+
+        virtual void setAttribute(stdts::string_view name, std::vector<ValueComponent> components) override {
+            if (name == "rotation") {
+                _view.setRotation(SumNumberComponents(components).value_or(0.0));
+            } else {
+                elements::View::Element<views::ImageView>::setAttribute(name, std::move(components));
+            }
+        }
     };
 };
 

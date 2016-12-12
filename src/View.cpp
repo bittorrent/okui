@@ -133,8 +133,16 @@ bool View::isVisibleInOpenWindow() const {
     return isVisible() && ancestorsAreVisible() && window() && window()->isOpen();
 }
 
+void View::setInterceptsInteractions(bool intercepts) {
+    _interceptsInteractions = intercepts;
+}
+
 void View::setInterceptsInteractions(bool intercepts, bool childrenIntercept) {
     _interceptsInteractions = intercepts;
+    _childrenInterceptInteractions = childrenIntercept;
+}
+
+void View::setChildrenInterceptInteractions(bool childrenIntercept) {
     _childrenInterceptInteractions = childrenIntercept;
 }
 

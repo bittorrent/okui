@@ -73,6 +73,10 @@ protected:
                 if (auto element = descendantWithId(value)) {
                     _view.setPreferredFocus(element->view());
                 }
+            } else if (name == "intercepts-interactions") {
+                _view.setInterceptsInteractions(ParseBoolean(value).value_or(true));
+            } else if (name == "children-intercept-interactions") {
+                _view.setChildrenInterceptInteractions(ParseBoolean(value).value_or(true));
             } else {
                 ElementBase::setAttribute(name, value);
             }
@@ -97,6 +101,8 @@ protected:
                 _view.setOpacity(SumNumberComponents(components).value_or(1.0));
             } else if (name == "tint-color") {
                 _view.setTintColor(SumColorComponents(components).value_or(Color::kWhite));
+            } else if (name == "scale") {
+                _view.setScale(SumNumberComponents(components).value_or(1.0));
             } else {
                 ElementBase::setAttribute(name, std::move(components));
             }

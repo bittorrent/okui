@@ -15,10 +15,6 @@
 		0C5CA53B1BED511800F7800E /* ForceFeedback.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0C5CA53A1BED511800F7800E /* ForceFeedback.framework */; };
 		0C5CA53D1BED51D400F7800E /* Carbon.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0C5CA53C1BED51D400F7800E /* Carbon.framework */; };
 		0C5CA53E1BED529800F7800E /* AudioUnit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0C5CA5351BED503400F7800E /* AudioUnit.framework */; };
-		0CBA33711C1F4FF40000D621 /* libc++.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 0CBA33701C1F4FF40000D621 /* libc++.tbd */; };
-		0CBA33721C1F4FF90000D621 /* libc++.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 0CBA33701C1F4FF40000D621 /* libc++.tbd */; };
-		0CBA33741C1F4FFF0000D621 /* libc++.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 0CBA33731C1F4FFF0000D621 /* libc++.tbd */; };
-		0CBA33751C1F50040000D621 /* libc++.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 0CBA33731C1F4FFF0000D621 /* libc++.tbd */; };
 		0CBA33771C1F50300000D621 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 0CBA33761C1F50300000D621 /* main.m */; };
 		0CBA33781C1F503F0000D621 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 0CBA33761C1F50300000D621 /* main.m */; };
 		0CBA33791C1F50510000D621 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 0CBA33761C1F50300000D621 /* main.m */; };
@@ -125,8 +121,6 @@
 		0CBA334A1C1F4F6C0000D621 /* okui-tests-iphonesimulator-bundle.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "okui-tests-iphonesimulator-bundle.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
 		0CBA33581C1F4F790000D621 /* okui-tests-appletvos-bundle.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "okui-tests-appletvos-bundle.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
 		0CBA33661C1F4F830000D621 /* okui-tests-appletvsimulator-bundle.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "okui-tests-appletvsimulator-bundle.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
-		0CBA33701C1F4FF40000D621 /* libc++.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = "libc++.tbd"; path = "Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS9.2.sdk/usr/lib/libc++.tbd"; sourceTree = DEVELOPER_DIR; };
-		0CBA33731C1F4FFF0000D621 /* libc++.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = "libc++.tbd"; path = "Platforms/AppleTVOS.platform/Developer/SDKs/AppleTVOS9.1.sdk/usr/lib/libc++.tbd"; sourceTree = DEVELOPER_DIR; };
 		0CBA33761C1F50300000D621 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; name = main.m; path = "../scraps/dependencies/ci-tacklebox/gtest-xcode/ios-host/main.m"; sourceTree = "<group>"; };
 		0CBA33871C1F51630000D621 /* Montserrat-regular.fnt */ = {isa = PBXFileReference; lastKnownFileType = text; name = "Montserrat-regular.fnt"; path = "tests/resources/Montserrat-regular.fnt"; sourceTree = "<group>"; };
 		0CBA33881C1F51630000D621 /* Montserrat-regular.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "Montserrat-regular.png"; path = "tests/resources/Montserrat-regular.png"; sourceTree = "<group>"; };
@@ -154,7 +148,6 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				0CBA33711C1F4FF40000D621 /* libc++.tbd in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -162,7 +155,6 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				0CBA33721C1F4FF90000D621 /* libc++.tbd in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -170,7 +162,6 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				0CBA33741C1F4FFF0000D621 /* libc++.tbd in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -178,7 +169,6 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				0CBA33751C1F50040000D621 /* libc++.tbd in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -281,8 +271,6 @@
 		52B8EF4D1B557FC800A0F1D5 = {
 			isa = PBXGroup;
 			children = (
-				0CBA33731C1F4FFF0000D621 /* libc++.tbd */,
-				0CBA33701C1F4FF40000D621 /* libc++.tbd */,
 				52B8EF5B1B55805800A0F1D5 /* include */,
 				52B8EF5C1B55805800A0F1D5 /* src */,
 				52B8EF5D1B55805800A0F1D5 /* tests */,

@@ -29,7 +29,6 @@ void MarkupView::layout() {
     }
 }
 
-
 View* MarkupView::descendantViewWithId(stdts::string_view id) {
     if (_element) {
         auto e = _element->descendantWithId(id);

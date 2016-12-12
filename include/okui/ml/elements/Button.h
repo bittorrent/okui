@@ -28,6 +28,8 @@ protected:
                 auto cc = context()->get(std::string(value));
                 _commandContext = cc ? *cc : CommandContext{};
                 _view.setAction(_command, _commandContext);
+            } else if (name == "can-become-direct-focus") {
+                _view.setCanBecomeDirectFocus(ParseBoolean(value).value_or(true));
             } else {
                 elements::View::Element<views::Button<::okui::View>>::setAttribute(name, value);
             }

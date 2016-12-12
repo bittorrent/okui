@@ -31,6 +31,8 @@ public:
 
     void setDrawMode(TextureDrawMode drawMode) { _drawMode = drawMode; }
 
+    void setRotation(double r) { _rotation = r; }
+
     TextureHandle& texture() { return _texture; }
     const Color& textureColor() const { return _color; }
 
@@ -50,6 +52,7 @@ private:
     Color                   _color = Color::kWhite;
     stdts::optional<double> _distanceFieldEdge;
     TextureDrawMode         _drawMode = TextureDrawMode::kFit;
+    double                  _rotation = 0;
 };
 
 } // namespace okui::views
