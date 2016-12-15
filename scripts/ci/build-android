@@ -8,4 +8,13 @@ if [[ ! -d $ANDROID_TOOLCHAIN ]] ; then
     exit 1
 fi
 
+$script_dir/build-common
+
+if [[ $TRAVIS_EVENT_TYPE == 'cron' ]] ; then
+    scripts/live-ci-tools/nightly-checkout.py \
+        --needy=needy/scripts/needy \
+        --needy-args='-t android' \
+        jshackle
+fi
+
 ./scripts/build --target=android --install
