@@ -18,6 +18,12 @@ LabeledPopoutButton::LabeledPopoutButton() {
     _label.setAlignment(TextView::Style::HorizontalAlignment::kCenter);
     _label.setOverflowBehavior(TextView::Style::OverflowBehavior::kWrap);
 
+    _focusedLabelStyle.alignment(okui::views::TextView::Style::HorizontalAlignment::kCenter)
+                      .alignment(okui::views::TextView::Style::VerticalAlignment::kMiddle);
+
+    _unfocusedLabelStyle.alignment(okui::views::TextView::Style::HorizontalAlignment::kCenter)
+                        .alignment(okui::views::TextView::Style::VerticalAlignment::kMiddle);
+
     addSubview(&_body);
     addSubview(&_label);
 }
@@ -53,6 +59,10 @@ void LabeledPopoutButton::layout() {
     }
 }
 
+LabeledPopoutButton::Body::Body() {
+    _iconView.setTextureColor(Color::kWhite.withAlphaF(0.8));
+}
+
 void LabeledPopoutButton::Body::setBackgroundColor(Color backgroundColor) {
     _backgroundColor = std::move(backgroundColor);
     invalidateRenderCache();
@@ -68,7 +78,6 @@ void LabeledPopoutButton::Body::setImage(std::string resourceOrURL, std::string 
 void LabeledPopoutButton::Body::setIcon(std::string sdf) {
     _iconView.setTexture(std::move(sdf));
     _iconView.setTextureDistanceField();
-    _iconView.setTextureColor(Color::kWhite.withAlphaF(0.8));
     addSubview(&_iconView);
     _iconView.bringToFront();
 }
