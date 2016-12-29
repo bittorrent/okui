@@ -138,18 +138,25 @@ inline void OSX<Base>::registerURLScheme(const char* scheme) {
 
 template <typename Base>
 inline void OSX<Base>::openDialog(Window* window, const char* title, const char* message, const std::vector<DialogButton>& buttons, std::function<void(int)> action) {
-    NSAlert* alert = [NSAlert new];
-    alert.messageText = [NSString stringWithUTF8String:title];
-    alert.informativeText = [NSString stringWithUTF8String:message];
-    for (auto& button : buttons) {
-        // TODO: support button styles?
-        [alert addButtonWithTitle:[NSString stringWithUTF8String:button.label.c_str()]];
-    }
-    [alert beginSheetModalForWindow:(window ? Base::nativeWindow(window) : [NSApp keyWindow]) completionHandler:^(NSModalResponse returnCode) {
-        if (action) {
-            action(static_cast<int>(returnCode - NSAlertFirstButtonReturn));
+    // XXX: this is a bit of a hack, but i can't figure out a nice alternative solution for this:
+    //      if you open a dialog as a result of hitting the return key while a button is focused,
+    //      the return key will also be handled by the dialog and will cause it to immediately close
+    //      as if you hit the default button. adding a delay gives the user time to pick their
+    //      finger up before showing the alert
+    this->taskScheduler()->asyncAfter(500ms, [=] {
+        NSAlert* alert = [NSAlert new];
+        alert.messageText = [NSString stringWithUTF8String:title];
+        alert.informativeText = [NSString stringWithUTF8String:message];
+        for (auto& button : buttons) {
+            // TODO: support button styles?
+            [alert addButtonWithTitle:[NSString stringWithUTF8String:button.label.c_str()]];
         }
-    }];
+        [alert beginSheetModalForWindow:(window ? Base::nativeWindow(window) : [NSApp keyWindow]) completionHandler:^(NSModalResponse returnCode) {
+            if (action && returnCode >= NSAlertFirstButtonReturn) {
+                action(static_cast<int>(returnCode - NSAlertFirstButtonReturn));
+            }
+        }];
+    });
 }
 
 template <typename Base>

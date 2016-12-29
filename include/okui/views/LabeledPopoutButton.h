@@ -30,6 +30,9 @@ public:
     void setBodyAspectRatio(double aspectRatio) { _bodyAspectRatio = aspectRatio; layout(); }
     void setIconColor(Color c) { _body.setIconColor(std::move(c)); }
 
+    const TextView::Style& focusedLabelStyle() const { return _focusedLabelStyle; }
+    const TextView::Style& unfocusedLabelStyle() const { return _unfocusedLabelStyle; }
+
     virtual void focusGained() override;
     virtual void focusLost() override;
     virtual void layout() override;
@@ -40,6 +43,7 @@ private:
 
     class Body : public PopoutFocus<View> {
     public:
+        Body();
         ~Body() { removeSubviews(); }
 
         void setBackgroundColor(Color backgroundColor);
