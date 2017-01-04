@@ -1,3 +1,0 @@
-lib png : ../../needs//libpng : <name>png ;
-lib z ;
-exe sdf-generator : main.cpp png z : <cxxflags>-std=c++14 ;
