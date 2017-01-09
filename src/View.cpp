@@ -89,8 +89,6 @@ void View::removeSubview(View* view) {
     removeChild(view);
 
     if (view->window() != nullptr) {
-        view->window()->endDragging(view);
-        view->window()->unsubscribeFromUpdates(view);
         view->_dispatchWindowChange(nullptr);
     }
 
@@ -719,6 +717,7 @@ void View::_dispatchWindowChange(Window* window) {
     }
 
     if (_window) {
+        _window->endDragging(this);
         _window->unsubscribeFromUpdates(this);
     }
 

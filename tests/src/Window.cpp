@@ -78,4 +78,38 @@ TEST(Window, disabledPreferredFocus) {
     EXPECT_TRUE(a.isFocus());
     EXPECT_FALSE(b.isFocus());
 }
+
+TEST(Window, draggedViewRemoval) {
+    TestApplication application;
+    okui::Window window(&application);
+    window.setSize(100, 100);
+    window.open();
+
+    struct FocusableView : View {
+        virtual void mouseDrag(double x1, double y1, double x2, double y2) override {
+            receivedDrag = true;
+        }
+        bool receivedDrag = false;
+    } a, b;
+
+    a.addSubview(&b);
+    window.contentView()->addSubview(&a);
+
+    a.setBoundsRelative(0, 0, 1, 1);
+    b.setBoundsRelative(0, 0, 1, 1);
+
+    window.dispatchMouseDown(okui::MouseButton::kLeft, 10, 10);
+    window.dispatchMouseMovement(11, 10);
+    EXPECT_TRUE(a.receivedDrag);
+    EXPECT_TRUE(b.receivedDrag);
+    a.receivedDrag = false;
+    b.receivedDrag = false;
+
+    // removing a should remove a's subviews from Window's internal list of "dragged views"
+    window.contentView()->removeSubview(&a);
+    window.dispatchMouseMovement(12, 10);
+    EXPECT_FALSE(a.receivedDrag);
+    // the window shouldn't invoke anything on b. as far as it knows, b doesn't exist anymore
+    EXPECT_FALSE(b.receivedDrag);
+}
 #endif
