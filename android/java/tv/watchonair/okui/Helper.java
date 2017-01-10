@@ -2,11 +2,13 @@ package tv.watchonair.okui;
 
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.app.UiModeManager;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.res.Configuration;
 import android.os.Build;
 import android.os.Handler;
-import android.content.Context;
 import android.provider.Settings.Secure;
 import android.util.DisplayMetrics;
 import android.net.ConnectivityManager;
@@ -102,5 +104,10 @@ public class Helper {
          ConnectivityManager connectivityManager = (ConnectivityManager)_activity.getSystemService(Context.CONNECTIVITY_SERVICE);
          NetworkInfo networkInfo = connectivityManager.getActiveNetworkInfo();
          return networkInfo != null && networkInfo.isConnected() && networkInfo.getType() == ConnectivityManager.TYPE_MOBILE;
+    }
+
+    public boolean isTenFootUI() {
+        UiModeManager uiModeManager = (UiModeManager) _activity.getSystemService(Activity.UI_MODE_SERVICE);
+        return uiModeManager.getCurrentModeType() == Configuration.UI_MODE_TYPE_TELEVISION;
     }
 }

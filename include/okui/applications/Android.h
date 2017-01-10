@@ -38,6 +38,7 @@ JSHACKLE_JAVA_CLASS_BEGIN(AndroidJavaHelper);
     JSHACKLE_JAVA_CLASS_METHOD(float, renderScale);
     JSHACKLE_JAVA_CLASS_METHOD(bool, hasNetworkConnection);
     JSHACKLE_JAVA_CLASS_METHOD(bool, isMobileConnection);
+    JSHACKLE_JAVA_CLASS_METHOD(bool, isTenFootUI);
 JSHACKLE_JAVA_CLASS_END();
 
 /**
@@ -74,6 +75,8 @@ public:
     virtual bool hasNetworkConnection() const override;
 
     virtual bool isMobileConnection() const override;
+
+    virtual bool isTenFootUI() const override;
 
     virtual bool canHandleCommand(Command command) override {
         return command == kCommandBack || Base::canHandleCommand(command);
@@ -219,6 +222,11 @@ inline bool Android<Base>::hasNetworkConnection() const {
 template <typename Base>
 inline bool Android<Base>::isMobileConnection() const {
     return _javaHelper->isMobileConnection();
+}
+
+template <typename Base>
+inline bool Android<Base>::isTenFootUI() const {
+    return _javaHelper->isTenFootUI();
 }
 
 template <typename Base>

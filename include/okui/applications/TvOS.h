@@ -27,6 +27,10 @@ public:
         }
         IOS<Base>::keyUp(key, mod, repeat);
     }
+
+    virtual bool isTenFootUI() const override {
+        return true;
+    }
 };
 
 

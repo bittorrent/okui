@@ -224,6 +224,11 @@ public:
     virtual bool isMobileConnection() const { return false; }
 
     /**
+    * Returns whether the screen is a 10 foot ui.
+    */
+    virtual bool isTenFootUI() const { return false; }
+
+    /**
     * Enables or disables the screen saver.
     */
     virtual void setScreenSaverEnabled(bool enabled = true) {}
