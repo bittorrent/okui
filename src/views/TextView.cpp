@@ -236,7 +236,7 @@ std::vector<std::basic_string<BitmapFont::GlyphId>> TextView::_computeLines(doub
                     }
                     if (!didBreak && !line.empty()) {
                         // just put this character on a new line
-                        auto& last = line.back();
+                        auto last = line.back();
                         line.pop_back();
                         lines.emplace_back(std::move(line));
                         line.clear();
@@ -250,9 +250,9 @@ std::vector<std::basic_string<BitmapFont::GlyphId>> TextView::_computeLines(doub
 
         if (needsEllipses) {
             // rewind until the ellipses fit
-            do {
+            while (!line.empty() && _lineWidth({line.data(), line.size()}, fontScale) + ellipsesWidth > width) {
                 line.pop_back();
-            } while (!line.empty() && _lineWidth({line.data(), line.size()}, fontScale) + ellipsesWidth > width);
+            }
             // trim whitespace
             while (!line.empty()) {
                 auto glyph = _font->glyph(line.back());
