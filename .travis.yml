@@ -64,7 +64,7 @@ matrix:
         # MacOS
         - os: osx
           language: cpp
-          osx_image: xcode8
+          osx_image: xcode8.2
           env:     TARGET=macos
           install: ./scripts/ci/install-xcode-dependencies
           script:  ./scripts/ci/build-macos
@@ -73,7 +73,7 @@ matrix:
         # iPhone
         - os: osx
           language: cpp
-          osx_image: xcode8
+          osx_image: xcode8.2
           env:     TARGET=iphoneos
           install: ./scripts/ci/install-xcode-dependencies
           script:  ./scripts/ci/build-iphoneos
@@ -81,7 +81,7 @@ matrix:
         # AppleTV
         - os: osx
           language: cpp
-          osx_image: xcode8
+          osx_image: xcode8.2
           env:     TARGET=appletvos
           install: ./scripts/ci/install-xcode-dependencies
           script:  ./scripts/ci/build-appletvos
@@ -110,7 +110,7 @@ matrix:
         # MacOS
         - os: osx
           language: cpp
-          osx_image: xcode8
+          osx_image: xcode8.2
           env:
               - TARGET=macos
               - ANALYSIS=1
