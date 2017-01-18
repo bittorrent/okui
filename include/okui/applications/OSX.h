@@ -186,7 +186,7 @@ inline void OSX<Base>::setMenu(const Menu& menu) {
     [appleMenu addItem:[NSMenuItem separatorItem]];
     [appleMenu addItemWithTitle:[@"Hide " stringByAppendingString:appName] action:@selector(hide:) keyEquivalent:@"h"];
     menuItem = (NSMenuItem*)[appleMenu addItemWithTitle:@"Hide Others" action:@selector(hideOtherApplications:) keyEquivalent:@"h"];
-    [menuItem setKeyEquivalentModifierMask:(NSAlternateKeyMask|NSCommandKeyMask)];
+    [menuItem setKeyEquivalentModifierMask:(NSEventModifierFlagOption|NSEventModifierFlagCommand)];
     [appleMenu addItemWithTitle:@"Show All" action:@selector(unhideAllApplications:) keyEquivalent:@""];
     [appleMenu addItem:[NSMenuItem separatorItem]];
     [appleMenu addItemWithTitle:[@"Quit " stringByAppendingString:appName] action:@selector(terminate:) keyEquivalent:@"q"];
@@ -302,16 +302,16 @@ template <typename Base>
 inline NSUInteger OSX<Base>::_convertKeyModifiers(KeyModifiers modifiers) {
     NSUInteger ret = 0;
     if (modifiers & KeyModifier::kShift) {
-        ret |= NSShiftKeyMask;
+        ret |= NSEventModifierFlagShift;
     }
     if (modifiers & KeyModifier::kAlt) {
-        ret |= NSAlternateKeyMask;
+        ret |= NSEventModifierFlagOption;
     }
     if (modifiers & KeyModifier::kControl) {
-        ret |= NSControlKeyMask;
+        ret |= NSEventModifierFlagControl;
     }
     if (modifiers & KeyModifier::kSuper) {
-        ret |= NSCommandKeyMask;
+        ret |= NSEventModifierFlagCommand;
     }
     return ret;
 }

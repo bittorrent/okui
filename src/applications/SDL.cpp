@@ -12,10 +12,10 @@
 
 @implementation OKUISDLApplication
 // selectively give events to sdl
-- (NSEvent*)nextEventMatchingMask:(NSUInteger)mask untilDate:(NSDate*)expiration inMode:(NSString*)mode dequeue:(BOOL)flag {
+- (NSEvent*)nextEventMatchingMask:(NSEventMask)mask untilDate:(NSDate*)expiration inMode:(NSString*)mode dequeue:(BOOL)flag {
     NSEvent* event = [super nextEventMatchingMask:mask untilDate:expiration inMode:mode dequeue:flag];
 
-    if (event.type != NSKeyDown && event.type != NSKeyUp) {
+    if (event.type != NSEventTypeKeyDown && event.type != NSEventTypeKeyUp) {
         return event;
     }
 
