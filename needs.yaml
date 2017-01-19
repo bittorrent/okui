@@ -1,7 +1,7 @@
 libraries:
     scraps:
         repository: git@github.com:bittorrent/scraps.git
-        commit: 6dcb0b8cf4e1815762fe5dedfb7a0e529157da23
+        commit: be59dc831eae2f765f3173dbdffb826aa8c0cb0e
         build-directory-suffix: {{variant|default('release')}}
         project:
             type: boostbuild
@@ -17,7 +17,7 @@ libraries:
     {% if platform == 'android' %}
     jshackle:
         repository: git@github.com:bittorrent/jshackle.git
-        commit: f471c01b7c7dfaf7fadacf2790a35bb15ee54155
+        commit: 29986aee0acb4c56c48208b2baddf3fec07278e9
     {% endif %}
     gas-preprocessor:
         repository: https://github.com/libjpeg-turbo/gas-preprocessor.git
