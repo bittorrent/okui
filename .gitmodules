@@ -1,6 +1,6 @@
 [submodule "needy"]
 	path = needy
-	url = git@github.com:bittorrent/needy.git
+	url = https://github.com/bittorrent/needy.git
 [submodule "scripts/live-ci-tools"]
 	path = scripts/live-ci-tools
 	url = https://github.com/bittorrent/live-ci-tools.git
