@@ -1,4 +1,4 @@
-# :sparkles: OkUI :sparkles:
+# :sparkles: OkUI :sparkles: [![Build Status](https://travis-ci.org/bittorrent/okui.svg?branch=master)](https://travis-ci.org/bittorrent/okui) [![Apache 2.0 License](https://img.shields.io/badge/license-Apache%202.0-blue.svg)](./LICENSE)
 
 OkUI is an OpenGL-based framework for creating portable user interfaces, with a focus on performance and portability. We think it's pretty okay. :ok_hand:
 
