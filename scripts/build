@@ -67,11 +67,15 @@ if args.cross_target == 'android':
         sys.exit(1)
     android_path = '$ANDROID_TOOLCHAIN/arm-linux-androideabi/bin:$PATH'
 
-if not distutils.spawn.find_executable('simon') and args.enable_analysis:
+if not distutils.spawn.find_executable('simon'):
     print_error(textwrap.dedent('''\
-        unable to perform static analysis without simon
+        unable to perform license checks without simon
         see https://github.com/bittorrent/simon'''))
-    sys.exit(1)
+    if args.enable_analysis:
+        print_error(textwrap.dedent('''\
+            unable to perform static analysis without simon
+            see https://github.com/bittorrent/simon'''))
+        sys.exit(1)
 
 if args.enable_coverage and args.cross_target:
     print_error('coverage is only supported for host')
@@ -211,10 +215,15 @@ def install(args):
     ])
 
 
+def verify():
+    if distutils.spawn.find_executable('simon'):
+        run_command('simon license check -x \'third-party/*\' -x \'examples/*\' --license=apache ')
+
 try:
     write_b2_project_config(args)
     build_deps(args)
     build(args)
+    verify()
     if args.install:
         install(args)
 except subprocess.CalledProcessError:
