@@ -1,6 +1,6 @@
 libraries:
     scraps:
-        repository: git@github.com:bittorrent/scraps.git
+        repository: https://github.com/bittorrent/scraps.git
         commit: be59dc831eae2f765f3173dbdffb826aa8c0cb0e
         build-directory-suffix: {{variant|default('release')}}
         project:
@@ -16,7 +16,7 @@ libraries:
                 - ./b2 install --prefix={build_directory}
     {% if platform == 'android' %}
     jshackle:
-        repository: git@github.com:bittorrent/jshackle.git
+        repository: https://github.com/bittorrent/jshackle.git
         commit: 29986aee0acb4c56c48208b2baddf3fec07278e9
     {% endif %}
     gas-preprocessor:
@@ -64,7 +64,7 @@ libraries:
             post-build:
                 - xxd -i LICENSE {build_directory}/include/libpng16/pnglicense.c
     sdl2:
-        repository: git@github.com:bittorrent/SDL.git
+        repository: https://github.com/bittorrent/SDL.git
         commit: 29365760bac72e0d9c6ab61903ac1963bceab54e
         project:
         {% if platform in ['ios', 'tvos', 'iossimulator', 'tvossimulator'] %}
@@ -91,7 +91,7 @@ libraries:
                 - cp -R android-project {build_directory}/share/sdl2
         {% endif %}
     googletest:
-        repository: git@github.com:google/googletest.git
+        repository: https://github.com/google/googletest.git
         commit: 43359642a1c16ad3f4fc575c7edd0cb935810815
         project:
             build-steps:
@@ -106,7 +106,7 @@ libraries:
             post-build:
                 - xxd -i LICENSE {build_directory}/include/utf8/license.c
     pugixml:
-        repository: git@github.com:zeux/pugixml.git
+        repository: https://github.com/zeux/pugixml.git
         commit: v1.7
         project:
             type: source
