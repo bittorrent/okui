@@ -24,6 +24,19 @@ Officially, Android, iOS, tvOS, and MacOS are supported, but it can probably be 
 
 ## Quick Start
 
+#### Prerequisites
+
+You'll need to install these yourself if you don't have them already.
+
+* The **pyyaml** and **jinja2** Python packages are used by Needy for our dependency configuration.
+* **git** is used to retrieve several of our dependencies.
+* **pkg-config** is used to integrate our dependencies.
+* **clang** and **libc++** are required to compile.
+* **libz** is required by Curl.
+* **OpenGL** is required by OkUI.
+
+These things must be installed before continuing.
+
 #### Compiling
 
 First, make sure you initialize all of the submodules: `git submodule update --recursive --init`
