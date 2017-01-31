@@ -72,7 +72,9 @@ inline void IOS<Base>::openDialog(Window* window, const char* title, const char*
     for (auto& button : buttons) {
         auto style = button.isCancel ? UIAlertActionStyleCancel : (button.isDestructive ? UIAlertActionStyleDestructive : UIAlertActionStyleDefault);
         UIAlertAction* alertAction = [UIAlertAction actionWithTitle:[NSString stringWithUTF8String:button.label.c_str()] style:style handler:^(UIAlertAction* alertAction) {
-            action(i);
+            if (action) {
+                action(i);
+            }
         }];
         [alert addAction:alertAction];
         ++i;
