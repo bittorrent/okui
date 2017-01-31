@@ -87,8 +87,9 @@ libraries:
                 - xxd -i COPYING.txt {build_directory}/include/SDL2/SDL_license.c
         {% endif %}
         {% if platform == 'android' %}
-                - mkdir -p {build_directory}/share/sdl2
-                - cp -R android-project {build_directory}/share/sdl2
+                - mkdir -p {build_directory}/share/sdl2/src/main/java
+                - cp -R {{ needs_file|dirname }}/android/sdl2/* {build_directory}/share/sdl2
+                - cp -R android-project/src/* {build_directory}/share/sdl2/src/main/java
         {% endif %}
     googletest:
         repository: https://github.com/google/googletest.git

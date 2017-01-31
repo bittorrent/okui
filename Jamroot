@@ -108,7 +108,7 @@ EOM
 
 install install-pkgconfig : okui.pc : <location>$(PKG_CONFIG) ;
 
-install install-android : [ glob-tree-ex android : *.java *.gradle ] : <location>$(PREFIX)/share/okui <install-source-root>android ;
+install install-android : [ glob-tree-ex android/okui : *.java *.gradle AndroidManifest.xml ] : <location>$(PREFIX)/share/okui <install-source-root>android/okui ;
 
 alias install :
     install-lib
