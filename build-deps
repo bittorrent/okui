@@ -81,7 +81,7 @@ if args.bootstrap_b2:
 dependencies = ['scraps', 'libpng', 'pugixml', 'sdl2', 'utf8', 'libjpegturbo']
 
 if args.dev:
-    dependencies.append('googletest')
+    dependencies.extend(['benchmark', 'googletest'])
 if args.enable_jshackle:
     dependencies.append('jshackle')
 

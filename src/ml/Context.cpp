@@ -39,6 +39,10 @@ std::unique_ptr<ElementInterface> Context::load(const pugi::xml_node& xml) const
 }
 
 std::string Context::render(stdts::string_view str) const {
+    if (str.find('{') == stdts::string_view::npos) {
+        return std::string(str);
+    }
+
     // based on http://stackoverflow.com/questions/39493542/building-a-dynamic-list-of-named-arguments-for-fmtlib
     std::vector<fmt::internal::NamedArg<char>> av;
     fmt::ULongLong types = 0;

@@ -89,7 +89,7 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
-		0C2EAE101CB8148300A2A0EC /* tests.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; name = tests.xcconfig; path = tests/tests.xcconfig; sourceTree = "<group>"; };
+		0C2EAE101CB8148300A2A0EC /* tests.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; name = tests.xcconfig; path = tests/unit/tests.xcconfig; sourceTree = "<group>"; };
 		0C5CA5031BED4D3B00F7800E /* okui-tests-osx-bundle.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "okui-tests-osx-bundle.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
 		0C5CA50B1BED4D4900F7800E /* libc++.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = "libc++.tbd"; path = "usr/lib/libc++.tbd"; sourceTree = SDKROOT; };
 		0C5CA50D1BED4D6400F7800E /* GoogleTests.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; name = GoogleTests.mm; path = "../scraps/dependencies/ci-tacklebox/gtest-xcode/GoogleTests.mm"; sourceTree = "<group>"; };
@@ -122,8 +122,8 @@
 		0CBA33581C1F4F790000D621 /* okui-tests-appletvos-bundle.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "okui-tests-appletvos-bundle.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
 		0CBA33661C1F4F830000D621 /* okui-tests-appletvsimulator-bundle.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "okui-tests-appletvsimulator-bundle.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
 		0CBA33761C1F50300000D621 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; name = main.m; path = "../scraps/dependencies/ci-tacklebox/gtest-xcode/ios-host/main.m"; sourceTree = "<group>"; };
-		0CBA33871C1F51630000D621 /* Montserrat-regular.fnt */ = {isa = PBXFileReference; lastKnownFileType = text; name = "Montserrat-regular.fnt"; path = "tests/resources/Montserrat-regular.fnt"; sourceTree = "<group>"; };
-		0CBA33881C1F51630000D621 /* Montserrat-regular.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "Montserrat-regular.png"; path = "tests/resources/Montserrat-regular.png"; sourceTree = "<group>"; };
+		0CBA33871C1F51630000D621 /* Montserrat-regular.fnt */ = {isa = PBXFileReference; lastKnownFileType = text; name = "Montserrat-regular.fnt"; path = "tests/unit/resources/Montserrat-regular.fnt"; sourceTree = "<group>"; };
+		0CBA33881C1F51630000D621 /* Montserrat-regular.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "Montserrat-regular.png"; path = "tests/unit/resources/Montserrat-regular.png"; sourceTree = "<group>"; };
 		52B8EF5B1B55805800A0F1D5 /* include */ = {isa = PBXFileReference; lastKnownFileType = folder; path = include; sourceTree = "<group>"; };
 		52B8EF5C1B55805800A0F1D5 /* src */ = {isa = PBXFileReference; lastKnownFileType = folder; path = src; sourceTree = "<group>"; };
 		52B8EF5D1B55805800A0F1D5 /* tests */ = {isa = PBXFileReference; lastKnownFileType = folder; path = tests; sourceTree = "<group>"; };

@@ -1,0 +1,14 @@
+path-constant OKUI_BENCHMARK_RESOURCES_PATH : ./resources ;
+
+exe okui-benchmarks :
+    [ glob-tree-ex src : *.cpp ]
+    ../..//okui/<variant>release
+    ../..//benchmark
+:
+    <variant>release
+    <define>OKUI_BENCHMARK_RESOURCES_PATH=\\\"$(OKUI_BENCHMARK_RESOURCES_PATH)\\\"
+;
+
+path-constant PREFIX : [ option.get prefix : "/usr/local" ] ;
+install install : okui-benchmarks : <location>$(PREFIX)/bin ;
+explicit install ;

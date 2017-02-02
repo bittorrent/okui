@@ -138,9 +138,9 @@ def build(args):
     def targets():
         ret = ['okui']
         if not args.cross_target:
-            ret.append('tests')
+            ret.append('tests/unit')
         if args.cross_target == 'android':
-            ret.extend(['tests//okui-tests', 'tests//okui-tests-android'])
+            ret.extend(['tests/unit//okui-tests', 'tests/unit//okui-tests-android'])
         if not args.cross_target and sys.platform == 'darwin':
             ret.extend(['examples/hello-world', 'examples/StateMachine'])
         return shell_quote(ret)
@@ -189,9 +189,9 @@ def install(args):
     def targets():
         targets = ['install']
         if not args.cross_target:
-            targets.append('tests//install')
+            targets.append('tests/unit//install')
         if args.cross_target == 'android':
-            targets.append('tests//install-android')
+            targets.append('tests/unit//install-android')
         return shell_quote(targets)
 
     def common_args():
@@ -209,7 +209,7 @@ def install(args):
 
     run_commands([
         'rm -rf {prefix}',
-        'rm -rf tests/{prefix}',
+        'rm -rf tests/unit/{prefix}',
         '{b2} {common_args} {targets}'.format(b2=b2(), targets=targets(), common_args=common_args()),
         'rm -rf {prefix}/needy.status',
     ])

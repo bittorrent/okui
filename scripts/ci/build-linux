@@ -7,7 +7,7 @@ $script_dir/build-common
 
 if [[ -z $ANALYSIS ]] ; then
     ./scripts/build --install --enable-coverage
-    ./tests/dist/okui-tests
+    ./tests/unit/dist/okui-tests
 else
     ./scripts/build --variant=debug --enable-analysis
 fi
