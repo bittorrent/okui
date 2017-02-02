@@ -1,11 +1,11 @@
-path-constant NEEDS_PATH : ../needs ;
+path-constant NEEDS_PATH : ../../needs ;
 
 path-constant OKUI_TEST_RESOURCES_PATH : ./resources ;
 
 alias okui-tests-common :
     [ glob-tree-ex src : *.cpp : android.cpp ]
-    ..//okui
-    ..//googletest
+    ../..//okui
+    ../..//googletest
 : : :
     <define>OKUI_TEST_RESOURCES_PATH=\\\"$(OKUI_TEST_RESOURCES_PATH)\\\"
     <target-os>darwin:<framework>CoreVideo
@@ -25,7 +25,7 @@ explicit run ;
 lib okui-tests-android :
     okui-tests-common/<link>static
     src/android.cpp
-    ..//jshackle
+    ../..//jshackle
 :
     <link>shared
     <build>no

@@ -20,6 +20,7 @@ pkgconfig.dependency utf8 ;
 pkgconfig.dependency libturbojpeg ;
 pkgconfig.dependency libpng ;
 pkgconfig.dependency googletest ;
+pkgconfig.dependency benchmark ;
 
 alias objc : : : :
     <target-os>darwin:<cxxflags>"-x objective-c++"

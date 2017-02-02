@@ -102,7 +102,7 @@ protected:
                 }
                 return;
             }
-            _view.layout();
+            _view.setNeedsLayout();
         }
     };
 };

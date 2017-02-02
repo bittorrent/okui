@@ -14,6 +14,16 @@ libraries:
             build-steps:
                 - ./bootstrap.sh
                 - ./b2 install --prefix={build_directory}
+    {% if platform == host_platform %}
+    benchmark:
+        repository: https://github.com/google/benchmark.git
+        commit: 577baa0dbdc6ea6d916db0f12ed2dcc5cee19b99
+        project:
+            environment:
+                CXXFLAGS: {{ env['CXXFLAGS'] ~ ' -fvisibility=hidden' }}
+            cmake-options:
+                CMAKE_BUILD_TYPE: Release
+    {% endif %}
     {% if platform == 'android' %}
     jshackle:
         repository: https://github.com/bittorrent/jshackle.git

@@ -101,17 +101,17 @@ protected:
             if (name == "background-color") {
                 _view.setBackgroundColor(SumColorComponents(components).value_or(Color::kTransparentBlack));
             } else if (name == "x") {
-                _view.attributes.x = SumExpressionComponents(components);
-                _view.layout();
+                _view.attributes().x = SumExpressionComponents(components);
+                _view.setNeedsLayout();
             } else if (name == "y") {
-                _view.attributes.y = SumExpressionComponents(components);
-                _view.layout();
+                _view.attributes().y = SumExpressionComponents(components);
+                _view.setNeedsLayout();
             } else if (name == "width") {
-                _view.attributes.width = SumExpressionComponents(components);
-                _view.layout();
+                _view.attributes().width = SumExpressionComponents(components);
+                _view.setNeedsLayout();
             } else if (name == "height") {
-                _view.attributes.height = SumExpressionComponents(components);
-                _view.layout();
+                _view.attributes().height = SumExpressionComponents(components);
+                _view.setNeedsLayout();
             } else if (name == "opacity") {
                 _view.setOpacity(SumNumberComponents(components).value_or(1.0));
             } else if (name == "tint-color") {
@@ -123,23 +123,51 @@ protected:
             }
         }
 
+        virtual void update() override {
+            ElementBase::update();
+            _view.layoutIfNeeded();
+        }
+
         virtual ::okui::View* view() override { return &_view; }
 
     protected:
         class View : public ViewType {
         public:
+            void layoutIfNeeded() {
+                if (_needsLayout) {
+                    layout();
+                    ViewType::removeUpdateHook("ml::Elements::View::View::setNeedsLayout");
+                }
+            }
+
+            void setNeedsLayout() {
+                if (_needsLayout) { return; }
+                _needsLayout = true;
+                ViewType::addUpdateHook("ml::Elements::View::View::setNeedsLayout", [this] {
+                    layoutIfNeeded();
+                });
+            }
+
+            struct Attributes {
+                stdts::optional<std::string> x, y, width, height;
+            };
+
+            Attributes& attributes() { return _attributes; }
+
             virtual void layout() override {
+                _needsLayout = false;
+
                 if (this->superview()) {
-                    if (attributes.x || attributes.y || attributes.width || attributes.height) {
+                    if (_attributes.x || _attributes.y || _attributes.width || _attributes.height) {
                         std::unordered_map<std::string, double> xUnits, yUnits;
                         xUnits["%pw"] = yUnits["%pw"] = xUnits["%"] = this->superview()->bounds().width / 100.0;
                         xUnits["%ph"] = yUnits["%ph"] = yUnits["%"] = this->superview()->bounds().height / 100.0;
 
                         this->setBounds(
-                            attributes.x ? ParseNumber(*attributes.x, xUnits).value_or(0.0) : this->bounds().x,
-                            attributes.y ? ParseNumber(*attributes.y, yUnits).value_or(0.0) : this->bounds().y,
-                            attributes.width ? ParseNumber(*attributes.width, xUnits).value_or(0.0) : this->bounds().width,
-                            attributes.height ? ParseNumber(*attributes.height, yUnits).value_or(0.0) : this->bounds().height
+                            _attributes.x ? ParseNumber(*_attributes.x, xUnits).value_or(0.0) : this->bounds().x,
+                            _attributes.y ? ParseNumber(*_attributes.y, yUnits).value_or(0.0) : this->bounds().y,
+                            _attributes.width ? ParseNumber(*_attributes.width, xUnits).value_or(0.0) : this->bounds().width,
+                            _attributes.height ? ParseNumber(*_attributes.height, yUnits).value_or(0.0) : this->bounds().height
                         );
                     }
 
@@ -151,9 +179,10 @@ protected:
                 ViewType::layout();
             }
 
-            struct {
-                stdts::optional<std::string> x, y, width, height;
-            } attributes;
+        private:
+            Attributes _attributes;
+
+            bool _needsLayout = false;
         } _view;
     };
 };
