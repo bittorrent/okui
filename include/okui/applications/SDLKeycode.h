@@ -278,6 +278,8 @@ constexpr KeyCode ConvertKeyCode(SDL_Keycode keyCode) {
         case SDLK_KBDILLUMUP:        return KeyCode::kKeyboardIllumUp;
         case SDLK_EJECT:             return KeyCode::kEject;
         case SDLK_SLEEP:             return KeyCode::kSleep;
+        case SDLK_REWIND:            return KeyCode::kRewind;
+        case SDLK_FASTFORWARD:       return KeyCode::kFastForward;
         default:                     return KeyCode::kUnknown;
     }
 }

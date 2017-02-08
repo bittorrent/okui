@@ -289,7 +289,9 @@ enum class KeyCode {
     kKeyboardIllumDown,
     kKeyboardIllumUp,
     kEject,
-    kSleep
+    kSleep,
+    kRewind,
+    kFastForward
 };
 
 } // namespace okui
