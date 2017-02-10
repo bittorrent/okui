@@ -33,16 +33,16 @@ protected:
     public:
         virtual void setAttribute(stdts::string_view name, stdts::string_view value) override {
             if (name == "texture") {
-                _view.setTexture(std::string(value));
+                setTexture(std::string(value));
             } else if (name == "texture-placeholder") {
-                _view.setTexturePlaceholder(std::string(value));
+                setTexturePlaceholder(std::string(value));
             } else if (name == "texture-distance-field") {
-                _view.setTextureDistanceField(ParseNumber(value));
+                setTextureDistanceField(ParseNumber(value));
             } else if (name == "draw-mode") {
                 if (value == "fill") {
-                    _view.setDrawMode(views::ImageView::TextureDrawMode::kFill);
+                    setDrawMode(views::ImageView::TextureDrawMode::kFill);
                 } else if (value == "fit") {
-                    _view.setDrawMode(views::ImageView::TextureDrawMode::kFit);
+                    setDrawMode(views::ImageView::TextureDrawMode::kFit);
                 }
             } else {
                 elements::View::Element<views::ImageView>::setAttribute(name, value);
@@ -51,7 +51,9 @@ protected:
 
         virtual void setAttribute(stdts::string_view name, std::vector<ValueComponent> components) override {
             if (name == "rotation") {
-                _view.setRotation(SumNumberComponents(components).value_or(0.0));
+                setRotation(SumNumberComponents(components).value_or(0.0));
+            } else if (name == "texture-color") {
+                setTextureColor(SumColorComponents(components).value_or(Color::kTransparentBlack));
             } else {
                 elements::View::Element<views::ImageView>::setAttribute(name, std::move(components));
             }

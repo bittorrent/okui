@@ -29,11 +29,11 @@ void StateMachine::Element::initialize(const Context* context, const pugi::xml_n
             _id = _context->render(_idAttribute);
         } else if (attribute.name() == "state"s) {
             _stateAttribute = attribute.value();
-            _stateMachine = std::make_unique<StateMachine>(_context->render(_stateAttribute));
+            _stateMachine = std::make_unique<StateMachine>(_context->render(*_stateAttribute));
         }
     }
 
-    if (!_stateMachine) { return; }
+    bool triggerStateMachine = !_stateMachine;
 
     for (auto& child : xml.children()) {
         if (child.type() != pugi::node_element) { continue; }
@@ -43,10 +43,24 @@ void StateMachine::Element::initialize(const Context* context, const pugi::xml_n
             std::unordered_map<std::string, std::string> attributes;
             for (auto& attribute : child.attributes()) {
                 if (attribute.name() == "id"s) {
+                    if (triggerStateMachine) {
+                        _stateMachine.reset();
+                        return;
+                    }
+                    id = attribute.value();
+                } else if (attribute.name() == "trigger"s) {
+                    if (!triggerStateMachine) {
+                        _stateMachine.reset();
+                        return;
+                    }
                     id = attribute.value();
                 } else {
                     attributes[attribute.name()] = attribute.value();
                 }
+            }
+
+            if (!_stateMachine) {
+                _stateMachine = std::make_unique<StateMachine>(id, true);
             }
 
             _stateMachine->stateDefinitions[std::move(id)].attributes = std::move(attributes);
@@ -61,6 +75,11 @@ void StateMachine::Element::initialize(const Context* context, const pugi::xml_n
                 if (duration && interpolation) {
                     auto delayAttribute = child.attribute("delay");
                     auto delay = delayAttribute ? ParseDuration(delayAttribute.value()).value_or(0s) : 0s;
+
+                    if (!_stateMachine) {
+                        _stateMachine = std::make_unique<StateMachine>(fromAttribute.value(), true);
+                    }
+
                     _stateMachine->setTransition(
                         fromAttribute.value(),
                         toAttribute.value(),
@@ -75,8 +94,8 @@ void StateMachine::Element::initialize(const Context* context, const pugi::xml_n
 }
 
 void StateMachine::Element::update() {
-    if (_stateMachine) {
-        _stateMachine->setState(_context->render(_stateAttribute));
+    if (_stateMachine && _stateAttribute) {
+        _stateMachine->setState(_context->render(*_stateAttribute));
     }
 }
 

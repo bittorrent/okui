@@ -33,9 +33,9 @@ protected:
     public:
         virtual void setAttribute(stdts::string_view name, std::vector<ValueComponent> components) override {
             if (name == "color") {
-                _view.setColor(SumColorComponents(components).value_or(Color::kWhite));
+                setColor(SumColorComponents(components).value_or(Color::kWhite));
             } else if (name == "thickness") {
-                _view.setThickness(SumNumberComponents(components).value_or(1.0));
+                setThickness(SumNumberComponents(components).value_or(1.0));
             } else {
                 elements::View::Element<views::FocusBorder<::okui::View>>::setAttribute(name, std::move(components));
             }

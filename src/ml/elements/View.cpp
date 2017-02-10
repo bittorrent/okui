@@ -140,4 +140,28 @@ stdts::optional<double> View::ElementBase::SumNumberComponents(const std::vector
     return sum;
 }
 
+std::vector<ElementInterface::StateMachineInterface*> View::ElementBase::findStateMachinesWithState(stdts::string_view id) {
+    auto stateMachines = std::vector<ElementInterface::StateMachineInterface*>{};
+
+    for (auto& stateMachine : _stateMachines) {
+        if (stateMachine->hasState(id)) {
+            stateMachines.push_back(stateMachine);
+        }
+    }
+
+    return stateMachines;
+}
+
+std::vector<ElementInterface::StateMachineInterface*> View::ElementBase::findStateMachinesWithTrigger(stdts::string_view id) {
+    auto stateMachines = std::vector<ElementInterface::StateMachineInterface*>{};
+
+    for (auto& stateMachine : _stateMachines) {
+        if (stateMachine->hasTrigger(id)) {
+            stateMachines.push_back(stateMachine);
+        }
+    }
+
+    return stateMachines;
+}
+
 } // namespace okui::ml::elements

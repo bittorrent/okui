@@ -57,4 +57,39 @@ TEST(ml_elements_StateMachine, basics) {
 
     application.run();
 }
+
+TEST(ml_elements_StateMachine, focusTrigger) {
+    TestApplication application;
+    okui::Window window(&application);
+
+    okui::ml::Environment ml;
+    okui::ml::Context context(&ml);
+
+    auto element = context.load(R"(
+    <button>
+        <statemachine>
+            <state trigger="focused" background-color="green" />
+            <state trigger="unfocused" background-color="blue" />
+        </statemachine>
+    </view>
+    )");
+
+    auto view = element->view();
+    ASSERT_TRUE(view);
+    window.contentView()->addSubview(view);
+
+    window.open();
+
+    view->asyncAfter(100ms, [&] {
+        EXPECT_EQ(view->backgroundColor(), okui::Color::kBlue);
+        view->focus();
+        element->update();
+        view->asyncAfter(100ms, [&] {
+            EXPECT_EQ(view->backgroundColor(), okui::Color::kGreen);
+            application.quit();
+        });
+    });
+
+    application.run();
+}
 #endif

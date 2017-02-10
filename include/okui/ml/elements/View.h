@@ -68,30 +68,49 @@ protected:
         stdts::optional<std::string> SumExpressionComponents(const std::vector<ValueComponent>& components);
         stdts::optional<double> SumNumberComponents(const std::vector<ValueComponent>& components);
 
-    private:
-        const Context* _context = nullptr;
-        std::unordered_map<std::string, std::string> _attributes;
-        std::string _text;
-        std::vector<std::unique_ptr<ElementInterface>> _children;
-        std::vector<StateMachineInterface*> _stateMachines;
+        std::vector<StateMachineInterface*> findStateMachinesWithState(stdts::string_view id);
+        std::vector<StateMachineInterface*> findStateMachinesWithTrigger(stdts::string_view id);
 
+    private:
         virtual void apply(stdts::string_view attribute, std::vector<ValueComponent> components) override;
+
+        const Context*                                 _context = nullptr;
+        std::unordered_map<std::string, std::string>   _attributes;
+        std::string                                    _text;
+        std::vector<std::unique_ptr<ElementInterface>> _children;
+        std::vector<StateMachineInterface*>            _stateMachines;
     };
 
     template <typename ViewType>
-    class Element : public ElementBase {
+    class Element : public ElementBase, public ViewType {
     public:
+        virtual void initialize(const Context* context, const pugi::xml_node& xml) override {
+            ElementBase::initialize(context, xml);
+
+            auto focused = ViewType::isFocus() ? "focused" : "unfocused";
+
+            for (auto& stateMachine : findStateMachinesWithTrigger("focused")) {
+                stateMachine->reset(focused);
+            }
+
+            for (auto& stateMachine : findStateMachinesWithTrigger("unfocused")) {
+                stateMachine->reset(focused);
+            }
+        }
+
         virtual void setAttribute(stdts::string_view name, stdts::string_view value) override {
             if (name == "visible") {
-                _view.setIsVisible(ParseBoolean(value).value_or(true));
+                this->setIsVisible(ParseBoolean(value).value_or(true));
             } else if (name == "preferred-focus") {
                 if (auto element = descendantWithId(value)) {
-                    _view.setPreferredFocus(element->view());
+                    this->setPreferredFocus(element->view());
                 }
+            } else if (name == "can-become-direct-focus") {
+                _canBecomeDirectFocus = ParseBoolean(value);
             } else if (name == "intercepts-interactions") {
-                _view.setInterceptsInteractions(ParseBoolean(value).value_or(true));
+                this->setInterceptsInteractions(ParseBoolean(value).value_or(true));
             } else if (name == "children-intercept-interactions") {
-                _view.setChildrenInterceptInteractions(ParseBoolean(value).value_or(true));
+                this->setChildrenInterceptInteractions(ParseBoolean(value).value_or(true));
             } else {
                 ElementBase::setAttribute(name, value);
             }
@@ -99,25 +118,25 @@ protected:
 
         virtual void setAttribute(stdts::string_view name, std::vector<ValueComponent> components) override {
             if (name == "background-color") {
-                _view.setBackgroundColor(SumColorComponents(components).value_or(Color::kTransparentBlack));
+                this->setBackgroundColor(SumColorComponents(components).value_or(Color::kTransparentBlack));
             } else if (name == "x") {
-                _view.attributes().x = SumExpressionComponents(components);
-                _view.setNeedsLayout();
+                attributes().x = SumExpressionComponents(components);
+                setNeedsLayout();
             } else if (name == "y") {
-                _view.attributes().y = SumExpressionComponents(components);
-                _view.setNeedsLayout();
+                attributes().y = SumExpressionComponents(components);
+                setNeedsLayout();
             } else if (name == "width") {
-                _view.attributes().width = SumExpressionComponents(components);
-                _view.setNeedsLayout();
+                attributes().width = SumExpressionComponents(components);
+                setNeedsLayout();
             } else if (name == "height") {
-                _view.attributes().height = SumExpressionComponents(components);
-                _view.setNeedsLayout();
+                attributes().height = SumExpressionComponents(components);
+                setNeedsLayout();
             } else if (name == "opacity") {
-                _view.setOpacity(SumNumberComponents(components).value_or(1.0));
+                this->setOpacity(SumNumberComponents(components).value_or(1.0));
             } else if (name == "tint-color") {
-                _view.setTintColor(SumColorComponents(components).value_or(Color::kWhite));
+                this->setTintColor(SumColorComponents(components).value_or(Color::kWhite));
             } else if (name == "scale") {
-                _view.setScale(SumNumberComponents(components).value_or(1.0));
+                this->setScale(SumNumberComponents(components).value_or(1.0));
             } else {
                 ElementBase::setAttribute(name, std::move(components));
             }
@@ -125,65 +144,85 @@ protected:
 
         virtual void update() override {
             ElementBase::update();
-            _view.layoutIfNeeded();
+            layoutIfNeeded();
         }
 
-        virtual ::okui::View* view() override { return &_view; }
+        virtual ::okui::View* view() override { return this; }
 
-    protected:
-        class View : public ViewType {
-        public:
-            void layoutIfNeeded() {
-                if (_needsLayout) {
-                    layout();
-                    ViewType::removeUpdateHook("ml::Elements::View::View::setNeedsLayout");
+        void layoutIfNeeded() {
+            if (_needsLayout) {
+                layout();
+                ViewType::removeUpdateHook("ml::Elements::View::View::setNeedsLayout");
+            }
+        }
+
+        void setNeedsLayout() {
+            if (_needsLayout) { return; }
+            _needsLayout = true;
+            ViewType::addUpdateHook("ml::Elements::View::View::setNeedsLayout", [this] {
+                layoutIfNeeded();
+            });
+        }
+
+        struct Attributes {
+            stdts::optional<std::string> x, y, width, height;
+        };
+
+        Attributes& attributes() { return _attributes; }
+
+        virtual void layout() override {
+            _needsLayout = false;
+
+            if (this->superview()) {
+                if (_attributes.x || _attributes.y || _attributes.width || _attributes.height) {
+                    std::unordered_map<std::string, double> xUnits, yUnits;
+                    xUnits["%pw"] = yUnits["%pw"] = xUnits["%"] = this->superview()->bounds().width / 100.0;
+                    xUnits["%ph"] = yUnits["%ph"] = yUnits["%"] = this->superview()->bounds().height / 100.0;
+
+                    this->setBounds(
+                        _attributes.x ? ParseNumber(*_attributes.x, xUnits).value_or(0.0) : this->bounds().x,
+                        _attributes.y ? ParseNumber(*_attributes.y, yUnits).value_or(0.0) : this->bounds().y,
+                        _attributes.width ? ParseNumber(*_attributes.width, xUnits).value_or(0.0) : this->bounds().width,
+                        _attributes.height ? ParseNumber(*_attributes.height, yUnits).value_or(0.0) : this->bounds().height
+                    );
+                }
+
+                for (auto& subview : this->subviews()) {
+                    subview->layout();
                 }
             }
 
-            void setNeedsLayout() {
-                if (_needsLayout) { return; }
-                _needsLayout = true;
-                ViewType::addUpdateHook("ml::Elements::View::View::setNeedsLayout", [this] {
-                    layoutIfNeeded();
-                });
+            ViewType::layout();
+        }
+
+        virtual void focusGained() override {
+            for (auto& stateMachine : findStateMachinesWithTrigger("focused")) {
+                stateMachine->setState("focused");
             }
 
-            struct Attributes {
-                stdts::optional<std::string> x, y, width, height;
-            };
+            ViewType::focusGained();
+        }
 
-            Attributes& attributes() { return _attributes; }
-
-            virtual void layout() override {
-                _needsLayout = false;
-
-                if (this->superview()) {
-                    if (_attributes.x || _attributes.y || _attributes.width || _attributes.height) {
-                        std::unordered_map<std::string, double> xUnits, yUnits;
-                        xUnits["%pw"] = yUnits["%pw"] = xUnits["%"] = this->superview()->bounds().width / 100.0;
-                        xUnits["%ph"] = yUnits["%ph"] = yUnits["%"] = this->superview()->bounds().height / 100.0;
-
-                        this->setBounds(
-                            _attributes.x ? ParseNumber(*_attributes.x, xUnits).value_or(0.0) : this->bounds().x,
-                            _attributes.y ? ParseNumber(*_attributes.y, yUnits).value_or(0.0) : this->bounds().y,
-                            _attributes.width ? ParseNumber(*_attributes.width, xUnits).value_or(0.0) : this->bounds().width,
-                            _attributes.height ? ParseNumber(*_attributes.height, yUnits).value_or(0.0) : this->bounds().height
-                        );
-                    }
-
-                    for (auto& subview : this->subviews()) {
-                        subview->layout();
-                    }
-                }
-
-                ViewType::layout();
+        virtual void focusLost() override {
+            for (auto& stateMachine : findStateMachinesWithTrigger("unfocused")) {
+                stateMachine->setState("unfocused");
             }
 
-        private:
-            Attributes _attributes;
+            ViewType::focusLost();
+        }
 
-            bool _needsLayout = false;
-        } _view;
+        virtual bool canBecomeDirectFocus() override {
+            if (_canBecomeDirectFocus) {
+                return *_canBecomeDirectFocus;
+            }
+
+            return ViewType::canBecomeDirectFocus();
+        }
+
+    private:
+        Attributes            _attributes;
+        bool                  _needsLayout = false;
+        stdts::optional<bool> _canBecomeDirectFocus;
     };
 };
 

@@ -21,6 +21,8 @@
 #include <okui/ml/ElementInterface.h>
 #include <okui/ml/ElementTypeInterface.h>
 
+#include <stdts/optional.h>
+
 namespace okui::ml::elements {
 
 /**
@@ -104,7 +106,10 @@ protected:
         };
 
         struct StateMachine : okui::StateMachine<State>, StateMachineInterface {
-            explicit StateMachine(std::string initialState) : okui::StateMachine<State>(std::move(initialState)) {}
+            explicit StateMachine(std::string initialState, bool trigger = false)
+                : okui::StateMachine<State>(std::move(initialState))
+                , triggerStateMachine{trigger}
+            {}
 
             // StateMachine
             virtual void update(stdts::string_view id, State& state, bool& isAnimated) override;
@@ -112,20 +117,26 @@ protected:
 
             // StateMachineInterface
             virtual void setDelegate(StateMachineDelegate* delegate) override { this->delegate = delegate; }
-            virtual bool drive() override { return okui::StateMachine<State>::drive(); }
-            virtual std::string state() const override { return okui::StateMachine<State>::state(); }
-            virtual void setState(std::string id) override { return okui::StateMachine<State>::setState(std::move(id)); }
+            virtual bool drive() override                                     { return okui::StateMachine<State>::drive(); }
+            virtual std::string state() const override                        { return okui::StateMachine<State>::state(); }
+            virtual void setState(std::string id) override                    { okui::StateMachine<State>::setState(std::move(id)); }
+            virtual void reset(std::string id) override                       { okui::StateMachine<State>::reset(id); }
+            virtual bool hasState(stdts::string_view id) const override       { return okui::StateMachine<State>::hasState(id); }
+            virtual bool hasTrigger(stdts::string_view id) const override     { return triggerStateMachine && hasState(id); }
 
             struct StateDefinition {
                 std::unordered_map<std::string, std::string> attributes;
             };
 
-            StateMachineDelegate* delegate = nullptr;
+            StateMachineDelegate*                            delegate = nullptr;
             std::unordered_map<std::string, StateDefinition> stateDefinitions;
+            bool                                             triggerStateMachine = false;
         };
 
-        const Context* _context = nullptr;
-        std::string _idAttribute, _id, _stateAttribute;
+        const Context*                _context = nullptr;
+        std::string                   _idAttribute;
+        std::string                   _id;
+        stdts::optional<std::string>  _stateAttribute;
         std::unique_ptr<StateMachine> _stateMachine;
     };
 };
