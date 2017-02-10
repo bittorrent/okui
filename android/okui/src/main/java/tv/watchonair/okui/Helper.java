@@ -25,7 +25,6 @@ import android.content.res.Configuration;
 import android.os.Build;
 import android.os.Handler;
 import android.provider.Settings.Secure;
-import android.util.DisplayMetrics;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.Uri;
@@ -104,9 +103,7 @@ public class Helper {
     }
 
     public float renderScale() {
-        DisplayMetrics metrics = new DisplayMetrics();
-        _activity.getWindowManager().getDefaultDisplay().getMetrics(metrics);
-        return metrics.density;
+        return _activity.getResources().getDisplayMetrics().density;
     }
 
     public boolean hasNetworkConnection() {
