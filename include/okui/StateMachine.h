@@ -81,6 +81,27 @@ public:
         _currentStateId = std::move(id);
     }
 
+    /**
+    * Immediately transitions to a new state
+    */
+    void reset(std::string id) {
+        for (auto& state : _stateStates) {
+            state.second.influence.reset(0);
+        }
+
+        _stateStates[id].influence.reset(1);
+        _currentStateId = std::move(id);
+    }
+
+    bool hasState(stdts::string_view id) const {
+        for (auto& stateState : _stateStates) {
+            if (stateState.first == id) {
+                return true;
+            }
+        }
+        return false;
+    }
+
 protected:
     /**
     * Implementations of this method should update the given state object accordingly. For example,

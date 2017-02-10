@@ -69,6 +69,9 @@ public:
         virtual bool drive() = 0;
         virtual std::string state() const = 0;
         virtual void setState(std::string id) = 0;
+        virtual void reset(std::string id) = 0;
+        virtual bool hasState(stdts::string_view id) const = 0;
+        virtual bool hasTrigger(stdts::string_view id) const = 0;
     };
 
     /**

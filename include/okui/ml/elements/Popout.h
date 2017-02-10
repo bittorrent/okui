@@ -73,36 +73,36 @@ protected:
     public:
         virtual void setAttribute(stdts::string_view name, std::vector<ValueComponent> components) override {
             if (name == "x") {
-                _view.popoutAttributes.x = SumExpressionComponents(components);
-                _view.popoutAttributes.anchorParentX = {};
+                popoutAttributes.x = SumExpressionComponents(components);
+                popoutAttributes.anchorParentX = {};
             } else if (name == "y") {
-                _view.popoutAttributes.y = SumExpressionComponents(components);
-                _view.popoutAttributes.anchorParentY = {};
+                popoutAttributes.y = SumExpressionComponents(components);
+                popoutAttributes.anchorParentY = {};
             } else if (name == "width") {
-                _view.popoutAttributes.width = SumExpressionComponents(components);
+                popoutAttributes.width = SumExpressionComponents(components);
             } else if (name == "height") {
-                _view.popoutAttributes.height = SumExpressionComponents(components);
+                popoutAttributes.height = SumExpressionComponents(components);
             } else if (name == "anchor-x") {
-                _view.popoutAttributes.anchorX = SumExpressionComponents(components);
+                popoutAttributes.anchorX = SumExpressionComponents(components);
             } else if (name == "anchor-y") {
-                _view.popoutAttributes.anchorY = SumExpressionComponents(components);
+                popoutAttributes.anchorY = SumExpressionComponents(components);
             } else if (name == "anchor-parent-x") {
-                _view.popoutAttributes.x = {};
-                _view.popoutAttributes.anchorParentX = SumExpressionComponents(components);
+                popoutAttributes.x = {};
+                popoutAttributes.anchorParentX = SumExpressionComponents(components);
             } else if (name == "anchor-parent-y") {
-                _view.popoutAttributes.y = {};
-                _view.popoutAttributes.anchorParentY = SumExpressionComponents(components);
+                popoutAttributes.y = {};
+                popoutAttributes.anchorParentY = SumExpressionComponents(components);
             } else {
                 if (name == "scaling") {
                     if (auto scaling = SumNumberComponents(components)) {
-                        _view.setScaling(*scaling);
+                        setScaling(*scaling);
                     }
                 } else {
                     elements::View::Element<ViewImplementation>::setAttribute(name, components);
                 }
                 return;
             }
-            _view.setNeedsLayout();
+            setNeedsLayout();
         }
     };
 };
