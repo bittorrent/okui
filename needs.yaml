@@ -75,7 +75,7 @@ libraries:
                 - xxd -i LICENSE {build_directory}/include/libpng16/pnglicense.c
     sdl2:
         repository: https://github.com/bittorrent/SDL.git
-        commit: 867d981757c0ed638b2be0271ebc5d3582e1bbc6
+        commit: 79abe7abe31b2e058783cf34cac6d7bf0f13350a
         project:
         {% if platform in ['ios', 'tvos', 'iossimulator', 'tvossimulator'] %}
             xcode-project: Xcode-iOS/SDL/SDL.xcodeproj
