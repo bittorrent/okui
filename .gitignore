@@ -12,3 +12,4 @@ project-config.jam
 /tests/android/src/main/assets
 /tests/android/src/main/libs
 /analysis
+/third-party/gradle/.gradle/

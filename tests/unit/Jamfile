@@ -30,6 +30,7 @@ lib okui-tests-android :
     <link>shared
     <build>no
     <target-os>android:<build>yes
+    <linkflags>-static-libstdc++
 ;
 
 path-constant PREFIX : [ option.get prefix : "/usr/local" ] ;

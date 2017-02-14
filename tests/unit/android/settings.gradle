@@ -1,0 +1,6 @@
+include ':app'
+include ':okui'
+include ':sdl2'
+
+project(':okui').setProjectDir(file('../../../android/okui'))
+project(':sdl2').setProjectDir(file('../../../needs/sdl2/build/android/armv7/share/sdl2/'))

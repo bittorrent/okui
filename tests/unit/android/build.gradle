@@ -1,51 +1,29 @@
-apply from: '../../../android-config-apk.gradle'
+// Top-level build file where you can add configuration options common to all sub-projects/modules.
 
 buildscript {
     repositories {
         jcenter()
     }
-
     dependencies {
-        classpath 'com.android.tools.build:gradle-experimental:0.2.0'
+        classpath 'com.android.tools.build:gradle-experimental:0.8.3'
+
+        // NOTE: Do not place your application dependencies here; they belong
+        // in the individual module build.gradle files
     }
 }
 
-model {
-    android {
-        defaultConfig.with {
-            archivesBaseName = 'okui-tests'
-            applicationId = 'tv.watchonair.okui.tests'
-        }
-    }
-
-    android.sources {
-        main {
-            java.source.srcDirs = ['src', '../../../deps/okui/needs/sdl2/source/android-project/src']
-        }
+allprojects {
+    repositories {
+        jcenter()
     }
 }
 
-task copyLibs(type: Sync) {
-    from('../dist/android') {
-        include '*.so'
-    }
-    into 'src/main/libs/armeabi-v7a'
+task clean(type: Delete) {
+    delete rootProject.buildDir
 }
 
-task copyAssets(type: Sync) {
-    from '../resources/PlayIcon.png'
-    from '../resources/Montserrat-regular.fnt'
-    from '../resources/Montserrat-regular.png'
-    into 'src/main/assets'
-}
-
-tasks.whenTaskAdded { task ->
-    if (task.name == 'preBuild') {
-        task.dependsOn copyLibs
-        task.dependsOn copyAssets
-    }
-}
-
-dependencies {
-    compile project(':okui')
+ext {
+    androidApiLevel = 25
+    minSdkVersion = 17
+    buildTools = "25.0.2"
 }

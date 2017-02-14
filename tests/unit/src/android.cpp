@@ -14,6 +14,7 @@
 * limitations under the License.
 */
 #include <okui/config.h>
+#include <okui/applications/SDLAndroidMain.h>
 
 #if SCRAPS_ANDROID
 

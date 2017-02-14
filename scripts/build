@@ -140,7 +140,7 @@ def build(args):
         if not args.cross_target:
             ret.append('tests/unit')
         if args.cross_target == 'android':
-            ret.extend(['tests/unit//okui-tests', 'tests/unit//okui-tests-android'])
+            ret.extend(['tests/unit//okui-tests', 'tests/unit//install-android'])
         if not args.cross_target and sys.platform == 'darwin':
             ret.extend(['examples/hello-world', 'examples/StateMachine'])
         return shell_quote(ret)
@@ -156,6 +156,8 @@ def build(args):
                 'cxxflags=-coverage',
                 'linkflags={}'.format(coverage_lib(platform.system().lower()))
             ])
+        if args.cross_target == 'android':
+            ret.append('--prefix=dist')
         return shell_quote([c.format(**variables) for c in ret])
 
     def b2():
@@ -172,6 +174,12 @@ def build(args):
         targets=targets(),
         common_args=common_args()
     ))
+
+    if args.cross_target == 'android':
+        run_command([
+            os.path.join('third-party', 'gradle', 'gradlew'),
+            '-p', 'tests/unit/android', 'assembleDebug'
+        ])
 
 
 def coverage_lib(uname):
@@ -190,8 +198,6 @@ def install(args):
         targets = ['install']
         if not args.cross_target:
             targets.append('tests/unit//install')
-        if args.cross_target == 'android':
-            targets.append('tests/unit//install-android')
         return shell_quote(targets)
 
     def common_args():
@@ -213,6 +219,11 @@ def install(args):
         '{b2} {common_args} {targets}'.format(b2=b2(), targets=targets(), common_args=common_args()),
         'rm -rf {prefix}/needy.status',
     ])
+    if args.cross_target == 'android':
+        run_commands([
+            'mkdir {prefix}/apk',
+            'cp tests/unit/android/app/build/outputs/apk/*.apk {prefix}/apk/'
+        ])
 
 
 def verify():

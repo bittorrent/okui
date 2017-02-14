@@ -1,0 +1,61 @@
+apply plugin: 'com.android.model.application'
+
+model {
+    repositories {
+        prebuilt (PrebuiltLibraries) {
+            okuiTest {
+                binaries.withType(SharedLibraryBinary) {
+                    sharedLibraryFile = file("../../dist/libokui-tests-android.so")
+                }
+            }
+        }
+    }
+
+    android {
+        compileSdkVersion project.androidApiLevel
+        buildToolsVersion project.buildTools
+        defaultConfig {
+            applicationId "tv.watchonair.okui.tests"
+            minSdkVersion.apiLevel project.minSdkVersion
+            targetSdkVersion.apiLevel project.androidApiLevel
+            versionCode 1
+            versionName "1.0"
+        }
+        sources.main {
+            jniLibs {
+                dependencies {
+                    library "okuiTest"
+                }
+            }
+        }
+        buildTypes {
+            release {
+                minifyEnabled = false
+                zipAlignEnabled = true
+            }
+        }
+        productFlavors {
+            create("arm") {
+                ndk.abiFilters.add("armeabi-v7a")
+            }
+        }
+    }
+}
+
+dependencies {
+    compile project(':okui')
+    compile project(':sdl2')
+}
+
+task copyAssets(type: Sync) {
+    from '../resources/PlayIcon.png'
+    from '../resources/Montserrat-regular.fnt'
+    from '../resources/Montserrat-regular.png'
+    into 'src/main/assets'
+}
+
+tasks.whenTaskAdded { task ->
+    if (task.name == 'preBuild') {
+        task.dependsOn copyAssets
+    }
+}
