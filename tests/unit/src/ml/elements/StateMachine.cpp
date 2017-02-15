@@ -71,7 +71,7 @@ TEST(ml_elements_StateMachine, focusTrigger) {
             <state trigger="focused" background-color="green" />
             <state trigger="unfocused" background-color="blue" />
         </statemachine>
-    </view>
+    </button>
     )");
 
     auto view = element->view();
