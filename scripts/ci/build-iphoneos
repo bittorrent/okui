@@ -3,6 +3,8 @@
 script_dir="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 cd $script_dir/../..
 
-$script_dir/build-common
-
-./scripts/build --target=iphoneos --install
+if [[ -z $ANALYSIS ]] ; then
+    ./scripts/build --target=iphoneos --install
+else
+    ./scripts/build --target=iphoneos --variant=debug --enable-analysis
+fi

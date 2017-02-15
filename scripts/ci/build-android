@@ -8,6 +8,4 @@ if [[ ! -d $ANDROID_TOOLCHAIN ]] ; then
     exit 1
 fi
 
-$script_dir/build-common
-
 ./scripts/build --target=android --install

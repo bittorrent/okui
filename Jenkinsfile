@@ -85,9 +85,6 @@ stage('Build') {
                         prepare_workspace()
                         build_docker('android')
                         stash_dist('android')
-                        withEnv(['ANALYSIS=1']) {
-                            build_docker('android')
-                        }
                     }
                 }, macos: {
                     node('darwin') {

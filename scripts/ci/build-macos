@@ -3,8 +3,6 @@
 script_dir="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 cd $script_dir/../..
 
-$script_dir/build-common
-
 if [[ -z $ANALYSIS ]] ; then
     ./scripts/build --install --enable-coverage
     ./tests/unit/dist/okui-tests
