@@ -196,16 +196,28 @@ protected:
         }
 
         virtual void focusGained() override {
+            bool needsUpdate = false;
             for (auto& stateMachine : findStateMachinesWithTrigger("focused")) {
                 stateMachine->setState("focused");
+                needsUpdate = true;
+            }
+
+            if (needsUpdate) {
+                update();
             }
 
             ViewType::focusGained();
         }
 
         virtual void focusLost() override {
+            bool needsUpdate = false;
             for (auto& stateMachine : findStateMachinesWithTrigger("unfocused")) {
                 stateMachine->setState("unfocused");
+                needsUpdate = true;
+            }
+
+            if (needsUpdate) {
+                update();
             }
 
             ViewType::focusLost();
