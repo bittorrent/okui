@@ -208,7 +208,13 @@ std::vector<std::basic_string<BitmapFont::GlyphId>> TextView::_computeLines(doub
     static constexpr std::array<BitmapFont::GlyphId, 3> ellipses{{ 0x2e, 0x2e, 0x2e }};
     auto ellipsesWidth = _lineWidth({ellipses.data(), ellipses.size()}, fontScale);
     bool skipUntilNewLine = false;
-    auto linesToShow = std::max<size_t>(1, floor(height / lineHeight()));
+    // Casting a double to a size_t gives you a double > the max size_t. floor(height / lineHeight()) may
+    // end up being greater than the max size_t. kMaxDouble is a double <= the max size_t and is used to
+    // clamp the result of floor(height / lineHeight()) to a double <= the max size_t. A double cast to
+    // a size_t which is > the max size_t gives the result 0, so it's important to get a double in the range
+    // of a size_t so the cast to a size_t works.
+    static const auto kMaxDouble = std::nexttoward(std::numeric_limits<size_t>::max(), std::numeric_limits<size_t>::max());
+    auto linesToShow = std::max<size_t>(1u, static_cast<size_t>(std::min(kMaxDouble, floor(height / lineHeight()))));
     auto useEllipses = _style.ellipsesEnabled() && _style.overflowBehavior() != Style::OverflowBehavior::kShrink;
 
     for (auto& glyph : _glyphs) {

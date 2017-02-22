@@ -99,7 +99,7 @@ public:
     const Style& style() const { return _style; }
     double lineHeight() const;
     size_t lineCount() const { return _lines.size(); }
-    size_t lineCountForWidth(double width) const { return _computeLines(width, std::numeric_limits<double>::infinity()).size(); }
+    size_t lineCountForWidth(double width) const { return _computeLines(width, std::numeric_limits<double>::max()).size(); }
     double textWidth() const { return _textWidth; }
     double textHeight() const { return lineHeight() * std::max<double>(lineCount(), 1); }
     double textHeightForWidth(double width) const { return lineHeight() * std::max<double>(lineCountForWidth(width), 1); }
